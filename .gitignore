@@ -1,0 +1,9 @@
+*~
+/classes
+/jung-src/
+*.jar
+*.gz
+*.zip
+
+# eclipse cache file
+.cache

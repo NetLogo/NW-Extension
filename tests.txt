@@ -1,0 +1,225 @@
+### in-link-radius
+
+in-link-radius-negative-radius
+  extensions [network]
+  O> crt 1
+  [turtles network:in-link-radius -1 links] of turtle 0 => ERROR Extension exception: radius cannot be negative
+
+in-link-radius-zero-radius
+  extensions [network]
+  O> crt 5
+  remove-duplicates [count turtles network:in-link-radius 0 links] of turtles => [1]
+
+in-link-radius-two-circles
+  extensions [network]
+  O> crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
+  O> crt 8 [ create-link-with turtle ((who - 8 + 1) mod 8 + 8) ]
+  remove-duplicates [count turtles network:in-link-radius 0 links] of turtles => [1]
+  remove-duplicates [count turtles network:in-link-radius 1 links] of turtles => [3]
+  remove-duplicates [count turtles network:in-link-radius 2 links] of turtles => [5]
+  remove-duplicates [count turtles network:in-link-radius 3 links] of turtles => [7]
+  remove-duplicates [count turtles network:in-link-radius 4 links] of turtles => [8]
+  remove-duplicates [count turtles network:in-link-radius 5 links] of turtles => [8]
+  remove-duplicates [count turtles network:in-link-radius 1E38 links] of turtles => [8]
+
+in-link-radius-source-set-filtering
+  extensions [network]
+  O> crt 8 [ create-links-with other turtles ]
+  O> set glob1 turtles with [who mod 2 = 0]
+  sort [who] of [glob1 network:in-link-radius 10 links] of turtle 0 => [0 2 4 6]
+
+### in-out-link-radius, in-in-link-radius
+
+in-out-link-radius
+  extensions [network]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  sort [who] of [turtles network:in-out-link-radius 1 links] of turtle 0 => [0 1]
+  sort [who] of [turtles network:in-out-link-radius 1 links] of turtle 1 => [1]
+
+in-in-link-radius
+  extensions [network]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  sort [who] of [turtles network:in-in-link-radius 1 links] of turtle 0 => [0]
+  sort [who] of [turtles network:in-in-link-radius 1 links] of turtle 1 => [0 1]
+
+### link-distance
+
+distance-to-self
+  extensions [network]
+  O> crt 1
+  [network:link-distance turtle 0 links] of turtle 0 => 0
+
+distance-two-turtles-no-links
+  extensions [network]
+  O> crt 2
+  [network:link-distance turtle 0 links] of turtle 1 => false
+  [network:link-distance turtle 1 links] of turtle 0 => false
+
+distance-one-undirected-link
+  extensions [network]
+  O> crt 2 [ create-links-with other turtles ]
+  [network:link-distance turtle 0 links] of turtle 1 => 1
+  [network:link-distance turtle 1 links] of turtle 0 => 1
+
+distance-one-directed-link
+  extensions [network]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  [network:link-distance turtle 0 links] of turtle 1 => false
+  [network:link-distance turtle 1 links] of turtle 0 => 1
+
+distance-always-one-in-fully-connected-network
+  extensions [network]
+  to-report distances report [network:link-distance myself links] of link-neighbors end
+  O> crt 10 [ create-links-with other turtles ]
+  remove-duplicates reduce sentence [distances] of turtles => [1]
+
+distance-along-chain
+  extensions [network]
+  O> crt 5 [ if who < 4 [ create-link-with turtle (who + 1) ] ]
+  sort [network:link-distance turtle 0 links] of turtles => [0 1 2 3 4]
+  sort [network:link-distance turtle 4 links] of turtles => [0 1 2 3 4]
+  sort remove-duplicates [network:link-distance turtle 2 links] of turtles => [0 1 2]
+
+distance-around-circle
+  extensions [network]
+  O> crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
+  sort [network:link-distance turtle 0 links] of turtles => [0 1 1 2 2 3 3 4]
+
+distance-around-two-circles
+  extensions [network]
+  O> crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
+  O> crt 8 [ create-link-with turtle ((who - 8 + 1) mod 8 + 8) ]
+  sort [network:link-distance turtle 0 links] of turtles with [who < 8] => [0 1 1 2 2 3 3 4]
+  sort [network:link-distance turtle 8 links] of turtles with [who >= 8] => [0 1 1 2 2 3 3 4]
+  remove-duplicates [network:link-distance turtle 8 links] of turtles with [who < 8] => [false]
+  remove-duplicates [network:link-distance turtle 0 links] of turtles with [who >= 8] => [false]
+
+### link-path
+
+link-path-self
+  extensions [network]
+  O> crt 1
+  [network:link-path turtle 0 links] of turtle 0 => []
+
+link-path-no-path
+  extensions [network]
+  O> crt 2
+  [network:link-path turtle 1 links] of turtle 0 => []
+  [network:link-path turtle 0 links] of turtle 1 => []
+
+link-path-undirected-pair
+  extensions [network]
+  O> crt 2 [ create-links-with other turtles ]
+  (word [network:link-path turtle 1 links] of turtle 0) => "[(link 0 1)]"
+  (word [network:link-path turtle 0 links] of turtle 1) => "[(link 0 1)]"
+
+link-path-a-b-c-undirected
+  extensions [network]
+  O> crt 3
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  O> ask turtle 1 [ create-link-with turtle 2 ]
+  (word [network:link-path turtle 2 links] of turtle 0) => "[(link 0 1) (link 1 2)]"
+  (word [network:link-path turtle 0 links] of turtle 2) => "[(link 1 2) (link 0 1)]"
+
+link-path-a-b-c-directed
+  extensions [network]
+  O> crt 3
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  O> ask turtle 1 [ create-link-to turtle 2 ]
+  (word [network:link-path turtle 2 links] of turtle 0) => "[(link 0 1) (link 1 2)]"
+  (word [network:link-path turtle 0 links] of turtle 2) => "[]"
+
+link-path-fully-connected
+  extensions [network]
+  O> crt 6 [ create-links-with other turtles ]
+  (word sort map [(word ?)] [network:link-path turtle 0 links] of turtles) => "[[(link 0 1)] [(link 0 2)] [(link 0 3)] [(link 0 4)] [(link 0 5)] []]"
+
+link-path-on-a-circle
+  extensions [network]
+  O> crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
+  sort [length network:link-path turtle 0 links] of turtles => [0 1 1 2 2 3]
+
+### link-path-turtles
+
+link-path-turtles-self
+  extensions [network]
+  O> crt 1
+  map [[who] of ?] [network:link-path-turtles turtle 0 links] of turtle 0 => [0]
+
+link-path-turtles-no-path
+  extensions [network]
+  O> crt 2
+  map [[who] of ?] [network:link-path-turtles turtle 1 links] of turtle 0 => []
+  map [[who] of ?] [network:link-path-turtles turtle 0 links] of turtle 1 => []
+
+link-path-turtles-undirected-pair
+  extensions [network]
+  O> crt 2 [ create-links-with other turtles ]
+  map [[who] of ?] [network:link-path-turtles turtle 1 links] of turtle 0 => [0 1]
+  map [[who] of ?] [network:link-path-turtles turtle 0 links] of turtle 1 => [1 0]
+
+link-path-turtles-fully-connected
+  extensions [network]
+  O> crt 6 [ create-links-with other turtles ]
+  sort [length network:link-path-turtles turtle 0 links] of turtles => [1 2 2 2 2 2]
+
+link-path-turtles-on-a-circle
+  extensions [network]
+  O> crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
+  sort [length network:link-path-turtles turtle 0 links] of turtles => [1 2 2 3 3 4]
+
+### mean-link-path-length
+
+## undirected links
+
+mean-link-path-length-empty
+  extensions [network]
+  network:mean-link-path-length turtles links => false
+
+mean-link-path-length-one-turtle
+  extensions [network]
+  network:mean-link-path-length turtles links => false
+
+mean-link-path-length-two-unconnected-turtles
+  extensions [network]
+  O> crt 2
+  network:mean-link-path-length turtles links => false
+
+mean-link-path-length-two-connected-turtles
+  extensions [network]
+  O> crt 2 [ create-links-with other turtles ]
+  network:mean-link-path-length turtles links => 1
+
+mean-link-path-length-fully-connected
+  extensions [network]
+  O> crt 10 [ create-links-with other turtles ]
+  network:mean-link-path-length turtles links => 1
+
+mean-link-path-length-on-a-pentagon
+  extensions [network]
+  O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
+  network:mean-link-path-length turtles links => 1.5
+
+mean-link-path-length-pairs-of-turtles-on-a-pentagon
+  extensions [network]
+  O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
+  network:mean-link-path-length (turtle-set turtle 0 turtle 1) links => 1
+  network:mean-link-path-length (turtle-set turtle 1 turtle 0) links => 1
+  network:mean-link-path-length (turtle-set turtle 0 turtle 2) links => 2
+  network:mean-link-path-length (turtle-set turtle 2 turtle 0) links => 2
+
+## directed links
+
+mean-link-path-length-directed-two-half-connected-turtles
+  extensions [network]
+  O> crt 2
+  O> ask turtle 0 [ create-links-to other turtles ]
+  network:mean-link-path-length turtles links => false
+
+mean-link-path-length-directed-two-connected-turtles
+  extensions [network]
+  O> crt 2 [ create-links-to other turtles ]
+  network:mean-link-path-length turtles links => 1
