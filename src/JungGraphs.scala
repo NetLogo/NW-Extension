@@ -1,4 +1,4 @@
-package org.nlogo.extensions.network
+package org.nlogo.extensions.nw
 
 import java.util.Collection
 
@@ -9,6 +9,7 @@ import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
 
+import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
 import edu.uci.ics.jung.graph.util.EdgeType
 import edu.uci.ics.jung.graph.util.Pair
 import edu.uci.ics.jung.graph.DirectedGraph
@@ -20,6 +21,8 @@ import edu.uci.ics.jung.graph.Graph
 trait JungGraph
   extends Graph[Turtle, Link] {
   self: NetLogoGraph =>
+
+  lazy val dijkstraShortestPath = new DijkstraShortestPath(this, isStatic)
 
   override def getInEdges(turtle: Turtle): Collection[Link] =
     validTurtle(turtle).map(inEdges(_).asJavaCollection).orNull

@@ -1,4 +1,4 @@
-package org.nlogo.extensions.network
+package org.nlogo.extensions.nw
 
 import scala.Option.option2Iterable
 import scala.collection.JavaConverters.iterableAsScalaIterableConverter
@@ -6,7 +6,7 @@ import org.nlogo.agent.Turtle
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.api.ExtensionException
-import org.nlogo.extensions.network.GraphUtil.EnrichAgentSet
+import org.nlogo.extensions.nw.GraphUtil.EnrichAgentSet
 import org.nlogo.agent.Agent
 
 object GraphUtil {
@@ -17,6 +17,7 @@ object GraphUtil {
 }
 
 trait NetLogoGraph {
+  val isStatic: Boolean
   val isValidLink: Link => Boolean
   val isValidTurtle: Turtle => Boolean
   def validTurtle(t: Turtle) = Option(t).filter(isValidTurtle)
@@ -48,6 +49,7 @@ trait NetLogoGraph {
 
 trait LiveNetLogoGraph
   extends NetLogoGraph {
+  val isStatic = false
   val world = linkSet.world
   val linkManager = world.linkManager
   val isAllLinks = linkSet eq world.links
@@ -74,6 +76,7 @@ trait LiveNetLogoGraph
 trait StaticNetLogoGraph
   extends NetLogoGraph {
 
+  val isStatic = true
   val turtleSet: AgentSet
 
   override val isValidLink = linkVector.contains(_: Link)
