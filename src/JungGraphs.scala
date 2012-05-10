@@ -18,51 +18,59 @@ import edu.uci.ics.jung.graph.AbstractGraph
 import edu.uci.ics.jung.graph.AbstractTypedGraph
 import edu.uci.ics.jung.graph.Graph
 
-trait JungGraph
-  extends Graph[Turtle, Link] {
-  self: NetLogoGraph =>
+object JungGraphUtil {
+  implicit def EnrichNetLogoGraph(nlg: NetLogoGraph) = new RichNetLogoGraph(nlg)
+  class RichNetLogoGraph(nlg: NetLogoGraph) {
+    def asJungGraph = new UntypedJungGraph(nlg)
+    def asDirectedJungGraph = new DirectedJungGraph(nlg)
+    def asUndirectedJungGraph = new UndirectedJungGraph(nlg)
+  }
+}
 
-  lazy val dijkstraShortestPath = new DijkstraShortestPath(this, isStatic)
+abstract class JungGraph(val nlg: NetLogoGraph)
+  extends AbstractGraph[Turtle, Link] {
+
+  lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic)
 
   override def getInEdges(turtle: Turtle): Collection[Link] =
-    validTurtle(turtle).map(inEdges(_).asJavaCollection).orNull
+    nlg.validTurtle(turtle).map(nlg.inEdges(_).asJavaCollection).orNull
   override def getPredecessors(turtle: Turtle): Collection[Turtle] =
-    validTurtle(turtle).map(inEdges(_).map(_.end1).asJavaCollection).orNull
+    nlg.validTurtle(turtle).map(nlg.inEdges(_).map(_.end1).asJavaCollection).orNull
 
   override def getOutEdges(turtle: Turtle): Collection[Link] =
-    validTurtle(turtle).map(outEdges(_).asJavaCollection).orNull
+    nlg.validTurtle(turtle).map(nlg.outEdges(_).asJavaCollection).orNull
   override def getSuccessors(turtle: Turtle): Collection[Turtle] =
-    validTurtle(turtle).map(outEdges(_).map(_.end2).asJavaCollection).orNull
+    nlg.validTurtle(turtle).map(nlg.outEdges(_).map(_.end2).asJavaCollection).orNull
 
   override def getIncidentEdges(turtle: Turtle): Collection[Link] =
-    validTurtle(turtle).map(edges(_).asJavaCollection).orNull
+    nlg.validTurtle(turtle).map(nlg.edges(_).asJavaCollection).orNull
 
   override def getSource(link: Link): Turtle =
-    validLink(link).filter(_.isDirectedLink).map(_.end1).orNull
+    nlg.validLink(link).filter(_.isDirectedLink).map(_.end1).orNull
 
   override def getDest(link: Link): Turtle =
-    validLink(link).filter(_.isDirectedLink).map(_.end2).orNull
+    nlg.validLink(link).filter(_.isDirectedLink).map(_.end2).orNull
 
-  override def getEdgeCount(): Int = links.size
+  override def getEdgeCount(): Int = nlg.links.size
 
   override def getNeighbors(turtle: Turtle): Collection[Turtle] =
-    validTurtle(turtle).map { t =>
-      (outEdges(t).map(_.end2) ++ inEdges(t).map(_.end1)).asJavaCollection
+    nlg.validTurtle(turtle).map { t =>
+      (nlg.outEdges(t).map(_.end2) ++ nlg.inEdges(t).map(_.end1)).asJavaCollection
     }.orNull
 
-  override def getVertexCount(): Int = turtles.size
-  override def getVertices(): Collection[Turtle] = turtles.asJavaCollection
-  override def getEdges(): Collection[Link] = links.asJavaCollection
-  override def containsEdge(link: Link): Boolean = validLink(link).isDefined
-  override def containsVertex(turtle: Turtle): Boolean = validTurtle(turtle).isDefined
+  override def getVertexCount(): Int = nlg.turtles.size
+  override def getVertices(): Collection[Turtle] = nlg.turtles.asJavaCollection
+  override def getEdges(): Collection[Link] = nlg.links.asJavaCollection
+  override def containsEdge(link: Link): Boolean = nlg.validLink(link).isDefined
+  override def containsVertex(turtle: Turtle): Boolean = nlg.validTurtle(turtle).isDefined
 
   def getEndpoints(link: Link): Pair[Turtle] =
     new Pair(link.end1, link.end2) // Note: contract says nothing about edge being in graph
 
   def isDest(turtle: Turtle, link: Link): Boolean =
-    validLink(link).filter(_.end2 == turtle).isDefined
+    nlg.validLink(link).filter(_.end2 == turtle).isDefined
   def isSource(turtle: Turtle, link: Link): Boolean =
-    validLink(link).filter(_.end1 == turtle).isDefined
+    nlg.validLink(link).filter(_.end1 == turtle).isDefined
 
   // TODO: in a live graph, maybe they could be useful for generators
   def removeEdge(link: Link): Boolean =
@@ -78,71 +86,28 @@ trait JungGraph
 
 }
 
-trait UntypedAbstractJungGraph
-  extends AbstractGraph[Turtle, Link] {
-  self: NetLogoGraph =>
+class UntypedJungGraph(val nlg: NetLogoGraph)
+  extends JungGraph(nlg) {
   override def getEdgeType(link: Link): EdgeType =
     if (link.isDirectedLink) EdgeType.DIRECTED else EdgeType.UNDIRECTED
-  private def edges(edgeType: EdgeType) = links.filter(getEdgeType(_) == edgeType)
+  private def edges(edgeType: EdgeType) = nlg.links.filter(getEdgeType(_) == edgeType)
   override def getEdgeCount(edgeType: EdgeType) = edges(edgeType).size
   override def getEdges(edgeType: EdgeType) = edges(edgeType).asJavaCollection
   override def getDefaultEdgeType(): EdgeType = EdgeType.UNDIRECTED
 }
 
-trait DirectedJungGraph
-  extends JungGraph
+class DirectedJungGraph(val nlg: NetLogoGraph)
+  extends JungGraph(nlg)
   with DirectedGraph[Turtle, Link] {
-  self: NetLogoGraph =>
-}
 
-trait UndirectedJungGraph
-  extends JungGraph
-  with UndirectedGraph[Turtle, Link] {
-  self: NetLogoGraph =>
-}
-
-class LiveJungGraph(val linkSet: AgentSet)
-  extends UntypedAbstractJungGraph
-  with JungGraph
-  with LiveNetLogoGraph
-
-class DirectedLiveJungGraph(val linkSet: AgentSet)
-  extends AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
-  with DirectedJungGraph {
-  self: LiveNetLogoGraph =>
-  if (!linkSet.isDirected)
+  if (!nlg.isDirected)
     throw new ExtensionException("link set must be directed")
+
 }
 
-class UndirectedLiveJungGraph(val linkSet: AgentSet)
-  extends AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
-  with UndirectedJungGraph {
-  self: LiveNetLogoGraph =>
-  if (!linkSet.isUndirected)
+class UndirectedJungGraph(val nlg: NetLogoGraph)
+  extends JungGraph(nlg)
+  with UndirectedGraph[Turtle, Link] {
+  if (!nlg.isUndirected)
     throw new ExtensionException("link set must be undirected")
-}
-
-class StaticJungGraph(
-  val linkSet: AgentSet,
-  val turtleSet: AgentSet)
-  extends UntypedAbstractJungGraph
-  with JungGraph
-  with StaticNetLogoGraph
-
-class DirectedStaticJungGraph(
-  val linkSet: AgentSet,
-  val turtleSet: AgentSet)
-  extends AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
-  with DirectedJungGraph
-  with StaticNetLogoGraph {
-  // TODO: require directed graph
-}
-
-class UndirectedStaticJungGraph(
-  val linkSet: AgentSet,
-  val turtleSet: AgentSet)
-  extends AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
-  with UndirectedJungGraph
-  with StaticNetLogoGraph {
-  // TODO: require undirected graph
 }

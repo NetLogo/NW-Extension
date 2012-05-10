@@ -22,10 +22,12 @@ trait NetLogoGraph {
   val isValidTurtle: Turtle => Boolean
   def validTurtle(t: Turtle) = Option(t).filter(isValidTurtle)
   def validLink(l: Link) = Option(l).filter(isValidLink)
-  // TODO: get rid of validTurtle / validLink in favor of:
+  // TODO: if I figure out how, get rid of validTurtle / validLink in favor of:
   // def valid[A](obj: A)(implicit isValid: A => Boolean) = Option(obj).filter(isValid)
 
-  val linkSet: AgentSet
+  protected val linkSet: AgentSet
+  val isDirected = linkSet.isDirected
+  val isUndirected = linkSet.isUndirected
   def links: Iterable[Link]
   def turtles: Iterable[Turtle]
 
@@ -35,19 +37,13 @@ trait NetLogoGraph {
   def directedOutEdges(turtle: Turtle): Iterable[Link]
 
   def inEdges(turtle: Turtle) =
-    if (linkSet.isDirected)
-      directedInEdges(turtle)
-    else
-      edges(turtle)
-
+    if (isDirected) directedInEdges(turtle) else edges(turtle)
   def outEdges(turtle: Turtle) =
-    if (linkSet.isDirected)
-      directedOutEdges(turtle)
-    else
-      edges(turtle)
+    if (isDirected) directedOutEdges(turtle) else edges(turtle)
 }
 
-trait LiveNetLogoGraph
+class LiveNetLogoGraph(
+  protected val linkSet: AgentSet)
   extends NetLogoGraph {
   val isStatic = false
   val world = linkSet.world
@@ -73,11 +69,12 @@ trait LiveNetLogoGraph
 
 }
 
-trait StaticNetLogoGraph
+class StaticNetLogoGraph(
+  protected val linkSet: AgentSet,
+  protected val turtleSet: AgentSet)
   extends NetLogoGraph {
 
   val isStatic = true
-  val turtleSet: AgentSet
 
   override val isValidLink = linkVector.contains(_: Link)
   override val isValidTurtle = turtleVector.contains(_: Turtle)
