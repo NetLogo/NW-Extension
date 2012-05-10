@@ -1,6 +1,5 @@
 package org.nlogo.extensions.nw
 
-import org.nlogo.api.Link
 import org.nlogo.api.Turtle
 import org.nlogo.api.Agent
 import org.nlogo.api.AgentSet
@@ -10,10 +9,14 @@ import org.nlogo.api.DefaultClassManager
 import org.nlogo.api.DefaultReporter
 import org.nlogo.api.ExtensionException
 import org.nlogo.api.I18N
+import org.nlogo.api.Link
+import org.nlogo.api.LogoList
 import org.nlogo.api.PrimitiveManager
 import org.nlogo.api.Syntax
 import org.nlogo.extensions.nw.JungGraphUtil.EnrichNetLogoGraph
-import NetworkExtensionUtil._
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.EnrichArgument
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
 
 class NetworkExtension extends DefaultClassManager {
   override def load(primManager: PrimitiveManager) {
@@ -93,7 +96,8 @@ object LinkPath extends DefaultReporter {
   override def report(args: Array[Argument], context: Context): AnyRef = {
     val start = context.getAgent.asInstanceOf[Turtle]
     val end = args(0).getAgent.asInstanceOf[Turtle]
-    args(1).getGraph.asJungGraph.dijkstraShortestPath.getPath(start, end)
+    val path = args(1).getGraph.asJungGraph.dijkstraShortestPath.getPath(start, end)
+    LogoList.fromJava(path)
   }
 }
 

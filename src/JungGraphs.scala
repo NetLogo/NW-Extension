@@ -27,9 +27,10 @@ object JungGraphUtil {
   }
 }
 
-abstract class JungGraph(val nlg: NetLogoGraph)
+trait JungGraph
   extends AbstractGraph[Turtle, Link] {
 
+  val nlg: NetLogoGraph
   lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic)
 
   override def getInEdges(turtle: Turtle): Collection[Link] =
@@ -86,8 +87,9 @@ abstract class JungGraph(val nlg: NetLogoGraph)
 
 }
 
-class UntypedJungGraph(val nlg: NetLogoGraph)
-  extends JungGraph(nlg) {
+class UntypedJungGraph(
+  override val nlg: NetLogoGraph)
+  extends JungGraph {
   override def getEdgeType(link: Link): EdgeType =
     if (link.isDirectedLink) EdgeType.DIRECTED else EdgeType.UNDIRECTED
   private def edges(edgeType: EdgeType) = nlg.links.filter(getEdgeType(_) == edgeType)
@@ -96,8 +98,10 @@ class UntypedJungGraph(val nlg: NetLogoGraph)
   override def getDefaultEdgeType(): EdgeType = EdgeType.UNDIRECTED
 }
 
-class DirectedJungGraph(val nlg: NetLogoGraph)
-  extends JungGraph(nlg)
+class DirectedJungGraph(
+  override val nlg: NetLogoGraph)
+  extends AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
+  with JungGraph
   with DirectedGraph[Turtle, Link] {
 
   if (!nlg.isDirected)
@@ -105,8 +109,10 @@ class DirectedJungGraph(val nlg: NetLogoGraph)
 
 }
 
-class UndirectedJungGraph(val nlg: NetLogoGraph)
-  extends JungGraph(nlg)
+class UndirectedJungGraph(
+  override val nlg: NetLogoGraph)
+  extends AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
+  with JungGraph
   with UndirectedGraph[Turtle, Link] {
   if (!nlg.isUndirected)
     throw new ExtensionException("link set must be undirected")
