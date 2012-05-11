@@ -4,34 +4,22 @@ import java.util.Collection
 
 import scala.collection.JavaConverters.asJavaCollectionConverter
 
-import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
 
-import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
 import edu.uci.ics.jung.graph.util.EdgeType
 import edu.uci.ics.jung.graph.util.Pair
 import edu.uci.ics.jung.graph.DirectedGraph
 import edu.uci.ics.jung.graph.UndirectedGraph
 import edu.uci.ics.jung.graph.AbstractGraph
 import edu.uci.ics.jung.graph.AbstractTypedGraph
-import edu.uci.ics.jung.graph.Graph
-
-object JungGraphUtil {
-  implicit def EnrichNetLogoGraph(nlg: NetLogoGraph) = new RichNetLogoGraph(nlg)
-  class RichNetLogoGraph(nlg: NetLogoGraph) {
-    def asJungGraph = new UntypedJungGraph(nlg)
-    def asDirectedJungGraph = new DirectedJungGraph(nlg)
-    def asUndirectedJungGraph = new UndirectedJungGraph(nlg)
-  }
-}
 
 trait JungGraph
-  extends AbstractGraph[Turtle, Link] {
+  extends AbstractGraph[Turtle, Link]
+  with JungAlgorithms {
 
   val nlg: NetLogoGraph
-  lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic)
 
   override def getInEdges(turtle: Turtle): Collection[Link] =
     nlg.validTurtle(turtle).map(nlg.inEdges(_).asJavaCollection).orNull

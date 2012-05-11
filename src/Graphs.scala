@@ -25,7 +25,12 @@ trait NetLogoGraph {
   // TODO: if I figure out how, get rid of validTurtle / validLink in favor of:
   // def valid[A](obj: A)(implicit isValid: A => Boolean) = Option(obj).filter(isValid)
 
+  lazy val asJungGraph = new UntypedJungGraph(this)
+  lazy val asDirectedJungGraph = new DirectedJungGraph(this)
+  lazy val asUndirectedJungGraph = new UndirectedJungGraph(this)
+
   protected val linkSet: AgentSet
+  val world = linkSet.world
   val isDirected = linkSet.isDirected
   val isUndirected = linkSet.isUndirected
   def links: Iterable[Link]
@@ -46,7 +51,6 @@ class LiveNetLogoGraph(
   protected val linkSet: AgentSet)
   extends NetLogoGraph {
   val isStatic = false
-  val world = linkSet.world
   val linkManager = world.linkManager
   val isAllLinks = linkSet eq world.links
   val isLinkBreed = world.isLinkBreed(linkSet)

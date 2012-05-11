@@ -6,6 +6,7 @@ import org.nlogo.api.AgentSet
 import org.nlogo.api.Argument
 import org.nlogo.api.Context
 import org.nlogo.api.DefaultClassManager
+import org.nlogo.api.DefaultCommand
 import org.nlogo.api.DefaultReporter
 import org.nlogo.api.ExtensionException
 import org.nlogo.api.I18N
@@ -13,17 +14,19 @@ import org.nlogo.api.Link
 import org.nlogo.api.LogoList
 import org.nlogo.api.PrimitiveManager
 import org.nlogo.api.Syntax
-import org.nlogo.extensions.nw.JungGraphUtil.EnrichNetLogoGraph
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
 import org.nlogo.extensions.nw.NetworkExtensionUtil.EnrichArgument
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
 
 class NetworkExtension extends DefaultClassManager {
   override def load(primManager: PrimitiveManager) {
-    //    primManager.addPrimitive("link-distance-s", LinkDistanceStatic)
-    //    primManager.addPrimitive("link-distance-l", LinkDistanceLive)
+    primManager.addPrimitive("link-distance", LinkDistance)
     primManager.addPrimitive("link-path", LinkPath)
     primManager.addPrimitive("snapshot", Snapshot)
+    primManager.addPrimitive("betweenness-centrality", BetweennessCentralityPrim)
+    primManager.addPrimitive("do-k-means-clustering", DoKMeansClustering)
+    primManager.addPrimitive("k-means-cluster", KMeansCluster)
   }
 }
 
@@ -65,8 +68,13 @@ object NetworkExtensionUtil {
   }
   implicit def EnrichArgument(arg: Argument) = new RichArgument(arg)
   class RichArgument(arg: Argument) {
+    def getStaticGraph = arg.get match {
+      case g: StaticNetLogoGraph => g
+      case _ => throw new ExtensionException(
+        "Expected input to be a network snapshot")
+    }
     def getGraph = arg.get match {
-      case as: AgentSet => new LiveNetLogoGraph(as.requireLinkBreed)
+      case as: AgentSet          => new LiveNetLogoGraph(as.requireLinkBreed)
       case g: StaticNetLogoGraph => g
       case _ => throw new ExtensionException(
         "Expected input to be either a linkset or a network snapshot")
@@ -74,8 +82,7 @@ object NetworkExtensionUtil {
   }
 }
 
-object Snapshot
-  extends DefaultReporter {
+object Snapshot extends DefaultReporter {
   override def getSyntax =
     Syntax.reporterSyntax(
       Array(Syntax.LinksetType, Syntax.TurtlesetType),
@@ -86,6 +93,43 @@ object Snapshot
     val turtleSet = args(1).getAgentSet
     new StaticNetLogoGraph(linkSet, turtleSet)
   }
+}
+
+object DoKMeansClustering extends DefaultCommand {
+  override def getSyntax = Syntax.commandSyntax(
+    Array(Syntax.WildcardType, Syntax.NumberType, Syntax.NumberType, Syntax.NumberType),
+    agentClassString = "OTPL")
+  override def perform(args: Array[Argument], context: Context) {
+    args(0).getStaticGraph.asJungGraph
+      .kMeansClusterer
+      .doKMeansClustering(
+        nbClusters = args(1).getIntValue,
+        maxIterations = args(2).getIntValue,
+        convergenceThreshold = args(3).getDoubleValue)
+  }
+}
+
+object KMeansCluster extends DefaultReporter {
+  override def getSyntax = Syntax.reporterSyntax(
+    Array(Syntax.WildcardType),
+    Syntax.NumberType,
+    agentClassString = "-T--")
+  override def report(args: Array[Argument], context: Context): AnyRef = {
+    Double.box(args(0).getStaticGraph.asJungGraph
+      .kMeansClusterer
+      .getCluster(context.getAgent.asInstanceOf[Turtle]))
+  }
+}
+
+object BetweennessCentralityPrim extends DefaultReporter {
+  override def getSyntax = Syntax.reporterSyntax(
+    Array(Syntax.WildcardType),
+    Syntax.NumberType,
+    agentClassString = "-T-L")
+  override def report(args: Array[Argument], context: Context): AnyRef =
+    Double.box(args(0).getStaticGraph.asJungGraph
+      .betweennessCentrality
+      .get(context.getAgent))
 }
 
 object LinkPath extends DefaultReporter {
@@ -101,7 +145,7 @@ object LinkPath extends DefaultReporter {
   }
 }
 
-object LinkDistanceStatic extends DefaultReporter {
+object LinkDistance extends DefaultReporter {
   override def getSyntax = Syntax.reporterSyntax(
     Array(Syntax.TurtleType, Syntax.LinksetType | Syntax.WildcardType),
     Syntax.NumberType | Syntax.BooleanType,
