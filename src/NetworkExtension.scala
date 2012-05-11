@@ -18,6 +18,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
 import org.nlogo.extensions.nw.NetworkExtensionUtil.EnrichArgument
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
+import org.nlogo.api.ScalaConversions._
 
 class NetworkExtension extends DefaultClassManager {
   override def load(primManager: PrimitiveManager) {
@@ -91,7 +92,7 @@ object Snapshot extends DefaultReporter {
   override def report(args: Array[Argument], context: Context): AnyRef = {
     val linkSet = args(0).getAgentSet
     val turtleSet = args(1).getAgentSet
-    new StaticNetLogoGraph(linkSet, turtleSet)
+    new StaticNetLogoGraph(linkSet, turtleSet).toLogoObject // make extension type
   }
 }
 
@@ -155,8 +156,8 @@ object LinkDistance extends DefaultReporter {
     val end = args(0).getAgent.asInstanceOf[Turtle]
     val path = args(1).getGraph.asJungGraph.dijkstraShortestPath.getPath(start, end)
     Option(path.size)
-      .filterNot(0==)
-      .map(Double.box(_))
-      .getOrElse(java.lang.Boolean.FALSE)
+    .filterNot(0==)
+    .map(Double.box(_))
+    .getOrElse(Boolean.box(false))
   }
 }

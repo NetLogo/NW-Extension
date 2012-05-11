@@ -8,6 +8,7 @@ import org.nlogo.agent.Link
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.GraphUtil.EnrichAgentSet
 import org.nlogo.agent.Agent
+import org.nlogo.api.ExtensionObject
 
 object GraphUtil {
   implicit def EnrichAgentSet(agentSet: AgentSet) = new RichAgentSet(agentSet)
@@ -45,6 +46,7 @@ trait NetLogoGraph {
     if (isDirected) directedInEdges(turtle) else edges(turtle)
   def outEdges(turtle: Turtle) =
     if (isDirected) directedOutEdges(turtle) else edges(turtle)
+
 }
 
 class LiveNetLogoGraph(
@@ -76,7 +78,7 @@ class LiveNetLogoGraph(
 class StaticNetLogoGraph(
   protected val linkSet: AgentSet,
   protected val turtleSet: AgentSet)
-  extends NetLogoGraph {
+  extends NetLogoGraph with ExtensionObject {
 
   val isStatic = true
 
@@ -98,4 +100,17 @@ class StaticNetLogoGraph(
   private lazy val outEdgesMap: Map[Turtle, Iterable[Link]] = links.groupBy(_.end1)
   override def directedOutEdges(turtle: Turtle) = outEdgesMap.get(turtle).flatten
 
+  // ExtensionObject methods:
+
+  override def dump(readable: Boolean, exporting: Boolean, reference: Boolean): String =
+    sys.error("TODO")
+
+  override def getExtensionName: String = "nw" // TODO change this here if we rename to "network"
+  override def getNLTypeName: String = ""
+  override def recursivelyEqual(obj: AnyRef): Boolean =
+    Option(obj)
+      .collect { case g: StaticNetLogoGraph => g }
+      .filter(g => g.linkVector == this.linkVector)
+      .filter(g => g.turtleVector == this.turtleVector)
+      .isDefined
 }
