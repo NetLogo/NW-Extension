@@ -19,6 +19,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
 import org.nlogo.extensions.nw.NetworkExtensionUtil.EnrichArgument
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
 import org.nlogo.api.ScalaConversions._
+import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
 
 class NetworkExtension extends DefaultClassManager {
   override def load(primManager: PrimitiveManager) {
@@ -26,8 +27,11 @@ class NetworkExtension extends DefaultClassManager {
     primManager.addPrimitive("link-path", LinkPath)
     primManager.addPrimitive("snapshot", Snapshot)
     primManager.addPrimitive("betweenness-centrality", BetweennessCentralityPrim)
-    primManager.addPrimitive("do-k-means-clustering", DoKMeansClustering)
-    primManager.addPrimitive("k-means-cluster", KMeansCluster)
+    primManager.addPrimitive("normalized-betweenness-centrality", NormalizedBetweennessCentralityPrim)
+    primManager.addPrimitive("random-walk-betweenness", RandomWalkBetweennessPrim)
+    primManager.addPrimitive("normalized-random-walk-betweenness", NormalizedRandomWalkBetweennessPrim)
+    primManager.addPrimitive("k-means-clusters", KMeansClusters)
+    primManager.addPrimitive("bicomponent-clusters",BicomponentClusters)
   }
 }
 
@@ -86,51 +90,81 @@ object NetworkExtensionUtil {
 object Snapshot extends DefaultReporter {
   override def getSyntax =
     Syntax.reporterSyntax(
-      Array(Syntax.LinksetType, Syntax.TurtlesetType),
+      Array(Syntax.TurtlesetType, Syntax.LinksetType),
       Syntax.WildcardType,
       agentClassString = "OTPL")
   override def report(args: Array[Argument], context: Context): AnyRef = {
-    val linkSet = args(0).getAgentSet
-    val turtleSet = args(1).getAgentSet
+    val turtleSet = args(0).getAgentSet
+    val linkSet = args(1).getAgentSet
     new StaticNetLogoGraph(linkSet, turtleSet).toLogoObject // make extension type
   }
 }
 
-object DoKMeansClustering extends DefaultCommand {
-  override def getSyntax = Syntax.commandSyntax(
+object KMeansClusters extends DefaultReporter {
+  override def getSyntax = Syntax.reporterSyntax(
     Array(Syntax.WildcardType, Syntax.NumberType, Syntax.NumberType, Syntax.NumberType),
+    Syntax.ListType,
     agentClassString = "OTPL")
-  override def perform(args: Array[Argument], context: Context) {
+  override def report(args: Array[Argument], context: Context) = {
     args(0).getStaticGraph.asJungGraph
       .kMeansClusterer
-      .doKMeansClustering(
+      .clusters(
         nbClusters = args(1).getIntValue,
         maxIterations = args(2).getIntValue,
         convergenceThreshold = args(3).getDoubleValue)
+      .toLogoList
   }
 }
 
-object KMeansCluster extends DefaultReporter {
+object BicomponentClusters extends DefaultReporter {
   override def getSyntax = Syntax.reporterSyntax(
     Array(Syntax.WildcardType),
-    Syntax.NumberType,
-    agentClassString = "-T--")
-  override def report(args: Array[Argument], context: Context): AnyRef = {
-    Double.box(args(0).getStaticGraph.asJungGraph
-      .kMeansClusterer
-      .getCluster(context.getAgent.asInstanceOf[Turtle]))
+    Syntax.ListType,
+    agentClassString = "OTPL")
+  override def report(args: Array[Argument], context: Context) = {
+    args(0).getStaticGraph.asUndirectedJungGraph
+      .bicomponentClusterer
+      .clusters
+      .toLogoList
   }
 }
 
-object BetweennessCentralityPrim extends DefaultReporter {
+trait JungScorerPrim extends DefaultReporter {
   override def getSyntax = Syntax.reporterSyntax(
     Array(Syntax.WildcardType),
     Syntax.NumberType,
     agentClassString = "-T-L")
+  type G <: JungGraph
+  def asGraph(g: StaticNetLogoGraph): G
+  def score(agent: Agent, g: G): Double
   override def report(args: Array[Argument], context: Context): AnyRef =
-    Double.box(args(0).getStaticGraph.asJungGraph
-      .betweennessCentrality
-      .get(context.getAgent))
+    score(context.getAgent, asGraph(args(0).getStaticGraph)).toLogoObject
+}
+
+trait UntypedJungScorerPrim extends JungScorerPrim {
+  type G = UntypedJungGraph
+  def asGraph(g: StaticNetLogoGraph) = g.asJungGraph
+}
+
+trait UndirectedJungScorerPrim extends JungScorerPrim {
+  type G = UndirectedJungGraph
+  def asGraph(g: StaticNetLogoGraph) = g.asUndirectedJungGraph
+}
+
+object BetweennessCentralityPrim extends UntypedJungScorerPrim {
+  override def score(agent: Agent, graph: G) = graph.betweennessCentrality.get(agent)
+}
+
+object NormalizedBetweennessCentralityPrim extends UntypedJungScorerPrim {
+  override def score(agent: Agent, graph: G) = graph.betweennessCentrality.getNormalized(agent)
+}
+
+object RandomWalkBetweennessPrim extends UndirectedJungScorerPrim {
+  override def score(agent: Agent, graph: G) = graph.randomWalkBetweenness.get(agent)
+}
+
+object NormalizedRandomWalkBetweennessPrim extends UndirectedJungScorerPrim {
+  override def score(agent: Agent, graph: G) = graph.randomWalkBetweenness.getNormalized(agent)
 }
 
 object LinkPath extends DefaultReporter {
@@ -155,9 +189,6 @@ object LinkDistance extends DefaultReporter {
     val start = context.getAgent.asInstanceOf[Turtle]
     val end = args(0).getAgent.asInstanceOf[Turtle]
     val path = args(1).getGraph.asJungGraph.dijkstraShortestPath.getPath(start, end)
-    Option(path.size)
-    .filterNot(0==)
-    .map(Double.box(_))
-    .getOrElse(Boolean.box(false))
+    Option(path.size).filterNot(0==).getOrElse(false).toLogoObject
   }
 }

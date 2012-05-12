@@ -90,6 +90,7 @@ class DirectedJungGraph(
   override val nlg: NetLogoGraph)
   extends AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
   with JungGraph
+  with DirectedJungAlgorithms
   with DirectedGraph[Turtle, Link] {
 
   if (!nlg.isDirected)
@@ -101,6 +102,7 @@ class UndirectedJungGraph(
   override val nlg: NetLogoGraph)
   extends AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
   with JungGraph
+  with UndirectedJungAlgorithms
   with UndirectedGraph[Turtle, Link] {
   if (!nlg.isUndirected)
     throw new ExtensionException("link set must be undirected")
