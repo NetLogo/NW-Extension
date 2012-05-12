@@ -20,6 +20,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.EnrichArgument
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
 import org.nlogo.api.ScalaConversions._
 import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
+import NetworkExtensionUtil._
 
 class NetworkExtension extends DefaultClassManager {
   override def load(primManager: PrimitiveManager) {
@@ -31,7 +32,10 @@ class NetworkExtension extends DefaultClassManager {
     primManager.addPrimitive("random-walk-betweenness", RandomWalkBetweennessPrim)
     primManager.addPrimitive("normalized-random-walk-betweenness", NormalizedRandomWalkBetweennessPrim)
     primManager.addPrimitive("k-means-clusters", KMeansClusters)
-    primManager.addPrimitive("bicomponent-clusters",BicomponentClusters)
+    primManager.addPrimitive("bicomponent-clusters", BicomponentClusters)
+    primManager.addPrimitive("generate-eppstein-power-law", EppsteinPowerLawGeneratorPrim)
+    primManager.addPrimitive("generate-barabasi-albert", BarabasiAlbertGeneratorPrim)
+    primManager.addPrimitive("generate-lattice-2d", Lattice2DGeneratorPrim)
   }
 }
 
@@ -56,13 +60,15 @@ object NetworkExtensionUtil {
   class RichAgentSet(agentSet: AgentSet) {
     def isLinkSet = classOf[Link].isAssignableFrom(agentSet.`type`)
     def isTurtleSet = classOf[Turtle].isAssignableFrom(agentSet.`type`)
-    def isLinkBreed = {
-      val w = agentSet.world.asInstanceOf[org.nlogo.agent.World]
-      (agentSet eq w.links) || w.isLinkBreed(agentSet)
-    }
+    lazy val world = agentSet.world.asInstanceOf[org.nlogo.agent.World]
+    def isLinkBreed = (agentSet eq world.links) || world.isLinkBreed(agentSet)
+    def isTurtleBreed = (agentSet eq world.turtles) || world.isBreed(agentSet)
     def requireTurtleSet =
       if (isTurtleSet) agentSet
       else throw new ExtensionException("Expected input to be a turtleset")
+    def requireTurtleBreed =
+      if (isTurtleBreed) agentSet
+      else throw new ExtensionException("Expected input to be a turtle breed")
     def requireLinkSet =
       if (isLinkSet) agentSet
       else throw new ExtensionException("Expected input to be a linkset")
@@ -190,5 +196,53 @@ object LinkDistance extends DefaultReporter {
     val end = args(0).getAgent.asInstanceOf[Turtle]
     val path = args(1).getGraph.asJungGraph.dijkstraShortestPath.getPath(start, end)
     Option(path.size).filterNot(0==).getOrElse(false).toLogoObject
+  }
+}
+
+object EppsteinPowerLawGeneratorPrim extends DefaultCommand {
+  override def getSyntax = Syntax.commandSyntax(
+    Array(Syntax.TurtlesetType, Syntax.LinksetType,
+      Syntax.NumberType, Syntax.NumberType, Syntax.NumberType),
+    agentClassString = "OTPL")
+  override def perform(args: Array[Argument], context: Context) {
+    new JungGraphGenerator(
+      turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      .eppsteinPowerLaw(
+        nbVertices = args(2).getIntValue,
+        nbEdges = args(3).getIntValue,
+        nbIterations = args(4).getIntValue)
+  }
+}
+
+object BarabasiAlbertGeneratorPrim extends DefaultCommand {
+  override def getSyntax = Syntax.commandSyntax(
+    Array(Syntax.TurtlesetType, Syntax.LinksetType,
+      Syntax.NumberType, Syntax.NumberType, Syntax.NumberType),
+    agentClassString = "OTPL")
+  override def perform(args: Array[Argument], context: Context) {
+    new JungGraphGenerator(
+      turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      .barabasiAlbert(
+        initialNbVertices = args(2).getIntValue,
+        nbEdgesPerIteration = args(3).getIntValue,
+        nbIterations = args(4).getIntValue)
+  }
+}
+
+object Lattice2DGeneratorPrim extends DefaultCommand {
+  override def getSyntax = Syntax.commandSyntax(
+    Array(Syntax.TurtlesetType, Syntax.LinksetType,
+      Syntax.NumberType, Syntax.NumberType, Syntax.BooleanType),
+    agentClassString = "OTPL")
+  override def perform(args: Array[Argument], context: Context) {
+    new JungGraphGenerator(
+      turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      .lattice2D(
+        rowCount = args(2).getIntValue,
+        colCount = args(3).getIntValue,
+        isToroidal = args(4).getBooleanValue)
   }
 }

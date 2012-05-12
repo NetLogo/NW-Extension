@@ -33,7 +33,7 @@ trait NetLogoGraph {
   protected val linkSet: AgentSet
   val world = linkSet.world
   val isDirected = linkSet.isDirected
-  val isUndirected = linkSet.isUndirected
+  val isUndirected = !isDirected
   def links: Iterable[Link]
   def turtles: Iterable[Turtle]
 

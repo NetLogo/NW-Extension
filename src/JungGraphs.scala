@@ -83,7 +83,8 @@ class UntypedJungGraph(
   private def edges(edgeType: EdgeType) = nlg.links.filter(getEdgeType(_) == edgeType)
   override def getEdgeCount(edgeType: EdgeType) = edges(edgeType).size
   override def getEdges(edgeType: EdgeType) = edges(edgeType).asJavaCollection
-  override def getDefaultEdgeType(): EdgeType = EdgeType.UNDIRECTED
+  override def getDefaultEdgeType(): EdgeType =
+    if (nlg.isDirected) EdgeType.DIRECTED else EdgeType.UNDIRECTED
 }
 
 class DirectedJungGraph(
