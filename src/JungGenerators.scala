@@ -2,7 +2,7 @@ package org.nlogo.extensions.nw
 
 import org.apache.commons.collections15.Factory
 import edu.uci.ics.jung.graph.Graph
-import edu.uci.ics.jung.graph.SparseGraph
+import edu.uci.ics.jung.graph._
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
 import scala.collection.JavaConverters._
@@ -12,6 +12,7 @@ import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
 /* TODO: VERY IMPORTANT!!! change RNG
  * The current generators use the java random number generator.
  * We need to fork Jung and modify them so we can plug in our own
+ * Note: KleinbergSmallWorldGenerator is already OK
  */
 class JungGraphGenerator(
   turtleBreed: AgentSet,
@@ -19,17 +20,23 @@ class JungGraphGenerator(
 
   protected class Edge
 
+  val rng = turtleBreed.world.mainRNG
+
   lazy val graphFactory = new Factory[Graph[Turtle, Edge]]() {
     def create = new SparseGraph[Turtle, Edge]()
   }
 
-  lazy val vertexFactory = new Factory[Turtle]() {
-    val w = turtleBreed.world
-    def create = w.createTurtle(turtleBreed,
-      w.mainRNG.nextInt(14), // color
-      w.mainRNG.nextInt(360)) // heading
+  lazy val undirectedGraphFactory = new Factory[UndirectedGraph[Turtle, Edge]]() {
+    def create = new UndirectedSparseGraph[Turtle, Edge]()
   }
-  lazy val edgeFactory = new Factory[Edge]() {
+
+  val vertexFactory = new Factory[Turtle]() {
+    def create =
+      turtleBreed.world.createTurtle(turtleBreed,
+        rng.nextInt(14), // color
+        rng.nextInt(360)) // heading
+  }
+  val edgeFactory = new Factory[Edge]() {
     def create = new Edge
   }
 
@@ -64,6 +71,20 @@ class JungGraphGenerator(
       graphFactory, vertexFactory, edgeFactory,
       initialNbVertices, nbEdgesPerIteration, new java.util.HashSet[Turtle])
     gen.evolveGraph(nbIterations)
+    createLinks(gen.create)
+  }
+
+  def erdosRenyi(nbVertices: Int, connexionProbability: Double) {
+    createLinks(new ErdosRenyiGenerator(
+      undirectedGraphFactory, vertexFactory, edgeFactory,
+      nbVertices, connexionProbability).create)
+  }
+
+  def kleinbergSmallWorld(rowCount: Int, colCount: Int, clusteringExponent: Double, isToroidal: Boolean) {
+    val gen = new KleinbergSmallWorldGenerator(
+      undirectedGraphFactory, vertexFactory, edgeFactory,
+      rowCount, colCount, clusteringExponent, isToroidal)
+    gen.setRandom(rng)
     createLinks(gen.create)
   }
 

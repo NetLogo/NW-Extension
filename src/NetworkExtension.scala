@@ -35,6 +35,8 @@ class NetworkExtension extends DefaultClassManager {
     primManager.addPrimitive("bicomponent-clusters", BicomponentClusters)
     primManager.addPrimitive("generate-eppstein-power-law", EppsteinPowerLawGeneratorPrim)
     primManager.addPrimitive("generate-barabasi-albert", BarabasiAlbertGeneratorPrim)
+    primManager.addPrimitive("generate-erdos-renyi", ErdosRenyiGeneratorPrim)
+    primManager.addPrimitive("generate-kleinberg-small-world", KleinbergSmallWorldGeneratorPrim)
     primManager.addPrimitive("generate-lattice-2d", Lattice2DGeneratorPrim)
   }
 }
@@ -231,6 +233,38 @@ object BarabasiAlbertGeneratorPrim extends DefaultCommand {
   }
 }
 
+object ErdosRenyiGeneratorPrim extends DefaultCommand {
+  override def getSyntax = Syntax.commandSyntax(
+    Array(Syntax.TurtlesetType, Syntax.LinksetType,
+      Syntax.NumberType, Syntax.NumberType),
+    agentClassString = "OTPL")
+  override def perform(args: Array[Argument], context: Context) {
+    new JungGraphGenerator(
+      turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      .erdosRenyi(
+        nbVertices = args(2).getIntValue,
+        connexionProbability = args(3).getDoubleValue)
+  }
+}
+
+object KleinbergSmallWorldGeneratorPrim extends DefaultCommand {
+  override def getSyntax = Syntax.commandSyntax(
+    Array(Syntax.TurtlesetType, Syntax.LinksetType,
+      Syntax.NumberType, Syntax.NumberType, Syntax.NumberType, Syntax.BooleanType),
+    agentClassString = "OTPL")
+  override def perform(args: Array[Argument], context: Context) {
+    new JungGraphGenerator(
+      turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      .kleinbergSmallWorld(
+        rowCount = args(2).getIntValue,
+        colCount = args(3).getIntValue,
+        clusteringExponent = args(4).getDoubleValue,
+        isToroidal = args(5).getBooleanValue)
+  }
+}
+
 object Lattice2DGeneratorPrim extends DefaultCommand {
   override def getSyntax = Syntax.commandSyntax(
     Array(Syntax.TurtlesetType, Syntax.LinksetType,
@@ -243,6 +277,6 @@ object Lattice2DGeneratorPrim extends DefaultCommand {
       .lattice2D(
         rowCount = args(2).getIntValue,
         colCount = args(3).getIntValue,
-        isToroidal = args(4).getBooleanValue)
+        isToroidal = args(5).getBooleanValue)
   }
 }
