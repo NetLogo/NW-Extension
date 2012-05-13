@@ -1,19 +1,19 @@
 package org.nlogo.extensions.nw
 
-import scala.collection.JavaConverters.asScalaSetConverter
-import scala.collection.JavaConverters.collectionAsScalaIterableConverter
-import scala.collection.JavaConverters.mapAsJavaMapConverter
-import scala.collection.JavaConverters.mapAsScalaMapConverter
+import Util.normalize
+import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
+import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
+import edu.uci.ics.jung.algorithms.util.KMeansClusterer
 import org.nlogo.agent.Agent
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
-import Util.normalize
-import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
-import edu.uci.ics.jung.algorithms.util.KMeansClusterer
+import scala.collection.JavaConverters.asScalaSetConverter
+import scala.collection.JavaConverters.collectionAsScalaIterableConverter
+import scala.collection.JavaConverters.mapAsJavaMapConverter
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 import edu.uci.ics.jung.algorithms.importance.AbstractRanker
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality
-import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
 import edu.uci.ics.jung.algorithms.importance.RandomWalkBetweenness
 
 object Util {

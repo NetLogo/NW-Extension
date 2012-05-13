@@ -1,19 +1,16 @@
 package org.nlogo.extensions.nw
 
-import java.util.Collection
-
-import scala.collection.JavaConverters.asJavaCollectionConverter
-
-import org.nlogo.agent.Link
-import org.nlogo.agent.Turtle
-import org.nlogo.api.ExtensionException
-
 import edu.uci.ics.jung.graph.util.EdgeType
 import edu.uci.ics.jung.graph.util.Pair
 import edu.uci.ics.jung.graph.DirectedGraph
 import edu.uci.ics.jung.graph.UndirectedGraph
 import edu.uci.ics.jung.graph.AbstractGraph
 import edu.uci.ics.jung.graph.AbstractTypedGraph
+import java.util.Collection
+import org.nlogo.agent.Link
+import org.nlogo.agent.Turtle
+import org.nlogo.api.ExtensionException
+import scala.collection.JavaConverters.asJavaCollectionConverter
 
 trait JungGraph
   extends AbstractGraph[Turtle, Link]

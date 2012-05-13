@@ -1,14 +1,14 @@
 package org.nlogo.extensions.nw
 
-import scala.Option.option2Iterable
-import scala.collection.JavaConverters.iterableAsScalaIterableConverter
-import org.nlogo.agent.Turtle
+import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
+import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
-import org.nlogo.extensions.nw.GraphUtil.EnrichAgentSet
-import org.nlogo.agent.Agent
 import org.nlogo.api.ExtensionObject
+import org.nlogo.extensions.nw.GraphUtil.EnrichAgentSet
+import scala.Option.option2Iterable
+import scala.collection.JavaConverters.iterableAsScalaIterableConverter
 
 object GraphUtil {
   implicit def EnrichAgentSet(agentSet: AgentSet) = new RichAgentSet(agentSet)

@@ -1,5 +1,11 @@
 package org.nlogo.extensions.nw
 
+import org.nlogo.api.ScalaConversions.toRichAny
+import org.nlogo.api.ScalaConversions.toRichSeq
+import org.nlogo.api.Syntax.BooleanType
+import org.nlogo.api.Syntax.LinksetType
+import org.nlogo.api.Syntax.NumberType
+import org.nlogo.api.Syntax.TurtlesetType
 import org.nlogo.api.Turtle
 import org.nlogo.api.Agent
 import org.nlogo.api.AgentSet
@@ -8,19 +14,19 @@ import org.nlogo.api.Context
 import org.nlogo.api.DefaultClassManager
 import org.nlogo.api.DefaultCommand
 import org.nlogo.api.DefaultReporter
+import org.nlogo.api.Dump
 import org.nlogo.api.ExtensionException
 import org.nlogo.api.I18N
 import org.nlogo.api.Link
 import org.nlogo.api.LogoList
 import org.nlogo.api.PrimitiveManager
 import org.nlogo.api.Syntax
+import org.nlogo.api.TypeNames
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
 import org.nlogo.extensions.nw.NetworkExtensionUtil.EnrichArgument
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
-import org.nlogo.api.ScalaConversions._
-import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
-import NetworkExtensionUtil._
 
 class NetworkExtension extends DefaultClassManager {
   override def load(primManager: PrimitiveManager) {
@@ -278,5 +284,58 @@ object Lattice2DGeneratorPrim extends DefaultCommand {
         rowCount = args(2).getIntValue,
         colCount = args(3).getIntValue,
         isToroidal = args(5).getBooleanValue)
+  }
+}
+
+trait Cmd extends DefaultCommand {
+  val agentClassString = "OTPL"
+  val args: Product
+
+  def argsSyntax = args.productIterator
+    .collect { case (typeConst: Int, _, _) => typeConst }
+    .toArray(manifest[Int])
+
+  override def getSyntax = Syntax.commandSyntax(argsSyntax, this.agentClassString)
+  def perf(context: Context)
+
+  private var argsArray: Option[Array[Argument]] = None
+
+  override def perform(args: Array[Argument], context: Context) {
+    argsArray = Some(args)
+    perf(context)
+  }
+
+  private val i = Iterator.from(0)
+  case class Arg[T](typeConst: Int) {
+    val index = i.next
+    def get = {
+      val argument = argsArray.get(index)
+      val obj = argument.get
+      try { obj.asInstanceOf[T] }
+      catch {
+        case (_: ClassCastException) => throw new org.nlogo.api.ExtensionException(
+          "Expected this input to be " + TypeNames.aName(typeConst) + " but got " +
+            (if (obj == org.nlogo.api.Nobody$.MODULE$) "NOBODY"
+            else "the " + TypeNames.name(obj) + " " + Dump.logoObject(obj)) +
+            " instead.")
+      }
+    }
+  }
+}
+
+object Lattice2DGeneratorPrim2 extends Cmd {
+  import Syntax._
+  override val args = (
+    Arg[AgentSet](TurtlesetType),
+    Arg[AgentSet](LinksetType),
+    Arg[Int](NumberType),
+    Arg[Int](NumberType),
+    Arg[Boolean](BooleanType))
+  override def perf(context: Context) {
+    new JungGraphGenerator(args._1.get.requireTurtleBreed, args._2.get.requireLinkBreed)
+      .lattice2D(
+        rowCount = args._3.get,
+        colCount = args._4.get,
+        isToroidal = args._5.get)
   }
 }
