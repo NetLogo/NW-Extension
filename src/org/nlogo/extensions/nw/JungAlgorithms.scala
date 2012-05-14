@@ -1,6 +1,5 @@
 package org.nlogo.extensions.nw
 
-import Util.normalize
 import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
 import edu.uci.ics.jung.algorithms.util.KMeansClusterer
@@ -15,13 +14,7 @@ import scala.collection.JavaConverters.mapAsScalaMapConverter
 import edu.uci.ics.jung.algorithms.importance.AbstractRanker
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality
 import edu.uci.ics.jung.algorithms.importance.RandomWalkBetweenness
-
-object Util {
-  def normalize[A <: Agent](xs: Map[A, Double]) = {
-    val total = xs.values.sum
-    xs.map(x => x._1 -> x._2 / total)
-  }
-}
+import edu.uci.ics.jung.algorithms.scoring._
 
 trait JungRanker {
   self: AbstractRanker[Turtle, Link] =>
@@ -30,8 +23,6 @@ trait JungRanker {
     m.asScala.map(x => x._1 -> x._2.doubleValue).toMap
   lazy val turtleScores = toScoreMap(getVertexRankScores(getRankScoreKey))
   lazy val linkScores = toScoreMap(getEdgeRankScores(getRankScoreKey))
-  lazy val normalizedTurtleScores = normalize(turtleScores)
-  lazy val normalizedLinkScores = normalize(linkScores)
 
   setRemoveRankScoresOnFinalize(false)
   evaluate
@@ -44,13 +35,18 @@ trait JungRanker {
     }).getOrElse(throw new ExtensionException(agent + "is not a member of this result set"))
 
   def get(agent: Agent) = getFrom(agent, turtleScores, linkScores)
-  def getNormalized(agent: Agent) = getFrom(agent, normalizedTurtleScores, normalizedLinkScores)
 }
 
 trait JungAlgorithms {
   self: JungGraph =>
   lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic)
   lazy val betweennessCentrality = new BetweennessCentrality(this) with JungRanker
+  lazy val eigenvectorCentrality = new PageRank(this, 0.0) { evaluate() }
+  lazy val closenessCentrality = new ClosenessCentrality(this) {
+    override def getVertexScore(turtle: Turtle) =
+      Option(super.getVertexScore(turtle))
+        .filterNot(_.isNaN).getOrElse(0.0)
+  }
 
   lazy val kMeansClusterer = new KMeansClusterer[Turtle] {
     rand = self.nlg.world.mainRNG
@@ -67,8 +63,6 @@ trait JungAlgorithms {
 
 trait UndirectedJungAlgorithms {
   self: UndirectedJungGraph =>
-  lazy val randomWalkBetweenness = new RandomWalkBetweenness(this) with JungRanker
-
   lazy val bicomponentClusterer = new BicomponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
   }

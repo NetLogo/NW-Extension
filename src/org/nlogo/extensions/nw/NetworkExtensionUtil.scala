@@ -15,7 +15,7 @@ import org.nlogo.api.TypeNames
 import org.nlogo.api.DefaultReporter
 import org.nlogo.api.Primitive
 
-object PrimUtil {
+object NetworkExtensionUtil {
   implicit def AgentSetToNetLogoAgentSet(agentSet: AgentSet) =
     agentSet.asInstanceOf[org.nlogo.agent.AgentSet]
   implicit def AgentToNetLogoAgent(agent: Agent) =
@@ -66,48 +66,6 @@ object PrimUtil {
       case _ => throw new ExtensionException(
         "Expected input to be either a linkset or a network snapshot")
     }
-  }
-}
-
-trait NetworkPrim extends Primitive {
-  val primitiveName: String
-  val args: Product
-
-  def argsSyntax = args.productIterator
-    .collect { case (typeConst: Int, _, _) => typeConst }
-    .toArray(manifest[Int])
-
-  override def getSyntax = commandSyntax(argsSyntax, getAgentClassString)
-
-  private val i = Iterator.from(0)
-  case class Arg[T](typeConst: Int) {
-    val index = i.next
-    def get(implicit argsArray: Array[Argument]) = {
-      val argument = argsArray(index)
-      val obj = argument.get
-      try { obj.asInstanceOf[T] }
-      catch {
-        case (_: ClassCastException) => throw new org.nlogo.api.ExtensionException(
-          "Expected this input to be " + TypeNames.aName(typeConst) + " but got " +
-            (if (obj == org.nlogo.api.Nobody$.MODULE$) "NOBODY"
-            else "the " + TypeNames.name(obj) + " " + Dump.logoObject(obj)) +
-            " instead.")
-      }
-    }
-  }  
-}
-
-trait NetworkCommand extends DefaultCommand with NetworkPrim {
-  def perform(context: Context)(implicit argsArray: Array[Argument])
-  override def perform(argsArray: Array[Argument], context: Context) {
-    perform(context)(argsArray)
-  }
-}
-
-trait NetworkReporter extends DefaultReporter with NetworkPrim {
-  def report(context: Context)(implicit argsArray: Array[Argument]): AnyRef
-  override def report(argsArray: Array[Argument], context: Context) = {
-    report(context)(argsArray)
   }
 }
 

@@ -26,7 +26,7 @@ trait NetLogoGraph {
   // TODO: if I figure out how, get rid of validTurtle / validLink in favor of:
   // def valid[A](obj: A)(implicit isValid: A => Boolean) = Option(obj).filter(isValid)
 
-  lazy val asJungGraph = new UntypedJungGraph(this)
+  def asJungGraph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   lazy val asDirectedJungGraph = new DirectedJungGraph(this)
   lazy val asUndirectedJungGraph = new UndirectedJungGraph(this)
 
@@ -103,10 +103,11 @@ class StaticNetLogoGraph(
   // ExtensionObject methods:
 
   override def dump(readable: Boolean, exporting: Boolean, reference: Boolean): String =
-    sys.error("TODO")
+    "Turtles: [" + turtles.mkString(", ") + "]\n Links: [" + links.mkString(", ") + "]" +
+      "\n Directed: " + isDirected
 
   override def getExtensionName: String = "nw" // TODO change this here if we rename to "network"
-  override def getNLTypeName: String = ""
+  override def getNLTypeName: String = "snapshot"
   override def recursivelyEqual(obj: AnyRef): Boolean =
     Option(obj)
       .collect { case g: StaticNetLogoGraph => g }

@@ -18,24 +18,8 @@ trait JungGraph
 
   val nlg: NetLogoGraph
 
-  override def getInEdges(turtle: Turtle): Collection[Link] =
-    nlg.validTurtle(turtle).map(nlg.inEdges(_).asJavaCollection).orNull
-  override def getPredecessors(turtle: Turtle): Collection[Turtle] =
-    nlg.validTurtle(turtle).map(nlg.inEdges(_).map(_.end1).asJavaCollection).orNull
-
-  override def getOutEdges(turtle: Turtle): Collection[Link] =
-    nlg.validTurtle(turtle).map(nlg.outEdges(_).asJavaCollection).orNull
-  override def getSuccessors(turtle: Turtle): Collection[Turtle] =
-    nlg.validTurtle(turtle).map(nlg.outEdges(_).map(_.end2).asJavaCollection).orNull
-
   override def getIncidentEdges(turtle: Turtle): Collection[Link] =
     nlg.validTurtle(turtle).map(nlg.edges(_).asJavaCollection).orNull
-
-  override def getSource(link: Link): Turtle =
-    nlg.validLink(link).filter(_.isDirectedLink).map(_.end1).orNull
-
-  override def getDest(link: Link): Turtle =
-    nlg.validLink(link).filter(_.isDirectedLink).map(_.end2).orNull
 
   override def getEdgeCount(): Int = nlg.links.size
 
@@ -53,12 +37,6 @@ trait JungGraph
   def getEndpoints(link: Link): Pair[Turtle] =
     new Pair(link.end1, link.end2) // Note: contract says nothing about edge being in graph
 
-  def isDest(turtle: Turtle, link: Link): Boolean =
-    nlg.validLink(link).filter(_.end2 == turtle).isDefined
-  def isSource(turtle: Turtle, link: Link): Boolean =
-    nlg.validLink(link).filter(_.end1 == turtle).isDefined
-
-  // TODO: in a live graph, maybe they could be useful for generators
   def removeEdge(link: Link): Boolean =
     throw sys.error("not implemented")
   def removeVertex(turtle: Turtle): Boolean =
@@ -72,18 +50,6 @@ trait JungGraph
 
 }
 
-class UntypedJungGraph(
-  override val nlg: NetLogoGraph)
-  extends JungGraph {
-  override def getEdgeType(link: Link): EdgeType =
-    if (link.isDirectedLink) EdgeType.DIRECTED else EdgeType.UNDIRECTED
-  private def edges(edgeType: EdgeType) = nlg.links.filter(getEdgeType(_) == edgeType)
-  override def getEdgeCount(edgeType: EdgeType) = edges(edgeType).size
-  override def getEdges(edgeType: EdgeType) = edges(edgeType).asJavaCollection
-  override def getDefaultEdgeType(): EdgeType =
-    if (nlg.isDirected) EdgeType.DIRECTED else EdgeType.UNDIRECTED
-}
-
 class DirectedJungGraph(
   override val nlg: NetLogoGraph)
   extends AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
@@ -93,6 +59,27 @@ class DirectedJungGraph(
 
   if (!nlg.isDirected)
     throw new ExtensionException("link set must be directed")
+
+  override def getInEdges(turtle: Turtle): Collection[Link] =
+    nlg.validTurtle(turtle).map(nlg.inEdges(_).asJavaCollection).orNull
+  override def getPredecessors(turtle: Turtle): Collection[Turtle] =
+    nlg.validTurtle(turtle).map(nlg.inEdges(_).map(_.end1).asJavaCollection).orNull
+
+  override def getOutEdges(turtle: Turtle): Collection[Link] =
+    nlg.validTurtle(turtle).map(nlg.outEdges(_).asJavaCollection).orNull
+  override def getSuccessors(turtle: Turtle): Collection[Turtle] =
+    nlg.validTurtle(turtle).map(nlg.outEdges(_).map(_.end2).asJavaCollection).orNull
+
+  def isDest(turtle: Turtle, link: Link): Boolean =
+    nlg.validLink(link).filter(_.end2 == turtle).isDefined
+  def isSource(turtle: Turtle, link: Link): Boolean =
+    nlg.validLink(link).filter(_.end1 == turtle).isDefined
+
+  override def getSource(link: Link): Turtle =
+    nlg.validLink(link).map(_.end1).orNull
+
+  override def getDest(link: Link): Turtle =
+    nlg.validLink(link).map(_.end2).orNull
 
 }
 
@@ -104,4 +91,17 @@ class UndirectedJungGraph(
   with UndirectedGraph[Turtle, Link] {
   if (!nlg.isUndirected)
     throw new ExtensionException("link set must be undirected")
+
+  override def getInEdges(turtle: Turtle) = getIncidentEdges(turtle)
+  override def getPredecessors(turtle: Turtle) = getNeighbors(turtle: Turtle)
+
+  override def getOutEdges(turtle: Turtle) = getIncidentEdges(turtle)
+  override def getSuccessors(turtle: Turtle) = getNeighbors(turtle: Turtle)
+
+  def isDest(turtle: Turtle, link: Link) = false
+  def isSource(turtle: Turtle, link: Link) = false
+
+  override def getSource(link: Link): Turtle = null
+  override def getDest(link: Link): Turtle = null
+
 }

@@ -17,33 +17,31 @@ import org.nlogo.api.LogoList
 import org.nlogo.api.PrimitiveManager
 import org.nlogo.api.Syntax._
 import org.nlogo.api.TypeNames
-import org.nlogo.extensions.nw.PrimUtil._
+import org.nlogo.extensions.nw.NetworkExtensionUtil._
 
 class NetworkExtension extends DefaultClassManager {
   override def load(primManager: PrimitiveManager) {
-    primManager.addPrimitive("link-distance", LinkDistance)
-    primManager.addPrimitive("link-path", LinkPath)
-    primManager.addPrimitive("snapshot", Snapshot)
-    primManager.addPrimitive("betweenness-centrality", BetweennessCentralityPrim)
-    primManager.addPrimitive("normalized-betweenness-centrality", NormalizedBetweennessCentralityPrim)
-    primManager.addPrimitive("random-walk-betweenness", RandomWalkBetweennessPrim)
-    primManager.addPrimitive("normalized-random-walk-betweenness", NormalizedRandomWalkBetweennessPrim)
-    primManager.addPrimitive("k-means-clusters", KMeansClusters)
-    primManager.addPrimitive("bicomponent-clusters", BicomponentClusters)
-    primManager.addPrimitive("generate-eppstein-power-law", EppsteinPowerLawGeneratorPrim)
-    primManager.addPrimitive("generate-barabasi-albert", BarabasiAlbertGeneratorPrim)
-    primManager.addPrimitive("generate-erdos-renyi", ErdosRenyiGeneratorPrim)
-    primManager.addPrimitive("generate-kleinberg-small-world", KleinbergSmallWorldGeneratorPrim)
-    primManager.addPrimitive("generate-lattice-2d", Lattice2DGeneratorPrim)
+    val add = primManager.addPrimitive _
+    add("link-distance", LinkDistance)
+    add("link-path", LinkPath)
+    add("snapshot", Snapshot)
+    add("betweenness-centrality", BetweennessCentralityPrim)
+    add("eigenvector-centrality", EigenvectorCentralityPrim)
+    add("closeness-centrality", ClosenessCentralityPrim)
+    add("k-means-clusters", KMeansClusters)
+    add("bicomponent-clusters", BicomponentClusters)
+    add("generate-eppstein-power-law", EppsteinPowerLawGeneratorPrim)
+    add("generate-barabasi-albert", BarabasiAlbertGeneratorPrim)
+    add("generate-erdos-renyi", ErdosRenyiGeneratorPrim)
+    add("generate-kleinberg-small-world", KleinbergSmallWorldGeneratorPrim)
+    add("generate-lattice-2d", Lattice2DGeneratorPrim)
   }
 }
 
 object Snapshot extends DefaultReporter {
-  override def getSyntax =
-    Syntax.reporterSyntax(
-      Array(Syntax.TurtlesetType, Syntax.LinksetType),
-      Syntax.WildcardType,
-      agentClassString = "OTPL")
+  override def getSyntax = reporterSyntax(
+    Array(TurtlesetType, LinksetType),
+    WildcardType)
   override def report(args: Array[Argument], context: Context): AnyRef = {
     val turtleSet = args(0).getAgentSet
     val linkSet = args(1).getAgentSet
@@ -52,10 +50,9 @@ object Snapshot extends DefaultReporter {
 }
 
 object KMeansClusters extends DefaultReporter {
-  override def getSyntax = Syntax.reporterSyntax(
-    Array(Syntax.WildcardType, Syntax.NumberType, Syntax.NumberType, Syntax.NumberType),
-    Syntax.ListType,
-    agentClassString = "OTPL")
+  override def getSyntax = reporterSyntax(
+    Array(WildcardType, NumberType, NumberType, NumberType),
+    ListType)
   override def report(args: Array[Argument], context: Context) = {
     args(0).getStaticGraph.asJungGraph
       .kMeansClusterer
@@ -68,10 +65,9 @@ object KMeansClusters extends DefaultReporter {
 }
 
 object BicomponentClusters extends DefaultReporter {
-  override def getSyntax = Syntax.reporterSyntax(
-    Array(Syntax.WildcardType),
-    Syntax.ListType,
-    agentClassString = "OTPL")
+  override def getSyntax = reporterSyntax(
+    Array(WildcardType),
+    ListType)
   override def report(args: Array[Argument], context: Context) = {
     args(0).getStaticGraph.asUndirectedJungGraph
       .bicomponentClusterer
@@ -80,48 +76,46 @@ object BicomponentClusters extends DefaultReporter {
   }
 }
 
-trait JungScorerPrim extends DefaultReporter {
-  override def getSyntax = Syntax.reporterSyntax(
-    Array(Syntax.WildcardType),
-    Syntax.NumberType,
+object BetweennessCentralityPrim extends DefaultReporter {
+  override def getSyntax = reporterSyntax(
+    Array(WildcardType),
+    NumberType,
     agentClassString = "-T-L")
-  type G <: JungGraph
-  def asGraph(g: StaticNetLogoGraph): G
-  def score(agent: Agent, g: G): Double
-  override def report(args: Array[Argument], context: Context): AnyRef =
-    score(context.getAgent, asGraph(args(0).getStaticGraph)).toLogoObject
+  override def report(args: Array[Argument], context: Context) =
+    args(0).getStaticGraph.asJungGraph
+      .betweennessCentrality
+      .get(context.getAgent)
+      .toLogoObject
 }
 
-trait UntypedJungScorerPrim extends JungScorerPrim {
-  type G = UntypedJungGraph
-  def asGraph(g: StaticNetLogoGraph) = g.asJungGraph
+object EigenvectorCentralityPrim extends DefaultReporter {
+  override def getSyntax = reporterSyntax(
+    Array(WildcardType),
+    NumberType,
+    agentClassString = "-T--")
+  override def report(args: Array[Argument], context: Context) =
+    args(0).getStaticGraph.asJungGraph
+      .eigenvectorCentrality
+      .getVertexScore(context.getAgent.asInstanceOf[Turtle])
+      .toLogoObject
 }
 
-trait UndirectedJungScorerPrim extends JungScorerPrim {
-  type G = UndirectedJungGraph
-  def asGraph(g: StaticNetLogoGraph) = g.asUndirectedJungGraph
-}
-
-object BetweennessCentralityPrim extends UntypedJungScorerPrim {
-  override def score(agent: Agent, graph: G) = graph.betweennessCentrality.get(agent)
-}
-
-object NormalizedBetweennessCentralityPrim extends UntypedJungScorerPrim {
-  override def score(agent: Agent, graph: G) = graph.betweennessCentrality.getNormalized(agent)
-}
-
-object RandomWalkBetweennessPrim extends UndirectedJungScorerPrim {
-  override def score(agent: Agent, graph: G) = graph.randomWalkBetweenness.get(agent)
-}
-
-object NormalizedRandomWalkBetweennessPrim extends UndirectedJungScorerPrim {
-  override def score(agent: Agent, graph: G) = graph.randomWalkBetweenness.getNormalized(agent)
+object ClosenessCentralityPrim extends DefaultReporter {
+  override def getSyntax = reporterSyntax(
+    Array(WildcardType),
+    NumberType,
+    agentClassString = "-T--")
+  override def report(args: Array[Argument], context: Context) =
+    args(0).getStaticGraph.asJungGraph
+      .closenessCentrality
+      .getVertexScore(context.getAgent.asInstanceOf[Turtle])
+      .toLogoObject
 }
 
 object LinkPath extends DefaultReporter {
-  override def getSyntax = Syntax.reporterSyntax(
-    Array(Syntax.TurtleType, Syntax.LinksetType | Syntax.WildcardType),
-    Syntax.ListType,
+  override def getSyntax = reporterSyntax(
+    Array(TurtleType, LinksetType | WildcardType),
+    ListType,
     agentClassString = "-T--")
   override def report(args: Array[Argument], context: Context): AnyRef = {
     val start = context.getAgent.asInstanceOf[Turtle]
@@ -132,9 +126,9 @@ object LinkPath extends DefaultReporter {
 }
 
 object LinkDistance extends DefaultReporter {
-  override def getSyntax = Syntax.reporterSyntax(
-    Array(Syntax.TurtleType, Syntax.LinksetType | Syntax.WildcardType),
-    Syntax.NumberType | Syntax.BooleanType,
+  override def getSyntax = reporterSyntax(
+    Array(TurtleType, LinksetType | WildcardType),
+    NumberType | BooleanType,
     agentClassString = "-T--")
   override def report(args: Array[Argument], context: Context): AnyRef = {
     val start = context.getAgent.asInstanceOf[Turtle]
@@ -145,10 +139,8 @@ object LinkDistance extends DefaultReporter {
 }
 
 object EppsteinPowerLawGeneratorPrim extends DefaultCommand {
-  override def getSyntax = Syntax.commandSyntax(
-    Array(Syntax.TurtlesetType, Syntax.LinksetType,
-      Syntax.NumberType, Syntax.NumberType, Syntax.NumberType),
-    agentClassString = "OTPL")
+  override def getSyntax = commandSyntax(
+    Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType))
   override def perform(args: Array[Argument], context: Context) {
     new JungGraphGenerator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
@@ -161,10 +153,8 @@ object EppsteinPowerLawGeneratorPrim extends DefaultCommand {
 }
 
 object BarabasiAlbertGeneratorPrim extends DefaultCommand {
-  override def getSyntax = Syntax.commandSyntax(
-    Array(Syntax.TurtlesetType, Syntax.LinksetType,
-      Syntax.NumberType, Syntax.NumberType, Syntax.NumberType),
-    agentClassString = "OTPL")
+  override def getSyntax = commandSyntax(
+    Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType))
   override def perform(args: Array[Argument], context: Context) {
     new JungGraphGenerator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
@@ -177,10 +167,8 @@ object BarabasiAlbertGeneratorPrim extends DefaultCommand {
 }
 
 object ErdosRenyiGeneratorPrim extends DefaultCommand {
-  override def getSyntax = Syntax.commandSyntax(
-    Array(Syntax.TurtlesetType, Syntax.LinksetType,
-      Syntax.NumberType, Syntax.NumberType),
-    agentClassString = "OTPL")
+  override def getSyntax = commandSyntax(
+    Array(TurtlesetType, LinksetType, NumberType, NumberType))
   override def perform(args: Array[Argument], context: Context) {
     new JungGraphGenerator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
@@ -192,10 +180,8 @@ object ErdosRenyiGeneratorPrim extends DefaultCommand {
 }
 
 object KleinbergSmallWorldGeneratorPrim extends DefaultCommand {
-  override def getSyntax = Syntax.commandSyntax(
-    Array(Syntax.TurtlesetType, Syntax.LinksetType,
-      Syntax.NumberType, Syntax.NumberType, Syntax.NumberType, Syntax.BooleanType),
-    agentClassString = "OTPL")
+  override def getSyntax = commandSyntax(
+    Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType))
   override def perform(args: Array[Argument], context: Context) {
     new JungGraphGenerator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
@@ -209,13 +195,8 @@ object KleinbergSmallWorldGeneratorPrim extends DefaultCommand {
 }
 
 object Lattice2DGeneratorPrim extends DefaultCommand {
-  override def getSyntax = commandSyntax(Array(
-    TurtlesetType,
-    LinksetType,
-    NumberType,
-    NumberType,
-    BooleanType),
-    getAgentClassString)
+  override def getSyntax = commandSyntax(
+    Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType))
   override def perform(args: Array[Argument], context: Context) {
     new JungGraphGenerator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
@@ -223,24 +204,6 @@ object Lattice2DGeneratorPrim extends DefaultCommand {
       .lattice2D(
         rowCount = args(2).getIntValue,
         colCount = args(3).getIntValue,
-        isToroidal = args(5).getBooleanValue)
-  }
-}
-
-object Lattice2DGeneratorPrim2 extends NetworkCommand {
-  override val args = (
-    Arg[AgentSet](TurtlesetType),
-    Arg[AgentSet](LinksetType),
-    Arg[Int](NumberType),
-    Arg[Int](NumberType),
-    Arg[Boolean](BooleanType))
-  override def perform(context: Context)(implicit argsArray: Array[Argument]) {
-    new JungGraphGenerator(
-      args._1.get.requireTurtleBreed,
-      args._2.get.requireLinkBreed)
-      .lattice2D(
-        rowCount = args._3.get,
-        colCount = args._4.get,
-        isToroidal = args._5.get)
+        isToroidal = args(4).getBooleanValue)
   }
 }
