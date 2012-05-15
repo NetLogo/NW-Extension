@@ -1,6 +1,6 @@
 package org.nlogo.extensions.nw
 
-import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
+import edu.uci.ics.jung.algorithms.cluster._
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
 import edu.uci.ics.jung.algorithms.util.KMeansClusterer
 import org.nlogo.agent.Agent
@@ -15,6 +15,10 @@ import edu.uci.ics.jung.algorithms.importance.AbstractRanker
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality
 import edu.uci.ics.jung.algorithms.importance.RandomWalkBetweenness
 import edu.uci.ics.jung.algorithms.scoring._
+import org.apache.commons.collections15.Transformer
+import edu.uci.ics.jung.graph.Graph
+
+// TODO: catch exceptions from Jung and give meaningful error messages 
 
 trait JungRanker {
   self: AbstractRanker[Turtle, Link] =>
@@ -53,17 +57,22 @@ trait JungAlgorithms {
     lazy val locations =
       self.nlg.turtles.map(t => t -> Array(t.xcor, t.ycor)).toMap.asJava
 
-    def clusters(nbClusters: Int, maxIterations: Int, convergenceThreshold: Double) = {
-      setMaxIterations(maxIterations)
-      setConvergenceThreshold(convergenceThreshold)
-      cluster(locations, nbClusters).asScala.map(_.keySet.asScala.toSeq).toSeq
-    }
+    def clusters(nbClusters: Int, maxIterations: Int, convergenceThreshold: Double) =
+      if (nlg.turtles.nonEmpty) {
+        setMaxIterations(maxIterations)
+        setConvergenceThreshold(convergenceThreshold)
+        cluster(locations, nbClusters).asScala.map(_.keySet.asScala.toSeq).toSeq
+      } else Seq()
   }
+
 }
 
 trait UndirectedJungAlgorithms {
   self: UndirectedJungGraph =>
   lazy val bicomponentClusterer = new BicomponentClusterer[Turtle, Link] {
+    def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
+  }
+  lazy val weakComponentClusterer = new WeakComponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
   }
 }

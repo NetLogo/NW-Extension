@@ -33,7 +33,6 @@ trait NetLogoGraph {
   protected val linkSet: AgentSet
   val world = linkSet.world
   val isDirected = linkSet.isDirected
-  val isUndirected = !isDirected
   def links: Iterable[Link]
   def turtles: Iterable[Turtle]
 
@@ -102,6 +101,7 @@ class StaticNetLogoGraph(
 
   // ExtensionObject methods:
 
+  // TODO: make this work with import / export world.
   override def dump(readable: Boolean, exporting: Boolean, reference: Boolean): String =
     "Turtles: [" + turtles.mkString(", ") + "]\n Links: [" + links.mkString(", ") + "]" +
       "\n Directed: " + isDirected

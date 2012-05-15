@@ -89,8 +89,6 @@ class UndirectedJungGraph(
   with JungGraph
   with UndirectedJungAlgorithms
   with UndirectedGraph[Turtle, Link] {
-  if (!nlg.isUndirected)
-    throw new ExtensionException("link set must be undirected")
 
   override def getInEdges(turtle: Turtle) = getIncidentEdges(turtle)
   override def getPredecessors(turtle: Turtle) = getNeighbors(turtle: Turtle)

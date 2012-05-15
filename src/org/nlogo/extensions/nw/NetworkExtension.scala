@@ -30,6 +30,7 @@ class NetworkExtension extends DefaultClassManager {
     add("closeness-centrality", ClosenessCentralityPrim)
     add("k-means-clusters", KMeansClusters)
     add("bicomponent-clusters", BicomponentClusters)
+    add("weak-component-clusters", WeakComponentClusters)
     add("generate-eppstein-power-law", EppsteinPowerLawGeneratorPrim)
     add("generate-barabasi-albert", BarabasiAlbertGeneratorPrim)
     add("generate-erdos-renyi", ErdosRenyiGeneratorPrim)
@@ -54,7 +55,7 @@ object KMeansClusters extends DefaultReporter {
     Array(WildcardType, NumberType, NumberType, NumberType),
     ListType)
   override def report(args: Array[Argument], context: Context) = {
-    args(0).getStaticGraph.asJungGraph
+    args(0).getGraph.asJungGraph
       .kMeansClusterer
       .clusters(
         nbClusters = args(1).getIntValue,
@@ -69,12 +70,25 @@ object BicomponentClusters extends DefaultReporter {
     Array(WildcardType),
     ListType)
   override def report(args: Array[Argument], context: Context) = {
-    args(0).getStaticGraph.asUndirectedJungGraph
+    args(0).getGraph.asUndirectedJungGraph
       .bicomponentClusterer
       .clusters
       .toLogoList
   }
 }
+
+object WeakComponentClusters extends DefaultReporter {
+  override def getSyntax = reporterSyntax(
+    Array(WildcardType),
+    ListType)
+  override def report(args: Array[Argument], context: Context) = {
+    args(0).getGraph.asUndirectedJungGraph
+      .weakComponentClusterer
+      .clusters
+      .toLogoList
+  }
+}
+
 
 object BetweennessCentralityPrim extends DefaultReporter {
   override def getSyntax = reporterSyntax(
@@ -118,10 +132,12 @@ object LinkPath extends DefaultReporter {
     ListType,
     agentClassString = "-T--")
   override def report(args: Array[Argument], context: Context): AnyRef = {
-    val start = context.getAgent.asInstanceOf[Turtle]
-    val end = args(0).getAgent.asInstanceOf[Turtle]
-    val path = args(1).getGraph.asJungGraph.dijkstraShortestPath.getPath(start, end)
-    LogoList.fromJava(path)
+    val source = context.getAgent.asInstanceOf[Turtle]
+    val target = args(0).getAgent.asInstanceOf[Turtle]
+    LogoList.fromJava(
+      args(1).getGraph.asJungGraph
+        .dijkstraShortestPath
+        .getPath(source, target))
   }
 }
 
@@ -131,9 +147,11 @@ object LinkDistance extends DefaultReporter {
     NumberType | BooleanType,
     agentClassString = "-T--")
   override def report(args: Array[Argument], context: Context): AnyRef = {
-    val start = context.getAgent.asInstanceOf[Turtle]
-    val end = args(0).getAgent.asInstanceOf[Turtle]
-    val path = args(1).getGraph.asJungGraph.dijkstraShortestPath.getPath(start, end)
+    val source = context.getAgent.asInstanceOf[Turtle]
+    val target = args(0).getAgent.asInstanceOf[Turtle]
+    val path = args(1).getGraph.asJungGraph
+      .dijkstraShortestPath
+      .getPath(source, target)
     Option(path.size).filterNot(0==).getOrElse(false).toLogoObject
   }
 }
