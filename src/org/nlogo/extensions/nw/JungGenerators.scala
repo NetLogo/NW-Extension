@@ -23,49 +23,26 @@ class JungGraphGenerator(
   turtleBreed: AgentSet,
   linkBreed: AgentSet) {
 
-  protected class Edge
-
   val rng = turtleBreed.world.mainRNG
 
-  lazy val graphFactory = new Factory[Graph[Turtle, Edge]]() {
-    def create = new SparseGraph[Turtle, Edge]()
-  }
-
-  lazy val undirectedGraphFactory = new Factory[UndirectedGraph[Turtle, Edge]]() {
-    def create = new UndirectedSparseGraph[Turtle, Edge]()
-  }
-
-  val vertexFactory = new Factory[Turtle]() {
-    def create =
-      turtleBreed.world.createTurtle(turtleBreed,
-        rng.nextInt(14), // color
-        rng.nextInt(360)) // heading
-  }
-  val edgeFactory = new Factory[Edge]() {
-    def create = new Edge
-  }
-
-  protected def createLinks(graph: Graph[Turtle, Edge]) {
-    for {
-      headTurtle <- graph.getVertices.asScala.headOption
-      linkManager = headTurtle.world.linkManager
-      edge <- graph.getEdges.asScala
-      endPoints = graph.getEndpoints(edge)
-    } linkManager.createLink(endPoints.getFirst, endPoints.getSecond, linkBreed)
-  }
+  lazy val graphFactory = DummyGraph.factory
+  lazy val undirectedGraphFactory = DummyGraph.undirectedFactory
+  lazy val edgeFactory = DummyGraph.edgeFactory
+  lazy val vertexFactory = DummyGraph.vertexFactory
 
   def eppsteinPowerLaw(nbVertices: Int, nbEdges: Int, nbIterations: Int) {
-    createLinks(new EppsteinPowerLawGenerator(
+    DummyGraph.importToNetLogo(new EppsteinPowerLawGenerator(
       graphFactory, vertexFactory, edgeFactory,
       nbVertices, nbEdges, nbIterations)
-      .create)
+      .create, turtleBreed, linkBreed)
+
   }
 
   def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean) {
-    createLinks(new Lattice2DGenerator(
+    DummyGraph.importToNetLogo(new Lattice2DGenerator(
       graphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, isToroidal)
-      .create)
+      .create, turtleBreed, linkBreed)
   }
 
   def barabasiAlbert(
@@ -74,15 +51,16 @@ class JungGraphGenerator(
     nbIterations: Int) {
     val gen = new BarabasiAlbertGenerator(
       graphFactory, vertexFactory, edgeFactory,
-      initialNbVertices, nbEdgesPerIteration, new java.util.HashSet[Turtle])
+      initialNbVertices, nbEdgesPerIteration, new java.util.HashSet[DummyGraph.Vertex])
     gen.evolveGraph(nbIterations)
-    createLinks(gen.create)
+    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed)
   }
 
   def erdosRenyi(nbVertices: Int, connexionProbability: Double) {
-    createLinks(new ErdosRenyiGenerator(
+    DummyGraph.importToNetLogo(new ErdosRenyiGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
-      nbVertices, connexionProbability).create)
+      nbVertices, connexionProbability)
+      .create, turtleBreed, linkBreed)
   }
 
   def kleinbergSmallWorld(rowCount: Int, colCount: Int, clusteringExponent: Double, isToroidal: Boolean) {
@@ -90,7 +68,7 @@ class JungGraphGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, clusteringExponent, isToroidal)
     gen.setRandom(rng)
-    createLinks(gen.create)
+    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed)
   }
 
 }

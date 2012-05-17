@@ -53,19 +53,5 @@ object NetworkExtensionUtil {
       else throw new ExtensionException(
         I18N.errors.get("org.nlogo.prim.etc.$common.expectedLastInputToBeLinkBreed"))
   }
-  implicit def EnrichArgument(arg: Argument) = new RichArgument(arg)
-  class RichArgument(arg: Argument) {
-    def getStaticGraph = arg.get match {
-      case g: StaticNetLogoGraph => g
-      case _ => throw new ExtensionException(
-        "Expected input to be a network snapshot")
-    }
-    def getGraph = arg.get match {
-      case as: AgentSet          => new LiveNetLogoGraph(as.requireLinkBreed)
-      case g: StaticNetLogoGraph => g
-      case _ => throw new ExtensionException(
-        "Expected input to be either a linkset or a network snapshot")
-    }
-  }
 }
 

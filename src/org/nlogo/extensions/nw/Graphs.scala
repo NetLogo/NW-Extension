@@ -32,7 +32,16 @@ trait NetLogoGraph {
 
   protected val linkSet: AgentSet
   val world = linkSet.world
+  
+  /* TODO: the directednes of world.links is set to directed 
+   * only if unbreeded links are directed. So if we have breeds,
+   * even if all breeds are directed, the type of "links" will
+   * be undirected. This is a bit counterintuitive - find a fix...  
+   */
+  
   val isDirected = linkSet.isDirected
+  
+  
   def links: Iterable[Link]
   def turtles: Iterable[Turtle]
 
@@ -48,6 +57,8 @@ trait NetLogoGraph {
 
 }
 
+// TODO: take turtle breed into account!
+// Note: this is not used and will probably go away anyway...
 class LiveNetLogoGraph(
   protected val linkSet: AgentSet)
   extends NetLogoGraph {

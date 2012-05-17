@@ -15,7 +15,7 @@ endif
 
 SRCS=$(wildcard src/org/nlogo/extensions/nw/*.scala)
 
-JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorithms-2.0.1.jar$(COLON)collections-generic-4.01.jar$(COLON)colt-1.2.0.jar
+JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorithms-2.0.1.jar$(COLON)collections-generic-4.01.jar$(COLON)colt-1.2.0.jar$(COLON)jung-io-2.0.1.jar
 
 network.jar network.jar.pack.gz: $(SRCS) manifest.txt Makefile
 	mkdir -p classes
