@@ -39,8 +39,7 @@ trait NetLogoGraph {
    * be undirected. This is a bit counterintuitive - find a fix...  
    */
   
-  val isDirected = linkSet.isDirected
-  
+  val isDirected = linkSet.isDirected  
   
   def links: Iterable[Link]
   def turtles: Iterable[Turtle]
@@ -57,38 +56,12 @@ trait NetLogoGraph {
 
 }
 
-// TODO: take turtle breed into account!
-// Note: this is not used and will probably go away anyway...
-class LiveNetLogoGraph(
-  protected val linkSet: AgentSet)
-  extends NetLogoGraph {
-  val isStatic = false
-  val linkManager = world.linkManager
-  val isAllLinks = linkSet eq world.links
-  val isLinkBreed = world.isLinkBreed(linkSet)
 
-  if (!(isAllLinks || isLinkBreed))
-    throw new ExtensionException("link set must be a link breed")
-
-  override val isValidLink = linkSet.contains(_: Link)
-  override val isValidTurtle = (_: Turtle).id != -1
-
-  def links = linkSet.toIterable[Link]
-  def turtles = world.turtles.toIterable[Turtle]
-
-  def edges(turtle: Turtle) =
-    linkManager.findLinksWith(turtle, linkSet).toIterable[Link]
-  def directedInEdges(turtle: Turtle) =
-    linkManager.findLinksTo(turtle, linkSet).toIterable[Link]
-  def directedOutEdges(turtle: Turtle) =
-    linkManager.findLinksFrom(turtle, linkSet).toIterable[Link]
-
-}
 
 class StaticNetLogoGraph(
   protected val linkSet: AgentSet,
   protected val turtleSet: AgentSet)
-  extends NetLogoGraph with ExtensionObject {
+  extends NetLogoGraph {
 
   val isStatic = true
 
@@ -109,20 +82,4 @@ class StaticNetLogoGraph(
 
   private lazy val outEdgesMap: Map[Turtle, Iterable[Link]] = links.groupBy(_.end1)
   override def directedOutEdges(turtle: Turtle) = outEdgesMap.get(turtle).flatten
-
-  // ExtensionObject methods:
-
-  // TODO: make this work with import / export world.
-  override def dump(readable: Boolean, exporting: Boolean, reference: Boolean): String =
-    "Turtles: [" + turtles.mkString(", ") + "]\n Links: [" + links.mkString(", ") + "]" +
-      "\n Directed: " + isDirected
-
-  override def getExtensionName: String = "nw" // TODO change this here if we rename to "network"
-  override def getNLTypeName: String = "snapshot"
-  override def recursivelyEqual(obj: AnyRef): Boolean =
-    Option(obj)
-      .collect { case g: StaticNetLogoGraph => g }
-      .filter(g => g.linkVector == this.linkVector)
-      .filter(g => g.turtleVector == this.turtleVector)
-      .isDefined
 }
