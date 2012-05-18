@@ -30,25 +30,22 @@ class JungGraphGenerator(
   lazy val edgeFactory = DummyGraph.edgeFactory
   lazy val vertexFactory = DummyGraph.vertexFactory
 
-  def eppsteinPowerLaw(nbVertices: Int, nbEdges: Int, nbIterations: Int) {
+  def eppsteinPowerLaw(nbVertices: Int, nbEdges: Int, nbIterations: Int) =
     DummyGraph.importToNetLogo(new EppsteinPowerLawGenerator(
       graphFactory, vertexFactory, edgeFactory,
       nbVertices, nbEdges, nbIterations)
       .create, turtleBreed, linkBreed)
 
-  }
-
-  def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean) {
+  def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean) =
     DummyGraph.importToNetLogo(new Lattice2DGenerator(
       graphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, isToroidal)
       .create, turtleBreed, linkBreed)
-  }
 
   def barabasiAlbert(
     initialNbVertices: Int,
     nbEdgesPerIteration: Int,
-    nbIterations: Int) {
+    nbIterations: Int) = {
     val gen = new BarabasiAlbertGenerator(
       graphFactory, vertexFactory, edgeFactory,
       initialNbVertices, nbEdgesPerIteration, new java.util.HashSet[DummyGraph.Vertex])
@@ -56,14 +53,14 @@ class JungGraphGenerator(
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed)
   }
 
-  def erdosRenyi(nbVertices: Int, connexionProbability: Double) {
+  def erdosRenyi(nbVertices: Int, connexionProbability: Double) =
     DummyGraph.importToNetLogo(new ErdosRenyiGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       nbVertices, connexionProbability)
       .create, turtleBreed, linkBreed)
-  }
 
-  def kleinbergSmallWorld(rowCount: Int, colCount: Int, clusteringExponent: Double, isToroidal: Boolean) {
+  def kleinbergSmallWorld(rowCount: Int, colCount: Int,
+    clusteringExponent: Double, isToroidal: Boolean) = {
     val gen = new KleinbergSmallWorldGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, clusteringExponent, isToroidal)

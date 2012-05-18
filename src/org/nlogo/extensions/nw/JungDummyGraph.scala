@@ -30,7 +30,7 @@ object DummyGraph {
       def create = new UndirectedSparseGraph[Vertex, Edge]
     }
 
-  def importToNetLogo(graph: Graph[Vertex, Edge], turtleBreed: AgentSet, linkBreed: AgentSet) {
+  def importToNetLogo(graph: Graph[Vertex, Edge], turtleBreed: AgentSet, linkBreed: AgentSet) = {
     val w = turtleBreed.world
     val m = graph.getVertices.asScala.map { v =>
       v -> turtleBreed.world.createTurtle(
@@ -46,5 +46,6 @@ object DummyGraph {
           m(endPoints.getSecond),
           linkBreed)
       }
+    m.valuesIterator // return turtles
   }
 }

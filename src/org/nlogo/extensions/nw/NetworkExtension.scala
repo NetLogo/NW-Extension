@@ -1,5 +1,6 @@
 package org.nlogo.extensions.nw
 
+import org.nlogo.api
 import org.nlogo.api.ScalaConversions.toRichAny
 import org.nlogo.api.ScalaConversions.toRichSeq
 import org.nlogo.api.Syntax._
@@ -18,6 +19,8 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
 import org.nlogo.agent.AgentSet
+import org.nlogo.nvm
+import org.nlogo.nvm.ExtensionContext
 
 // TODO: program everything against the API, if possible
 
@@ -69,12 +72,10 @@ trait NetworkPrimitives {
 
   object Snapshot extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(OtherBlockType, OtherBlockType))
+      Array(AgentsetType, AgentsetType))
     override def perform(args: Array[Argument], context: Context) {
-      val turtleSet = args(0).getReporterTask.report(context, Array())
-        .asInstanceOf[AgentSet].requireTurtleSet
-      val linkSet = args(1).getReporterTask.report(context, Array())
-        .asInstanceOf[AgentSet].requireTurtleSet.requireLinkSet
+      val turtleSet = args(0).getAgentSet.requireTurtleSet
+      val linkSet = args(1).getAgentSet.requireLinkSet
       setGraph(new StaticNetLogoGraph(linkSet, turtleSet))
     }
   }
@@ -201,14 +202,25 @@ trait NetworkPrimitives {
 
   object ErdosRenyiGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType))
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType | OptionalType))
     override def perform(args: Array[Argument], context: Context) {
-      new JungGraphGenerator(
+
+      val newTurtles = new JungGraphGenerator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .erdosRenyi(
           nbVertices = args(2).getIntValue,
           connexionProbability = args(3).getDoubleValue)
+
+      val command = args(4).getCommandTask
+      val extContext = context.asInstanceOf[ExtensionContext]
+      val newContext = (t: Turtle) => new ExtensionContext(
+        extContext.workspace, new nvm.Context(extContext.nvmContext, t))
+
+      newTurtles.foreach { t =>
+        println(t)
+        command.perform(newContext(t), Array())
+      }
     }
   }
 
