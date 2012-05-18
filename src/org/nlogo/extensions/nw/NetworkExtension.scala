@@ -2,28 +2,27 @@ package org.nlogo.extensions.nw
 
 import org.nlogo.api.ScalaConversions.toRichAny
 import org.nlogo.api.ScalaConversions.toRichSeq
-import org.nlogo.api.Turtle
-import org.nlogo.api.Agent
-import org.nlogo.api.AgentSet
+import org.nlogo.api.Syntax._
+import org.nlogo.api.ExtensionException
+import org.nlogo.api.LogoException
 import org.nlogo.api.Argument
 import org.nlogo.api.Context
 import org.nlogo.api.DefaultClassManager
 import org.nlogo.api.DefaultCommand
 import org.nlogo.api.DefaultReporter
-import org.nlogo.api.ExtensionException
-import org.nlogo.api.I18N
-import org.nlogo.api.Link
 import org.nlogo.api.LogoList
 import org.nlogo.api.PrimitiveManager
-import org.nlogo.api.Syntax._
-import org.nlogo.api.TypeNames
-import org.nlogo.extensions.nw.NetworkExtensionUtil._
-import NetworkExtension._
+import org.nlogo.api.Turtle
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
+import org.nlogo.agent.AgentSet
 
 // TODO: program everything against the API, if possible
 
 class NetworkExtension extends DefaultClassManager
-  with HasSnapshot
+  with HasGraph
   with NetworkPrimitives {
 
   override def load(primManager: PrimitiveManager) {
@@ -47,7 +46,7 @@ class NetworkExtension extends DefaultClassManager
   }
 }
 
-trait HasSnapshot {
+trait HasGraph {
   // TODO: this is a temporary hack. When we modify
   // the core netlogo, we are going to have
   // set-context and with-context primitives,
@@ -67,14 +66,16 @@ trait HasSnapshot {
 
 trait NetworkPrimitives {
   self: NetworkExtension =>
-    
+
   object Snapshot extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType))
+      Array(OtherBlockType, OtherBlockType))
     override def perform(args: Array[Argument], context: Context) {
-      val turtleBreed = args(0).getAgentSet.requireTurtleBreed
-      val linkBreed = args(1).getAgentSet.requireLinkBreed
-      setGraph(new StaticNetLogoGraph(linkBreed, turtleBreed))
+      val turtleSet = args(0).getReporterTask.report(context, Array())
+        .asInstanceOf[AgentSet].requireTurtleSet
+      val linkSet = args(1).getReporterTask.report(context, Array())
+        .asInstanceOf[AgentSet].requireTurtleSet.requireLinkSet
+      setGraph(new StaticNetLogoGraph(linkSet, turtleSet))
     }
   }
 
