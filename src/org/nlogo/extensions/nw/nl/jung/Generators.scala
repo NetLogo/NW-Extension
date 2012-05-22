@@ -1,25 +1,19 @@
-package org.nlogo.extensions.nw
+package org.nlogo.extensions.nw.nl.jung
+
+import org.nlogo.agent.AgentSet
 
 import edu.uci.ics.jung.algorithms.generators.random.BarabasiAlbertGenerator
 import edu.uci.ics.jung.algorithms.generators.random.EppsteinPowerLawGenerator
 import edu.uci.ics.jung.algorithms.generators.random.ErdosRenyiGenerator
 import edu.uci.ics.jung.algorithms.generators.random.KleinbergSmallWorldGenerator
 import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
-import edu.uci.ics.jung.graph.UndirectedGraph
-import edu.uci.ics.jung.graph.Graph
-import edu.uci.ics.jung.graph.SparseGraph
-import edu.uci.ics.jung.graph.UndirectedSparseGraph
-import org.apache.commons.collections15.Factory
-import org.nlogo.agent.AgentSet
-import org.nlogo.agent.Turtle
-import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
 /* TODO: VERY IMPORTANT!!! change RNG
  * The current generators use the java random number generator.
  * We need to fork Jung and modify them so we can plug in our own
  * Note: KleinbergSmallWorldGenerator is already OK
  */
-class JungGraphGenerator(
+class Generator(
   turtleBreed: AgentSet,
   linkBreed: AgentSet) {
 

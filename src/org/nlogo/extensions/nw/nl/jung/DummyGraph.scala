@@ -1,16 +1,9 @@
-package org.nlogo.extensions.nw
+package org.nlogo.extensions.nw.nl.jung
 
+import edu.uci.ics.jung
 import org.apache.commons.collections15.Factory
-import edu.uci.ics.jung.graph.Graph
-import edu.uci.ics.jung.graph.SparseGraph
-import org.nlogo.agent.Link
-import org.nlogo.agent.Turtle
-import org.nlogo.agent.World
-import edu.uci.ics.jung.io.MatrixFile
 import org.nlogo.agent.AgentSet
-import scala.collection.JavaConverters._
-import edu.uci.ics.jung.graph.UndirectedGraph
-import edu.uci.ics.jung.graph.UndirectedSparseGraph
+import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
 object DummyGraph {
   class Vertex
@@ -21,16 +14,19 @@ object DummyGraph {
   def vertexFactory: Factory[Vertex] = new Factory[Vertex]() {
     def create = new Vertex
   }
-  def factory: Factory[Graph[Vertex, Edge]] =
-    new Factory[Graph[Vertex, Edge]]() {
-      def create = new SparseGraph[Vertex, Edge]
+  def factory: Factory[jung.graph.Graph[Vertex, Edge]] =
+    new Factory[jung.graph.Graph[Vertex, Edge]]() {
+      def create = new jung.graph.SparseGraph[Vertex, Edge]
     }
-  def undirectedFactory: Factory[UndirectedGraph[Vertex, Edge]] =
-    new Factory[UndirectedGraph[Vertex, Edge]]() {
-      def create = new UndirectedSparseGraph[Vertex, Edge]
+  def undirectedFactory: Factory[jung.graph.UndirectedGraph[Vertex, Edge]] =
+    new Factory[jung.graph.UndirectedGraph[Vertex, Edge]]() {
+      def create = new jung.graph.UndirectedSparseGraph[Vertex, Edge]
     }
 
-  def importToNetLogo(graph: Graph[Vertex, Edge], turtleBreed: AgentSet, linkBreed: AgentSet) = {
+  def importToNetLogo(
+    graph: jung.graph.Graph[Vertex, Edge],
+    turtleBreed: AgentSet,
+    linkBreed: AgentSet) = {
     val w = turtleBreed.world
     val m = graph.getVertices.asScala.map { v =>
       v -> turtleBreed.world.createTurtle(

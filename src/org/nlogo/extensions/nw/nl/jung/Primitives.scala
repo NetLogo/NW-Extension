@@ -1,4 +1,4 @@
-package org.nlogo.extensions.nw
+package org.nlogo.extensions.nw.nl.jung
 
 import scala.Array.canBuildFrom
 
@@ -26,9 +26,11 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
+import org.nlogo.extensions.nw.NetworkExtension
+import org.nlogo.extensions.nw.StaticNetLogoGraph
 import org.nlogo.nvm.ExtensionContext
 
-trait JungPrimitives {
+trait Primitives {
   self: NetworkExtension =>
 
   object Snapshot extends DefaultCommand {
@@ -137,7 +139,7 @@ trait JungPrimitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      new JungGraphGenerator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .eppsteinPowerLaw(
@@ -151,7 +153,7 @@ trait JungPrimitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      new JungGraphGenerator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .barabasiAlbert(
@@ -167,7 +169,7 @@ trait JungPrimitives {
     override def perform(args: Array[Argument], context: Context) {
 
       println(args.map(_.get).mkString("\n"))
-      val (newTurtles, temp) = new JungGraphGenerator(
+      val (newTurtles, temp) = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .erdosRenyi(
@@ -188,7 +190,7 @@ trait JungPrimitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType))
     override def perform(args: Array[Argument], context: Context) {
-      new JungGraphGenerator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .kleinbergSmallWorld(
@@ -203,7 +205,7 @@ trait JungPrimitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType))
     override def perform(args: Array[Argument], context: Context) {
-      new JungGraphGenerator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .lattice2D(
@@ -216,14 +218,14 @@ trait JungPrimitives {
   object SaveMatrix extends DefaultCommand {
     override def getSyntax = commandSyntax(Array(StringType))
     override def perform(args: Array[Argument], context: Context) {
-      JungMatrix.save(getGraph(context).asJungGraph, args(0).getString)
+      Matrix.save(getGraph(context).asJungGraph, args(0).getString)
     }
   }
 
   object LoadMatrix extends DefaultCommand {
     override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType))
     override def perform(args: Array[Argument], context: Context) {
-      JungMatrix.load(
+      Matrix.load(
         filename = args(0).getString,
         turtleBreed = args(1).getAgentSet.requireTurtleBreed,
         linkBreed = args(2).getAgentSet.requireLinkBreed)

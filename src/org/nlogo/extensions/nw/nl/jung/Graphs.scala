@@ -1,20 +1,22 @@
-package org.nlogo.extensions.nw
+package org.nlogo.extensions.nw.nl.jung
 
-import edu.uci.ics.jung.graph.util.EdgeType
-import edu.uci.ics.jung.graph.util.Pair
-import edu.uci.ics.jung.graph.DirectedGraph
-import edu.uci.ics.jung.graph.UndirectedGraph
-import edu.uci.ics.jung.graph.AbstractGraph
-import edu.uci.ics.jung.graph.AbstractTypedGraph
 import java.util.Collection
+
+import scala.collection.JavaConverters.asJavaCollectionConverter
+
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
-import scala.collection.JavaConverters.asJavaCollectionConverter
+import org.nlogo.extensions.nw.NetLogoGraph
+import org.nlogo.extensions.nw.nl
 
-trait JungGraph
-  extends AbstractGraph[Turtle, Link]
-  with JungAlgorithms {
+import edu.uci.ics.jung.graph.util.EdgeType
+import edu.uci.ics.jung.graph.util.Pair
+import edu.uci.ics.jung
+
+trait Graph
+  extends jung.graph.AbstractGraph[Turtle, Link]
+  with nl.jung.Algorithms {
 
   val nlg: NetLogoGraph
 
@@ -50,12 +52,12 @@ trait JungGraph
 
 }
 
-class DirectedJungGraph(
+class DirectedGraph(
   override val nlg: NetLogoGraph)
-  extends AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
-  with JungGraph
-  with DirectedJungAlgorithms
-  with DirectedGraph[Turtle, Link] {
+  extends jung.graph.AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
+  with nl.jung.Graph
+  with nl.jung.DirectedAlgorithms
+  with jung.graph.DirectedGraph[Turtle, Link] {
 
   if (!nlg.isDirected)
     throw new ExtensionException("link set must be directed")
@@ -83,12 +85,12 @@ class DirectedJungGraph(
 
 }
 
-class UndirectedJungGraph(
+class UndirectedGraph(
   override val nlg: NetLogoGraph)
-  extends AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
-  with JungGraph
-  with UndirectedJungAlgorithms
-  with UndirectedGraph[Turtle, Link] {
+  extends jung.graph.AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
+  with nl.jung.Graph
+  with nl.jung.UndirectedAlgorithms
+  with jung.graph.UndirectedGraph[Turtle, Link] {
 
   override def getInEdges(turtle: Turtle) = getIncidentEdges(turtle)
   override def getPredecessors(turtle: Turtle) = getNeighbors(turtle: Turtle)

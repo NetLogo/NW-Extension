@@ -13,7 +13,7 @@ else
   COLON=:
 endif
 
-SRCS=$(wildcard src/org/nlogo/extensions/nw/*.scala)
+SRCS=$(wildcard src/org/nlogo/extensions/nw/*.scala src/org/nlogo/extensions/nw/nl/jung/*.scala src/org/nlogo/extensions/nw/nl/jgrapht/*.scala)
 
 JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorithms-2.0.1.jar$(COLON)collections-generic-4.01.jar$(COLON)colt-1.2.0.jar$(COLON)jung-io-2.0.1.jar$(COLON)jgrapht-jdk1.6.jar
 

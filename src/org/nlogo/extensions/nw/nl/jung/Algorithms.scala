@@ -1,26 +1,26 @@
-package org.nlogo.extensions.nw
+package org.nlogo.extensions.nw.nl.jung
 
-import edu.uci.ics.jung.algorithms.cluster._
-import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
-import edu.uci.ics.jung.algorithms.util.KMeansClusterer
-import org.nlogo.agent.Agent
-import org.nlogo.agent.Link
-import org.nlogo.agent.Turtle
-import org.nlogo.api.ExtensionException
 import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.collection.JavaConverters.mapAsScalaMapConverter
+import org.nlogo.agent.Agent
+import org.nlogo.agent.Link
+import org.nlogo.agent.Turtle
+import org.nlogo.api.ExtensionException
+import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
+import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer
+import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
+import edu.uci.ics.jung.algorithms.util.KMeansClusterer
 import edu.uci.ics.jung.algorithms.importance.AbstractRanker
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality
-import edu.uci.ics.jung.algorithms.importance.RandomWalkBetweenness
-import edu.uci.ics.jung.algorithms.scoring._
-import org.apache.commons.collections15.Transformer
-import edu.uci.ics.jung.graph.Graph
+import edu.uci.ics.jung.algorithms.scoring.PageRank
+import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality
+import org.nlogo.extensions.nw.nl
 
 // TODO: catch exceptions from Jung and give meaningful error messages 
 
-trait JungRanker {
+trait Ranker {
   self: AbstractRanker[Turtle, Link] =>
 
   private def toScoreMap[A <: Agent](m: java.util.Map[A, Number]) =
@@ -41,10 +41,10 @@ trait JungRanker {
   def get(agent: Agent) = getFrom(agent, turtleScores, linkScores)
 }
 
-trait JungAlgorithms {
-  self: JungGraph =>
+trait Algorithms {
+  self: nl.jung.Graph =>
   lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic)
-  lazy val betweennessCentrality = new BetweennessCentrality(this) with JungRanker
+  lazy val betweennessCentrality = new BetweennessCentrality(this) with Ranker
   lazy val eigenvectorCentrality = new PageRank(this, 0.0) { evaluate() }
   lazy val closenessCentrality = new ClosenessCentrality(this) {
     override def getVertexScore(turtle: Turtle) =
@@ -67,8 +67,8 @@ trait JungAlgorithms {
 
 }
 
-trait UndirectedJungAlgorithms {
-  self: UndirectedJungGraph =>
+trait UndirectedAlgorithms {
+  self: nl.jung.UndirectedGraph =>
   lazy val bicomponentClusterer = new BicomponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
   }
@@ -77,7 +77,7 @@ trait UndirectedJungAlgorithms {
   }
 }
 
-trait DirectedJungAlgorithms {
-  self: DirectedJungGraph =>
+trait DirectedAlgorithms {
+  self: nl.jung.DirectedGraph =>
 
 }

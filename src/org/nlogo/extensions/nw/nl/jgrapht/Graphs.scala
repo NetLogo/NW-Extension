@@ -1,13 +1,18 @@
-package org.nlogo.extensions.nw
+package org.nlogo.extensions.nw.nl.jgrapht
 
-import org.jgrapht
-import org.nlogo.agent.Turtle
-import org.nlogo.agent.Link
-import org.nlogo.api.ExtensionException
-import scala.collection.JavaConverters._
 import java.lang.IllegalArgumentException
 
-trait JGraphTGraph
+import scala.collection.JavaConverters.setAsJavaSetConverter
+
+import org.nlogo.agent.Link
+import org.nlogo.agent.Turtle
+import org.nlogo.api.ExtensionException
+import org.nlogo.extensions.nw.NetLogoGraph
+import org.nlogo.extensions.nw.nl
+
+import org.jgrapht
+
+trait Graph
   extends jgrapht.graph.AbstractGraph[Turtle, Link] {
   val nlg: NetLogoGraph
 
@@ -56,16 +61,16 @@ trait JGraphTGraph
 
 }
 
-class UndirectedJGraphTGraph(
+class UndirectedGraph(
   override val nlg: NetLogoGraph)
-  extends JGraphTGraph
+  extends nl.jgrapht.Graph
   with jgrapht.UndirectedGraph[Turtle, Link] {
   override def degreeOf(vertex: Turtle) = nlg.allEdges(vertex).size
 }
 
-class DirectedJGraphTGraph(
+class DirectedGraph(
   override val nlg: NetLogoGraph)
-  extends JGraphTGraph
+  extends nl.jgrapht.Graph
   with jgrapht.DirectedGraph[Turtle, Link] {
   if (!nlg.isDirected)
     throw new ExtensionException("link set must be directed")

@@ -26,12 +26,12 @@ trait NetLogoGraph {
   // def valid[A](obj: A)(implicit isValid: A => Boolean) = Option(obj).filter(isValid)
 
   def asJungGraph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
-  lazy val asDirectedJungGraph = new DirectedJungGraph(this)
-  lazy val asUndirectedJungGraph = new UndirectedJungGraph(this)
+  lazy val asDirectedJungGraph = new nl.jung.DirectedGraph(this)
+  lazy val asUndirectedJungGraph = new nl.jung.UndirectedGraph(this)
 
   def asJGraphTGraph = if (isDirected) asDirectedJGraphTGraph else asUndirectedJGraphTGraph
-  lazy val asDirectedJGraphTGraph = new DirectedJGraphTGraph(this)
-  lazy val asUndirectedJGraphTGraph = new UndirectedJGraphTGraph(this)
+  lazy val asDirectedJGraphTGraph = new nl.jgrapht.DirectedGraph(this)
+  lazy val asUndirectedJGraphTGraph = new nl.jgrapht.UndirectedGraph(this)
 
   protected val linkSet: AgentSet
   val world = linkSet.world
