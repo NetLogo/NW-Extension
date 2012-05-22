@@ -1,14 +1,13 @@
 package org.nlogo.extensions.nw
 
+import scala.Option.option2Iterable
+import scala.collection.JavaConverters.iterableAsScalaIterableConverter
+
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
-import org.nlogo.api.ExtensionException
-import org.nlogo.api.ExtensionObject
 import org.nlogo.extensions.nw.GraphUtil.EnrichAgentSet
-import scala.Option.option2Iterable
-import scala.collection.JavaConverters.iterableAsScalaIterableConverter
 
 object GraphUtil {
   implicit def EnrichAgentSet(agentSet: AgentSet) = new RichAgentSet(agentSet)
@@ -30,27 +29,30 @@ trait NetLogoGraph {
   lazy val asDirectedJungGraph = new DirectedJungGraph(this)
   lazy val asUndirectedJungGraph = new UndirectedJungGraph(this)
 
+  def asJGraphTGraph = if (isDirected) asDirectedJGraphTGraph else asUndirectedJGraphTGraph
+  lazy val asDirectedJGraphTGraph = new DirectedJGraphTGraph(this)
+  lazy val asUndirectedJGraphTGraph = new UndirectedJGraphTGraph(this)
+
   protected val linkSet: AgentSet
   val world = linkSet.world
-  
+
   lazy val isDirected = links.forall(_.isDirectedLink)
-  
+
   def links: Iterable[Link]
   def turtles: Iterable[Turtle]
 
-  def edges(turtle: Turtle): Iterable[Link]
+  def allEdges(turtle: Turtle): Iterable[Link]
 
   def directedInEdges(turtle: Turtle): Iterable[Link]
   def directedOutEdges(turtle: Turtle): Iterable[Link]
 
+  // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
   def inEdges(turtle: Turtle) =
-    if (isDirected) directedInEdges(turtle) else edges(turtle)
+    if (isDirected) directedInEdges(turtle) else allEdges(turtle)
   def outEdges(turtle: Turtle) =
-    if (isDirected) directedOutEdges(turtle) else edges(turtle)
+    if (isDirected) directedOutEdges(turtle) else allEdges(turtle)
 
 }
-
-
 
 class StaticNetLogoGraph(
   protected val linkSet: AgentSet,
@@ -59,21 +61,25 @@ class StaticNetLogoGraph(
 
   val isStatic = true
 
-  override val isValidLink = linkVector.contains(_: Link)
-  override val isValidTurtle = turtleVector.contains(_: Turtle)
+  override val isValidLink = _links.contains(_: Link)
+  override val isValidTurtle = _turtles.contains(_: Turtle)
 
-  private val turtleVector = Vector() ++ turtleSet.toIterable[Turtle]
-  private val linkVector = Vector() ++ linkSet.toIterable[Link]
-    .filter { l => turtleVector.contains(l.end1) && turtleVector.contains(l.end2) }
+  private val _turtles = Set() ++ turtleSet.toIterable[Turtle]
+  private val _links = Set() ++ linkSet.toIterable[Link]
+    .filter { l => _turtles.contains(l.end1) && _turtles.contains(l.end2) }
 
-  def turtles = turtleVector: Iterable[Turtle]
-  def links = linkVector: Iterable[Link]
+  def turtles = _turtles: Iterable[Turtle]
+  def links = _links: Iterable[Link]
 
-  def edges(turtle: Turtle) = linkVector.filter(l => l.end1 == turtle || l.end2 == turtle)
+  private type LinkMap = Map[Turtle, Iterable[Link]]
 
-  private lazy val inEdgesMap: Map[Turtle, Iterable[Link]] = links.groupBy(_.end2)
+  private lazy val allEdgesMap: LinkMap =
+    turtles.map(t => t -> _links.filter(l => l.end1 == t || l.end2 == t)).toMap
+  def allEdges(turtle: Turtle) = allEdgesMap.get(turtle).flatten
+
+  private lazy val inEdgesMap: LinkMap = links.groupBy(_.end2)
   override def directedInEdges(turtle: Turtle) = inEdgesMap.get(turtle).flatten
 
-  private lazy val outEdgesMap: Map[Turtle, Iterable[Link]] = links.groupBy(_.end1)
+  private lazy val outEdgesMap: LinkMap = links.groupBy(_.end1)
   override def directedOutEdges(turtle: Turtle) = outEdgesMap.get(turtle).flatten
 }

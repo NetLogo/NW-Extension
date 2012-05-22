@@ -19,7 +19,7 @@ trait JungGraph
   val nlg: NetLogoGraph
 
   override def getIncidentEdges(turtle: Turtle): Collection[Link] =
-    nlg.validTurtle(turtle).map(nlg.edges(_).asJavaCollection).orNull
+    nlg.validTurtle(turtle).map(nlg.allEdges(_).asJavaCollection).orNull
 
   override def getEdgeCount(): Int = nlg.links.size
 

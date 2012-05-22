@@ -1,6 +1,7 @@
 *~
 /classes
 /jung-src/
+/jgrapht-src/
 *.jar
 *.gz
 *.zip

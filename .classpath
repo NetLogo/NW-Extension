@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="wstx-asl-3.2.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="jgrapht-src"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
