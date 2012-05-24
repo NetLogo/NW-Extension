@@ -29,12 +29,14 @@ trait NetLogoGraph {
   lazy val asDirectedJungGraph = new nl.jung.DirectedGraph(this)
   lazy val asUndirectedJungGraph = new nl.jung.UndirectedGraph(this)
 
-  def asJGraphTGraph = if (isDirected) asDirectedJGraphTGraph else asUndirectedJGraphTGraph
-  lazy val asDirectedJGraphTGraph = new nl.jgrapht.DirectedGraph(this)
+//  def asJGraphTGraph = if (isDirected) asDirectedJGraphTGraph else asUndirectedJGraphTGraph
+  def asJGraphTGraph = asUndirectedJGraphTGraph
+//  lazy val asDirectedJGraphTGraph = new nl.jgrapht.DirectedGraph(this)
   lazy val asUndirectedJGraphTGraph = new nl.jgrapht.UndirectedGraph(this)
 
   protected val linkSet: AgentSet
   val world = linkSet.world
+  val rng = world.mainRNG
 
   lazy val isDirected = links.forall(_.isDirectedLink)
 

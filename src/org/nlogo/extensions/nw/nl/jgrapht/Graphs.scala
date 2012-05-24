@@ -13,7 +13,8 @@ import org.nlogo.extensions.nw.nl
 import org.jgrapht
 
 trait Graph
-  extends jgrapht.graph.AbstractGraph[Turtle, Link] {
+  extends jgrapht.graph.AbstractGraph[Turtle, Link]
+  with nl.jgrapht.Algorithms {
   val nlg: NetLogoGraph
 
   override def getAllEdges(sourceVertex: Turtle, targetVertex: Turtle) =

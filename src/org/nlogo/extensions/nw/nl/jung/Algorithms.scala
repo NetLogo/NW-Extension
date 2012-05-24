@@ -7,7 +7,6 @@ import scala.collection.JavaConverters.mapAsScalaMapConverter
 import org.nlogo.agent.Agent
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
-import org.nlogo.api.ExtensionException
 import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
@@ -17,6 +16,7 @@ import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality
 import edu.uci.ics.jung.algorithms.scoring.PageRank
 import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality
 import org.nlogo.extensions.nw.nl
+import org.nlogo.api.ExtensionException
 
 // TODO: catch exceptions from Jung and give meaningful error messages 
 
@@ -43,7 +43,27 @@ trait Ranker {
 
 trait Algorithms {
   self: nl.jung.Graph =>
-  lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic)
+  lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic) {
+
+    def meanLinkPathLength: Option[Double] = {
+      
+      val pathSizes = for {
+        source <- nlg.turtles
+        target <- nlg.turtles
+        if target != source
+        path = getPath(source, target)
+        size = Option(path.size)
+      } yield size.filterNot(_ == 0)
+
+      for {
+        sizes <- Option(pathSizes)
+        if sizes.nonEmpty // it was not an empty graph
+        sum <- sizes.fold(Option(0))(for (x <- _; y <- _) yield x + y)
+      } yield sum.toDouble / pathSizes.size
+      
+    }
+  }
+
   lazy val betweennessCentrality = new BetweennessCentrality(this) with Ranker
   lazy val eigenvectorCentrality = new PageRank(this, 0.0) { evaluate() }
   lazy val closenessCentrality = new ClosenessCentrality(this) {
