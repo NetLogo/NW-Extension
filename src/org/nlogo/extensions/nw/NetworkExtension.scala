@@ -9,12 +9,21 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 
 class NetworkExtension extends DefaultClassManager
   with HasGraph
-  with nl.jung.Primitives {
+  with nl.jung.Primitives
+  with nl.jgrapht.Primitives {
 
   override def load(primManager: PrimitiveManager) {
     val add = primManager.addPrimitive _
+
+    // In original extension:
+//    add("in-link-radius", InLinkRadius)
+//    add("in-out-link-radius", InOutLinkRadius)
+//    add("in-in-link-radius", InInLinkRadius)
+    add("mean-link-path-length", MeanLinkPathLength)
     add("link-distance", LinkDistance)
     add("link-path", LinkPath)
+    
+    // New:
     add("set-snapshot", Snapshot)
     add("betweenness-centrality", BetweennessCentralityPrim)
     add("eigenvector-centrality", EigenvectorCentralityPrim)
@@ -29,6 +38,8 @@ class NetworkExtension extends DefaultClassManager
     add("generate-lattice-2d", Lattice2DGeneratorPrim)
     add("save-matrix", SaveMatrix)
     add("load-matrix", LoadMatrix)
+    add("maximal-cliques", MaximalCliques)
+    add("biggest-maximal-clique", BiggestMaximalClique)
   }
 }
 

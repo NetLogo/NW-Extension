@@ -120,6 +120,19 @@ trait Primitives {
     }
   }
 
+  object MeanLinkPathLength extends DefaultReporter {
+    override def getSyntax = reporterSyntax(ListType)
+    override def report(args: Array[Argument], context: Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[Turtle]
+      val target = args(0).getAgent.asInstanceOf[Turtle]
+      getGraph(context).asJungGraph
+        .dijkstraShortestPath
+        .meanLinkPathLength
+        .map(Double.box)
+        .getOrElse(java.lang.Boolean.FALSE)
+    }
+  }
+
   object LinkDistance extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType),
@@ -165,7 +178,7 @@ trait Primitives {
 
   object ErdosRenyiGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-        Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType | OptionalType))
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType | OptionalType))
     override def perform(args: Array[Argument], context: Context) {
 
       println(args.map(_.get).mkString("\n"))
@@ -181,7 +194,6 @@ trait Primitives {
       //      val command = args(4).getCommandTask.asInstanceOf[nvm.CommandTask]
       val commandArgs = Array[AnyRef]()
       val nvmContext = context.asInstanceOf[ExtensionContext].nvmContext
-      
 
     }
   }
