@@ -20,6 +20,12 @@ trait Graph
 
   val nlg: NetLogoGraph
 
+  def edgeType =
+    if (nlg.isDirected)
+      jung.graph.util.EdgeType.DIRECTED
+    else
+      jung.graph.util.EdgeType.UNDIRECTED
+
   override def getIncidentEdges(turtle: Turtle): Collection[Link] =
     nlg.validTurtle(turtle).map(nlg.allEdges(_).asJavaCollection).orNull
 
@@ -49,6 +55,15 @@ trait Graph
     throw sys.error("not implemented")
   def addEdge(link: Link, turtles: Pair[_ <: Turtle], edgeType: EdgeType): Boolean =
     throw sys.error("not implemented")
+
+  lazy val asSparseGraph: jung.graph.SparseGraph[Turtle, Link] = {
+    val g = new jung.graph.SparseGraph[Turtle, Link]()
+    nlg.turtles.foreach(g.addVertex)
+    nlg.links.foreach { l =>
+      g.addEdge(l, new jung.graph.util.Pair(l.end1, l.end2), edgeType)
+    }
+    g
+  }
 
 }
 
