@@ -24,26 +24,18 @@ class Generator(
   lazy val edgeFactory = DummyGraph.edgeFactory
   lazy val vertexFactory = DummyGraph.vertexFactory
 
-  def eppsteinPowerLaw(nbVertices: Int, nbEdges: Int, nbIterations: Int) =
-    DummyGraph.importToNetLogo(new EppsteinPowerLawGenerator(
-      graphFactory, vertexFactory, edgeFactory,
-      nbVertices, nbEdges, nbIterations)
-      .create, turtleBreed, linkBreed)
-
   def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean) =
     DummyGraph.importToNetLogo(new Lattice2DGenerator(
       graphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, isToroidal)
       .create, turtleBreed, linkBreed)
 
-  def barabasiAlbert(
-    initialNbVertices: Int,
-    nbEdgesPerIteration: Int,
-    nbIterations: Int) = {
+  def barabasiAlbert(nbVertices: Int) = {
     val gen = new BarabasiAlbertGenerator(
       graphFactory, vertexFactory, edgeFactory,
-      initialNbVertices, nbEdgesPerIteration, new java.util.HashSet[DummyGraph.Vertex])
-    gen.evolveGraph(nbIterations)
+      1, 1, new java.util.HashSet[DummyGraph.Vertex])
+    while (gen.create.getVertexCount < nbVertices)
+      gen.evolveGraph(1)
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed)
   }
 

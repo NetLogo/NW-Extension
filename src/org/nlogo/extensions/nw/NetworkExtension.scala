@@ -31,8 +31,7 @@ class NetworkExtension extends DefaultClassManager
     add("k-means-clusters", KMeansClusters)
     add("bicomponent-clusters", BicomponentClusters)
     add("weak-component-clusters", WeakComponentClusters)
-    add("generate-power-law", EppsteinPowerLawGeneratorPrim)
-    add("generate-preferential-attachment", BarabasiAlbertGeneratorPrim)
+    add("generate-power-law", BarabasiAlbertGeneratorPrim)
     add("generate-random", ErdosRenyiGeneratorPrim)
     add("generate-small-world", KleinbergSmallWorldGeneratorPrim)
     add("generate-lattice-2d", Lattice2DGeneratorPrim)
@@ -40,6 +39,10 @@ class NetworkExtension extends DefaultClassManager
     add("load-matrix", LoadMatrix)
     add("maximal-cliques", MaximalCliques)
     add("biggest-maximal-clique", BiggestMaximalClique)
+    
+    add("generate-ring", RingGeneratorPrim)
+    add("generate-wheel", WheelGeneratorPrim)
+    
   }
 }
 
