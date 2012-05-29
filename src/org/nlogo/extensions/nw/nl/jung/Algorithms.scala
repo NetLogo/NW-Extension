@@ -1,5 +1,6 @@
 package org.nlogo.extensions.nw.nl.jung
 
+import org.nlogo.agent.ArrayAgentSet
 import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.JavaConverters.mapAsJavaMapConverter
@@ -17,6 +18,7 @@ import edu.uci.ics.jung.algorithms.scoring.PageRank
 import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality
 import org.nlogo.extensions.nw.nl
 import org.nlogo.api.ExtensionException
+import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 
 // TODO: catch exceptions from Jung and give meaningful error messages 
 
@@ -46,10 +48,10 @@ trait Algorithms {
   lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic) {
 
     def meanLinkPathLength: Option[Double] = {
-      
+
       val pathSizes = for {
-        source <- nlg.turtles
-        target <- nlg.turtles
+        source <- nlg.turtles.toSeq // toSeq to make sure we don't get a set
+        target <- nlg.turtles.toSeq
         if target != source
         path = getPath(source, target)
         size = Option(path.size)
@@ -59,8 +61,8 @@ trait Algorithms {
         sizes <- Option(pathSizes)
         if sizes.nonEmpty // it was not an empty graph
         sum <- sizes.fold(Option(0))(for (x <- _; y <- _) yield x + y)
-      } yield sum.toDouble / pathSizes.size
-      
+      } yield sum.toDouble / pathSizes.size.toDouble
+
     }
   }
 
@@ -85,9 +87,19 @@ trait Algorithms {
       } else Seq()
   }
 
+  def kNeighborhood(source: Turtle, radius: Int, edgeType: KNeighborhoodFilter.EdgeType) =
+    new ArrayAgentSet(
+      classOf[Turtle],
+      new KNeighborhoodFilter(source, radius, edgeType)
+        .transform(this.asSparseGraph) // TODO: ugly hack; fix when we fork jung
+        .getVertices
+        .asScala
+        .filterNot(_ == source)
+        .toArray[Agent],
+      nlg.world)
 }
 
-trait UndirectedAlgorithms {
+trait UndirectedAlgorithms extends Algorithms {
   self: nl.jung.UndirectedGraph =>
   lazy val bicomponentClusterer = new BicomponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
@@ -97,7 +109,6 @@ trait UndirectedAlgorithms {
   }
 }
 
-trait DirectedAlgorithms {
+trait DirectedAlgorithms extends Algorithms {
   self: nl.jung.DirectedGraph =>
-
 }

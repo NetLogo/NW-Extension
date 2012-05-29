@@ -16,9 +16,9 @@ class NetworkExtension extends DefaultClassManager
     val add = primManager.addPrimitive _
 
     // In original extension:
-//    add("in-link-radius", InLinkRadius)
-//    add("in-out-link-radius", InOutLinkRadius)
-//    add("in-in-link-radius", InInLinkRadius)
+    add("in-link-radius", InLinkRadius)
+    add("in-out-link-radius", InOutLinkRadius)
+    add("in-in-link-radius", InInLinkRadius)
     add("mean-link-path-length", MeanLinkPathLength)
     add("link-distance", LinkDistance)
     add("link-path", LinkPath)

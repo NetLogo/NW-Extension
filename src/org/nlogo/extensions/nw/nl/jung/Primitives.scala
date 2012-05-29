@@ -1,7 +1,7 @@
 package org.nlogo.extensions.nw.nl.jung
 
 import scala.Array.canBuildFrom
-
+import org.nlogo.api.ExtensionException
 import org.nlogo.api.ScalaConversions.toRichAny
 import org.nlogo.api.ScalaConversions.toRichSeq
 import org.nlogo.api.Syntax.AgentsetType
@@ -16,6 +16,7 @@ import org.nlogo.api.Syntax.TurtleType
 import org.nlogo.api.Syntax.TurtlesetType
 import org.nlogo.api.Syntax.commandSyntax
 import org.nlogo.api.Syntax.reporterSyntax
+import org.nlogo.api.Syntax.NormalPrecedence
 import org.nlogo.api.Argument
 import org.nlogo.api.Context
 import org.nlogo.api.DefaultCommand
@@ -29,6 +30,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
 import org.nlogo.extensions.nw.NetworkExtension
 import org.nlogo.extensions.nw.StaticNetLogoGraph
 import org.nlogo.nvm.ExtensionContext
+import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 
 trait Primitives {
   self: NetworkExtension =>
@@ -123,8 +125,6 @@ trait Primitives {
   object MeanLinkPathLength extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
     override def report(args: Array[Argument], context: Context): AnyRef = {
-      val source = context.getAgent.asInstanceOf[Turtle]
-      val target = args(0).getAgent.asInstanceOf[Turtle]
       getGraph(context).asJungGraph
         .dijkstraShortestPath
         .meanLinkPathLength
@@ -242,5 +242,30 @@ trait Primitives {
         turtleBreed = args(1).getAgentSet.requireTurtleBreed,
         linkBreed = args(2).getAgentSet.requireLinkBreed)
     }
+  }
+
+  abstract class LinkRadiusPrim extends DefaultReporter {
+    val edgeType: KNeighborhoodFilter.EdgeType
+    override def getSyntax = reporterSyntax(
+      Array(NumberType),
+      TurtlesetType,
+      agentClassString = "-T--")
+    override def report(args: Array[Argument], context: Context) = {
+      val graph = getGraph(context).asJungGraph
+      val source = context.getAgent.asInstanceOf[Turtle]
+      val radius = args(0).getIntValue
+      if (radius < 0) throw new ExtensionException("radius cannot be negative")
+      graph.kNeighborhood(source, radius, edgeType)
+    }
+  }
+
+  object InLinkRadius extends LinkRadiusPrim {
+    override val edgeType = KNeighborhoodFilter.EdgeType.IN_OUT
+  }
+  object InInLinkRadius extends LinkRadiusPrim {
+    override val edgeType = KNeighborhoodFilter.EdgeType.IN
+  }
+  object InOutLinkRadius extends LinkRadiusPrim {
+    override val edgeType = KNeighborhoodFilter.EdgeType.OUT
   }
 }
