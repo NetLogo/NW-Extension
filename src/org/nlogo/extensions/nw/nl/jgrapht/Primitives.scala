@@ -1,6 +1,7 @@
 package org.nlogo.extensions.nw.nl.jgrapht
 
 import org.nlogo.extensions.nw.NetworkExtension
+import org.nlogo.extensions.nw.nl.jgrapht
 import org.nlogo.api.ScalaConversions.toRichAny
 import org.nlogo.api.ScalaConversions.toRichSeq
 import org.nlogo.api.Syntax.AgentsetType
@@ -50,6 +51,30 @@ trait Primitives {
         .bronKerboschCliqueFinder
         .biggestClique
         .toLogoList
+    }
+  }
+
+  object RingGeneratorPrim extends DefaultCommand {
+    override def getSyntax = commandSyntax(
+      Array(TurtlesetType, LinksetType, NumberType))
+    override def perform(args: Array[Argument], context: Context) {
+      new jgrapht.Generator(
+        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+        linkBreed = args(1).getAgentSet.requireLinkBreed)
+        .ringGraphGenerator(args(2).getIntValue)
+    }
+  }
+
+  object WheelGeneratorPrim extends DefaultCommand {
+    override def getSyntax = commandSyntax(
+      Array(TurtlesetType, LinksetType, NumberType, BooleanType))
+    override def perform(args: Array[Argument], context: Context) {
+      // TODO: make inward/outward optional or maybe make different prims,
+      // requiring that the link-breed be directed for inward/outward versions
+      new jgrapht.Generator(
+        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+        linkBreed = args(1).getAgentSet.requireLinkBreed)
+        .wheelGraphGenerator(args(2).getIntValue, args(3).getBooleanValue)
     }
   }
 

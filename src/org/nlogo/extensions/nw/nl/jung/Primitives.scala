@@ -148,31 +148,14 @@ trait Primitives {
     }
   }
 
-  object EppsteinPowerLawGeneratorPrim extends DefaultCommand {
-    override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType))
-    override def perform(args: Array[Argument], context: Context) {
-      new Generator(
-        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
-        linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .eppsteinPowerLaw(
-          nbVertices = args(2).getIntValue,
-          nbEdges = args(3).getIntValue,
-          nbIterations = args(4).getIntValue)
-    }
-  }
-
   object BarabasiAlbertGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType))
+      Array(TurtlesetType, LinksetType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .barabasiAlbert(
-          initialNbVertices = args(2).getIntValue,
-          nbEdgesPerIteration = args(3).getIntValue,
-          nbIterations = args(4).getIntValue)
+        .barabasiAlbert(args(2).getIntValue)
     }
   }
 
