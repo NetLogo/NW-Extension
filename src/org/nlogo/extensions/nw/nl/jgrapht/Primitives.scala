@@ -65,16 +65,47 @@ trait Primitives {
     }
   }
 
-  object WheelGeneratorPrim extends DefaultCommand {
+  object StarGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, BooleanType))
+      Array(TurtlesetType, LinksetType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      // TODO: make inward/outward optional or maybe make different prims,
-      // requiring that the link-breed be directed for inward/outward versions
       new jgrapht.Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .wheelGraphGenerator(args(2).getIntValue, args(3).getBooleanValue)
+        .starGraphGenerator(args(2).getIntValue)
+    }
+  }
+
+  object WheelGeneratorPrim extends DefaultCommand {
+    override def getSyntax = commandSyntax(
+      Array(TurtlesetType, LinksetType, NumberType))
+    override def perform(args: Array[Argument], context: Context) {
+      new jgrapht.Generator(
+        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+        linkBreed = args(1).getAgentSet.requireUndirectedLinkBreed)
+        .wheelGraphGenerator(args(2).getIntValue, true)
+    }
+  }
+
+  object WheelGeneratorInwardPrim extends DefaultCommand {
+    override def getSyntax = commandSyntax(
+      Array(TurtlesetType, LinksetType, NumberType))
+    override def perform(args: Array[Argument], context: Context) {
+      new jgrapht.Generator(
+        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+        linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
+        .wheelGraphGenerator(args(2).getIntValue, true)
+    }
+  }
+
+  object WheelGeneratorOutwardPrim extends DefaultCommand {
+    override def getSyntax = commandSyntax(
+      Array(TurtlesetType, LinksetType, NumberType))
+    override def perform(args: Array[Argument], context: Context) {
+      new jgrapht.Generator(
+        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+        linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
+        .wheelGraphGenerator(args(2).getIntValue, false)
     }
   }
 

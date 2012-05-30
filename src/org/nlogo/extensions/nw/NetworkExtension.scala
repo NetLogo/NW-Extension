@@ -41,7 +41,10 @@ class NetworkExtension extends DefaultClassManager
     add("biggest-maximal-clique", BiggestMaximalClique)
     
     add("generate-ring", RingGeneratorPrim)
+    add("generate-star", StarGeneratorPrim)
     add("generate-wheel", WheelGeneratorPrim)
+    add("generate-wheel-inward", WheelGeneratorInwardPrim)
+    add("generate-wheel-outward", WheelGeneratorOutwardPrim)
     
   }
 }
