@@ -5,6 +5,7 @@ import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.collection.JavaConverters.mapAsScalaMapConverter
+import scala.collection.mutable
 import org.nlogo.agent.Agent
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
@@ -45,7 +46,23 @@ trait Ranker {
 
 trait Algorithms {
   self: nl.jung.Graph =>
-  lazy val dijkstraShortestPath = new DijkstraShortestPath(this, nlg.isStatic) {
+
+  private def functionToTransformer[I, O](f: Function1[I, O]) =
+    new org.apache.commons.collections15.Transformer[I, O] {
+      override def transform(i: I) = f(i)
+    }
+
+  lazy private val dijkstraMemo: mutable.Map[String, RichDijkstra] = mutable.Map()
+
+  def dijkstraShortestPath =
+    dijkstraMemo.getOrElseUpdate("1.0", new RichDijkstra(_ => 1.0))
+
+  def dijkstraShortestPath(variable: String) =
+    dijkstraMemo.getOrElseUpdate(variable,
+      new RichDijkstra(_.getTurtleOrLinkVariable(variable).asInstanceOf[Double]))
+
+  class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
+    extends DijkstraShortestPath(self, functionToTransformer(weightFunction), true) {
 
     def meanLinkPathLength: Option[Double] = {
 
@@ -64,6 +81,7 @@ trait Algorithms {
       } yield sum.toDouble / pathSizes.size.toDouble
 
     }
+
   }
 
   lazy val betweennessCentrality = new BetweennessCentrality(this) with Ranker

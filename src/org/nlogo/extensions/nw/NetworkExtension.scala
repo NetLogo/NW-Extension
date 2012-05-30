@@ -24,6 +24,7 @@ class NetworkExtension extends DefaultClassManager
     add("link-path", LinkPath)
     
     // New:
+    add("weighted-link-distance", WeightedLinkDistance)
     add("set-snapshot", Snapshot)
     add("betweenness-centrality", BetweennessCentralityPrim)
     add("eigenvector-centrality", EigenvectorCentralityPrim)
