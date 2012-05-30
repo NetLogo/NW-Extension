@@ -52,6 +52,14 @@ object NetworkExtensionUtil {
       if (isLinkBreed) agentSet
       else throw new ExtensionException(
         I18N.errors.get("org.nlogo.prim.etc.$common.expectedLastInputToBeLinkBreed"))
+    def requireDirectedLinkBreed =
+      if (isLinkBreed && agentSet.isDirected) agentSet
+      else throw new ExtensionException(
+        I18N.errors.get("Expected input to be a directed link breed"))
+    def requireUndirectedLinkBreed =
+      if (isLinkBreed && !agentSet.isDirected) agentSet
+      else throw new ExtensionException(
+        I18N.errors.get("Expected input to be an undirected link breed"))
   }
 }
 
