@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/NetLogo"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="lib" path="collections-generic-4.01.jar"/>
 	<classpathentry kind="lib" path="colt-1.2.0.jar"/>
-	<classpathentry kind="lib" path="concurrent-1.3.4.jar"/>
 	<classpathentry kind="lib" path="jung-algorithms-2.0.1.jar" sourcepath="/home/nicolas/git/NetLogo/extensions/network/jung-src/jung-algorithms-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="jung-api-2.0.1.jar" sourcepath="jung-src/jung-api-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="jung-graph-impl-2.0.1.jar" sourcepath="/home/nicolas/git/NetLogo/extensions/network/jung-src/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="jung-io-2.0.1.jar" sourcepath="jung-src/jung-io-2.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="jung-jai-2.0.1.jar"/>
-	<classpathentry kind="lib" path="jung-visualization-2.0.1.jar"/>
-	<classpathentry kind="lib" path="stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="wstx-asl-3.2.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="jgrapht-src"/>
+	<classpathentry kind="lib" path="/home/nicolas/git/NetLogo/NetLogo.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
