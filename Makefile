@@ -29,7 +29,7 @@ nw.zip: nw.jar
 	cp -rp nw.jar nw.jar.pack.gz README.md Makefile src manifest.txt tests.txt nw
 	zip -rv nw.zip nw
 	rm -rf nw
-	
+
 jung-api-2.0.1.jar jung-api-2.0.1.jar.pack.gz:
 	curl -f -S 'http://search.maven.org/remotecontent?filepath=net/sf/jung/jung-api/2.0.1/jung-api-2.0.1.jar' -o jung-api-2.0.1.jar
 	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jung-api-2.0.1.jar.pack.gz jung-api-2.0.1.jar
