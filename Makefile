@@ -19,7 +19,7 @@ JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorit
 
 nw.jar nw.jar.pack.gz: $(SRCS) manifest.txt Makefile $(JARS) $(addsuffix .pack.gz, $(JARS))
 	mkdir -p classes
-	$(SCALA_HOME)/bin/scalac -deprecation -unchecked -encoding us-ascii -classpath $(NETLOGO)/NetLogo.jar$(COLON)$(JARSPATH) -d classes $(SRCS)
+	$(SCALA_HOME)/bin/scalac -deprecation -unchecked -encoding us-ascii -classpath $(NETLOGO)/NetLogoLite.jar$(COLON)$(JARSPATH) -d classes $(SRCS)
 	jar cmf manifest.txt nw.jar -C classes .
 	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip nw.jar.pack.gz nw.jar
 
