@@ -14,8 +14,8 @@ else
 endif
 
 SRCS=$(wildcard src/org/nlogo/extensions/nw/*.scala src/org/nlogo/extensions/nw/nl/jung/*.scala src/org/nlogo/extensions/nw/nl/jgrapht/*.scala)
-JARS=jung-api-2.0.1.jar jung-graph-impl-2.0.1.jar jung-algorithms-2.0.1.jar collections-generic-4.01.jar colt-1.2.0.jar jung-io-2.0.1.jar jgrapht-jdk1.6.jar
-JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorithms-2.0.1.jar$(COLON)collections-generic-4.01.jar$(COLON)colt-1.2.0.jar$(COLON)jung-io-2.0.1.jar$(COLON)jgrapht-jdk1.6.jar
+JARS=jung-api-2.0.1.jar jung-graph-impl-2.0.1.jar jung-algorithms-2.0.1.jar collections-generic-4.01.jar colt-1.2.0.jar jung-io-2.0.1.jar jgrapht-jdk1.6-0.8.3.jar
+JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorithms-2.0.1.jar$(COLON)collections-generic-4.01.jar$(COLON)colt-1.2.0.jar$(COLON)jung-io-2.0.1.jar$(COLON)jgrapht-jdk1.6-0.8.3.jar
 
 nw.jar nw.jar.pack.gz: $(SRCS) manifest.txt Makefile $(JARS) $(addsuffix .pack.gz, $(JARS))
 	mkdir -p classes
@@ -48,10 +48,6 @@ colt-1.2.0.jar colt-1.2.0.jar.pack.gz:
 jung-io-2.0.1.jar jung-io-2.0.1.jar.pack.gz:
 	curl -f -S 'http://search.maven.org/remotecontent?filepath=net/sf/jung/jung-io/2.0.1/jung-io-2.0.1.jar' -o jung-io-2.0.1.jar
 	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jung-io-2.0.1.jar.pack.gz jung-io-2.0.1.jar
-jgrapht-jdk1.6.jar jgrapht-jdk1.6.jar.pack.gz:
-	curl -f -S 'http://ccl.northwestern.edu/devel/jgrapht-jdk1.6.jar' -o jgrapht-jdk1.6.jar
-	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jgrapht-jdk1.6.jar.pack.gz jgrapht-jdk1.6.jar
-<<<<<<< HEAD
-	
-=======
->>>>>>> adcd826a397873bd00c87cf81d5d4a5b42e98534
+jgrapht-jdk1.6-0.8.3.jar jgrapht-jdk1.6-0.8.3.jar.pack.gz:
+	curl -f -S 'http://ccl.northwestern.edu/devel/jgrapht-jdk1.6-0.8.3.jar' -o jgrapht-jdk1.6-0.8.3.jar
+	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jgrapht-jdk1.6-0.8.3.jar.pack.gz jgrapht-jdk1.6-0.8.3.jar
