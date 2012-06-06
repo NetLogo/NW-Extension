@@ -3,8 +3,8 @@ package org.nlogo.extensions.nw.nl.jung
 import scala.Array.canBuildFrom
 import scala.collection.JavaConverters.asScalaBufferConverter
 
-import org.nlogo.api.ScalaConversions.toRichAny
-import org.nlogo.api.ScalaConversions.toRichSeq
+import org.nlogo.api.ScalaConversions.toLogoList
+import org.nlogo.api.ScalaConversions.toLogoObject
 import org.nlogo.api.Syntax.AgentsetType
 import org.nlogo.api.Syntax.BooleanType
 import org.nlogo.api.Syntax.CommandTaskType
@@ -50,69 +50,60 @@ trait Primitives {
     override def getSyntax = reporterSyntax(
       Array(NumberType, NumberType, NumberType),
       ListType)
-    override def report(args: Array[Argument], context: Context) = {
-      getGraph(context).asJungGraph
+    override def report(args: Array[Argument], context: Context) =
+      toLogoList(getGraph(context).asJungGraph
         .kMeansClusterer
         .clusters(
           nbClusters = args(0).getIntValue,
           maxIterations = args(1).getIntValue,
-          convergenceThreshold = args(2).getDoubleValue)
-        .toLogoList
-    }
+          convergenceThreshold = args(2).getDoubleValue))
   }
 
   object BicomponentClusters extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) = {
-      getGraph(context).asUndirectedJungGraph
+    override def report(args: Array[Argument], context: Context) =
+      toLogoList(getGraph(context).asUndirectedJungGraph
         .bicomponentClusterer
-        .clusters
-        .toLogoList
-    }
+        .clusters)
   }
 
   object WeakComponentClusters extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) = {
-      getGraph(context).asUndirectedJungGraph
+    override def report(args: Array[Argument], context: Context) =
+      toLogoList(getGraph(context).asUndirectedJungGraph
         .weakComponentClusterer
-        .clusters
-        .toLogoList
-    }
+        .clusters)
   }
 
   object BetweennessCentralityPrim extends DefaultReporter {
-    override def getSyntax = reporterSyntax(NumberType, agentClassString = "-T-L")
+    override def getSyntax = reporterSyntax(NumberType, "-T-L")
     override def report(args: Array[Argument], context: Context) =
-      getGraph(context).asJungGraph
+      toLogoObject(getGraph(context).asJungGraph
         .betweennessCentrality
-        .get(context.getAgent)
-        .toLogoObject
+        .get(context.getAgent))
   }
 
   object EigenvectorCentralityPrim extends DefaultReporter {
-    override def getSyntax = reporterSyntax(NumberType, agentClassString = "-T--")
+    override def getSyntax = reporterSyntax(NumberType, "-T--")
     override def report(args: Array[Argument], context: Context) =
-      getGraph(context).asJungGraph
+      Double.box(getGraph(context).asJungGraph
         .eigenvectorCentrality
-        .getVertexScore(context.getAgent.asInstanceOf[Turtle])
-        .toLogoObject
+        .getVertexScore(context.getAgent.asInstanceOf[Turtle]))
   }
 
   object ClosenessCentralityPrim extends DefaultReporter {
-    override def getSyntax = reporterSyntax(NumberType, agentClassString = "-T--")
+    override def getSyntax = reporterSyntax(NumberType, "-T--")
     override def report(args: Array[Argument], context: Context) =
-      getGraph(context).asJungGraph
+      Double.box(getGraph(context).asJungGraph
         .closenessCentrality
-        .getVertexScore(context.getAgent.asInstanceOf[Turtle])
-        .toLogoObject
+        .getVertexScore(context.getAgent.asInstanceOf[Turtle]))
   }
 
   object LinkPath extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType),
       ListType,
-      agentClassString = "-T--")
+      "-T--")
     override def report(args: Array[Argument], context: Context): AnyRef = {
       val source = context.getAgent.asInstanceOf[Turtle]
       val target = args(0).getAgent.asInstanceOf[Turtle]
@@ -138,14 +129,14 @@ trait Primitives {
     override def getSyntax = reporterSyntax(
       Array(TurtleType),
       NumberType | BooleanType,
-      agentClassString = "-T--")
+      "-T--")
     override def report(args: Array[Argument], context: Context): AnyRef = {
       val source = context.getAgent.asInstanceOf[Turtle]
       val target = args(0).getAgent.asInstanceOf[Turtle]
       val path = getGraph(context).asJungGraph
         .dijkstraShortestPath
         .getPath(source, target)
-      Option(path.size).filterNot(0==).getOrElse(false).toLogoObject
+      toLogoObject(Option(path.size).filterNot(0==).getOrElse(false))
     }
   }
 
@@ -153,7 +144,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(
       Array(TurtleType, StringType),
       NumberType | BooleanType,
-      agentClassString = "-T--")
+      "-T--")
     override def report(args: Array[Argument], context: Context): AnyRef = {
       val source = context.getAgent.asInstanceOf[Turtle]
       val target = args(0).getAgent.asInstanceOf[Turtle]
@@ -163,11 +154,10 @@ trait Primitives {
         .getPath(source, target)
         .asScala
         .map(_.getTurtleOrLinkVariable(weightVariable).asInstanceOf[Double])
-      Option(linkWeights)
+      toLogoObject(Option(linkWeights)
         .filterNot(_.size == 0)
         .map(_.sum)
-        .getOrElse(false)
-        .toLogoObject
+        .getOrElse(false))
     }
   }
 
@@ -255,7 +245,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(
       Array(NumberType),
       TurtlesetType,
-      agentClassString = "-T--")
+      "-T--")
     override def report(args: Array[Argument], context: Context) = {
       val graph = getGraph(context).asJungGraph
       val source = context.getAgent.asInstanceOf[Turtle]
