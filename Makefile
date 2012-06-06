@@ -50,4 +50,5 @@ jung-io-2.0.1.jar jung-io-2.0.1.jar.pack.gz:
 	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jung-io-2.0.1.jar.pack.gz jung-io-2.0.1.jar
 jgrapht-jdk1.6.jar jgrapht-jdk1.6.jar.pack.gz:
 	curl -f -S 'http://ccl.northwestern.edu/devel/jgrapht-jdk1.6.jar' -o jgrapht-jdk1.6.jar
-	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jung-io-2.0.1.jar.pack.gz jung-io-2.0.1.jar
+	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jgrapht-jdk1.6.jar.pack.gz jgrapht-jdk1.6.jar
+	
