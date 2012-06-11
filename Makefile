@@ -14,8 +14,8 @@ else
 endif
 
 SRCS=$(wildcard src/org/nlogo/extensions/nw/*.scala src/org/nlogo/extensions/nw/nl/jung/*.scala src/org/nlogo/extensions/nw/nl/jgrapht/*.scala)
-JARS=jung-api-2.0.1.jar jung-graph-impl-2.0.1.jar jung-algorithms-2.0.1.jar collections-generic-4.01.jar colt-1.2.0.jar jung-io-2.0.1.jar jgrapht-jdk1.6-0.8.3.jar
-JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorithms-2.0.1.jar$(COLON)collections-generic-4.01.jar$(COLON)colt-1.2.0.jar$(COLON)jung-io-2.0.1.jar$(COLON)jgrapht-jdk1.6-0.8.3.jar
+JARS=jung-api-2.0.1.jar jung-graph-impl-2.0.1.jar jung-algorithms-2.0.2-nlfork-0.1.jar collections-generic-4.01.jar colt-1.2.0.jar jung-io-2.0.1.jar jgrapht-jdk1.6-0.8.3.jar
+JARSPATH=jung-api-2.0.1.jar$(COLON)jung-graph-impl-2.0.1.jar$(COLON)jung-algorithms-2.0.2-nlfork-0.1.jar$(COLON)collections-generic-4.01.jar$(COLON)colt-1.2.0.jar$(COLON)jung-io-2.0.1.jar$(COLON)jgrapht-jdk1.6-0.8.3.jar
 
 nw.jar nw.jar.pack.gz: $(SRCS) manifest.txt Makefile $(JARS) $(addsuffix .pack.gz, $(JARS))
 	mkdir -p classes
@@ -36,9 +36,9 @@ jung-api-2.0.1.jar jung-api-2.0.1.jar.pack.gz:
 jung-graph-impl-2.0.1.jar jung-graph-impl-2.0.1.jar.pack.gz: 
 	curl -f -S 'http://search.maven.org/remotecontent?filepath=net/sf/jung/jung-graph-impl/2.0.1/jung-graph-impl-2.0.1.jar' -o jung-graph-impl-2.0.1.jar
 	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jung-graph-impl-2.0.1.jar.pack.gz jung-graph-impl-2.0.1.jar
-jung-algorithms-2.0.1.jar jung-algorithms-2.0.1.jar.pack.gz:
-	curl -f -S 'http://search.maven.org/remotecontent?filepath=net/sf/jung/jung-algorithms/2.0.1/jung-algorithms-2.0.1.jar' -o jung-algorithms-2.0.1.jar
-	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jung-algorithms-2.0.1.jar.pack.gz jung-algorithms-2.0.1.jar
+jung-algorithms-2.0.2-nlfork-0.1.jar jung-algorithms-2.0.2-nlfork-0.1.jar.pack.gz: 
+	curl -f -S 'http://ccl.northwestern.edu/devel/jung-algorithms-2.0.2-nlfork-0.1.jar' -o jung-algorithms-2.0.2-nlfork-0.1.jar
+	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip jung-algorithms-2.0.2-nlfork-0.1.jar.pack.gz jung-algorithms-2.0.2-nlfork-0.1.jar
 collections-generic-4.01.jar collections-generic-4.01.jar.pack.gz:
 	curl -f -S 'http://search.maven.org/remotecontent?filepath=net/sourceforge/collections/collections-generic/4.01/collections-generic-4.01.jar' -o collections-generic-4.01.jar
 	pack200 --modification-time=latest --effort=9 --strip-debug --no-keep-file-order --unknown-attribute=strip collections-generic-4.01.jar.pack.gz collections-generic-4.01.jar

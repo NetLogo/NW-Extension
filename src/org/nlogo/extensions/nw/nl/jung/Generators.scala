@@ -8,11 +8,6 @@ import edu.uci.ics.jung.algorithms.generators.random.ErdosRenyiGenerator
 import edu.uci.ics.jung.algorithms.generators.random.KleinbergSmallWorldGenerator
 import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
 
-/* TODO: VERY IMPORTANT!!! change RNG
- * The current generators use the java random number generator.
- * We need to fork Jung and modify them so we can plug in our own
- * Note: KleinbergSmallWorldGenerator is already OK
- */
 class Generator(
   turtleBreed: AgentSet,
   linkBreed: AgentSet) {
@@ -34,16 +29,19 @@ class Generator(
     val gen = new BarabasiAlbertGenerator(
       graphFactory, vertexFactory, edgeFactory,
       1, 1, new java.util.HashSet[DummyGraph.Vertex])
+    gen.setRandom(rng)
     while (gen.create.getVertexCount < nbVertices)
       gen.evolveGraph(1)
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed)
   }
 
-  def erdosRenyi(nbVertices: Int, connexionProbability: Double) =
-    DummyGraph.importToNetLogo(new ErdosRenyiGenerator(
+  def erdosRenyi(nbVertices: Int, connexionProbability: Double) = {
+    val gen = new ErdosRenyiGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       nbVertices, connexionProbability)
-      .create, turtleBreed, linkBreed)
+    gen.setRandom(rng)
+    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed)
+  }
 
   def kleinbergSmallWorld(rowCount: Int, colCount: Int,
     clusteringExponent: Double, isToroidal: Boolean) = {
