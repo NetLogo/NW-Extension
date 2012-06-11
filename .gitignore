@@ -1,4 +1,5 @@
 *~
+*.orig
 /classes
 /jung-src/
 /jgrapht-src/
