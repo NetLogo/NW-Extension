@@ -65,19 +65,22 @@ trait Algorithms {
 
     def meanLinkPathLength: Option[Double] = {
 
-      val pathSizes = for {
-        source <- nlg.turtles.toSeq // toSeq to make sure we don't get a set
+      // Build a seq of all optional lengths for paths from all nodes to all nodes,
+      // where None means that there is no path between two nodes
+      val pathLengths = for {
+        source <- nlg.turtles.toSeq // toSeq makes sure we don't get a set
         target <- nlg.turtles.toSeq
         if target != source
         path = getPath(source, target)
-        size = Option(path.size)
-      } yield size.filterNot(_ == 0)
+        weights = path.asScala.map(weightFunction(_).doubleValue)
+      } yield Option(weights).filterNot(_.isEmpty).map(_.sum)
 
       for {
-        sizes <- Option(pathSizes)
-        if sizes.nonEmpty // it was not an empty graph
-        sum <- sizes.fold(Option(0))(for (x <- _; y <- _) yield x + y)
-      } yield sum.toDouble / pathSizes.size.toDouble
+        allLengths <- Option(pathLengths)
+        if allLengths.nonEmpty // exclude the empty graph, returns None
+        if allLengths.forall(_.isDefined) // exclude disconnected graphs, returns None
+        lengths = allLengths.flatten
+      } yield lengths.sum / lengths.size.toDouble
 
     }
 

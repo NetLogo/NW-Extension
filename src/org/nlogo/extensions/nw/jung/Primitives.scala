@@ -113,10 +113,23 @@ trait Primitives {
   }
 
   object MeanLinkPathLength extends DefaultReporter {
-    override def getSyntax = reporterSyntax(ListType)
+    override def getSyntax = reporterSyntax(NumberType | BooleanType)
     override def report(args: Array[Argument], context: Context): AnyRef = {
       getGraph(context).asJungGraph
         .dijkstraShortestPath
+        .meanLinkPathLength
+        .map(Double.box)
+        .getOrElse(java.lang.Boolean.FALSE)
+    }
+  }
+
+  object WeightedMeanLinkPathLength extends DefaultReporter {
+    override def getSyntax = reporterSyntax(
+      Array(StringType),
+      NumberType | BooleanType)
+    override def report(args: Array[Argument], context: Context): AnyRef = {
+      getGraph(context).asJungGraph
+        .dijkstraShortestPath(args(0).getString.toUpperCase)
         .meanLinkPathLength
         .map(Double.box)
         .getOrElse(java.lang.Boolean.FALSE)
