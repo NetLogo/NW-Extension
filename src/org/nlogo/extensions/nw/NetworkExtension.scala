@@ -1,9 +1,14 @@
 package org.nlogo.extensions.nw
 
+import org.nlogo.api.Syntax.AgentsetType
+import org.nlogo.api.Syntax.commandSyntax
+import org.nlogo.api.Argument
 import org.nlogo.api.Context
 import org.nlogo.api.DefaultClassManager
+import org.nlogo.api.DefaultCommand
 import org.nlogo.api.PrimitiveManager
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 
 // TODO: program everything against the API, if possible
 
@@ -22,22 +27,22 @@ class NetworkExtension extends DefaultClassManager
     add("mean-link-path-length", MeanLinkPathLength)
     add("link-distance", LinkDistance)
     add("link-path", LinkPath)
-    
+
     // New:
-    add("set-snapshot", Snapshot)
-    
+    add("set-snapshot", SnapshotPrim)
+
     add("weighted-link-distance", WeightedLinkDistance)
     add("weighted-link-path", WeightedLinkPath)
     add("weighted-mean-link-path-length", WeightedMeanLinkPathLength)
-    
+
     add("betweenness-centrality", BetweennessCentralityPrim)
     add("eigenvector-centrality", EigenvectorCentralityPrim)
     add("closeness-centrality", ClosenessCentralityPrim)
-    
+
     add("k-means-clusters", KMeansClusters)
     add("bicomponent-clusters", BicomponentClusters)
     add("weak-component-clusters", WeakComponentClusters)
-    
+
     add("maximal-cliques", MaximalCliques)
     add("biggest-maximal-clique", BiggestMaximalClique)
 
@@ -53,9 +58,7 @@ class NetworkExtension extends DefaultClassManager
 
     add("save-matrix", SaveMatrix)
     add("load-matrix", LoadMatrix)
-    
-    
-    
+
   }
 }
 
@@ -75,5 +78,14 @@ trait HasGraph {
       _graph = Some(g)
       g
   }
-}
 
+  object SnapshotPrim extends DefaultCommand {
+    override def getSyntax = commandSyntax(
+      Array(AgentsetType, AgentsetType))
+    override def perform(args: Array[Argument], context: Context) {
+      val turtleSet = args(0).getAgentSet.requireTurtleSet
+      val linkSet = args(1).getAgentSet.requireLinkSet
+      setGraph(new StaticNetLogoGraph(linkSet, turtleSet))
+    }
+  }
+}
