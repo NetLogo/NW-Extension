@@ -17,7 +17,6 @@ import edu.uci.ics.jung.algorithms.importance.AbstractRanker
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality
 import edu.uci.ics.jung.algorithms.scoring.PageRank
 import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality
-import org.nlogo.extensions.nw.nl
 import org.nlogo.api.ExtensionException
 import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 
@@ -45,7 +44,7 @@ trait Ranker {
 }
 
 trait Algorithms {
-  self: nl.jung.Graph =>
+  self: Graph =>
 
   private def functionToTransformer[I, O](f: Function1[I, O]) =
     new org.apache.commons.collections15.Transformer[I, O] {
@@ -118,7 +117,7 @@ trait Algorithms {
 }
 
 trait UndirectedAlgorithms extends Algorithms {
-  self: nl.jung.UndirectedGraph =>
+  self: UndirectedGraph =>
   lazy val bicomponentClusterer = new BicomponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
   }
@@ -128,5 +127,5 @@ trait UndirectedAlgorithms extends Algorithms {
 }
 
 trait DirectedAlgorithms extends Algorithms {
-  self: nl.jung.DirectedGraph =>
+  self: DirectedGraph =>
 }

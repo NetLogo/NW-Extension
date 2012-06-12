@@ -8,13 +8,12 @@ import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetLogoGraph
-import org.nlogo.extensions.nw.nl
 
 import org.jgrapht
 
 trait Graph
   extends jgrapht.graph.AbstractGraph[Turtle, Link]
-  with nl.jgrapht.Algorithms {
+  with Algorithms {
   val nlg: NetLogoGraph
 
   override def getAllEdges(sourceVertex: Turtle, targetVertex: Turtle) =
@@ -64,14 +63,14 @@ trait Graph
 
 class UndirectedGraph(
   override val nlg: NetLogoGraph)
-  extends nl.jgrapht.Graph
+  extends Graph
   with jgrapht.UndirectedGraph[Turtle, Link] {
   override def degreeOf(vertex: Turtle) = nlg.allEdges(vertex).size
 }
 
 class DirectedGraph(
   override val nlg: NetLogoGraph)
-  extends nl.jgrapht.Graph
+  extends Graph
   with jgrapht.DirectedGraph[Turtle, Link] {
   if (!nlg.isDirected)
     throw new ExtensionException("link set must be directed")

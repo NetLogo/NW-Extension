@@ -9,8 +9,8 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 
 class NetworkExtension extends DefaultClassManager
   with HasGraph
-  with nl.jung.Primitives
-  with nl.jgrapht.Primitives {
+  with jung.Primitives
+  with jgrapht.Primitives {
 
   override def load(primManager: PrimitiveManager) {
     val add = primManager.addPrimitive _
