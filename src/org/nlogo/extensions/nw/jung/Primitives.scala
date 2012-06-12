@@ -34,16 +34,6 @@ import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 trait Primitives {
   self: NetworkExtension =>
 
-  object Snapshot extends DefaultCommand {
-    override def getSyntax = commandSyntax(
-      Array(AgentsetType, AgentsetType))
-    override def perform(args: Array[Argument], context: Context) {
-      val turtleSet = args(0).getAgentSet.requireTurtleSet
-      val linkSet = args(1).getAgentSet.requireLinkSet
-      setGraph(new StaticNetLogoGraph(linkSet, turtleSet))
-    }
-  }
-
   object KMeansClusters extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(NumberType, NumberType, NumberType),
