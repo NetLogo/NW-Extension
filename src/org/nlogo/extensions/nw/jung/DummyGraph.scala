@@ -1,4 +1,4 @@
-package org.nlogo.extensions.nw.nl.jung
+package org.nlogo.extensions.nw.jung
 
 import edu.uci.ics.jung
 import org.apache.commons.collections15.Factory

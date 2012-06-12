@@ -1,4 +1,4 @@
-package org.nlogo.extensions.nw.nl.jung
+package org.nlogo.extensions.nw.jung
 
 import org.nlogo.agent.ArrayAgentSet
 import scala.collection.JavaConverters.asScalaSetConverter

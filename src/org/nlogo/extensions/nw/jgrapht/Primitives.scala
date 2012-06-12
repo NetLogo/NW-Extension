@@ -1,4 +1,4 @@
-package org.nlogo.extensions.nw.nl.jgrapht
+package org.nlogo.extensions.nw.jgrapht
 
 import org.nlogo.api.ScalaConversions.toLogoList
 import org.nlogo.api.Syntax.LinksetType

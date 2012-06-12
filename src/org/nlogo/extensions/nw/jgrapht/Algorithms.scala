@@ -1,4 +1,4 @@
-package org.nlogo.extensions.nw.nl.jgrapht
+package org.nlogo.extensions.nw.jgrapht
 
 import org.nlogo.extensions.nw.nl
 import org.jgrapht.alg._

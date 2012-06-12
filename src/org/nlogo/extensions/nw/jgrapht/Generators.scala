@@ -1,4 +1,4 @@
-package org.nlogo.extensions.nw.nl.jgrapht
+package org.nlogo.extensions.nw.jgrapht
 
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
