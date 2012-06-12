@@ -1,13 +1,12 @@
 package org.nlogo.extensions.nw.jgrapht
 
-import org.nlogo.extensions.nw.nl
-import org.jgrapht.alg._
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import scala.collection.JavaConverters._
+import org.jgrapht.alg.BronKerboschCliqueFinder
 
 trait Algorithms {
-  self: nl.jgrapht.Graph =>
+  self: Graph =>
 
   lazy val bronKerboschCliqueFinder = new BronKerboschCliqueFinder(this) {
     private def toScala(cliques: java.util.Collection[java.util.Set[Turtle]]) =
@@ -22,5 +21,4 @@ trait Algorithms {
       }
     }
   }
-  // bamsix40
 }

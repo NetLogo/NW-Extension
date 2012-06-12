@@ -14,7 +14,6 @@ import org.nlogo.api.DefaultReporter
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtension
-import org.nlogo.extensions.nw.nl.jgrapht
 
 trait Primitives {
   self: NetworkExtension =>
@@ -39,7 +38,7 @@ trait Primitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      new jgrapht.Generator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .ringGraphGenerator(args(2).getIntValue)
@@ -50,7 +49,7 @@ trait Primitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      new jgrapht.Generator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .starGraphGenerator(args(2).getIntValue)
@@ -61,7 +60,7 @@ trait Primitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      new jgrapht.Generator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireUndirectedLinkBreed)
         .wheelGraphGenerator(args(2).getIntValue, true)
@@ -72,7 +71,7 @@ trait Primitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      new jgrapht.Generator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
         .wheelGraphGenerator(args(2).getIntValue, true)
@@ -83,7 +82,7 @@ trait Primitives {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType))
     override def perform(args: Array[Argument], context: Context) {
-      new jgrapht.Generator(
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
         .wheelGraphGenerator(args(2).getIntValue, false)

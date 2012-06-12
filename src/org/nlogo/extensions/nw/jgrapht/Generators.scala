@@ -1,15 +1,15 @@
 package org.nlogo.extensions.nw.jgrapht
 
-import org.nlogo.agent.AgentSet
-import org.nlogo.agent.Turtle
-import org.nlogo.agent.Link
-import org.jgrapht
-import org.jgrapht.generate.RingGraphGenerator
-import org.jgrapht.generate.WheelGraphGenerator
-import org.jgrapht.generate.StarGraphGenerator
-import org.jgrapht.VertexFactory
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.asScalaSetConverter
+
 import org.jgrapht.generate.GraphGenerator
+import org.jgrapht.generate.RingGraphGenerator
+import org.jgrapht.generate.StarGraphGenerator
+import org.jgrapht.generate.WheelGraphGenerator
+import org.jgrapht.VertexFactory
+import org.nlogo.agent.AgentSet
+
+import org.jgrapht
 
 class Vertex
 class Edge

@@ -8,23 +8,22 @@ import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetLogoGraph
-import org.nlogo.extensions.nw.nl
 
 import edu.uci.ics.jung.graph.util.EdgeType
 import edu.uci.ics.jung.graph.util.Pair
-import edu.uci.ics.jung
+import edu.uci.ics
 
 trait Graph
-  extends jung.graph.AbstractGraph[Turtle, Link]
-  with nl.jung.Algorithms {
+  extends ics.jung.graph.AbstractGraph[Turtle, Link]
+  with Algorithms {
 
   val nlg: NetLogoGraph
 
   def edgeType =
     if (nlg.isDirected)
-      jung.graph.util.EdgeType.DIRECTED
+      ics.jung.graph.util.EdgeType.DIRECTED
     else
-      jung.graph.util.EdgeType.UNDIRECTED
+      ics.jung.graph.util.EdgeType.UNDIRECTED
 
   override def getIncidentEdges(turtle: Turtle): Collection[Link] =
     nlg.validTurtle(turtle).map(nlg.allEdges(_).asJavaCollection).orNull
@@ -56,11 +55,11 @@ trait Graph
   def addEdge(link: Link, turtles: Pair[_ <: Turtle], edgeType: EdgeType): Boolean =
     throw sys.error("not implemented")
 
-  lazy val asSparseGraph: jung.graph.SparseGraph[Turtle, Link] = {
-    val g = new jung.graph.SparseGraph[Turtle, Link]()
+  lazy val asSparseGraph: ics.jung.graph.SparseGraph[Turtle, Link] = {
+    val g = new ics.jung.graph.SparseGraph[Turtle, Link]()
     nlg.turtles.foreach(g.addVertex)
     nlg.links.foreach { l =>
-      g.addEdge(l, new jung.graph.util.Pair(l.end1, l.end2), edgeType)
+      g.addEdge(l, new ics.jung.graph.util.Pair(l.end1, l.end2), edgeType)
     }
     g
   }
@@ -69,10 +68,10 @@ trait Graph
 
 class DirectedGraph(
   override val nlg: NetLogoGraph)
-  extends jung.graph.AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
-  with nl.jung.Graph
-  with nl.jung.DirectedAlgorithms
-  with jung.graph.DirectedGraph[Turtle, Link] {
+  extends ics.jung.graph.AbstractTypedGraph[Turtle, Link](EdgeType.DIRECTED)
+  with Graph
+  with DirectedAlgorithms
+  with ics.jung.graph.DirectedGraph[Turtle, Link] {
 
   if (!nlg.isDirected)
     throw new ExtensionException("link set must be directed")
@@ -102,10 +101,10 @@ class DirectedGraph(
 
 class UndirectedGraph(
   override val nlg: NetLogoGraph)
-  extends jung.graph.AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
-  with nl.jung.Graph
-  with nl.jung.UndirectedAlgorithms
-  with jung.graph.UndirectedGraph[Turtle, Link] {
+  extends ics.jung.graph.AbstractTypedGraph[Turtle, Link](EdgeType.UNDIRECTED)
+  with Graph
+  with UndirectedAlgorithms
+  with ics.jung.graph.UndirectedGraph[Turtle, Link] {
 
   override def getInEdges(turtle: Turtle) = getIncidentEdges(turtle)
   override def getPredecessors(turtle: Turtle) = getNeighbors(turtle: Turtle)
