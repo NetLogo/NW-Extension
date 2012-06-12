@@ -25,27 +25,34 @@ class NetworkExtension extends DefaultClassManager
     
     // New:
     add("set-snapshot", Snapshot)
+    
     add("weighted-link-distance", WeightedLinkDistance)
+    
     add("betweenness-centrality", BetweennessCentralityPrim)
     add("eigenvector-centrality", EigenvectorCentralityPrim)
     add("closeness-centrality", ClosenessCentralityPrim)
+    
     add("k-means-clusters", KMeansClusters)
     add("bicomponent-clusters", BicomponentClusters)
     add("weak-component-clusters", WeakComponentClusters)
+    
+    add("maximal-cliques", MaximalCliques)
+    add("biggest-maximal-clique", BiggestMaximalClique)
+
     add("generate-preferential-attachment", BarabasiAlbertGeneratorPrim)
     add("generate-random", ErdosRenyiGeneratorPrim)
     add("generate-small-world", KleinbergSmallWorldGeneratorPrim)
     add("generate-lattice-2d", Lattice2DGeneratorPrim)
-    add("save-matrix", SaveMatrix)
-    add("load-matrix", LoadMatrix)
-    add("maximal-cliques", MaximalCliques)
-    add("biggest-maximal-clique", BiggestMaximalClique)
-    
     add("generate-ring", RingGeneratorPrim)
     add("generate-star", StarGeneratorPrim)
     add("generate-wheel", WheelGeneratorPrim)
     add("generate-wheel-inward", WheelGeneratorInwardPrim)
     add("generate-wheel-outward", WheelGeneratorOutwardPrim)
+
+    add("save-matrix", SaveMatrix)
+    add("load-matrix", LoadMatrix)
+    
+    
     
   }
 }
