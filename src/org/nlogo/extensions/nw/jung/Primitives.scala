@@ -1,4 +1,4 @@
-package org.nlogo.extensions.nw.nl.jung
+package org.nlogo.extensions.nw.jung
 
 import scala.Array.canBuildFrom
 import scala.collection.JavaConverters.asScalaBufferConverter
