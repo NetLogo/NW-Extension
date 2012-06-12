@@ -31,6 +31,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
 import org.nlogo.extensions.nw.NetworkExtension
 import org.nlogo.extensions.nw.StaticNetLogoGraph
 import org.nlogo.nvm.ExtensionContext
+import org.nlogo.nvm
 
 import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 trait Primitives {
@@ -177,19 +178,22 @@ trait Primitives {
       Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType | OptionalType))
     override def perform(args: Array[Argument], context: Context) {
 
-      println(args.map(_.get).mkString("\n"))
-      val (newTurtles, temp) = new Generator(
+      val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .erdosRenyi(
           nbVertices = args(2).getIntValue,
           connexionProbability = args(3).getDoubleValue)
-        .duplicate
-      println(temp.toList)
-      println(args(4))
-      //      val command = args(4).getCommandTask.asInstanceOf[nvm.CommandTask]
+
+      val command = args(4).getCommandTask.asInstanceOf[nvm.CommandTask]
       val commandArgs = Array[AnyRef]()
       val nvmContext = context.asInstanceOf[ExtensionContext].nvmContext
+
+      for (turtle <- newTurtles) {
+        val newContext = new nvm.Context(nvmContext.job, turtle,
+          nvmContext.ip, nvmContext.activation)
+        command.perform(newContext, commandArgs)
+      }
 
     }
   }

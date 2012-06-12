@@ -10,6 +10,6 @@
 	<classpathentry kind="lib" path="jung-graph-impl-2.0.1.jar" sourcepath="/home/nicolas/git/NetLogo/extensions/network/jung-src/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="jung-io-2.0.1.jar" sourcepath="jung-src/jung-io-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="jgrapht-jdk1.6-0.8.3.jar"/>
-	<classpathentry kind="lib" path="/NetLogo-5.0.1/NetLogoLite.jar"/>
+	<classpathentry kind="lib" path="/NetLogo-5.0.1/NetLogoLite.jar" sourcepath="/NetLogo-5.0.1/src/main"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
