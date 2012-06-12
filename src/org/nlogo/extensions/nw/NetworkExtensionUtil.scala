@@ -14,6 +14,8 @@ import org.nlogo.api.Context
 import org.nlogo.api.TypeNames
 import org.nlogo.api.DefaultReporter
 import org.nlogo.api.Primitive
+import org.nlogo.nvm.ExtensionContext
+import org.nlogo.nvm
 
 object NetworkExtensionUtil {
   implicit def AgentSetToNetLogoAgentSet(agentSet: AgentSet) =
@@ -60,6 +62,17 @@ object NetworkExtensionUtil {
       if (isLinkBreed && !agentSet.isDirected) agentSet
       else throw new ExtensionException(
         I18N.errors.get("Expected input to be an undirected link breed"))
+  }
+  
+  def runCommandTaskForTurtles(turtles: TraversableOnce[Turtle], commandTaskArgument: Argument, context: Context) {
+    val command = commandTaskArgument.getCommandTask.asInstanceOf[nvm.CommandTask]
+    val emptyArgs = Array[AnyRef]()
+    val nvmContext = context.asInstanceOf[ExtensionContext].nvmContext
+    for (turtle <- turtles) {
+      val newContext = new nvm.Context(nvmContext.job, turtle,
+        nvmContext.ip, nvmContext.activation)
+      command.perform(newContext, emptyArgs)
+    }
   }
 }
 

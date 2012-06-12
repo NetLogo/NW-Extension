@@ -1,6 +1,5 @@
 package org.nlogo.extensions.nw.jung
 
-import scala.Array.canBuildFrom
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 import org.nlogo.api.ScalaConversions.toLogoList
@@ -11,7 +10,6 @@ import org.nlogo.api.Syntax.CommandTaskType
 import org.nlogo.api.Syntax.LinksetType
 import org.nlogo.api.Syntax.ListType
 import org.nlogo.api.Syntax.NumberType
-import org.nlogo.api.Syntax.OptionalType
 import org.nlogo.api.Syntax.StringType
 import org.nlogo.api.Syntax.TurtleType
 import org.nlogo.api.Syntax.TurtlesetType
@@ -28,10 +26,9 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
+import org.nlogo.extensions.nw.NetworkExtensionUtil.runCommandTaskForTurtles
 import org.nlogo.extensions.nw.NetworkExtension
 import org.nlogo.extensions.nw.StaticNetLogoGraph
-import org.nlogo.nvm.ExtensionContext
-import org.nlogo.nvm
 
 import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 trait Primitives {
@@ -164,45 +161,35 @@ trait Primitives {
 
   object BarabasiAlbertGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType))
+      Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
     override def perform(args: Array[Argument], context: Context) {
-      new Generator(
+      val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .barabasiAlbert(args(2).getIntValue)
+      runCommandTaskForTurtles(newTurtles, args(3), context)
     }
   }
 
   object ErdosRenyiGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType | OptionalType))
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType))
     override def perform(args: Array[Argument], context: Context) {
-
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .erdosRenyi(
           nbVertices = args(2).getIntValue,
           connexionProbability = args(3).getDoubleValue)
-
-      val command = args(4).getCommandTask.asInstanceOf[nvm.CommandTask]
-      val commandArgs = Array[AnyRef]()
-      val nvmContext = context.asInstanceOf[ExtensionContext].nvmContext
-
-      for (turtle <- newTurtles) {
-        val newContext = new nvm.Context(nvmContext.job, turtle,
-          nvmContext.ip, nvmContext.activation)
-        command.perform(newContext, commandArgs)
-      }
-
+      runCommandTaskForTurtles(newTurtles, args(4), context)
     }
   }
 
   object KleinbergSmallWorldGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType))
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandTaskType))
     override def perform(args: Array[Argument], context: Context) {
-      new Generator(
+      val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .kleinbergSmallWorld(
@@ -210,20 +197,22 @@ trait Primitives {
           colCount = args(3).getIntValue,
           clusteringExponent = args(4).getDoubleValue,
           isToroidal = args(5).getBooleanValue)
+      runCommandTaskForTurtles(newTurtles, args(6), context)
     }
   }
 
   object Lattice2DGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType))
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandTaskType))
     override def perform(args: Array[Argument], context: Context) {
-      new Generator(
+      val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .lattice2D(
           rowCount = args(2).getIntValue,
           colCount = args(3).getIntValue,
           isToroidal = args(4).getBooleanValue)
+      runCommandTaskForTurtles(newTurtles, args(5), context)
     }
   }
 
