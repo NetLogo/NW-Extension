@@ -44,7 +44,8 @@ trait Primitives {
         .clusters(
           nbClusters = args(0).getIntValue,
           maxIterations = args(1).getIntValue,
-          convergenceThreshold = args(2).getDoubleValue))
+          convergenceThreshold = args(2).getDoubleValue,
+          rng = context.getRNG))
   }
 
   object BicomponentClusters extends DefaultReporter {
@@ -185,7 +186,7 @@ trait Primitives {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .barabasiAlbert(args(2).getIntValue)
+        .barabasiAlbert(args(2).getIntValue, context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(3), context)
     }
   }
@@ -199,7 +200,8 @@ trait Primitives {
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .erdosRenyi(
           nbVertices = args(2).getIntValue,
-          connexionProbability = args(3).getDoubleValue)
+          connexionProbability = args(3).getDoubleValue,
+          rng = context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(4), context)
     }
   }
@@ -215,7 +217,8 @@ trait Primitives {
           rowCount = args(2).getIntValue,
           colCount = args(3).getIntValue,
           clusteringExponent = args(4).getDoubleValue,
-          isToroidal = args(5).getBooleanValue)
+          isToroidal = args(5).getBooleanValue,
+          rng = context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(6), context)
     }
   }
@@ -230,7 +233,8 @@ trait Primitives {
         .lattice2D(
           rowCount = args(2).getIntValue,
           colCount = args(3).getIntValue,
-          isToroidal = args(4).getBooleanValue)
+          isToroidal = args(4).getBooleanValue,
+          rng = context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(5), context)
     }
   }
@@ -248,7 +252,8 @@ trait Primitives {
       Matrix.load(
         filename = args(0).getString,
         turtleBreed = args(1).getAgentSet.requireTurtleBreed,
-        linkBreed = args(2).getAgentSet.requireLinkBreed)
+        linkBreed = args(2).getAgentSet.requireLinkBreed,
+        rng = context.getRNG)
     }
   }
 

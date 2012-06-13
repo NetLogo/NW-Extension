@@ -4,6 +4,7 @@ import edu.uci.ics.jung
 import org.apache.commons.collections15.Factory
 import org.nlogo.agent.AgentSet
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
+import java.util.Random
 
 object DummyGraph {
   class Vertex
@@ -26,13 +27,14 @@ object DummyGraph {
   def importToNetLogo(
     graph: jung.graph.Graph[Vertex, Edge],
     turtleBreed: AgentSet,
-    linkBreed: AgentSet) = {
+    linkBreed: AgentSet,
+    rng: Random) = {
     val w = turtleBreed.world
     val m = graph.getVertices.asScala.map { v =>
       v -> turtleBreed.world.createTurtle(
         turtleBreed,
-        w.mainRNG.nextInt(14), // color
-        w.mainRNG.nextInt(360)) // heading
+        rng.nextInt(14), // color
+        rng.nextInt(360)) // heading
     }.toMap
     graph.getEdges.asScala
       .map(graph.getEndpoints(_))

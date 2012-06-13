@@ -1,5 +1,6 @@
 package org.nlogo.extensions.nw
 
+import org.nlogo.api
 import org.nlogo.api.Dump
 import org.nlogo.api.Agent
 import org.nlogo.api.AgentSet
@@ -63,7 +64,7 @@ object NetworkExtensionUtil {
       else throw new ExtensionException(
         I18N.errors.get("Expected input to be an undirected link breed"))
   }
-  
+
   def runCommandTaskForTurtles(turtles: TraversableOnce[Turtle], commandTaskArgument: Argument, context: Context) {
     val command = commandTaskArgument.getCommandTask.asInstanceOf[nvm.CommandTask]
     val emptyArgs = Array[AnyRef]()

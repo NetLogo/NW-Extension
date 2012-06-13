@@ -13,6 +13,7 @@ import org.nlogo.api.Argument
 import org.nlogo.api.Context
 import org.nlogo.api.DefaultCommand
 import org.nlogo.api.DefaultReporter
+import org.nlogo.nvm
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtension
@@ -33,7 +34,7 @@ trait Primitives {
     override def report(args: Array[Argument], context: Context) =
       toLogoList(getGraph(context).asJGraphTGraph
         .bronKerboschCliqueFinder
-        .biggestClique)
+        .biggestClique(context.getRNG))
   }
 
   object RingGeneratorPrim extends DefaultCommand {
@@ -43,7 +44,7 @@ trait Primitives {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .ringGraphGenerator(args(2).getIntValue)
+        .ringGraphGenerator(args(2).getIntValue, context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(3), context)
     }
   }
@@ -55,7 +56,7 @@ trait Primitives {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .starGraphGenerator(args(2).getIntValue)
+        .starGraphGenerator(args(2).getIntValue, context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(3), context)
     }
   }
@@ -67,7 +68,7 @@ trait Primitives {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireUndirectedLinkBreed)
-        .wheelGraphGenerator(args(2).getIntValue, true)
+        .wheelGraphGenerator(args(2).getIntValue, true, context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(3), context)
     }
   }
@@ -79,7 +80,7 @@ trait Primitives {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
-        .wheelGraphGenerator(args(2).getIntValue, true)
+        .wheelGraphGenerator(args(2).getIntValue, true, context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(3), context)
     }
   }
@@ -91,7 +92,7 @@ trait Primitives {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
-        .wheelGraphGenerator(args(2).getIntValue, false)
+        .wheelGraphGenerator(args(2).getIntValue, false, context.getRNG)
       runCommandTaskForTurtles(newTurtles, args(3), context)
     }
   }
