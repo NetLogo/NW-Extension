@@ -36,7 +36,6 @@ trait NetLogoGraph {
 
   protected val linkSet: AgentSet
   val world = linkSet.world
-  val rng = world.mainRNG
 
   lazy val isDirected = links.forall(_.isDirectedLink)
 

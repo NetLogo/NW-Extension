@@ -19,6 +19,7 @@ import edu.uci.ics.jung.algorithms.scoring.PageRank
 import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality
 import org.nlogo.api.ExtensionException
 import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
+import java.util.Random
 
 // TODO: catch exceptions from Jung and give meaningful error messages 
 
@@ -95,12 +96,12 @@ trait Algorithms {
   }
 
   lazy val kMeansClusterer = new KMeansClusterer[Turtle] {
-    rand = self.nlg.world.mainRNG
     lazy val locations =
       self.nlg.turtles.map(t => t -> Array(t.xcor, t.ycor)).toMap.asJava
 
-    def clusters(nbClusters: Int, maxIterations: Int, convergenceThreshold: Double) =
+    def clusters(nbClusters: Int, maxIterations: Int, convergenceThreshold: Double, rng: Random) =
       if (nlg.turtles.nonEmpty) {
+        rand = rng
         setMaxIterations(maxIterations)
         setConvergenceThreshold(convergenceThreshold)
         cluster(locations, nbClusters).asScala.map(_.keySet.asScala.toSeq).toSeq
