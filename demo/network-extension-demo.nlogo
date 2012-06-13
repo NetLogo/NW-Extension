@@ -8,12 +8,6 @@ globals [
   highlighted-subgraph
 ]
 
-to-report get-link-breed
-  report ifelse-value directed
-    [ dirlinks ]
-    [ unlinks ]
-end
-
 to-report get-links-to-use
   report ifelse-value (links-to-use = "directed")
     [ dirlinks ]
@@ -23,12 +17,17 @@ to-report get-links-to-use
     ]
 end
 
+to-report directed
+  report (links-to-use = "directed")
+end
+
 to radial
   layout-radial turtles links (max-one-of turtles [ count my-links ] )
 end
 
 to spring
   layout-spring turtles links spring-constant spring-length repulsion-constant
+  display
 end
 
 to circle
@@ -143,39 +142,39 @@ end
 ; Generators --------------------------------------
 
 to preferential-attachment
-  nw:generate-preferential-attachment turtles get-link-breed nb-nodes []
+  nw:generate-preferential-attachment turtles get-links-to-use nb-nodes []
   update-plots
 end
 
 to ring
-  nw:generate-ring turtles get-link-breed nb-nodes []
+  nw:generate-ring turtles get-links-to-use nb-nodes []
   update-plots
 end  
 
 to star
-  nw:generate-star turtles get-link-breed nb-nodes []
+  nw:generate-star turtles get-links-to-use nb-nodes []
   update-plots
 end  
 
 to wheel
-  if directed and wheel-inward [ nw:generate-wheel-inward turtles get-link-breed nb-nodes [] ]
-  if directed and not wheel-inward [ nw:generate-wheel-outward turtles get-link-breed nb-nodes [] ]
-  if not directed [ nw:generate-wheel turtles get-link-breed nb-nodes [] ]
+  if directed and wheel-inward [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ]
+  if directed and not wheel-inward [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ]
+  if not directed [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ]
   update-plots
 end  
 
 to lattice-2d
-  nw:generate-lattice-2d turtles get-link-breed nb-rows nb-cols wrap []
+  nw:generate-lattice-2d turtles get-links-to-use nb-rows nb-cols wrap []
   update-plots
 end
 
 to small-world
-  nw:generate-small-world turtles get-link-breed nb-rows-sw nb-cols-sw clustering-exp is-toroidal []
+  nw:generate-small-world turtles get-links-to-use nb-rows-sw nb-cols-sw clustering-exp is-toroidal []
   update-plots
 end
 
 to generate-random
-  nw:generate-random turtles get-link-breed nb-nodes-er connexion-prob []
+  nw:generate-random turtles get-links-to-use nb-nodes-er connexion-prob []
   update-plots
 end
 
@@ -186,7 +185,7 @@ to save
 end
 
 to load
-  nw:load-matrix "matrix.txt" turtles get-link-breed
+  nw:load-matrix "matrix.txt" turtles get-links-to-use
 end
 
 to mean-link-path-length
@@ -208,8 +207,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-1
-1
+0
+0
 1
 -16
 16
@@ -323,7 +322,7 @@ spring-length
 spring-length
 1
 10
-2
+10
 0.5
 1
 NIL
@@ -338,7 +337,7 @@ repulsion-constant
 repulsion-constant
 0
 10
-2
+7.5
 0.5
 1
 NIL
@@ -353,7 +352,7 @@ nb-nodes
 nb-nodes
 0
 1000
-20
+22
 1
 1
 NIL
@@ -368,7 +367,7 @@ nb-clusters
 nb-clusters
 2
 14
-4
+3
 1
 1
 NIL
@@ -472,7 +471,7 @@ nb-rows
 nb-rows
 0
 20
-2
+7
 1
 1
 NIL
@@ -487,7 +486,7 @@ nb-cols
 nb-cols
 0
 20
-2
+8
 1
 1
 NIL
@@ -500,7 +499,7 @@ SWITCH
 423
 wrap
 wrap
-1
+0
 1
 -1000
 
@@ -557,7 +556,7 @@ nb-nodes-er
 nb-nodes-er
 0
 100
-2
+31
 1
 1
 NIL
@@ -572,7 +571,7 @@ connexion-prob
 connexion-prob
 0
 1
-1
+0.82
 0.01
 1
 NIL
@@ -667,17 +666,6 @@ NIL
 NIL
 NIL
 1
-
-SWITCH
-90
-70
-207
-103
-directed
-directed
-0
-1
--1000
 
 BUTTON
 95
@@ -783,7 +771,7 @@ CHOOSER
 links-to-use
 links-to-use
 "all links" "undirected" "directed"
-1
+2
 
 BUTTON
 935
@@ -985,7 +973,7 @@ SWITCH
 248
 wheel-inward
 wheel-inward
-0
+1
 1
 -1000
 
