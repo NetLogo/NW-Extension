@@ -11,6 +11,21 @@ This extension is at a very early stage of development.  Users are invited to ex
 The source code for the extension is currently hosted online at
 https://github.com/nicolaspayette/netlogo-network.
 
+## Changes
+
+Compared to the current extension, this new version offers:
+
+* Improved performance and functionality of existing features: pathfinding primitives are now faster and allow taking edge weights into account.
+* Centrality measures: calculate the betweenness centrality, closeness centrality and eigenvector centrality of the nodes in your network.
+* Clusterers: find bicomponent and weak component clusters in your network.
+* Clique finder: find all maximal cliques or the biggest maximal clique in your network.
+* Generators: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
+* Import/Export: save and load your networks using plain text matrix files.
+
+There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import/export to other formats like GraphML and Pajek, some new network layouts, and more algorithms and measures.
+
+To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network librairies: **Jung** (http://jung.sourceforge.net/) and **JGraphT** (https://github.com/jgrapht/jgrapht).
+
 ## Usage
 
 
