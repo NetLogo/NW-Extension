@@ -119,19 +119,19 @@ The `in-link-radius` form works with undirected links.  The other two forms work
 Example: 
 
     clear-all
-    create-bankers 5
-    ask banker 0 [ create-friendship-with banker 1 ]
-    ask banker 0 [ create-friendship-with banker 2 ]
-    ask banker 1 [ create-friendship-with banker 3 ]
-    ask banker 2 [ create-friendship-with banker 4 ]
-    nw:set-snapshot bankers friendships
-    ask banker 0 [
+    create-turtles 5
+    ask turtle 0 [ create-link-with turtle 1 ]
+    ask turtle 0 [ create-link-with turtle 2 ]
+    ask turtle 1 [ create-link-with turtle 3 ]
+    ask turtle 2 [ create-link-with turtle 4 ]
+    nw:set-snapshot turtles links
+    ask turtle 0 [
       show sort nw:in-link-radius 1
     ]
 
 Will output:
 
-    (banker 0): [(banker 1) (banker 2)]
+    (turtle 0): [(turtle 1) (turtle 2)]
 
 #### link-distance, weighted-link-distance
 `nw:link-distance`
