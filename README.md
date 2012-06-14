@@ -28,7 +28,11 @@ To provide all this functionality, the Network Extension is relying on two exter
 
 ## Usage
 
+The first thing that one needs to understand in order to work with the network extension is how to tell the extension _which_ network to work with.
 
+Now wouldn't it be better if you _didn't_ have to take a new snapshot everytime you want to do something with a network? Yes, indeed, it would. And eventually, it will be the case. What we have in mind for the moment is something like a `set-context` primitive, which you would use to tell the extension that "in general, these are the turtles and links I want to work with."
+
+The reason we did not do it like this right away is that there currently is no efficient way to ask NetLogo if turtles and links have been created or deleted since a previous function call. If we can include this in a future version of NetLogo, we will probably deprecate `set-snapshot` and provide the much more convenient `set-context` instead.
 
 ## Primitives
 
