@@ -177,3 +177,5 @@ The first versions of the network primitives were written by Forrest Stonedahl. 
 [![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
 
 The NetLogo network extension is in the public domain.  To the extent possible under law, Uri Wilensky has waived all copyright and related or neighboring rights.
+
+[Jung](http://jung.sourceforge.net/) is [licensed under the BSD license](http://jung.sourceforge.net/license.txt) and [JGraphT](http://jgrapht.org/) is [licensed under the LGPL license](http://jgrapht.org/LGPL.html).
