@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="jung-algorithms-2.0.2-nlfork-0.1.jar" sourcepath="/jung-algorithms/src"/>
 	<classpathentry kind="lib" path="collections-generic-4.01.jar"/>
 	<classpathentry kind="lib" path="colt-1.2.0.jar"/>
-	<classpathentry kind="lib" path="jung-api-2.0.1.jar" sourcepath="jung-src/jung-api-2.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="jung-api-2.0.1.jar" sourcepath="/jung-api/src"/>
 	<classpathentry kind="lib" path="jung-graph-impl-2.0.1.jar" sourcepath="/home/nicolas/git/NetLogo/extensions/network/jung-src/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="jung-io-2.0.1.jar" sourcepath="/jung-io/src"/>
 	<classpathentry kind="lib" path="jgrapht-jdk1.6-0.8.3.jar"/>

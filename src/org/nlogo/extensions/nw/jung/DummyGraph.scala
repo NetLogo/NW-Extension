@@ -7,30 +7,44 @@ import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import java.util.Random
 
 object DummyGraph {
-  class Vertex
+  // TODO: the vertex id thing is a ugly hack to get around the fact that 
+  // Jung has no ordered SparseGraph (only ordered MultiGraphs). Ideally, 
+  // we would add a custom sorted graph. NP 2012-06-13
+  private var vertexIdCounter = 0L
+  case class Vertex(val id: Long)
   class Edge
   def edgeFactory: Factory[Edge] = new Factory[Edge]() {
     def create = new Edge
   }
   def vertexFactory: Factory[Vertex] = new Factory[Vertex]() {
-    def create = new Vertex
+    def create = {
+      vertexIdCounter += 1
+      new Vertex(vertexIdCounter)
+    }
   }
-  def factory: Factory[jung.graph.Graph[Vertex, Edge]] =
-    new Factory[jung.graph.Graph[Vertex, Edge]]() {
-      def create = new jung.graph.SparseGraph[Vertex, Edge]
-    }
-  def undirectedFactory: Factory[jung.graph.UndirectedGraph[Vertex, Edge]] =
-    new Factory[jung.graph.UndirectedGraph[Vertex, Edge]]() {
-      def create = new jung.graph.UndirectedSparseGraph[Vertex, Edge]
-    }
+
+  def factoryFor(linkBreed: AgentSet) =
+    if (linkBreed.isDirected)
+      new Factory[jung.graph.Graph[Vertex, Edge]]() {
+        def create = new jung.graph.DirectedSparseGraph[Vertex, Edge]
+      }
+    else
+      new Factory[jung.graph.Graph[Vertex, Edge]]() {
+        def create = new jung.graph.UndirectedSparseGraph[Vertex, Edge]
+      }
+
+  def directedFactory = jung.graph.DirectedSparseGraph.getFactory[Vertex, Edge]
+  def undirectedFactory = jung.graph.UndirectedSparseGraph.getFactory[Vertex, Edge]
 
   def importToNetLogo(
     graph: jung.graph.Graph[Vertex, Edge],
     turtleBreed: AgentSet,
     linkBreed: AgentSet,
-    rng: Random) = {
+    rng: Random,
+    sorted: Boolean = false) = {
     val w = turtleBreed.world
-    val m = graph.getVertices.asScala.map { v =>
+    val vs = graph.getVertices.asScala
+    val m = (if (sorted) vs.toSeq.sortBy(_.id) else vs).map { v =>
       v -> turtleBreed.world.createTurtle(
         turtleBreed,
         rng.nextInt(14), // color
