@@ -28,7 +28,7 @@ To provide all this functionality, the Network Extension is relying on two exter
 
 ## Usage
 
-The first thing that one needs to understand in order to work with the network extension is how to tell the extension _which_ network to work with. Consider the following situation:
+The first thing that one needs to understand in order to work with the network extension is how to tell the extension _which_ network to work with. Consider the following example situation:
 
     breed [ bankers banker ]
     breed [ clients client ]
@@ -40,7 +40,7 @@ Basically, you have bankers and clients. Clients can have accounts with bankers.
 
 Now it is possible that you want to consider this whole thing as one big network, but it seems more likely that you will only be interested in a subset of it. Maybe you want to consider all friendships, but maybe you want to consider only the friendship between bankers. After all, something having a very high centrality in the network of banker friendship is very different from having a high centrality in a network of client frienships.
 
-To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links between turtles of this set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-snapshot` primitive, which you must call prior to doing any operations on a network.
+To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-snapshot` primitive, which you must call _prior_ to doing any operations on a network.
 
 Some examples:
 
@@ -49,6 +49,16 @@ Some examples:
 - `nw:set-snapshot bankers friendships` will give you all the bankers, and only friendships between bankers.
 - `nw:set-snapshot bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
 - `nw:set-snapshot clients accounts` will give all the clients and accounts between each other, but since in our fictionnal example clients can only have accounts with bankers, this will be a completely disconnected network.
+
+Now one very important thing that you need to understand about `set-snapshot` is that, as its name suggests, it takes a static picture of the network at the time you call it. All subsequent network operations will use this static picture, _even if turtles or links have been created or died in the meantime_, until you call `set-snapshot` again.
+
+In pratice, this means that you will write code like:
+
+    nw:set-snapshot bankers friendships
+    ask bankers [
+      set size nw:closeness-centrality
+    ]
+
 
 
 
