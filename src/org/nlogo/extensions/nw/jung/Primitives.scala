@@ -67,7 +67,7 @@ trait Primitives {
   object BetweennessCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T-L")
     override def report(args: Array[Argument], context: Context) =
-      toLogoObject(getGraph(context).asJungGraph
+      Double.box(getGraph(context).asJungGraph
         .betweennessCentrality
         .get(context.getAgent))
   }
