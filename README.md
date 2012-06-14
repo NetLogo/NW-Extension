@@ -106,9 +106,11 @@ Note that if turtles and links are created or die, changes will **not** be refle
 
 #### in-link-radius, in-out-link-radius, in-in-link-radius
 
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-link-radius` _radius_
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-out-link-radius` _radius_
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-in-link-radius` _radius_
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-link-radius` _radius_ 
+
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-out-link-radius` _radius_ 
+
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-in-link-radius` _radius_ 
 
 Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
 
@@ -116,10 +118,20 @@ The `in-link-radius` form works with undirected links.  The other two forms work
 
 Example: 
 
+    clear-all
+    create-bankers 5
+    ask banker 0 [ create-friendship-with banker 1 ]
+    ask banker 0 [ create-friendship-with banker 2 ]
+    ask banker 1 [ create-friendship-with banker 3 ]
+    ask banker 2 [ create-friendship-with banker 4 ]
     nw:set-snapshot bankers friendships
-    ask one-of bankers [
-      show other nw:in-link-radius 5
+    ask banker 0 [
+      show sort nw:in-link-radius 1
     ]
+
+Will output:
+
+    (banker 0): [(banker 1) (banker 2)]
 
 #### link-distance, weighted-link-distance
 `nw:link-distance`
