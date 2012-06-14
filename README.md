@@ -38,7 +38,7 @@ The first thing that one needs to understand in order to work with the network e
 
 Basically, you have bankers and clients. Clients can have accounts with bankers. Bankers can probably have account with other bankers, and anyone can be friends with anyone.
 
-Now it is possible that you want to consider this whole thing as one big network, but it seems more likely that you will only be interested in a subset of it. Maybe you want to consider all friendships, but maybe you want to consider only the friendship between bankers. After all, something having a very high centrality in the network of banker friendship is very different from having a high centrality in a network of client frienships.
+Now it is possible that you want to consider this whole thing as one big network, but it seems more likely that you will only be interested in a subset of it. Maybe you want to consider all friendships, but you might also want to consider only the friendship between bankers. After all, something having a very high centrality in the network of banker friendship is very different from having a high centrality in a network of client frienships.
 
 To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-snapshot` primitive, which you must call _prior_ to doing any operations on a network.
 
@@ -59,8 +59,16 @@ In pratice, this means that you will write code like:
       set size nw:closeness-centrality
     ]
 
+This also means that you need to be careful:
 
+    nw:set-snapshot bankers friendships
+    create-bankers 1 ; creates a new banker after taking the snapshot
+    show nw:mean-path-lenght ; this is OK, it just won't take the new banker into account
+    ask bankers [
+      set size nw:closeness-centrality ; <-- THIS WILL FAIL FOR THE NEWLY CREATED BANKER
+    ]
 
+In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-link-path-length` in the example above, but if you try to ask the newly created banker for, e.g., it's closeness centrality, the extension will give you a runtime error.
 
 ### Future Usage
 
