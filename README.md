@@ -135,6 +135,11 @@ breed.
 
 Reports false unless paths exist between all pairs.
 
+### `nw:closeness-centrality`
+
+- intra-component closeness
+- reports 0 for isolates
+
 ## Transition guide
 
 
