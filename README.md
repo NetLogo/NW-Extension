@@ -105,9 +105,20 @@ Note that if turtles and links are created or die, changes will **not** be refle
 ### Path and Distance
 
 #### in-link-radius, in-out-link-radius, in-in-link-radius
-`nw:in-link-radius`
-`nw:in-out-link-radius`
-`nw:in-in-link-radius`
+![turtle](http://ccl.northwestern.edu/netlogo/docs/images/turtle.gif) `nw:in-link-radius` _radius_
+![turtle](http://ccl.northwestern.edu/netlogo/docs/images/turtle.gif) `nw:in-out-link-radius` _radius_
+![turtle](http://ccl.northwestern.edu/netlogo/docs/images/turtle.gif) `nw:in-in-link-radius` _radius_
+
+Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
+
+The `in-link-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
+
+Example: 
+
+    nw:set-snapshot bankers friendships
+    ask one-of bankers [
+      show other nw:in-link-radius 5
+    ]
 
 #### link-distance, weighted-link-distance
 `nw:link-distance`
