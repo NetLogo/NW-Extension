@@ -62,10 +62,10 @@ In pratice, this means that you will write code like:
 This also means that you need to be careful:
 
     nw:set-snapshot bankers friendships
-    create-bankers 1 ; creates a new banker after taking the snapshot
-    show nw:mean-path-lenght ; this is OK, it just won't take the new banker into account
+    create-bankers 1                    ; creates a new banker after taking the snapshot
+    show nw:mean-path-lenght            ; this is OK, it just won't take the new banker into account
     ask bankers [
-      set size nw:closeness-centrality ; <-- THIS WILL FAIL FOR THE NEWLY CREATED BANKER
+      set size nw:closeness-centrality  ; THIS WILL FAIL FOR THE NEWLY CREATED BANKER
     ]
 
 In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-link-path-length` in the example above, but if you try to ask the newly created banker for, e.g., it's closeness centrality, the extension will give you a runtime error.
