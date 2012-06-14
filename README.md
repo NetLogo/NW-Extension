@@ -4,7 +4,7 @@ This is a new, experimental, version of the Network Extension that is currently 
 
 This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network/blob/master/README.md#building)) or download it from ***PROVIDE DOWNLOAD LINK***.
 
-(For help with extensions in general, see the NetLogo User Manual.)
+(For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
 This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/nicolaspayette/netlogo-network/issues?state=open), but it should not be used for production code.
 
