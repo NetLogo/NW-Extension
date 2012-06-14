@@ -82,6 +82,14 @@ The reason we did not do it like this right away is that there currently is no e
 
 ## Primitives
 
+- [General](https://github.com/nicolaspayette/netlogo-network#general)
+- [Path and Distance](https://github.com/nicolaspayette/netlogo-network#path-and-distance)
+- [Centrality](https://github.com/nicolaspayette/netlogo-network#centrality)
+- [Clusterers](https://github.com/nicolaspayette/netlogo-network#clusterers)
+- [Cliques](https://github.com/nicolaspayette/netlogo-network#cliques)
+- [Generators](https://github.com/nicolaspayette/netlogo-network#generators)
+- [Import / Export](https://github.com/nicolaspayette/netlogo-network#import--export)
+
 ### General
 
 ### set-snapshot
