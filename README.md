@@ -63,7 +63,7 @@ This also means that you need to be careful:
 
     nw:set-snapshot bankers friendships
     create-bankers 1                    ; creates a new banker after taking the snapshot
-    show nw:mean-path-lenght            ; this is OK, it just won't take the new banker into account
+    show nw:mean-path-length            ; this is OK, it just won't take the new banker into account
     ask bankers [
       set size nw:closeness-centrality  ; THIS WILL FAIL FOR THE NEWLY CREATED BANKER
     ]
