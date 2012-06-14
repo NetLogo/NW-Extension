@@ -105,9 +105,10 @@ Note that if turtles and links are created or die, changes will **not** be refle
 ### Path and Distance
 
 #### in-link-radius, in-out-link-radius, in-in-link-radius
-![turtle](http://ccl.northwestern.edu/netlogo/docs/images/turtle.gif) `nw:in-link-radius` _radius_
-![turtle](http://ccl.northwestern.edu/netlogo/docs/images/turtle.gif) `nw:in-out-link-radius` _radius_
-![turtle](http://ccl.northwestern.edu/netlogo/docs/images/turtle.gif) `nw:in-in-link-radius` _radius_
+
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-link-radius` _radius_
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-out-link-radius` _radius_
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-in-link-radius` _radius_
 
 Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
 
