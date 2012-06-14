@@ -6,7 +6,7 @@ This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use 
 
 (For help with extensions in general, see the NetLogo User Manual.)
 
-This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find here on GitHub, but it should not be used for production code.
+This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/nicolaspayette/netlogo-network/issues?state=open), but it should not be used for production code.
 
 The source code for the extension is currently hosted online at
 https://github.com/nicolaspayette/netlogo-network.
@@ -22,9 +22,9 @@ Compared to the current extension, this new version offers:
 - **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
 - **Import/Export**: save and load your networks using plain text matrix files.
 
-There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import/export to other formats like GraphML and Pajek, some new network layouts, and more algorithms and measures.
+There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import/export to other formats like [GraphML](http://graphml.graphdrawing.org/) and [Pajek](http://pajek.imfm.si/doku.php), some new network layouts, and more algorithms and measures.
 
-To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network librairies: **Jung** (http://jung.sourceforge.net/) and **JGraphT** (https://github.com/jgrapht/jgrapht).
+To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network librairies: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
 
 ## Usage
 
