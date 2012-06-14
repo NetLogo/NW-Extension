@@ -19,7 +19,7 @@ object Matrix {
     DummyGraph.importToNetLogo(
       new jung.io.MatrixFile(
         null, // TODO: provide weight key (null means 1) 
-        DummyGraph.factory, DummyGraph.vertexFactory, DummyGraph.edgeFactory)
+        DummyGraph.factoryFor(linkBreed), DummyGraph.vertexFactory, DummyGraph.edgeFactory)
         .load(filename),
       turtleBreed, linkBreed, rng)
   }

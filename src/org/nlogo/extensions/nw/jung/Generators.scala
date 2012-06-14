@@ -12,7 +12,7 @@ class Generator(
   turtleBreed: AgentSet,
   linkBreed: AgentSet) {
 
-  lazy val graphFactory = DummyGraph.factory
+  lazy val graphFactory = DummyGraph.factoryFor(linkBreed)
   lazy val undirectedGraphFactory = DummyGraph.undirectedFactory
   lazy val edgeFactory = DummyGraph.edgeFactory
   lazy val vertexFactory = DummyGraph.vertexFactory
@@ -30,7 +30,7 @@ class Generator(
     gen.setRandom(rng)
     while (gen.create.getVertexCount < nbVertices)
       gen.evolveGraph(1)
-    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng)
+    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng, sorted = true)
   }
 
   def erdosRenyi(nbVertices: Int, connexionProbability: Double, rng: Random) = {

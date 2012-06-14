@@ -142,7 +142,11 @@ end
 ; Generators --------------------------------------
 
 to preferential-attachment
-  nw:generate-preferential-attachment turtles get-links-to-use nb-nodes []
+  nw:generate-preferential-attachment turtles get-links-to-use nb-nodes [
+    set color grey - 3
+    set label who
+  ]
+  
   update-plots
 end
 
@@ -221,9 +225,9 @@ ticks
 30.0
 
 BUTTON
-245
+270
 370
-425
+450
 403
 NIL
 betweenness
@@ -238,9 +242,9 @@ NIL
 1
 
 TEXTBOX
-245
+270
 135
-395
+420
 153
 Clusterers
 12
@@ -248,9 +252,9 @@ Clusterers
 1
 
 BUTTON
-245
+270
 160
-315
+340
 193
 NIL
 k-means
@@ -322,7 +326,7 @@ spring-length
 spring-length
 1
 10
-10
+3
 0.5
 1
 NIL
@@ -337,7 +341,7 @@ repulsion-constant
 repulsion-constant
 0
 10
-7.5
+1
 0.5
 1
 NIL
@@ -352,16 +356,16 @@ nb-nodes
 nb-nodes
 0
 1000
-22
+2
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-315
+340
 160
-425
+450
 193
 nb-clusters
 nb-clusters
@@ -374,9 +378,9 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-245
+270
 345
-395
+420
 363
 Centrality
 12
@@ -384,9 +388,9 @@ Centrality
 1
 
 BUTTON
-435
+460
 300
-615
+640
 333
 NIL
 bicomponent
@@ -401,9 +405,9 @@ NIL
 1
 
 MONITOR
-555
+580
 250
-615
+640
 295
 nb
 length subgraphs
@@ -514,9 +518,9 @@ Generators
 1
 
 BUTTON
-245
+270
 405
-425
+450
 438
 NIL
 eigenvector
@@ -533,7 +537,7 @@ NIL
 BUTTON
 10
 525
-210
+225
 558
 random
 generate-random
@@ -550,13 +554,13 @@ NIL
 SLIDER
 10
 490
-210
+225
 523
 nb-nodes-er
 nb-nodes-er
 0
 100
-31
+100
 1
 1
 NIL
@@ -565,7 +569,7 @@ HORIZONTAL
 SLIDER
 10
 455
-210
+225
 488
 connexion-prob
 connexion-prob
@@ -580,7 +584,7 @@ HORIZONTAL
 BUTTON
 10
 675
-210
+225
 708
 NIL
 small-world
@@ -597,7 +601,7 @@ NIL
 SLIDER
 10
 570
-102
+115
 603
 nb-rows-sw
 nb-rows-sw
@@ -610,9 +614,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-105
+120
 570
-210
+225
 603
 nb-cols-sw
 nb-cols-sw
@@ -627,7 +631,7 @@ HORIZONTAL
 SLIDER
 10
 605
-210
+225
 638
 clustering-exp
 clustering-exp
@@ -642,7 +646,7 @@ HORIZONTAL
 SWITCH
 10
 640
-210
+225
 673
 is-toroidal
 is-toroidal
@@ -651,9 +655,9 @@ is-toroidal
 -1000
 
 BUTTON
-245
+270
 440
-425
+450
 473
 NIL
 closeness
@@ -719,9 +723,9 @@ NIL
 1
 
 MONITOR
-495
+520
 250
-552
+577
 295
 current
 highlighted-subgraph
@@ -730,9 +734,9 @@ highlighted-subgraph
 11
 
 BUTTON
-435
+460
 250
-490
+515
 295
 next
 next-subgraph
@@ -747,9 +751,9 @@ NIL
 1
 
 BUTTON
-245
+270
 300
-425
+450
 333
 NIL
 weak-component
@@ -764,9 +768,9 @@ NIL
 1
 
 CHOOSER
-245
+270
 70
-425
+450
 115
 links-to-use
 links-to-use
@@ -791,9 +795,9 @@ NIL
 1
 
 PLOT
-245
+270
 485
-425
+450
 620
 Degree distribution
 NIL
@@ -826,9 +830,9 @@ NIL
 1
 
 BUTTON
-245
+270
 675
-335
+360
 708
 NIL
 save
@@ -843,9 +847,9 @@ NIL
 1
 
 BUTTON
-340
+365
 675
-425
+450
 708
 NIL
 load
@@ -860,9 +864,9 @@ NIL
 1
 
 MONITOR
-245
+270
 625
-335
+360
 670
 NIL
 count turtles
@@ -871,9 +875,9 @@ count turtles
 11
 
 MONITOR
-340
+365
 625
-425
+450
 670
 NIL
 count links
@@ -882,9 +886,9 @@ count links
 11
 
 BUTTON
-435
+460
 205
-615
+640
 238
 maximal cliques
 find-cliques
@@ -899,9 +903,9 @@ NIL
 1
 
 BUTTON
-435
+460
 170
-615
+640
 203
 NIL
 find-biggest-clique
@@ -916,9 +920,9 @@ NIL
 1
 
 BUTTON
-435
+460
 370
-615
+640
 403
 NIL
 mean-link-path-length
@@ -973,7 +977,7 @@ SWITCH
 248
 wheel-inward
 wheel-inward
-1
+0
 1
 -1000
 
