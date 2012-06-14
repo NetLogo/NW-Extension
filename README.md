@@ -40,7 +40,15 @@ Basically, you have bankers and clients. Clients can have accounts with bankers.
 
 Now it is possible that you want to consider this whole thing as one big network, but it seems more likely that you will only be interested in a subset of it. Maybe you want to consider all friendships, but maybe you want to consider only the friendship between bankers. After all, something having a very high centrality in the network of banker friendship is very different from having a high centrality in a network of client frienships.
 
-To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links between turtles of this set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-snapshot` primitive.
+To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links between turtles of this set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-snapshot` primitive, which you must call prior to doing any operations on a network.
+
+Some examples:
+
+- `nw:set-snapshot turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
+- `nw:set-snapshot turtles friendships` will give you all the bankers and clients and friendships between any of them.
+- `nw:set-snapshot bankers friendships` will give you all the bankers, and only friendships between bankers.
+- `nw:set-snapshot bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
+- `nw:set-snapshot clients accounts` will give all the clients and accounts between each in each other, but since, in our fictionnal example, clients can only have accounts with bankers, this will be a completely disconnected network.
 
 
 
