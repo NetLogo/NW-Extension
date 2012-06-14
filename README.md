@@ -80,56 +80,55 @@ Now wouldn't it be better if you _didn't_ have to call `nw:set-snapshot` everyti
 
 The reason we did not do it like this right away is that there currently is no efficient way to ask NetLogo if turtles and links have been created or deleted since a previous function call. If we can include this functionality in a future version of NetLogo, we will probably deprecate `nw:set-snapshot` and provide the much more convenient `nw:set-context` instead.
 
-## Primitives
+## General Primitives
 
-### General
 
-#### `set-snapshot`
-`set-snapshot` _TURTLESET _ LINKSET_
+### set-snapshot
+- `nw:set-snapshot` _turtleset_ _linkset_
 
 ### Path and distance
 
-#### in-link-radius, in-out-link-radius, in-in-link-radius
+### in-link-radius, in-out-link-radius, in-in-link-radius
 
-#### link-distance, weighted-link-distance
+### link-distance, weighted-link-distance
 
-#### link-path, weighted-link-path
+### link-path, weighted-link-path
 
-#### mean-link-path-length, weighted-mean-link-path-length
+### mean-link-path-length, weighted-mean-link-path-length
 
 ### Centrality
 
-#### betweenness-centrality
-#### eigenvector-centrality
-#### closeness-centrality
+### betweenness-centrality
+### eigenvector-centrality
+### closeness-centrality
 - intra-component closeness
 - reports 0 for isolates
 
 ### Clusterers
 
-#### k-means-clusters
-#### bicomponent-clusters
-#### weak-component-clusters
+### k-means-clusters
+### bicomponent-clusters
+### weak-component-clusters
 
 ### Cliques
 
-#### maximal-cliques
-#### biggest-maximal-clique
+### maximal-cliques
+### biggest-maximal-clique
 
 ### Generators
 
-#### generate-preferential-attachment
-#### generate-random
-#### generate-small-world
-#### generate-lattice-2d
-#### generate-ring
-#### generate-star
-#### generate-wheel, generate-wheel-inward, generate-wheel-outward
+### generate-preferential-attachment
+### generate-random
+### generate-small-world
+### generate-lattice-2d
+### generate-ring
+### generate-star
+### generate-wheel, generate-wheel-inward, generate-wheel-outward
 
 ### Import / export
 
-#### save-matrix
-#### load-matrix
+### save-matrix
+### load-matrix
 
 ## Transition guide
 
