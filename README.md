@@ -1,25 +1,19 @@
-# NetLogo network extension
+# The "New" NetLogo Network Extension
 
-This extension is pre-installed in NetLogo 5.0. (For help with extensions in general, see the NetLogo User Manual.)
+This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (see https://github.com/NetLogo/Network-Extension for the current version of the extension.)
 
-This extension is experimental.  Although it is presently bundled with NetLogo, it should not be considered a standard, fully-supported part of the application.
+This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself (see below) or download it from ***HERE***.
 
-The source code for the extension is hosted online at
-https://github.com/NetLogo/Network-Extension
+(For help with extensions in general, see the NetLogo User Manual.)
+
+This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find here on GitHub, but it should not be used for production code.
+
+The source code for the extension is currently hosted online at
+https://github.com/nicolaspayette/netlogo-network.
 
 ## Usage
 
-Anywhere a link breed is required, `links` is also accepted.
 
-Path lengths are computed based solely on the number of hops.  There
-isn't currently any way to specify a "weight" or "distance" variable
-for links.
-
-Ideally, instead of taking a link breed as input, the breed could take
-the place of `link` in the primitive name.  Currently the extensions
-API doesn't allow primitives that change name like this, but it should
-in some future NetLogo version.  Anyway, this is why all the names
-have `link` in them.
 
 ## Primitives
 
@@ -106,7 +100,7 @@ If compilation succeeds, `nw.jar` will be created. To use the extension, this fi
 
 ## Credits
 
-The first version of the network primitives was written by Forrest Stonedahl. They were then ported to a NetLogo 5.0 extension by Seth Tisue.
+The first versions of the network primitives were written by Forrest Stonedahl. They were then ported to a NetLogo 5.0 extension by Seth Tisue.
 
 ## Terms of Use
 
