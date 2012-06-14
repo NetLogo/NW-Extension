@@ -82,7 +82,9 @@ The reason we did not do it like this right away is that there currently is no e
 
 ## Primitives
 
-### network:in-link-radius, network:in-out-link-radius, network:in-in-link-radius
+### Path related
+
+#### nw:in-link-radius, nw:in-out-link-radius, network:in-in-link-radius
 
 ![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-link-radius RADIUS LINK-BREED`  
 ![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-out-link-radius RADIUS LINK-BREED`  
