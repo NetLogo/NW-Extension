@@ -98,7 +98,7 @@ The reason we did not do it like this right away is that there currently is no e
 
 Builds a static internal representation of the network formed by all the turtles in _turtleset_ and all the links in _linkset_ that connect two turtles from _turtleset_. This network snapshot is the one that will be used by all other primitives (unless specified otherwise) until a new snapshot is created.
 
-(At the moment, only the generator primitives and `nw:import-matrix` are exceptions to this rule.)
+(At the moment, only the [generator primitives](https://github.com/nicolaspayette/netlogo-network#generators) and [`nw:load-matrix`](https://github.com/nicolaspayette/netlogo-network#load-matrix) are exceptions to this rule.)
 
 Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
 
