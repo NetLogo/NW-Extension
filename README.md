@@ -2,7 +2,7 @@
 
 This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (see https://github.com/NetLogo/Network-Extension for the current version of the extension.)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself (see below) or download it from ***HERE***.
+This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself (see below) or download it from ***PROVIDE DOWNLOAD LINK***.
 
 (For help with extensions in general, see the NetLogo User Manual.)
 
@@ -28,7 +28,21 @@ To provide all this functionality, the Network Extension is relying on two exter
 
 ## Usage
 
-The first thing that one needs to understand in order to work with the network extension is how to tell the extension _which_ network to work with.
+The first thing that one needs to understand in order to work with the network extension is how to tell the extension _which_ network to work with. Consider the following situation:
+
+    breed [ bankers banker ]
+    breed [ clients client ]
+    
+    undirected-link-breed [ friendships friendship ]
+    directed-link-breed [ accounts account ]
+
+Basically, you have bankers and clients. Clients can have accounts with bankers. Bankers can probably have account with other bankers, and anyone can be friends with anyone.
+
+Now it is possible that you want to consider this whole thing as one big network, but it seems more likely that you will only be interested in a subset of it. Maybe you want to consider all friendships, but maybe you want to consider only the friendship between bankers. After all, something having a very high centrality in the network of banker friendship is very different from having a high centrality in a network of client frienships.
+
+
+
+### Future Usage
 
 Now wouldn't it be better if you _didn't_ have to take a new snapshot everytime you want to do something with a network? Yes, indeed, it would. And eventually, it will be the case. What we have in mind for the moment is something like a `set-context` primitive, which you would use to tell the extension that "in general, these are the turtles and links I want to work with."
 
