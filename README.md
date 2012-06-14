@@ -116,7 +116,7 @@ Returns the set of turtles within the given distance (number of links followed) 
 
 The `in-link-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
 
-Example: 
+##### Example: 
 
     clear-all
     create-turtles 5
@@ -134,8 +134,10 @@ Will output:
     (turtle 0): [(turtle 1) (turtle 2)]
 
 #### link-distance, weighted-link-distance
-`nw:link-distance`
-`nw:weighted-link-distance`
+
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:link-distance` _target-turtle_
+
+![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:weighted-link-distance` _target-turtle_ _weight-variable-name_
 
 #### link-path, weighted-link-path
 `nw:link-path`
