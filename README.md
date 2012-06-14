@@ -82,77 +82,54 @@ The reason we did not do it like this right away is that there currently is no e
 
 ## Primitives
 
-### Path related
+### General
 
-#### nw:in-link-radius, nw:in-out-link-radius, network:in-in-link-radius
+#### `set-snapshot`
+`set-snapshot` _TURTLESET _ LINKSET_
 
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-link-radius RADIUS LINK-BREED`  
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-out-link-radius RADIUS LINK-BREED`  
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-in-link-radius RADIUS LINK-BREED`
+### Path and distance
 
-example: `ask one-of bankers [ show other bankers network:in-link-radius 5 friendships ]`
+#### in-link-radius, in-out-link-radius, in-in-link-radius
 
-Returns the set of turtles within the given distance (number of links followed)
-of the calling turtle.
-Searches breadth-first from the calling turtle,
-following links of the given link breed.
+#### link-distance, weighted-link-distance
 
-The `in-link-radius` form works with undirected links.  The other two
-forms work with directed links; `out` or `in` specifies whether links
-are followed in the normal direction (`out`), or in reverse (`in`).
+#### link-path, weighted-link-path
 
-### network:link-distance
+#### mean-link-path-length, weighted-mean-link-path-length
 
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `network:link-distance TURTLE LINK-BREED`
+### Centrality
 
-example: `ask one-of-bankers [ show network:link-distance the-best-banker friendships ]`
-
-Finds the distance to the destination turtle (number of links followed).
-Searches breadth-first from the calling turtle,
-following links of the given link breed.
-
-Reports false if no path exists.
-
-### network:link-path, link-path-turtles
-
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `network:link-path TURTLE LINK-BREED`  
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `network:link-path-turtles TURTLE LINK-BREED`
-
-example: `ask banker1 [ show network:link-path banker3 friendships ]`
-->   [(link 1 2) (link 2 3)]
-
-example:`ask banker1 [ show network:link-path-turtles banker3 friendships ]`
-->   [(banker 1) (banker 2) (banker 3)]
- 
-Reports a list of turtles or links following the shortest path from the calling
-turtle to the destination turtle.
-
-Reports an empty list if no path exists.
-
-If `network:link-path-turtles` is used, the calling turtle and the
-destination are included in the list.
-
-Searches breadth-first from the calling turtle,
-following links of the given link breed.
-
-Follows links at the same depth in random order.  If there are
-multiple shortest paths, a different path may be returned on
-subsequent calls, depending on the random choices made during search.
-
-### network:mean-link-path-length
-
-`network:mean-link-path-length TURTLE-SET LINK-BREED`
-
-Reports the average shortest-path length between all distinct pairs of
-nodes in the given set of turtles, following links of the given link
-breed.
-
-Reports false unless paths exist between all pairs.
-
-### `nw:closeness-centrality`
-
+#### betweenness-centrality
+#### eigenvector-centrality
+#### closeness-centrality
 - intra-component closeness
 - reports 0 for isolates
+
+### Clusterers
+
+#### k-means-clusters
+#### bicomponent-clusters
+#### weak-component-clusters
+
+### Cliques
+
+#### maximal-cliques
+#### biggest-maximal-clique
+
+### Generators
+
+#### generate-preferential-attachment
+#### generate-random
+#### generate-small-world
+#### generate-lattice-2d
+#### generate-ring
+#### generate-star
+#### generate-wheel, generate-wheel-inward, generate-wheel-outward
+
+### Import / export
+
+#### save-matrix
+#### load-matrix
 
 ## Transition guide
 
