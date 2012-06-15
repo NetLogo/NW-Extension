@@ -102,6 +102,15 @@ trait Primitives {
     }
   }
 
+  def linkPathToTurtlePath(
+    source: org.nlogo.api.Turtle,
+    linkPath: java.util.List[org.nlogo.agent.Link]) =
+    if (linkPath.isEmpty) Vector()
+    else linkPath.asScala.foldLeft(Vector(source)) {
+      case (turtles, link) =>
+        turtles :+ (if (link.end1 != turtles.last) link.end1 else link.end2)
+    }
+
   object LinkPathTurtles extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType),
@@ -112,11 +121,25 @@ trait Primitives {
       val target = args(0).getAgent.asInstanceOf[Turtle]
       val linkPath =
         getGraph(context).asJungGraph
-          .dijkstraShortestPath.getPath(source, target)
-      val turtlePath =
-        if (linkPath.isEmpty) Vector()
-        else Vector(source) ++ linkPath.asScala.map(_.end2)
-      LogoList.fromVector(turtlePath)
+          .dijkstraShortestPath
+          .getPath(source, target)
+      LogoList.fromVector(linkPathToTurtlePath(source, linkPath))
+    }
+  }
+
+  object WeightedLinkPathTurtles extends DefaultReporter {
+    override def getSyntax = reporterSyntax(
+      Array(TurtleType, StringType),
+      ListType,
+      "-T--")
+    override def report(args: Array[Argument], context: Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[Turtle]
+      val target = args(0).getAgent.asInstanceOf[Turtle]
+      val linkPath =
+        getGraph(context).asJungGraph
+          .dijkstraShortestPath(args(1).getString.toUpperCase)
+          .getPath(source, target)
+      LogoList.fromVector(linkPathToTurtlePath(source, linkPath))
     }
   }
 
