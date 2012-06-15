@@ -164,9 +164,36 @@ Will ouput:
     (turtle 0): 2
     (turtle 0): 1.5
 
-#### link-path, weighted-link-path
-![turtle][turtle] `nw:link-path`
-![turtle][turtle] `nw:weighted-link-path`
+#### link-path, link-path-turtles, weighted-link-path, weighted-link-path-turtles
+![turtle][turtle] `nw:link-path` _target-turtle_
+![turtle][turtle] `nw:link-path-turtles` _target-turtle_
+![turtle][turtle] `nw:weighted-link-path` _target-turtle_ _weight-variable-name_
+![turtle][turtle] `nw:weighted-link-path-turtles` _target-turtle_ _weight-variable-name_
+
+##### Example:
+
+    links-own [ weight ]
+    to link-path-example
+      clear-all
+      create-turtles 7
+      ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
+      ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
+      ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
+      ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
+      ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
+      nw:set-snapshot turtles links
+      ask turtle 0 [ show nw:link-path turtle 2 ]
+      ask turtle 0 [ show nw:link-path-turtles turtle 2 ]
+      ask turtle 0 [ show nw:weighted-link-path turtle 2 "weight" ]
+      ask turtle 0 [ show nw:weighted-link-path-turtles turtle 2 "weight" ]
+    end
+
+Will output:
+
+    (turtle 0): [(link 0 1) (link 1 2)]
+    (turtle 0): [(turtle 0) (turtle 1) (turtle 2)]
+    (turtle 0): [(link 0 3) (link 3 4) (link 2 4)]
+    (turtle 0): [(turtle 0) (turtle 3) (turtle 4) (turtle 2)]
 
 #### mean-link-path-length, weighted-mean-link-path-length
 `nw:mean-link-path-length`
