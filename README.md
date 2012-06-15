@@ -148,7 +148,7 @@ The `nw:link-distance` version of the primitive assumes that each link counts fo
     links-own [ weight ]
     to link-distance-example
       clear-all
-      create-turtles 7
+      create-turtles 5
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
       ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
       ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
@@ -175,7 +175,7 @@ Will ouput:
     links-own [ weight ]
     to link-path-example
       clear-all
-      create-turtles 7
+      create-turtles 5
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
       ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
       ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
@@ -195,9 +195,39 @@ Will output:
     (turtle 0): [(link 0 3) (link 3 4) (link 2 4)]
     (turtle 0): [(turtle 0) (turtle 3) (turtle 4) (turtle 2)]
 
-#### mean-link-path-length, weighted-mean-link-path-length
+#### mean-link-path-length, mean-weighted-link-path-length
+
 `nw:mean-link-path-length`
-`nw:weighted-mean-link-path-length`
+
+`nw:mean-weighted-link-path-length` _weight-variable-name_
+
+Reports the average shortest-path length between all distinct pairs of nodes in the current snapshot. If the `nw:mean-weighted-link-path-length` is used, the distances will be calculated using _weight-variable-name_.
+
+Reports false unless paths exist between all pairs.
+
+##### Example:
+
+    links-own [ weight ]
+    to mean-link-path-length-example
+      clear-all
+      create-turtles 3
+      ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
+      ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
+      nw:set-snapshot turtles links
+      show nw:mean-link-path-length
+      show nw:mean-weighted-link-path-length "weight"
+      create-turtles 1 ; create a new, disconnected turtle
+      nw:set-snapshot turtles links
+      show nw:mean-link-path-length
+      show nw:mean-weighted-link-path-length "weight"
+    end
+
+Will ouput:
+
+    observer: 1.3333333333333333
+    observer: 2.6666666666666665
+    observer: false
+    observer: false
 
 ### Centrality
 
