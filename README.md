@@ -314,3 +314,4 @@ The NetLogo network extension is in the public domain.  To the extent possible u
 
 
 [turtle]: https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif  "Turtle"
+[link]: https://github.com/nicolaspayette/netlogo-network/raw/master/link.gif  "Link"
