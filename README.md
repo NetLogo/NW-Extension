@@ -141,7 +141,7 @@ Will output:
 
 Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current snapshot.
 
-The `nw:link-distance` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-link-distance` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations.
+The `nw:link-distance` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-link-distance` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
 
 ##### Example:
 
@@ -172,7 +172,7 @@ Will ouput:
 
 Finds the shortest path to the target turtle and reports the actual path between the source and the target turtle. The `nw:link-path` and `nw:weighted-link-path` variants will report the list of links that constitute the path, while the `nw:link-path-turtles` and `nw:weighted-link-path-turtles` variants will report the list of turtles along the path, including the source and destination turtles.
 
-As with the link distance primitives, the `nw:weighted-link-path` and `nw:weighted-link-path-turtles` accept a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations.
+As with the link distance primitives, the `nw:weighted-link-path` and `nw:weighted-link-path-turtles` accept a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
 
 If no path exist between the source and the target turtles, all primitives will report an empty list.
 
@@ -207,7 +207,7 @@ Will output:
 
 `nw:mean-weighted-link-path-length` _weight-variable-name_
 
-Reports the average shortest-path length between all distinct pairs of nodes in the current snapshot. If the `nw:mean-weighted-link-path-length` is used, the distances will be calculated using _weight-variable-name_.
+Reports the average shortest-path length between all distinct pairs of nodes in the current snapshot. If the `nw:mean-weighted-link-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
 
 Reports false unless paths exist between all pairs.
 
@@ -314,3 +314,4 @@ The NetLogo network extension is in the public domain.  To the extent possible u
 
 
 [turtle]: https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif  "Turtle"
+[link]: https://github.com/nicolaspayette/netlogo-network/raw/master/link.gif  "Link"
