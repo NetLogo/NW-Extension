@@ -28,12 +28,14 @@ class NetworkExtension extends DefaultClassManager
     add("link-distance", LinkDistance)
     add("link-path", LinkPath)
     add("link-path-turtles", LinkPathTurtles)
+    
 
     // New:
     add("set-snapshot", SnapshotPrim)
 
     add("weighted-link-distance", WeightedLinkDistance)
     add("weighted-link-path", WeightedLinkPath)
+    add("weighted-link-path-turtles", WeightedLinkPathTurtles)
     add("weighted-mean-link-path-length", WeightedMeanLinkPathLength)
 
     add("betweenness-centrality", BetweennessCentralityPrim)
