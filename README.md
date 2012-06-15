@@ -145,7 +145,24 @@ The `nw:link-distance` version of the primitive assumes that each link counts fo
 
 ##### Example:
 
+    links-own [ weight ]
+    to link-distance-example
+      clear-all
+      create-turtles 7
+      ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
+      ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
+      ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
+      ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
+      ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
+      nw:set-snapshot turtles links
+      ask turtle 0 [ show nw:link-distance turtle 2 ]
+      ask turtle 0 [ show nw:weighted-link-distance turtle 2 "weight" ]
+    end
 
+Will ouput:
+
+    (turtle 0): 2
+    (turtle 0): 1.5
 
 #### link-path, weighted-link-path
 ![turtle][turtle] `nw:link-path`
