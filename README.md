@@ -139,7 +139,7 @@ Will output:
 
 ![turtle][turtle] `nw:weighted-link-distance` _target-turtle_ _weight-variable-name_
 
-Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists.
+Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current snapshot.
 
 The `nw:link-distance` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-link-distance` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations.
 
@@ -169,6 +169,12 @@ Will ouput:
 ![turtle][turtle] `nw:link-path-turtles` _target-turtle_
 ![turtle][turtle] `nw:weighted-link-path` _target-turtle_ _weight-variable-name_
 ![turtle][turtle] `nw:weighted-link-path-turtles` _target-turtle_ _weight-variable-name_
+
+Finds the shortest path to the target turtle and reports the actual path between the source and the target turtle. The `nw:link-path` and `nw:weighted-link-path` variants will report the list of links that constitute the path, while the `nw:link-path-turtles` and `nw:weighted-link-path-turtles` variants will report the list of turtles along the path, including the source and destination turtles.
+
+As with the link distance primitives, the `nw:weighted-link-path` and `nw:weighted-link-path-turtles` accept a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations.
+
+If no path exist between the source and the target turtles, all primitives will report an empty list.
 
 ##### Example:
 
