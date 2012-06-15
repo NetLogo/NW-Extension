@@ -87,7 +87,7 @@ trait Primitives {
         .getVertexScore(context.getAgent.asInstanceOf[Turtle]))
   }
 
-  object LinkPath extends DefaultReporter {
+  object PathToPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType),
       ListType,
@@ -111,7 +111,7 @@ trait Primitives {
         turtles :+ (if (link.end1 != turtles.last) link.end1 else link.end2)
     }
 
-  object LinkPathTurtles extends DefaultReporter {
+  object TurtlesOnPathToPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType),
       ListType,
@@ -127,7 +127,7 @@ trait Primitives {
     }
   }
 
-  object WeightedLinkPathTurtles extends DefaultReporter {
+  object TurtlesOnWeightedPathToPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType, StringType),
       ListType,
@@ -143,7 +143,7 @@ trait Primitives {
     }
   }
 
-  object MeanLinkPathLength extends DefaultReporter {
+  object MeanPathLengthPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType | BooleanType)
     override def report(args: Array[Argument], context: Context): AnyRef = {
       getGraph(context).asJungGraph
@@ -154,7 +154,7 @@ trait Primitives {
     }
   }
 
-  object MeanWeightedLinkPathLength extends DefaultReporter {
+  object MeanWeightedPathLengthPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(StringType),
       NumberType | BooleanType)
@@ -167,7 +167,7 @@ trait Primitives {
     }
   }
 
-  object LinkDistance extends DefaultReporter {
+  object DistanceToPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType),
       NumberType | BooleanType,
@@ -182,7 +182,7 @@ trait Primitives {
     }
   }
 
-  object WeightedLinkDistance extends DefaultReporter {
+  object WeightedDistanceToPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType, StringType),
       NumberType | BooleanType,
@@ -203,7 +203,7 @@ trait Primitives {
     }
   }
 
-  object WeightedLinkPath extends DefaultReporter {
+  object WeightedPathToPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(TurtleType, StringType),
       NumberType | BooleanType,
@@ -297,7 +297,7 @@ trait Primitives {
     }
   }
 
-  abstract class LinkRadiusPrim extends DefaultReporter {
+  abstract class InRadiusPrim extends DefaultReporter {
     val edgeType: KNeighborhoodFilter.EdgeType
     override def getSyntax = reporterSyntax(
       Array(NumberType),
@@ -312,13 +312,13 @@ trait Primitives {
     }
   }
 
-  object InLinkRadius extends LinkRadiusPrim {
+  object TurtlesInRadiusPrim extends InRadiusPrim {
     override val edgeType = KNeighborhoodFilter.EdgeType.IN_OUT
   }
-  object InInLinkRadius extends LinkRadiusPrim {
+  object TurtlesInInRadiusPrim extends InRadiusPrim {
     override val edgeType = KNeighborhoodFilter.EdgeType.IN
   }
-  object InOutLinkRadius extends LinkRadiusPrim {
+  object TurtlesInOutRadiusPrim extends InRadiusPrim {
     override val edgeType = KNeighborhoodFilter.EdgeType.OUT
   }
 }

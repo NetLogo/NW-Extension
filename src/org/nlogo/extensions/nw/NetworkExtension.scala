@@ -20,23 +20,21 @@ class NetworkExtension extends DefaultClassManager
   override def load(primManager: PrimitiveManager) {
     val add = primManager.addPrimitive _
 
-    // In original extension:
-    add("in-link-radius", InLinkRadius)
-    add("in-out-link-radius", InOutLinkRadius)
-    add("in-in-link-radius", InInLinkRadius)
-    add("mean-link-path-length", MeanLinkPathLength)
-    add("link-distance", LinkDistance)
-    add("link-path", LinkPath)
-    add("link-path-turtles", LinkPathTurtles)
-    
-
-    // New:
     add("set-snapshot", SnapshotPrim)
 
-    add("weighted-link-distance", WeightedLinkDistance)
-    add("weighted-link-path", WeightedLinkPath)
-    add("weighted-link-path-turtles", WeightedLinkPathTurtles)
-    add("mean-weighted-link-path-length", MeanWeightedLinkPathLength)
+    add("turtles-in-radius", TurtlesInRadiusPrim)
+    add("turtles-in-out-radius", TurtlesInOutRadiusPrim)
+    add("turtles-in-in-radius", TurtlesInInRadiusPrim)
+
+    add("mean-path-length", MeanPathLengthPrim)
+    add("mean-weighted-path-length", MeanWeightedPathLengthPrim)
+
+    add("distance-to", DistanceToPrim)
+    add("path-to", PathToPrim)
+    add("turtles-on-path-to", TurtlesOnPathToPrim)
+    add("weighted-distance-to", WeightedDistanceToPrim)
+    add("weighted-path-to", WeightedPathToPrim)
+    add("turtles-on-weighted-path-to", TurtlesOnWeightedPathToPrim)
 
     add("betweenness-centrality", BetweennessCentralityPrim)
     add("eigenvector-centrality", EigenvectorCentralityPrim)

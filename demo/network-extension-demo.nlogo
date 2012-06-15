@@ -194,7 +194,7 @@ end
 
 to mean-link-path-length
   nw:set-snapshot turtles links
-  user-message nw:mean-link-path-length
+  user-message nw:mean-path-length
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
