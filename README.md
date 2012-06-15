@@ -106,11 +106,11 @@ Note that if turtles and links are created or die, changes will **not** be refle
 
 #### in-link-radius, in-out-link-radius, in-in-link-radius
 
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-link-radius` _radius_ 
+![turtle][turtle] `nw:in-link-radius` _radius_ 
 
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-out-link-radius` _radius_ 
+![turtle][turtle] `nw:in-out-link-radius` _radius_ 
 
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:in-in-link-radius` _radius_ 
+![turtle][turtle] `nw:in-in-link-radius` _radius_ 
 
 Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
 
@@ -135,13 +135,21 @@ Will output:
 
 #### link-distance, weighted-link-distance
 
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:link-distance` _target-turtle_
+![turtle][turtle] `nw:link-distance` _target-turtle_
 
-![turtle](https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif) `nw:weighted-link-distance` _target-turtle_ _weight-variable-name_
+![turtle][turtle] `nw:weighted-link-distance` _target-turtle_ _weight-variable-name_
+
+Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists.
+
+The `nw:link-distance` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-link-distance` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations.
+
+##### Example:
+
+
 
 #### link-path, weighted-link-path
-`nw:link-path`
-`nw:weighted-link-path`
+![turtle][turtle] `nw:link-path`
+![turtle][turtle] `nw:weighted-link-path`
 
 #### mean-link-path-length, weighted-mean-link-path-length
 `nw:mean-link-path-length`
@@ -150,11 +158,11 @@ Will output:
 ### Centrality
 
 #### betweenness-centrality
-`nw:betweenness-centrality`
+![turtle][turtle] `nw:betweenness-centrality`
 #### eigenvector-centrality
-`nw:eigenvector-centrality`
+![turtle][turtle] `nw:eigenvector-centrality`
 #### closeness-centrality
-`nw:closeness-centrality`
+![turtle][turtle] `nw:closeness-centrality`
 - intra-component closeness
 - reports 0 for isolates
 
@@ -227,3 +235,6 @@ The first versions of the network primitives were written by Forrest Stonedahl. 
 The NetLogo network extension is in the public domain.  To the extent possible under law, Uri Wilensky has waived all copyright and related or neighboring rights.
 
 [Jung](http://jung.sourceforge.net/) is licensed under the [BSD license](http://jung.sourceforge.net/license.txt) and [JGraphT](http://jgrapht.org/) is licensed under the [LGPL license](http://jgrapht.org/LGPL.html).
+
+
+[turtle]: https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif  "Turtle"
