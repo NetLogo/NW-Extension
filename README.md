@@ -68,11 +68,11 @@ This also means that you need to be careful:
       set size nw:closeness-centrality  ; THIS WILL FAIL FOR THE NEWLY CREATED BANKER
     ]
 
-In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-link-path-length` in the example above, but if you try to ask the newly created banker for, e.g., its closeness centrality, the extension will give you a runtime error.
+In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-path-length` in the example above, but if you try to ask the newly created banker for, e.g., its closeness centrality, the extension will give you a runtime error.
 
 One reason why things work the way they do is that it allows the extension to _cache_ the result of some computations. Many network algorithms are designed to operate on the whole network at once. In the example above, the closeness centrality is actually calculated for every banker the first time you ask for it and then stored in the snapshot so that other bankers just have to access the result.
 
-This makes a big difference, in particular, for primitives like `nw:link-distance`, which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). Without getting into the details of the algorithm, let's just say that a big part of the calculations that are made in finding the shortest path from `turtle 0` to `turtle 10` can be reused when finding the shortest path from `turtle 0` to `turtle 20`, and that these calculations are stored in the snapshot.
+This makes a big difference, in particular, for primitives like `nw:distance-to`, which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). Without getting into the details of the algorithm, let's just say that a big part of the calculations that are made in finding the shortest path from `turtle 0` to `turtle 10` can be reused when finding the shortest path from `turtle 0` to `turtle 20`, and that these calculations are stored in the snapshot.
 
 ### Future Usage
 
@@ -104,17 +104,17 @@ Note that if turtles and links are created or die, changes will **not** be refle
 
 ### Path and Distance
 
-#### in-link-radius, in-out-link-radius, in-in-link-radius
+#### turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius
 
-![turtle][turtle] `nw:in-link-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-radius` _radius_ 
 
-![turtle][turtle] `nw:in-out-link-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-out-radius` _radius_ 
 
-![turtle][turtle] `nw:in-in-link-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-in-radius` _radius_ 
 
 Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
 
-The `in-link-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
+The `turtles-in-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
 
 ##### Example: 
 
@@ -126,7 +126,7 @@ The `in-link-radius` form works with undirected links.  The other two forms work
     ask turtle 2 [ create-link-with turtle 4 ]
     nw:set-snapshot turtles links
     ask turtle 0 [
-      show sort nw:in-link-radius 1
+      show sort nw:turtles-in-radius 1
     ]
 
 Will output:
