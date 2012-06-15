@@ -27,6 +27,7 @@ class NetworkExtension extends DefaultClassManager
     add("mean-link-path-length", MeanLinkPathLength)
     add("link-distance", LinkDistance)
     add("link-path", LinkPath)
+    add("link-path-turtles", LinkPathTurtles)
 
     // New:
     add("set-snapshot", SnapshotPrim)

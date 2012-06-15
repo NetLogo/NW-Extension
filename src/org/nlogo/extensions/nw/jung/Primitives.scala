@@ -1,7 +1,6 @@
 package org.nlogo.extensions.nw.jung
 
 import scala.collection.JavaConverters.asScalaBufferConverter
-
 import org.nlogo.api.ScalaConversions.toLogoList
 import org.nlogo.api.ScalaConversions.toLogoObject
 import org.nlogo.api.Syntax.AgentsetType
@@ -100,6 +99,24 @@ trait Primitives {
         getGraph(context).asJungGraph
           .dijkstraShortestPath
           .getPath(source, target))
+    }
+  }
+
+  object LinkPathTurtles extends DefaultReporter {
+    override def getSyntax = reporterSyntax(
+      Array(TurtleType),
+      ListType,
+      "-T--")
+    override def report(args: Array[Argument], context: Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[Turtle]
+      val target = args(0).getAgent.asInstanceOf[Turtle]
+      val linkPath =
+        getGraph(context).asJungGraph
+          .dijkstraShortestPath.getPath(source, target)
+      val turtlePath =
+        if (linkPath.isEmpty) Vector()
+        else Vector(source) ++ linkPath.asScala.map(_.end2)
+      LogoList.fromVector(turtlePath)
     }
   }
 
