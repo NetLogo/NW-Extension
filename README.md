@@ -4,7 +4,7 @@ This is a new, experimental, version of the Network Extension that is currently 
 
 This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network/blob/master/README.md#building)) or download it from ***PROVIDE DOWNLOAD LINK***.
 
-(For help with extensions in general, see the NetLogo User Manual.)
+(For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
 This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/nicolaspayette/netlogo-network/issues?state=open), but it should not be used for production code.
 
@@ -68,85 +68,162 @@ This also means that you need to be careful:
       set size nw:closeness-centrality  ; THIS WILL FAIL FOR THE NEWLY CREATED BANKER
     ]
 
-In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-link-path-length` in the example above, but if you try to ask the newly created banker for, e.g., it's closeness centrality, the extension will give you a runtime error.
+In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-link-path-length` in the example above, but if you try to ask the newly created banker for, e.g., its closeness centrality, the extension will give you a runtime error.
+
+One reason why things work the way they do is that it allows the extension to _cache_ the result of some computations. Many network algorithms are designed to operate on the whole network at once. In the example above, the closeness centrality is actually calculated for every banker the first time you ask for it and then stored in the snapshot so that other bankers just have to access the result.
+
+This makes a big difference, in particular, for primitives like `nw:link-distance`, which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). Without getting into the details of the algorithm, let's just say that a big part of the calculations that are made in finding the shortest path from `turtle 0` to `turtle 10` can be reused when finding the shortest path from `turtle 0` to `turtle 20`, and that these calculations are stored in the snapshot.
 
 ### Future Usage
 
-Now wouldn't it be better if you _didn't_ have to take a new snapshot everytime you want to do something with a network? Yes, indeed, it would. And eventually, it will be the case. What we have in mind for the moment is something like a `set-context` primitive, which you would use to tell the extension that "in general, these are the turtles and links I want to work with."
+Now wouldn't it be better if you _didn't_ have to call `nw:set-snapshot` everytime you want to do something with a network? Yes, indeed, it would. And eventually, it will be the case. What we have in mind for the moment is something like a `nw:set-context` primitive, which you would use to tell the extension that "in general, these are the turtles and links I want to work with." Once you set the context, the extension will be wise enough to decide by itself if it needs to take a new snapshot or not.
 
-The reason we did not do it like this right away is that there currently is no efficient way to ask NetLogo if turtles and links have been created or deleted since a previous function call. If we can include this in a future version of NetLogo, we will probably deprecate `set-snapshot` and provide the much more convenient `set-context` instead.
+The reason we did not do it like this right away is that there currently is no efficient way to ask NetLogo if turtles and links have been created or deleted since a previous function call. If we can include this functionality in a future version of NetLogo, we will probably deprecate `nw:set-snapshot` and provide the much more convenient `nw:set-context` instead.
 
 ## Primitives
 
-### network:in-link-radius, network:in-out-link-radius, network:in-in-link-radius
+- [General](https://github.com/nicolaspayette/netlogo-network#general)
+- [Path and Distance](https://github.com/nicolaspayette/netlogo-network#path-and-distance)
+- [Centrality](https://github.com/nicolaspayette/netlogo-network#centrality)
+- [Clusterers](https://github.com/nicolaspayette/netlogo-network#clusterers)
+- [Cliques](https://github.com/nicolaspayette/netlogo-network#cliques)
+- [Generators](https://github.com/nicolaspayette/netlogo-network#generators)
+- [Import / Export](https://github.com/nicolaspayette/netlogo-network#import--export)
 
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-link-radius RADIUS LINK-BREED`  
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-out-link-radius RADIUS LINK-BREED`  
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `TURTLESET network:in-in-link-radius RADIUS LINK-BREED`
+## General
 
-example: `ask one-of bankers [ show other bankers network:in-link-radius 5 friendships ]`
+### set-snapshot
 
-Returns the set of turtles within the given distance (number of links followed)
-of the calling turtle.
-Searches breadth-first from the calling turtle,
-following links of the given link breed.
+`nw:set-snapshot` _turtleset_ _linkset_
 
-The `in-link-radius` form works with undirected links.  The other two
-forms work with directed links; `out` or `in` specifies whether links
-are followed in the normal direction (`out`), or in reverse (`in`).
+Builds a static internal representation of the network formed by all the turtles in _turtleset_ and all the links in _linkset_ that connect two turtles from _turtleset_. This network snapshot is the one that will be used by all other primitives (unless specified otherwise) until a new snapshot is created.
 
-### network:link-distance
+(At the moment, only the [generator primitives](https://github.com/nicolaspayette/netlogo-network#generators) and [`nw:load-matrix`](https://github.com/nicolaspayette/netlogo-network#load-matrix) are exceptions to this rule.)
 
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `network:link-distance TURTLE LINK-BREED`
+Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
 
-example: `ask one-of-bankers [ show network:link-distance the-best-banker friendships ]`
+### Path and Distance
 
-Finds the distance to the destination turtle (number of links followed).
-Searches breadth-first from the calling turtle,
-following links of the given link breed.
+#### in-link-radius, in-out-link-radius, in-in-link-radius
 
-Reports false if no path exists.
+![turtle][turtle] `nw:in-link-radius` _radius_ 
 
-### network:link-path, link-path-turtles
+![turtle][turtle] `nw:in-out-link-radius` _radius_ 
 
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `network:link-path TURTLE LINK-BREED`  
-![turtle](https://github.com/NetLogo/Network-Extension/raw/master/turtle.gif) `network:link-path-turtles TURTLE LINK-BREED`
+![turtle][turtle] `nw:in-in-link-radius` _radius_ 
 
-example: `ask banker1 [ show network:link-path banker3 friendships ]`
-->   [(link 1 2) (link 2 3)]
+Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
 
-example:`ask banker1 [ show network:link-path-turtles banker3 friendships ]`
-->   [(banker 1) (banker 2) (banker 3)]
- 
-Reports a list of turtles or links following the shortest path from the calling
-turtle to the destination turtle.
+The `in-link-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
 
-Reports an empty list if no path exists.
+##### Example: 
 
-If `network:link-path-turtles` is used, the calling turtle and the
-destination are included in the list.
+    clear-all
+    create-turtles 5
+    ask turtle 0 [ create-link-with turtle 1 ]
+    ask turtle 0 [ create-link-with turtle 2 ]
+    ask turtle 1 [ create-link-with turtle 3 ]
+    ask turtle 2 [ create-link-with turtle 4 ]
+    nw:set-snapshot turtles links
+    ask turtle 0 [
+      show sort nw:in-link-radius 1
+    ]
 
-Searches breadth-first from the calling turtle,
-following links of the given link breed.
+Will output:
 
-Follows links at the same depth in random order.  If there are
-multiple shortest paths, a different path may be returned on
-subsequent calls, depending on the random choices made during search.
+    (turtle 0): [(turtle 1) (turtle 2)]
 
-### network:mean-link-path-length
+#### link-distance, weighted-link-distance
 
-`network:mean-link-path-length TURTLE-SET LINK-BREED`
+![turtle][turtle] `nw:link-distance` _target-turtle_
 
-Reports the average shortest-path length between all distinct pairs of
-nodes in the given set of turtles, following links of the given link
-breed.
+![turtle][turtle] `nw:weighted-link-distance` _target-turtle_ _weight-variable-name_
 
-Reports false unless paths exist between all pairs.
+Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists.
 
-### `nw:closeness-centrality`
+The `nw:link-distance` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-link-distance` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations.
 
+##### Example:
+
+    links-own [ weight ]
+    to link-distance-example
+      clear-all
+      create-turtles 7
+      ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
+      ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
+      ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
+      ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
+      ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
+      nw:set-snapshot turtles links
+      ask turtle 0 [ show nw:link-distance turtle 2 ]
+      ask turtle 0 [ show nw:weighted-link-distance turtle 2 "weight" ]
+    end
+
+Will ouput:
+
+    (turtle 0): 2
+    (turtle 0): 1.5
+
+#### link-path, weighted-link-path
+![turtle][turtle] `nw:link-path`
+![turtle][turtle] `nw:weighted-link-path`
+
+#### mean-link-path-length, weighted-mean-link-path-length
+`nw:mean-link-path-length`
+`nw:weighted-mean-link-path-length`
+
+### Centrality
+
+#### betweenness-centrality
+![turtle][turtle] `nw:betweenness-centrality`
+#### eigenvector-centrality
+![turtle][turtle] `nw:eigenvector-centrality`
+#### closeness-centrality
+![turtle][turtle] `nw:closeness-centrality`
 - intra-component closeness
 - reports 0 for isolates
+
+### Clusterers
+
+#### k-means-clusters
+`nw:k-means-clusters`
+#### bicomponent-clusters
+`nw:bicomponent-clusters`
+#### weak-component-clusters
+`nw:weak-component-clusters`
+
+### Cliques
+
+#### maximal-cliques
+`nw:maximal-cliques`
+#### biggest-maximal-clique
+`nw:biggest-maximal-clique`
+
+### Generators
+
+#### generate-preferential-attachment
+`nw:generate-preferential-attachment`
+#### generate-random
+`nw:generate-random`
+#### generate-small-world
+`nw:generate-small-world`
+#### generate-lattice-2d
+`nw:generate-lattice-2d`
+#### generate-ring
+`nw:generate-ring`
+#### generate-star
+`nw:generate-star`
+#### generate-wheel, generate-wheel-inward, generate-wheel-outward
+`nw:generate-wheel`
+`nw:generate-wheel-inward`
+`nw:generate-wheel-outward`
+
+### Import / Export
+
+#### save-matrix
+`nw:save-matrix`
+#### load-matrix
+`nw:load-matrix`
 
 ## Transition guide
 
@@ -173,3 +250,8 @@ The first versions of the network primitives were written by Forrest Stonedahl. 
 [![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
 
 The NetLogo network extension is in the public domain.  To the extent possible under law, Uri Wilensky has waived all copyright and related or neighboring rights.
+
+[Jung](http://jung.sourceforge.net/) is licensed under the [BSD license](http://jung.sourceforge.net/license.txt) and [JGraphT](http://jgrapht.org/) is licensed under the [LGPL license](http://jgrapht.org/LGPL.html).
+
+
+[turtle]: https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif  "Turtle"
