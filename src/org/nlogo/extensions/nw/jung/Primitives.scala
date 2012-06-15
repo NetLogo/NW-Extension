@@ -154,7 +154,7 @@ trait Primitives {
     }
   }
 
-  object WeightedMeanLinkPathLength extends DefaultReporter {
+  object MeanWeightedLinkPathLength extends DefaultReporter {
     override def getSyntax = reporterSyntax(
       Array(StringType),
       NumberType | BooleanType)
