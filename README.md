@@ -133,15 +133,15 @@ Will output:
 
     (turtle 0): [(turtle 1) (turtle 2)]
 
-#### link-distance, weighted-link-distance
+#### distance-to, weighted-distance-to
 
-![turtle][turtle] `nw:link-distance` _target-turtle_
+![turtle][turtle] `nw:distance-to` _target-turtle_
 
-![turtle][turtle] `nw:weighted-link-distance` _target-turtle_ _weight-variable-name_
+![turtle][turtle] `nw:weighted-distance-to` _target-turtle_ _weight-variable-name_
 
 Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current snapshot.
 
-The `nw:link-distance` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-link-distance` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
+The `nw:distance-to` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-distance-to` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
 
 ##### Example:
 
@@ -155,8 +155,8 @@ The `nw:link-distance` version of the primitive assumes that each link counts fo
       ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
       nw:set-snapshot turtles links
-      ask turtle 0 [ show nw:link-distance turtle 2 ]
-      ask turtle 0 [ show nw:weighted-link-distance turtle 2 "weight" ]
+      ask turtle 0 [ show nw:distance-to turtle 2 ]
+      ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
     end
 
 Will ouput:
@@ -164,15 +164,19 @@ Will ouput:
     (turtle 0): 2
     (turtle 0): 1.5
 
-#### link-path, link-path-turtles, weighted-link-path, weighted-link-path-turtles
-![turtle][turtle] `nw:link-path` _target-turtle_
-![turtle][turtle] `nw:link-path-turtles` _target-turtle_
-![turtle][turtle] `nw:weighted-link-path` _target-turtle_ _weight-variable-name_
-![turtle][turtle] `nw:weighted-link-path-turtles` _target-turtle_ _weight-variable-name_
+#### path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to
 
-Finds the shortest path to the target turtle and reports the actual path between the source and the target turtle. The `nw:link-path` and `nw:weighted-link-path` variants will report the list of links that constitute the path, while the `nw:link-path-turtles` and `nw:weighted-link-path-turtles` variants will report the list of turtles along the path, including the source and destination turtles.
+![turtle][turtle] `nw:path-to` _target-turtle_
 
-As with the link distance primitives, the `nw:weighted-link-path` and `nw:weighted-link-path-turtles` accept a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
+![turtle][turtle] `nw:turtles-on-path-to` _target-turtle_
+
+![turtle][turtle] `nw:weighted-path-to` _target-turtle_ _weight-variable-name_
+
+![turtle][turtle] `nw:turtles-on-weighted-path-to` _target-turtle_ _weight-variable-name_
+
+Finds the shortest path to the target turtle and reports the actual path between the source and the target turtle. The `nw:path-to` and `nw:weighted-path-to` variants will report the list of links that constitute the path, while the `nw:turtles-on-path-to` and `nw:turtles-on-weighted-path-to` variants will report the list of turtles along the path, including the source and destination turtles.
+
+As with the link distance primitives, the `nw:weighted-path-to` and `nw:turtles-on-weighted-path-to` accept a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
 
 If no path exist between the source and the target turtles, all primitives will report an empty list.
 
@@ -188,10 +192,10 @@ If no path exist between the source and the target turtles, all primitives will 
       ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
       nw:set-snapshot turtles links
-      ask turtle 0 [ show nw:link-path turtle 2 ]
-      ask turtle 0 [ show nw:link-path-turtles turtle 2 ]
-      ask turtle 0 [ show nw:weighted-link-path turtle 2 "weight" ]
-      ask turtle 0 [ show nw:weighted-link-path-turtles turtle 2 "weight" ]
+      ask turtle 0 [ show nw:path-to turtle 2 ]
+      ask turtle 0 [ show nw:turtles-on-path-to turtle 2 ]
+      ask turtle 0 [ show nw:weighted-path-to turtle 2 "weight" ]
+      ask turtle 0 [ show nw:turtles-on-weighted-path-to turtle 2 "weight" ]
     end
 
 Will output:
@@ -201,13 +205,13 @@ Will output:
     (turtle 0): [(link 0 3) (link 3 4) (link 2 4)]
     (turtle 0): [(turtle 0) (turtle 3) (turtle 4) (turtle 2)]
 
-#### mean-link-path-length, mean-weighted-link-path-length
+#### mean-path-length, mean-weighted-path-length
 
-`nw:mean-link-path-length`
+`nw:mean-path-length`
 
-`nw:mean-weighted-link-path-length` _weight-variable-name_
+`nw:mean-weighted-path-length` _weight-variable-name_
 
-Reports the average shortest-path length between all distinct pairs of nodes in the current snapshot. If the `nw:mean-weighted-link-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
+Reports the average shortest-path length between all distinct pairs of nodes in the current snapshot. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
 
 Reports false unless paths exist between all pairs.
 
@@ -220,12 +224,12 @@ Reports false unless paths exist between all pairs.
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
       ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
       nw:set-snapshot turtles links
-      show nw:mean-link-path-length
-      show nw:mean-weighted-link-path-length "weight"
+      show nw:mean-path-length
+      show nw:mean-weighted-path-length "weight"
       create-turtles 1 ; create a new, disconnected turtle
       nw:set-snapshot turtles links
-      show nw:mean-link-path-length
-      show nw:mean-weighted-link-path-length "weight"
+      show nw:mean-path-length
+      show nw:mean-weighted-path-length "weight"
     end
 
 Will ouput:
