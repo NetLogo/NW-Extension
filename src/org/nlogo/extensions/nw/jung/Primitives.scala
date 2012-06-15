@@ -152,7 +152,7 @@ trait Primitives {
       val target = args(0).getAgent.asInstanceOf[Turtle]
       val weightVariable = args(1).getString.toUpperCase
       val linkWeights = getGraph(context).asJungGraph
-        .dijkstraShortestPath
+        .dijkstraShortestPath(weightVariable)
         .getPath(source, target)
         .asScala
         .map(_.getTurtleOrLinkVariable(weightVariable).asInstanceOf[Double])
