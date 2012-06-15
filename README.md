@@ -288,10 +288,6 @@ Will ouput:
 #### load-matrix
 `nw:load-matrix`
 
-## Transition guide
-
-
-
 ## Building
 
 The extension is written in Scala (version 2.9.1).
