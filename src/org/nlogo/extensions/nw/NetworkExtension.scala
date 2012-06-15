@@ -30,10 +30,10 @@ class NetworkExtension extends DefaultClassManager
     add("mean-weighted-path-length", MeanWeightedPathLengthPrim)
 
     add("distance-to", DistanceToPrim)
-    add("path-to", PathToPrim)
-    add("turtles-on-path-to", TurtlesOnPathToPrim)
     add("weighted-distance-to", WeightedDistanceToPrim)
+    add("path-to", PathToPrim)
     add("weighted-path-to", WeightedPathToPrim)
+    add("turtles-on-path-to", TurtlesOnPathToPrim)
     add("turtles-on-weighted-path-to", TurtlesOnWeightedPathToPrim)
 
     add("betweenness-centrality", BetweennessCentralityPrim)
