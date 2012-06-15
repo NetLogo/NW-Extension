@@ -74,17 +74,17 @@ trait Primitives {
   object EigenvectorCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T--")
     override def report(args: Array[Argument], context: Context) =
-      Double.box(getGraph(context).asJungGraph
+      getGraph(context).asJungGraph
         .eigenvectorCentrality
-        .getVertexScore(context.getAgent.asInstanceOf[Turtle]))
+        .getScore(context.getAgent.asInstanceOf[Turtle])
   }
 
   object ClosenessCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T--")
     override def report(args: Array[Argument], context: Context) =
-      Double.box(getGraph(context).asJungGraph
+      getGraph(context).asJungGraph
         .closenessCentrality
-        .getVertexScore(context.getAgent.asInstanceOf[Turtle]))
+        .getScore(context.getAgent.asInstanceOf[Turtle])
   }
 
   object PathToPrim extends DefaultReporter {

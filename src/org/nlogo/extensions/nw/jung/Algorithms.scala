@@ -39,7 +39,7 @@ trait Ranker {
       case t: Turtle => tScores.get(t)
       case l: Link   => lScores.get(l)
       case _         => None
-    }).map { x => println(x); x }.getOrElse(throw new ExtensionException(agent + " is not a member of this result set"))
+    }).getOrElse(throw new ExtensionException(agent + " is not a member of this result set"))
 
   def get(agent: Agent) = getFrom(agent, turtleScores, linkScores)
 }
@@ -88,14 +88,24 @@ trait Algorithms {
   }
 
   lazy val betweennessCentrality = new BetweennessCentrality(this) with Ranker
-  lazy val eigenvectorCentrality = new PageRank(this, 0.0) { evaluate() }
-  lazy val closenessCentrality = new ClosenessCentrality(this) {
-    override def getVertexScore(turtle: Turtle) = Option(super.getVertexScore(turtle)) match {
-      case None =>
-        throw new ExtensionException(turtle + " is not a member of this result set")
-      case Some(res) if res.isNaN => 0.0 // for isolates
-      case Some(res)              => res
+  lazy val eigenvectorCentrality = new PageRank(this, 0.0) {
+    evaluate()
+    def getScore(turtle: Turtle) = {
+      if (!graph.containsVertex(turtle))
+        throw new ExtensionException(turtle + " is not a member of the current snapshot")
+      getVertexScore(turtle)
     }
+  }
+  lazy val closenessCentrality = new ClosenessCentrality(this) {
+    def getScore(turtle: Turtle) = {
+      if (!graph.containsVertex(turtle))
+        throw new ExtensionException(turtle + " is not a member of the current snapshot")
+      val res = getVertexScore(turtle)
+      if (res.isNaN)
+        Double.box(0.0) // for isolates
+      else res
+    }
+
   }
 
   lazy val kMeansClusterer = new KMeansClusterer[Turtle] {
