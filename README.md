@@ -318,8 +318,17 @@ The biggest maximal clique is, as its name implies, the biggest [clique](http://
 
 ### Generators
 
+The generators are amongst the only primitives that do not operate on the current network snapshot. Instead, all of them take a turtle breed and a link breed as inputs and generate a new network using the given breeds.
+
 #### generate-preferential-attachment
-`nw:generate-preferential-attachment`
+`nw:generate-preferential-attachment` _turtle-breed_ _link-breed_ _nb-nodes_
+
+Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free", i.e., the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
+
+In this version of the primitive, turtles are added, one by one, each forming one link to a previously added turtle, until _nb-nodes_ is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added.
+
+Future versions of the primitive might provide more flexibility in the way the network is generated.
+
 #### generate-random
 `nw:generate-random`
 #### generate-small-world
