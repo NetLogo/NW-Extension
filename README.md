@@ -273,11 +273,13 @@ Also note that, as of now, link weights are not taken into account.
 
 Partitions the turtles in the current snapshot into _nb-clusters_ different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings that get better and better until some _convergence-threshold_ or some maximum number of iterations (_max-iterations_) is reached.
 
-Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, ***not*** their distance in the network. This is coming in a future version of the extension. 
+Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, ***not*** their distance in the network. This is coming in a future version of the extension.
 
 The primitive reports a list of lists of turtles representing the different clusters. Each turtle can only be part of one cluster.
 
-Example:
+Note that k-means include a part of randomness, and may give different results everytime it runs.
+
+##### Example:
 
     nw:set-snapshot turtles links
     let nb-clusters 10
@@ -304,8 +306,15 @@ The result is reported as a list of lists of turtles. Note that one turtle _cann
 
 #### maximal-cliques
 `nw:maximal-cliques`
+
+A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node as a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
+
+The result is reported as a list of lists of turtles. Note that one turtle can be a member of more than one maximal clique at once.
+
 #### biggest-maximal-clique
 `nw:biggest-maximal-clique`
+
+The biggest maximal clique is, as its name implies, the biggest [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. The result is reported a list of turtles in the clique. If more than one cliques are tied for the title of biggest clique, only one of them is reported at random.
 
 ### Generators
 
