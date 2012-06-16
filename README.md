@@ -298,7 +298,7 @@ Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnec
 #### weak-component-clusters
 `nw:weak-component-clusters`
 
-Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the curret network snapshot. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
+Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network snapshot. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
 
 The result is reported as a list of lists of turtles. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
 
