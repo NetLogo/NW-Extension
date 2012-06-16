@@ -323,14 +323,17 @@ The generators are amongst the only primitives that do not operate on the curren
 #### generate-preferential-attachment
 `nw:generate-preferential-attachment` _turtle-breed_ _link-breed_ _nb-nodes_
 
-Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free", i.e., the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
+Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
 
 In this version of the primitive, turtles are added, one by one, each forming one link to a previously added turtle, until _nb-nodes_ is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added.
 
 Future versions of the primitive might provide more flexibility in the way the network is generated.
 
 #### generate-random
-`nw:generate-random`
+`nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection_probability_
+
+Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+
 #### generate-small-world
 `nw:generate-small-world`
 #### generate-lattice-2d
