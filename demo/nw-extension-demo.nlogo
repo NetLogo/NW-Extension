@@ -137,8 +137,13 @@ to centrality [ measure ]
   nw:set-snapshot turtles get-links-to-use
   ask turtles [
     let res (runresult measure)
-    set label precision res 2
-    set size res
+    ifelse is-number? res [
+      set label precision res 2
+      set size res
+    ]
+    [
+      set label res
+    ]
   ]
   normalize-sizes
 end
@@ -201,7 +206,7 @@ to small-world
 end
 
 to generate-random
-  nw:generate-random turtles get-links-to-use nb-nodes-er connexion-prob []
+  nw:generate-random turtles get-links-to-use nb-nodes connexion-prob []
   update-plots
 end
 
@@ -395,9 +400,9 @@ NIL
 
 BUTTON
 10
-310
+350
 125
-343
+383
 NIL
 lattice-2d
 NIL
@@ -412,9 +417,9 @@ NIL
 
 SLIDER
 130
-275
+315
 225
-308
+348
 nb-rows
 nb-rows
 0
@@ -427,9 +432,9 @@ HORIZONTAL
 
 SLIDER
 130
-310
+350
 225
-343
+383
 nb-cols
 nb-cols
 0
@@ -442,9 +447,9 @@ HORIZONTAL
 
 SWITCH
 10
-275
+315
 125
-308
+348
 wrap
 wrap
 1
@@ -480,9 +485,9 @@ NIL
 
 BUTTON
 10
-425
-225
-458
+260
+70
+293
 random
 generate-random
 NIL
@@ -496,30 +501,15 @@ NIL
 1
 
 SLIDER
-10
-390
+75
+260
 225
-423
-nb-nodes-er
-nb-nodes-er
-0
-100
-100
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-10
-355
-225
-388
+293
 connexion-prob
 connexion-prob
 0
 1
-0.82
+0.19
 0.01
 1
 NIL
@@ -527,9 +517,9 @@ HORIZONTAL
 
 BUTTON
 10
-545
+475
 120
-578
+508
 NIL
 small-world
 NIL
@@ -544,9 +534,9 @@ NIL
 
 SLIDER
 125
-510
+440
 225
-543
+473
 nb-rows-sw
 nb-rows-sw
 0
@@ -559,9 +549,9 @@ HORIZONTAL
 
 SLIDER
 125
-545
+475
 225
-578
+508
 nb-cols-sw
 nb-cols-sw
 0
@@ -574,9 +564,9 @@ HORIZONTAL
 
 SLIDER
 10
-475
+405
 225
-508
+438
 clustering-exp
 clustering-exp
 0
@@ -589,9 +579,9 @@ HORIZONTAL
 
 SWITCH
 10
-510
+440
 120
-543
+473
 is-toroidal
 is-toroidal
 1
@@ -668,7 +658,7 @@ CHOOSER
 links-to-use
 links-to-use
 "all links" "undirected" "directed"
-2
+1
 
 PLOT
 245
@@ -859,7 +849,7 @@ CHOOSER
 layout
 layout
 "circle" "spring" "radial" "tutte"
-2
+0
 
 BUTTON
 339
@@ -1243,7 +1233,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.1
+NetLogo 5.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
