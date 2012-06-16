@@ -271,9 +271,9 @@ Also note that, as of now, link weights are not taken into account.
 #### k-means-clusters
 `nw:k-means-clusters` _nb-clusters_ _max-iterations_ _convergence-threshold_
 
-Partitions the turtles in the current snapshot into _nb-clusters_ different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings that get better and better until some _convergence-threshold_ or some maximum number iterations (_max-iterations_) is reached.
+Partitions the turtles in the current snapshot into _nb-clusters_ different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings that get better and better until some _convergence-threshold_ or some maximum number of iterations (_max-iterations_) is reached.
 
-Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, _not_ their distance in the network. This is coming in a future version of the extension. 
+Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, ***not*** their distance in the network. This is coming in a future version of the extension. 
 
 The primitive reports a list of lists of turtles representing the different clusters. Each turtle can only be part of one cluster.
 
