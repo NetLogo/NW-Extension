@@ -335,7 +335,12 @@ Future versions of the primitive might provide more flexibility in the way the n
 Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
 #### generate-small-world
-`nw:generate-small-world`
+`nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _clustering-exponent_ _is-toroidal_
+
+Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
+
+The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close by nodes when adding new links. A clustering exponent of `2.0` is typically used.
+
 #### generate-lattice-2d
 `nw:generate-lattice-2d`
 #### generate-ring
