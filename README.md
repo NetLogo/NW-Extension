@@ -280,11 +280,9 @@ The primitive reports a list of lists of turtles representing the different clus
 Example:
 
     nw:set-snapshot turtles links
-    let clusters nw:k-means-clusters 10 500 0.01
-    let n length clusters
-    let colors ifelse-value (n < 14)
-      [ n-of n remove gray base-colors ]
-      [ n-values n [ random 140 ] ]
+    let nb-clusters 10
+    let clusters nw:k-means-clusters nb-clusters 500 0.01
+    let colors n-of nb-clusters remove gray base-colors
     (foreach clusters colors [
       let c ?2
       foreach ?1 [ ask ? [ set color c ] ]
