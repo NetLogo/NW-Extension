@@ -73,10 +73,16 @@ trait Primitives {
 
   object EigenvectorCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T--")
-    override def report(args: Array[Argument], context: Context) =
-      getGraph(context).asJungGraph
-        .eigenvectorCentrality
-        .getScore(context.getAgent.asInstanceOf[Turtle])
+    override def report(args: Array[Argument], context: Context) = {
+      val g = getGraph(context).asJungGraph
+      // make sure graph is connected
+      // TODO: I should have an isConnected method instead of using meanLinkPathLength.isDefined
+      if (g.dijkstraShortestPath.meanLinkPathLength.isDefined)
+        g.eigenvectorCentrality
+          .getScore(context.getAgent.asInstanceOf[Turtle])
+      else
+        java.lang.Boolean.FALSE
+    }
   }
 
   object ClosenessCentralityPrim extends DefaultReporter {
