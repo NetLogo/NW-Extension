@@ -244,7 +244,9 @@ Will ouput:
 #### betweenness-centrality
 ![turtle][turtle] `nw:betweenness-centrality`
 
-(http://en.wikipedia.org/wiki/Betweenness_centrality)
+To calculate the [betweenness centrality](http://en.wikipedia.org/wiki/Betweenness_centrality) of a turtle, you take every other possible pairs of turtles and, for each pair, you calculate the proportion of shortest paths between members of the pair that passes through the current turtle. The betweeness centrality of a turtle is the sum of these.
+
+As of now, link weights are not taken into account.
 
 #### eigenvector-centrality
 ![turtle][turtle] `nw:eigenvector-centrality`
