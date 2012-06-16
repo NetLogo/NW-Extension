@@ -339,7 +339,7 @@ Generates a new random network of _nb-nodes_ turtles in which each one has a  _c
 
 Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
 
-The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close by nodes when adding new links. A clustering exponent of `2.0` is typically used.
+The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
 #### generate-lattice-2d
 `nw:generate-lattice-2d`
