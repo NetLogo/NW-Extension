@@ -18,7 +18,6 @@ globals
   average-path-length                  ;; average path length of the network
   clustering-coefficient-of-lattice    ;; the clustering coefficient of the initial lattice
   average-path-length-of-lattice       ;; average path length of the initial lattice
-  highlight-string                     ;; message that appears on the node properties monitor
   number-rewired                       ;; number of edges that have been rewired. used for plots.
   rewire-one?                          ;; these two variables record which button was last pushed
   rewire-all?
@@ -49,7 +48,7 @@ to setup
   set highlighted-node-color red
   set highlighted-neighbor-color red + 2
   set highlighted-link-color yellow
-  set rewired-link-color green
+  set rewired-link-color green - 2
   set between-neighbors-link-color orange
   
   set currently-highlighted-node nobody  
@@ -71,7 +70,6 @@ to setup
   set clustering-coefficient-of-lattice clustering-coefficient
   set average-path-length-of-lattice average-path-length
   set number-rewired 0
-  set highlight-string ""
 end
 
 to make-turtles
@@ -190,11 +188,21 @@ to-report do-calculations
   ;; find the path lengths in the network
   ask turtles [
     let distances remove false [ nw:distance-to myself ] of other turtles
-    show distances
-    set node-average-path-length sum distances / length distances
-    set node-clustering-coefficient ifelse-value (count link-neighbors <= 1)
-      [ "undefined" ]
-      [ (2 * count links with [ in-neighborhood? [ link-neighbors ] of myself ] / ((count link-neighbors) * (count link-neighbors - 1))) ]
+    ifelse empty? distances [
+      set node-average-path-length false ;; undefined
+    ]
+    [
+      set node-average-path-length sum distances / length distances
+    ]
+
+    let hood link-neighbors
+    ifelse count hood <= 1 [
+      set node-clustering-coefficient "undefined"
+    ]
+    [
+      let links-in-hood links with [ (member? end1 hood and member? end2 hood) ]
+      set node-clustering-coefficient (2 * count links-in-hood) / (count hood * (count hood - 1))
+    ]
   ]
   
   set average-path-length nw:mean-path-length ;; will be false if the network is disconnected
@@ -207,7 +215,7 @@ to-report do-calculations
 end
 
 to-report in-neighborhood? [ hood ]
-  report ( member? end1 hood and member? end2 hood )
+  report (member? end1 hood and member? end2 hood)
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -246,8 +254,7 @@ to highlight
 end
 
 to do-highlight
-    
-  ;; getg the node with neighbors that is closest to the mouse
+  ;; get the node with neighbors that is closest to the mouse
   let node min-one-of turtles with [ count link-neighbors > 0 ] [ distancexy mouse-xcor mouse-ycor ]
   if node = nobody [ stop ]
   if node = currently-highlighted-node [ stop ]
@@ -255,7 +262,7 @@ to do-highlight
   
   ;; remove previous highlights
   ask turtles [ set color default-node-color ]
-  ask links [ set color default-link-color ]
+  ask links [ set color ifelse-value rewired? [ rewired-link-color ] [ default-link-color ] ]
   
   ;; highlight the chosen node
   ask node [ set color highlighted-node-color ]
@@ -309,7 +316,7 @@ ticks
 30.0
 
 SLIDER
-80
+90
 10
 320
 43
@@ -347,7 +354,7 @@ BUTTON
 50
 320
 83
-NIL
+Rewire one
 rewire-one
 NIL
 1
@@ -360,7 +367,7 @@ NIL
 1
 
 SLIDER
-105
+110
 280
 320
 313
@@ -368,7 +375,7 @@ rewiring-probability
 rewiring-probability
 0
 1
-0.3
+0.6
 0.01
 1
 NIL
@@ -377,9 +384,9 @@ HORIZONTAL
 BUTTON
 10
 280
-100
+107
 313
-NIL
+Rewire all
 rewire-all
 NIL
 1
@@ -394,7 +401,7 @@ NIL
 BUTTON
 810
 450
-945
+935
 495
 Highlight node
 highlight
@@ -452,9 +459,9 @@ PENS
 BUTTON
 10
 10
-76
+82
 43
-setup
+Setup
 setup
 NIL
 1
@@ -521,9 +528,9 @@ PENS
 "default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:eigenvector-centrality ] of turtles\nlet y-min first ys\nlet y-max last ys\nset-plot-pen-interval (y-max - y-min) / 10\nset-plot-x-range precision y-min 3 precision y-max 3\nhistogram ys"
 
 MONITOR
-945
+940
 450
-1075
+1070
 495
 Clustering coefficient
 [ node-clustering-coefficient ] of currently-highlighted-node

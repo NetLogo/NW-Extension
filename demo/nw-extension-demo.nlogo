@@ -21,24 +21,36 @@ to-report directed
   report (links-to-use = "directed")
 end
 
-to radial
-  layout-radial turtles links (max-one-of turtles [ count my-links ] )
-end
 
-to spring
-  layout-spring turtles links spring-constant spring-length repulsion-constant
-  display
-end
-
-to circle
-  layout-circle sort turtles 8
-end
-
-to tutte
-  layout-circle sort turtles 10
-  repeat 10 [
-    layout-tutte max-n-of (count turtles * 0.5) turtles [ count my-links ] links 12
+to redo-layout [ forever? ]
+  if layout = "radial" [
+    layout-radial turtles links ( max-one-of turtles [ count my-links ] )
   ]
+  if layout = "spring" [
+    repeat ifelse-value forever? [ 1 ] [ 50 ] [
+      let factor sqrt count turtles
+      layout-spring turtles links (1 / factor) (7 / factor) (1.5 / factor)
+      if not forever? [ wait 0.005 ]
+    ]
+  ]
+  if layout = "circle" [
+    layout-circle sort turtles 8
+  ]
+  if layout = "tutte" [
+    layout-circle sort turtles 10
+    repeat 10 [
+      layout-tutte max-n-of (count turtles * 0.5) turtles [ count my-links ] links 12
+    ]
+  ]
+end
+
+to layout-once
+  redo-layout false
+end
+
+to layout-forever
+  redo-layout true
+  display
 end
 
 to clear
@@ -98,12 +110,14 @@ to bicomponent
   nw:set-snapshot turtles get-links-to-use
   set subgraphs nw:bicomponent-clusters
   highlight-subgraph-number 0
+  user-message "Click [next] to cycle between bicomponent clusters"
 end
 
 to find-cliques
   nw:set-snapshot turtles get-links-to-use
   set subgraphs nw:maximal-cliques
   highlight-subgraph-number 0
+  user-message "Click [next] to cycle between maximal cliques"
 end
 
 to find-biggest-clique
@@ -124,6 +138,16 @@ to centrality [ measure ]
     let res (runresult measure)
     set label precision res 2
     set size res
+  ]
+  normalize-sizes
+end
+
+to normalize-sizes
+  let sizes sort [ size ] of turtles
+  let delta last sizes - first sizes
+  ifelse delta = 0 
+    [ ask turtles [ set size 1 ] ]
+    [ ask turtles [ set size ((size - first sizes) / delta) * 2 + 0.5 ]
   ]
 end
 
@@ -188,19 +212,19 @@ to load
   nw:load-matrix "matrix.txt" turtles get-links-to-use
 end
 
-to mean-link-path-length
+to-report mean-path-length
   nw:set-snapshot turtles links
-  user-message nw:mean-path-length
+  report nw:mean-path-length
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-645
-90
-1258
-724
+570
+10
+1133
+594
 16
 16
-18.3
+16.76
 1
 10
 1
@@ -221,10 +245,10 @@ ticks
 30.0
 
 BUTTON
-270
-370
 450
-403
+95
+560
+128
 NIL
 betweenness
 NIL
@@ -238,20 +262,20 @@ NIL
 1
 
 TEXTBOX
-270
-135
-420
-153
-Clusterers
+245
+70
+395
+88
+Clusterers & Cliques
 12
 0.0
 1
 
 BUTTON
-270
-160
-340
-193
+245
+95
+315
+128
 NIL
 k-means
 NIL
@@ -264,105 +288,26 @@ NIL
 NIL
 1
 
-BUTTON
-400
-10
-470
-43
-NIL
-spring
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-315
-10
-395
-43
-NIL
-circle
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-475
-10
-625
-43
-spring-constant
-spring-constant
-0
-0.5
-0.2
-0.01
-1
-NIL
-HORIZONTAL
-
-SLIDER
-630
-10
-755
-43
-spring-length
-spring-length
-1
-10
-3
-0.5
-1
-NIL
-HORIZONTAL
-
-SLIDER
-760
-10
-920
-43
-repulsion-constant
-repulsion-constant
-0
-10
-1
-0.5
-1
-NIL
-HORIZONTAL
-
 SLIDER
 10
-110
-210
-143
+95
+225
+128
 nb-nodes
 nb-nodes
 0
 1000
-195
+16
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-340
-160
-450
-193
+315
+95
+425
+128
 nb-clusters
 nb-clusters
 2
@@ -374,21 +319,21 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-270
-345
-420
-363
+450
+70
+600
+88
 Centrality
 12
 0.0
 1
 
 BUTTON
-460
-300
-640
-333
-NIL
+245
+235
+425
+268
+bicomponent clusters
 bicomponent
 NIL
 1
@@ -401,10 +346,10 @@ NIL
 1
 
 MONITOR
-580
-250
-640
-295
+365
+185
+425
+230
 nb
 length subgraphs
 17
@@ -414,8 +359,8 @@ length subgraphs
 BUTTON
 10
 10
-90
-43
+120
+55
 NIL
 clear
 NIL
@@ -430,9 +375,9 @@ NIL
 
 BUTTON
 10
-145
-212
-178
+130
+225
+163
 NIL
 preferential-attachment
 NIL
@@ -447,9 +392,9 @@ NIL
 
 BUTTON
 10
-390
-110
-423
+320
+125
+353
 NIL
 lattice-2d
 NIL
@@ -463,10 +408,10 @@ NIL
 1
 
 SLIDER
-10
-355
-110
-388
+130
+285
+225
+318
 nb-rows
 nb-rows
 0
@@ -478,10 +423,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-110
-355
-210
-388
+130
+320
+225
+353
 nb-cols
 nb-cols
 0
@@ -493,10 +438,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-110
-390
-210
-423
+10
+285
+125
+318
 wrap
 wrap
 0
@@ -504,20 +449,20 @@ wrap
 -1000
 
 TEXTBOX
-10
-70
-160
-88
+15
+75
+165
+93
 Generators
 12
 0.0
 1
 
 BUTTON
-270
-405
 450
-438
+130
+560
+163
 NIL
 eigenvector
 NIL
@@ -532,9 +477,9 @@ NIL
 
 BUTTON
 10
-525
+440
 225
-558
+473
 random
 generate-random
 NIL
@@ -549,9 +494,9 @@ NIL
 
 SLIDER
 10
-490
+405
 225
-523
+438
 nb-nodes-er
 nb-nodes-er
 0
@@ -564,9 +509,9 @@ HORIZONTAL
 
 SLIDER
 10
-455
+370
 225
-488
+403
 connexion-prob
 connexion-prob
 0
@@ -579,9 +524,9 @@ HORIZONTAL
 
 BUTTON
 10
-675
-225
-708
+560
+120
+593
 NIL
 small-world
 NIL
@@ -595,10 +540,10 @@ NIL
 1
 
 SLIDER
-10
-570
-115
-603
+125
+525
+225
+558
 nb-rows-sw
 nb-rows-sw
 0
@@ -610,10 +555,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-120
-570
+125
+560
 225
-603
+593
 nb-cols-sw
 nb-cols-sw
 0
@@ -626,9 +571,9 @@ HORIZONTAL
 
 SLIDER
 10
-605
+490
 225
-638
+523
 clustering-exp
 clustering-exp
 0
@@ -641,9 +586,9 @@ HORIZONTAL
 
 SWITCH
 10
-640
-225
-673
+525
+120
+558
 is-toroidal
 is-toroidal
 1
@@ -651,10 +596,10 @@ is-toroidal
 -1000
 
 BUTTON
-270
-440
 450
-473
+165
+560
+198
 NIL
 closeness
 NIL
@@ -667,62 +612,11 @@ NIL
 NIL
 1
 
-BUTTON
-95
-10
-150
-43
-size 1
-ask turtles [ set size 1 ]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-155
-10
-225
-43
-size * 2
-ask turtles [ set size size * 2 ]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-230
-10
-300
-43
-size / 2
-ask turtles [ set size size / 2 ]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 MONITOR
-520
-250
-577
-295
+305
+185
+362
+230
 current
 highlighted-subgraph
 17
@@ -730,10 +624,10 @@ highlighted-subgraph
 11
 
 BUTTON
-460
-250
-515
-295
+245
+185
+300
+230
 next
 next-subgraph
 NIL
@@ -747,11 +641,11 @@ NIL
 1
 
 BUTTON
-270
-300
-450
-333
-NIL
+245
+140
+425
+173
+weak component clusters
 weak-component
 NIL
 1
@@ -764,37 +658,20 @@ NIL
 1
 
 CHOOSER
-270
-70
-450
-115
+125
+10
+225
+55
 links-to-use
 links-to-use
 "all links" "undirected" "directed"
-1
-
-BUTTON
-935
-10
-1007
-43
-radial
-radial
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
+2
 
 PLOT
-270
-485
-450
-620
+245
+375
+560
+535
 Degree distribution
 NIL
 NIL
@@ -809,27 +686,10 @@ PENS
 "default" 1.0 1 -16777216 true "" "histogram [ count my-links ] of turtles"
 
 BUTTON
-1015
-10
-1082
-43
-NIL
-tutte
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-270
-675
-360
-708
+450
+240
+560
+273
 NIL
 save
 NIL
@@ -843,10 +703,10 @@ NIL
 1
 
 BUTTON
-365
-675
 450
-708
+275
+560
+308
 NIL
 load
 NIL
@@ -860,10 +720,10 @@ NIL
 1
 
 MONITOR
-270
-625
-360
-670
+330
+550
+415
+595
 NIL
 count turtles
 17
@@ -871,10 +731,10 @@ count turtles
 11
 
 MONITOR
-365
-625
-450
-670
+245
+550
+325
+595
 NIL
 count links
 17
@@ -882,10 +742,10 @@ count links
 11
 
 BUTTON
-460
-205
-640
-238
+245
+270
+425
+303
 maximal cliques
 find-cliques
 NIL
@@ -899,11 +759,11 @@ NIL
 1
 
 BUTTON
-460
-170
-640
-203
-NIL
+245
+325
+425
+358
+biggest maximal clique
 find-biggest-clique
 NIL
 1
@@ -916,27 +776,10 @@ NIL
 1
 
 BUTTON
-460
-370
-640
-403
-NIL
-mean-link-path-length
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
 10
-180
-210
-213
+165
+225
+198
 NIL
 ring
 NIL
@@ -951,9 +794,9 @@ NIL
 
 BUTTON
 10
-215
-70
-248
+235
+85
+268
 NIL
 wheel
 NIL
@@ -967,21 +810,21 @@ NIL
 1
 
 SWITCH
-75
-215
-210
-248
+90
+235
+225
+268
 wheel-inward
 wheel-inward
-0
+1
 1
 -1000
 
 BUTTON
 10
-260
-73
-293
+200
+225
+233
 NIL
 star
 NIL
@@ -992,6 +835,71 @@ NIL
 NIL
 NIL
 NIL
+1
+
+MONITOR
+420
+550
+560
+595
+Mean path length
+mean-path-length
+3
+1
+11
+
+CHOOSER
+245
+10
+337
+55
+layout
+layout
+"circle" "spring" "radial" "tutte"
+1
+
+BUTTON
+339
+10
+444
+55
+layout once
+layout-once
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+450
+10
+560
+55
+layout
+layout-forever
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+TEXTBOX
+450
+215
+550
+233
+Matrix File
+12
+0.0
 1
 
 @#$#@#$#@
