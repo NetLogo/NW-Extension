@@ -142,11 +142,7 @@ end
 ; Generators --------------------------------------
 
 to preferential-attachment
-  nw:generate-preferential-attachment turtles get-links-to-use nb-nodes [
-    set color grey - 3
-    set label who
-  ]
-  
+  nw:generate-preferential-attachment turtles get-links-to-use nb-nodes []
   update-plots
 end
 
@@ -356,7 +352,7 @@ nb-nodes
 nb-nodes
 0
 1000
-2
+195
 1
 1
 NIL
@@ -775,7 +771,7 @@ CHOOSER
 links-to-use
 links-to-use
 "all links" "undirected" "directed"
-2
+1
 
 BUTTON
 935
