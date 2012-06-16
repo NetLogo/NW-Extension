@@ -307,7 +307,7 @@ The result is reported as a list of lists of turtles. Note that one turtle _cann
 #### maximal-cliques
 `nw:maximal-cliques`
 
-A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node as a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
+A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
 
 The result is reported as a list of lists of turtles. Note that one turtle can be a member of more than one maximal clique at once.
 
