@@ -251,8 +251,11 @@ As of now, link weights are not taken into account.
 #### eigenvector-centrality
 ![turtle][turtle] `nw:eigenvector-centrality`
 
-(http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality)
+The [Eigenvector centrality](http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality) of a node can be thought of as the proportion of its time that an agent forever "walking" at random on the network would spend on this node. In practise, turtles that are connected to a lot of other turtles that are themselves well-connected (and so) get a higher Eigenvector centrality score.
 
+Eigenvector centrality is only defined for connected networks, and the primitive will report `false` for disconnected graphs. (Just like `distance-to` does when there is no path to the target turtle.)
+
+As of now, link weights are not taken into account.
 
 #### closeness-centrality
 ![turtle][turtle] `nw:closeness-centrality`
