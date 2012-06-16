@@ -269,7 +269,27 @@ Also note that, as of now, link weights are not taken into account.
 ### Clusterers
 
 #### k-means-clusters
-`nw:k-means-clusters`
+`nw:k-means-clusters` _nb-clusters_ _max-iterations_ _convergence-threshold_
+
+Partitions the turtles in the current snapshot into _nb-clusters_ different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings that get better and better until some _convergence-threshold_ or some maximum number iterations (_max-iterations_) is reached.
+
+Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, _not_ their distance in the network. This is coming in a future version of the extension. 
+
+The primitive reports a list of lists of turtles representing the different clusters. Each turtle can only be part of one cluster.
+
+Example:
+
+    nw:set-snapshot turtles links
+    let clusters nw:k-means-clusters 10 500 0.01
+    let n length clusters
+    let colors ifelse-value (n < 14)
+      [ n-of n remove gray base-colors ]
+      [ n-values n [ random 140 ] ]
+    (foreach clusters colors [
+      let c ?2
+      foreach ?1 [ ask ? [ set color c ] ]
+    ])
+
 #### bicomponent-clusters
 `nw:bicomponent-clusters`
 #### weak-component-clusters
