@@ -29,7 +29,8 @@ to redo-layout [ forever? ]
   if layout = "spring" [
     repeat ifelse-value forever? [ 1 ] [ 50 ] [
       let factor sqrt count turtles
-      layout-spring turtles links (1 / factor) (7 / factor) (1.5 / factor)
+      if factor = 0 [ set factor 1 ]
+      layout-spring turtles links (1 / factor) (14 / factor) (1.5 / factor)
       if not forever? [ wait 0.005 ]
     ]
   ]
@@ -143,11 +144,13 @@ to centrality [ measure ]
 end
 
 to normalize-sizes
-  let sizes sort [ size ] of turtles
-  let delta last sizes - first sizes
-  ifelse delta = 0 
+  if count turtles > 0 [
+    let sizes sort [ size ] of turtles
+    let delta last sizes - first sizes
+    ifelse delta = 0 
     [ ask turtles [ set size 1 ] ]
     [ ask turtles [ set size ((size - first sizes) / delta) * 2 + 0.5 ]
+    ]
   ]
 end
 
@@ -220,11 +223,11 @@ end
 GRAPHICS-WINDOW
 570
 10
-1133
-594
+1118
+579
 16
 16
-16.76
+16.30303030303031
 1
 10
 1
@@ -263,9 +266,9 @@ NIL
 
 TEXTBOX
 245
-70
+65
 395
-88
+83
 Clusterers & Cliques
 12
 0.0
@@ -273,9 +276,9 @@ Clusterers & Cliques
 
 BUTTON
 245
-95
+90
 315
-128
+123
 NIL
 k-means
 NIL
@@ -290,9 +293,9 @@ NIL
 
 SLIDER
 10
-95
+85
 225
-128
+118
 nb-nodes
 nb-nodes
 0
@@ -305,9 +308,9 @@ HORIZONTAL
 
 SLIDER
 315
-95
+90
 425
-128
+123
 nb-clusters
 nb-clusters
 2
@@ -330,9 +333,9 @@ Centrality
 
 BUTTON
 245
-235
+230
 425
-268
+263
 bicomponent clusters
 bicomponent
 NIL
@@ -347,9 +350,9 @@ NIL
 
 MONITOR
 365
-185
+180
 425
-230
+225
 nb
 length subgraphs
 17
@@ -375,9 +378,9 @@ NIL
 
 BUTTON
 10
-130
+120
 225
-163
+153
 NIL
 preferential-attachment
 NIL
@@ -392,9 +395,9 @@ NIL
 
 BUTTON
 10
-320
+310
 125
-353
+343
 NIL
 lattice-2d
 NIL
@@ -409,9 +412,9 @@ NIL
 
 SLIDER
 130
-285
+275
 225
-318
+308
 nb-rows
 nb-rows
 0
@@ -424,9 +427,9 @@ HORIZONTAL
 
 SLIDER
 130
-320
+310
 225
-353
+343
 nb-cols
 nb-cols
 0
@@ -439,20 +442,20 @@ HORIZONTAL
 
 SWITCH
 10
-285
+275
 125
-318
+308
 wrap
 wrap
-0
+1
 1
 -1000
 
 TEXTBOX
 15
-75
+65
 165
-93
+83
 Generators
 12
 0.0
@@ -477,9 +480,9 @@ NIL
 
 BUTTON
 10
-440
+425
 225
-473
+458
 random
 generate-random
 NIL
@@ -494,9 +497,9 @@ NIL
 
 SLIDER
 10
-405
+390
 225
-438
+423
 nb-nodes-er
 nb-nodes-er
 0
@@ -509,9 +512,9 @@ HORIZONTAL
 
 SLIDER
 10
-370
+355
 225
-403
+388
 connexion-prob
 connexion-prob
 0
@@ -524,9 +527,9 @@ HORIZONTAL
 
 BUTTON
 10
-560
+545
 120
-593
+578
 NIL
 small-world
 NIL
@@ -541,9 +544,9 @@ NIL
 
 SLIDER
 125
-525
+510
 225
-558
+543
 nb-rows-sw
 nb-rows-sw
 0
@@ -556,9 +559,9 @@ HORIZONTAL
 
 SLIDER
 125
-560
+545
 225
-593
+578
 nb-cols-sw
 nb-cols-sw
 0
@@ -571,9 +574,9 @@ HORIZONTAL
 
 SLIDER
 10
-490
+475
 225
-523
+508
 clustering-exp
 clustering-exp
 0
@@ -586,9 +589,9 @@ HORIZONTAL
 
 SWITCH
 10
-525
+510
 120
-558
+543
 is-toroidal
 is-toroidal
 1
@@ -614,9 +617,9 @@ NIL
 
 MONITOR
 305
-185
+180
 362
-230
+225
 current
 highlighted-subgraph
 17
@@ -625,9 +628,9 @@ highlighted-subgraph
 
 BUTTON
 245
-185
+180
 300
-230
+225
 next
 next-subgraph
 NIL
@@ -642,9 +645,9 @@ NIL
 
 BUTTON
 245
-140
+135
 425
-173
+168
 weak component clusters
 weak-component
 NIL
@@ -669,9 +672,9 @@ links-to-use
 
 PLOT
 245
-375
+360
 560
-535
+520
 Degree distribution
 NIL
 NIL
@@ -687,9 +690,9 @@ PENS
 
 BUTTON
 450
-240
+230
 560
-273
+263
 NIL
 save
 NIL
@@ -704,9 +707,9 @@ NIL
 
 BUTTON
 450
-275
+265
 560
-308
+298
 NIL
 load
 NIL
@@ -721,9 +724,9 @@ NIL
 
 MONITOR
 330
-550
+535
 415
-595
+580
 NIL
 count turtles
 17
@@ -732,9 +735,9 @@ count turtles
 
 MONITOR
 245
-550
+535
 325
-595
+580
 NIL
 count links
 17
@@ -743,9 +746,9 @@ count links
 
 BUTTON
 245
-270
+265
 425
-303
+298
 maximal cliques
 find-cliques
 NIL
@@ -760,9 +763,9 @@ NIL
 
 BUTTON
 245
-325
+320
 425
-358
+353
 biggest maximal clique
 find-biggest-clique
 NIL
@@ -777,9 +780,9 @@ NIL
 
 BUTTON
 10
-165
+155
 225
-198
+188
 NIL
 ring
 NIL
@@ -794,9 +797,9 @@ NIL
 
 BUTTON
 10
-235
+225
 85
-268
+258
 NIL
 wheel
 NIL
@@ -811,9 +814,9 @@ NIL
 
 SWITCH
 90
-235
 225
-268
+225
+258
 wheel-inward
 wheel-inward
 1
@@ -822,9 +825,9 @@ wheel-inward
 
 BUTTON
 10
-200
+190
 225
-233
+223
 NIL
 star
 NIL
@@ -839,9 +842,9 @@ NIL
 
 MONITOR
 420
-550
+535
 560
-595
+580
 Mean path length
 mean-path-length
 3
@@ -856,7 +859,7 @@ CHOOSER
 layout
 layout
 "circle" "spring" "radial" "tutte"
-1
+2
 
 BUTTON
 339
@@ -894,9 +897,9 @@ NIL
 
 TEXTBOX
 450
-215
+205
 550
-233
+223
 Matrix File
 12
 0.0
