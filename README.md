@@ -292,6 +292,9 @@ Example:
 
 #### bicomponent-clusters
 `nw:bicomponent-clusters`
+
+Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network snapshot. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of lists of turtles. Note that one turtle can be a member of more than one bicomponent at once.
+
 #### weak-component-clusters
 `nw:weak-component-clusters`
 
