@@ -1,4 +1,4 @@
-extensions [ network nw ]
+extensions [ nw ]
 
 directed-link-breed [ dirlinks dirlink ]
 undirected-link-breed [ unlinks unlink ]
@@ -17,10 +17,7 @@ end
 to-report get-links-to-use
   report ifelse-value (links-to-use = "directed")
     [ dirlinks ]
-    [ ifelse-value (links-to-use = "undirected")
-      [ unlinks ] 
-      [ links ] 
-    ]
+    [ unlinks ] 
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -230,8 +227,8 @@ to star
 end  
 
 to wheel
-  if (links-to-use = "directed") and wheel-inward [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ]
-  if (links-to-use = "directed") and not wheel-inward [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ]
+  if (links-to-use = "directed") and spokes-direction = "inward" [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ]
+  if (links-to-use = "directed") and spokes-direction = "outward" [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ]
   if (links-to-use != "directed") [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ]
   layout-once
   update-plots
@@ -244,7 +241,7 @@ to lattice-2d
 end
 
 to small-world
-  nw:generate-small-world turtles get-links-to-use nb-rows-sw nb-cols-sw clustering-exponent is-toroidal []
+  nw:generate-small-world turtles get-links-to-use nb-rows nb-cols clustering-exponent wrap []
   layout-once
   update-plots
 end
@@ -276,6 +273,10 @@ to-report mean-path-length
   nw:set-snapshot turtles links
   report nw:mean-path-length
 end
+
+
+;; Copyright 2012 Uri Wilensky.
+;; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
 570
@@ -357,7 +358,7 @@ nb-nodes
 nb-nodes
 0
 1000
-200
+535
 1
 1
 NIL
@@ -407,10 +408,10 @@ NIL
 
 BUTTON
 10
-130
+135
 225
-163
-NIL
+168
+preferential attachment
 preferential-attachment
 NIL
 1
@@ -423,11 +424,11 @@ NIL
 1
 
 BUTTON
-10
-370
-125
-403
-NIL
+120
+455
+225
+490
+lattice 2D
 lattice-2d
 NIL
 1
@@ -440,30 +441,30 @@ NIL
 1
 
 SLIDER
-130
-335
+120
+380
 225
-368
+413
 nb-rows
 nb-rows
 0
 20
-7
+10
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-130
-370
-225
-403
+10
+380
+115
+413
 nb-cols
 nb-cols
 0
 20
-8
+17
 1
 1
 NIL
@@ -471,9 +472,9 @@ HORIZONTAL
 
 SWITCH
 10
-335
-125
-368
+415
+225
+448
 wrap
 wrap
 1
@@ -509,9 +510,9 @@ NIL
 
 BUTTON
 10
-280
-70
-313
+290
+75
+323
 random
 generate-random
 NIL
@@ -525,10 +526,10 @@ NIL
 1
 
 SLIDER
-75
-280
+80
+290
 225
-313
+323
 connexion-prob
 connexion-prob
 0
@@ -541,10 +542,10 @@ HORIZONTAL
 
 BUTTON
 10
-495
-120
-528
-NIL
+455
+115
+490
+small world
 small-world
 NIL
 1
@@ -557,60 +558,19 @@ NIL
 1
 
 SLIDER
-125
-460
-225
-493
-nb-rows-sw
-nb-rows-sw
-0
-100
-6
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-125
-495
-225
-528
-nb-cols-sw
-nb-cols-sw
-0
-100
-6
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
 10
-425
+492
 225
-458
+525
 clustering-exponent
 clustering-exponent
 0
 10
-7.3
+9.8
 0.1
 1
 NIL
 HORIZONTAL
-
-SWITCH
-10
-460
-120
-493
-is-toroidal
-is-toroidal
-1
-1
--1000
 
 BUTTON
 450
@@ -653,7 +613,7 @@ CHOOSER
 55
 links-to-use
 links-to-use
-"undirected" "directed" "all links"
+"undirected" "directed"
 0
 
 PLOT
@@ -749,9 +709,9 @@ NIL
 
 BUTTON
 10
-175
+170
 225
-208
+203
 NIL
 ring
 NIL
@@ -766,9 +726,9 @@ NIL
 
 BUTTON
 10
-245
-85
-278
+240
+75
+285
 NIL
 wheel
 NIL
@@ -781,22 +741,11 @@ NIL
 NIL
 1
 
-SWITCH
-90
-245
-225
-278
-wheel-inward
-wheel-inward
-1
-1
--1000
-
 BUTTON
 10
-210
+205
 225
-243
+238
 NIL
 star
 NIL
@@ -828,7 +777,7 @@ CHOOSER
 layout
 layout
 "circle" "spring" "radial" "tutte"
-1
+0
 
 BUTTON
 339
@@ -879,7 +828,7 @@ BUTTON
 175
 425
 208
-NIL
+highlight bicomponents
 highlight-bicomponents
 T
 1
@@ -896,7 +845,7 @@ BUTTON
 215
 425
 248
-NIL
+highlight maximal cliques
 highlight-maximal-cliques
 T
 1
@@ -908,42 +857,114 @@ NIL
 NIL
 1
 
+CHOOSER
+80
+240
+225
+285
+spokes-direction
+spokes-direction
+"inward" "outward"
+0
+
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This model demonstrates various features of the Netlogo Network extension.
+
+It is not a model _of_ anything per se, but rather a collection of tools that allow you the generate various kind of networks, lay them out on screen, and get information about them.
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+The extension offers many different network "generators": primitives that allow you to generate various shape of networks. This model provides buttons and controls for adjusting the different parameters of these generators and actu
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+The first thing you should do is press the **clear** button. This will set the default shape of turtles so that they look like circles instead of arrows. At any later time, you can press the [clear] button again to erase everything and start over.
+
+The next thing to think about is if you want to use directed or undirected links. The **links-to-use** chooser will allow you to specify that: all the generators will use the kind of links specfied in the chooser. You can generate different networks with different kinds of links without clearing everything in between.
+
+As an aside, also note that the value of the **links-to-use** chooser is used by the different clusterers and measures as well. Be careful to use the right value for the network you are interested in! For example, if you ask for betweenness centrality with "directed links" selected in the chooser, but the network on the screen is undirected, the betweenness centrality values will all be zero, because the algorithm only takes directed links into account!
+
+Now that you know what kind of links you want, it's time to generate a network.
+
+The first thing that you will see in the **Generators** section of the model is a slider labeled **nb-nodes**. As you might have guessed, this will allow you to specify the number of nodes you want to have in your network. The first five generator buttons (**preferential attachment**, **ring**, **star**, **wheel**, and **random**) will take the value of that slider into account.
+
+Here is a description of each of them:
+
+### preferential attachment
+
+Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
+
+Turtles are added, one by one, each forming one link to a previously added turtle, until _nb-nodes_ is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added.
+
+### ring
+
+Generates a [ring network](http://en.wikipedia.org/wiki/Ring_network) of **nb-nodes** turtles, in which each turtle is connected to exactly two other turtles.
+
+### star
+
+Generates a [star network](http://en.wikipedia.org/wiki/Star_graph) in which there is one central turtle and every other turtle is connected only to this central node. The number of turtles can be as low as one, but it won't look much like a star.
+
+### wheel
+
+Generates a [wheel network](http://en.wikipedia.org/wiki/Wheel_graph), which is basically a [ring network](http://en.wikipedia.org/wiki/Ring_network) with an additional "central" turtle that is connected to every other turtle. The number of nodes must be at least four.
+
+On the right side of the **wheel** button, you will see a chooser allowing you the select either "inward" or "outward". This will allow to specify if the "spokes" of the wheel point toward the central turtle (inward) or away from it (outward). This is, of course, meaningful only in the case of a directed network.
+
+### random
+
+Generates a new random network of _nb-nodes_ turtles in which each one has a  connection probability (between 0 and 1) of being connected to each other turtles (this is specified through the **connection-prob** slider). The algorithm uses the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+
+### lattice 2D
+
+Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of **nb-rows** rows and **nb-cols** columns. The grid will wrap around itsef if the **wrap** switch is set to on.
+
+### small world
+
+Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
+
+The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+- When you generate preferential attachment networks, notice the distribution of node degrees in the histogram. What does it look like? What happens if you generate a network with more nodes, or multiple preferential attachment networks?
+
+- When you generate a small world network, what is the **mean path length** value that you can see on the monitor? How does it compare the a random network with the same number of nodes?
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+- In general, different layouts work best for different kind of graphs. Can you try every combination of graph/layout? Which layout do you prefer for each kind of graph? Why?
+
+- Try the spring layout with a lattice 2D network, with **wrap** set to off. How does it look? Now try it with **wrap** set to on. Can you explain the difference?
+
+- Generate a small world network with a low clustering exponent (e.g., 0.1). What is the size of the biggest maximal clique? Now try it with a big exponent (e.g. 10.0). What is the size? Try it multiple times. Do you see a pattern? What if you crank up the number of rows and columns?
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+The current version of the demo does not take link weights into account. You can add a "weight" variable to each link breed. Can you add a button assigning random weights to the links? Can you make it so that link thickness reflects the "weight" of the link? Look at the extensions documentation for primitive that take weights into account. Can you integrate those in the demo?
 
 ## NETLOGO FEATURES
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+Well, this model obviously shows the network extension primitives.
+
+But aside from that, notice the interesting use it makes of tasks for the centrality buttons. We have only one `centrality` procedure in the code that does all the hard work, and the other procedures call it with a `measure` reporter task as a parameter, that the `centrality` primitive then runs with `runresult`. This removes a lot of code duplication.
+
+Another nice tidbit is how the `foreach` command is used in the `color-clusters` primitive. Notice how it loops over both the `clusters` list and the `colors` and then uses `?1` and `?2` to access members of each pair of cluster/color.
 
 ## RELATED MODELS
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+A couple of models already in the model library, namely the "Giant Component" model and the "Small World" model could be build much more easily by using the primitives in the network extension. Such versions of these two models are included in the "demo" folder of the extension, but trying to make the modifications yourself would be an excellent exercice.
 
 ## CREDITS AND REFERENCES
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+Copyright 2012 Uri Wilensky.
+
+![CC BY-NC-SA 3.0](http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+
+Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
 @#$#@#$#@
 default
 true
@@ -1246,7 +1267,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
