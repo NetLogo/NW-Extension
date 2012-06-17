@@ -76,8 +76,7 @@ trait Primitives {
     override def report(args: Array[Argument], context: Context) = {
       val g = getGraph(context).asJungGraph
       // make sure graph is connected
-      // TODO: I should have an isConnected method instead of using meanLinkPathLength.isDefined
-      if (g.dijkstraShortestPath.meanLinkPathLength.isDefined)
+      if (g.isConnected)
         g.eigenvectorCentrality
           .getScore(context.getAgent.asInstanceOf[Turtle])
       else

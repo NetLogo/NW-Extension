@@ -4,10 +4,16 @@ directed-link-breed [ dirlinks dirlink ]
 undirected-link-breed [ unlinks unlink ]
 
 globals [
-  subgraphs
-  highlighted-subgraph
+  highlighted-node
 ]
 
+to clear
+  clear-all
+  set-current-plot "Degree distribution"
+  set-default-shape turtles "circle"
+end
+
+;; Reports the link set corresponding to the value of the links-to-use combo box
 to-report get-links-to-use
   report ifelse-value (links-to-use = "directed")
     [ dirlinks ]
@@ -17,13 +23,12 @@ to-report get-links-to-use
     ]
 end
 
-to-report directed
-  report (links-to-use = "directed")
-end
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Layouts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to redo-layout [ forever? ]
-  if layout = "radial" [
+  if layout = "radial" and count turtles > 1 [
     layout-radial turtles links ( max-one-of turtles [ count my-links ] )
   ]
   if layout = "spring" [
@@ -35,10 +40,10 @@ to redo-layout [ forever? ]
     ]
   ]
   if layout = "circle" [
-    layout-circle sort turtles 8
+    layout-circle sort turtles max-pxcor * 0.9
   ]
   if layout = "tutte" [
-    layout-circle sort turtles 10
+    layout-circle sort turtles max-pxcor * 0.9
     repeat 10 [
       layout-tutte max-n-of (count turtles * 0.5) turtles [ count my-links ] links 12
     ]
@@ -54,110 +59,105 @@ to layout-forever
   display
 end
 
-to clear
-  clear-all
-  set-current-plot "Degree distribution"
-  set subgraphs []
-  set-default-shape turtles "circle"
-end
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Clusterers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Clusterers -------------------------------------
-
-to color-clusters [ clusters ]
-  let n length clusters
-  let colors ifelse-value (n < 14)
-    [ n-of n remove gray base-colors ]
-    [ n-values n [ random 140 ] ]
-  
-    (foreach clusters colors [
-      let c ?2
-      foreach ?1 [ ask ? [ set color c ] ]
-    ])
-end
-
+;; Clusters the graph according to turtle position
 to k-means
   nw:set-snapshot turtles get-links-to-use
   let clusters nw:k-means-clusters nb-clusters 1000 0.001
   if length clusters > 0 [ color-clusters clusters ]
 end   
 
-to next-subgraph
-  if highlighted-subgraph >= length subgraphs
-    [ set highlighted-subgraph 0 ]
-  highlight-subgraph-number highlighted-subgraph
-end
-
-to highlight-subgraph [ subgraph ]
-  ask turtles [ set color gray - 3 ]
-  ask links [ set color gray - 3 ]
-  ask turtle-set subgraph [ 
-    set color yellow 
-    ask my-links [
-      if member? other-end subgraph [
-        set color white
-      ]
-    ]
-  ]
-end
-
-to highlight-subgraph-number [ i ]
-  if length subgraphs > 0 [
-    set highlighted-subgraph i + 1
-    highlight-subgraph item i subgraphs
-  ]
-end
-
-to bicomponent
-  nw:set-snapshot turtles get-links-to-use
-  set subgraphs nw:bicomponent-clusters
-  highlight-subgraph-number 0
-  user-message "Click [next] to cycle between bicomponent clusters"
-end
-
-to find-cliques
-  nw:set-snapshot turtles get-links-to-use
-  set subgraphs nw:maximal-cliques
-  highlight-subgraph-number 0
-  user-message "Click [next] to cycle between maximal cliques"
-end
-
-to find-biggest-clique
-  nw:set-snapshot turtles get-links-to-use
-  highlight-subgraph nw:biggest-maximal-clique
-end
-
+;; Colorizes each node according to which component it is part of
 to weak-component
   nw:set-snapshot turtles get-links-to-use
   color-clusters nw:weak-component-clusters
 end
 
-; Centrality --------------------------------------
-
-to centrality [ measure ]
-  nw:set-snapshot turtles get-links-to-use
-  ask turtles [
-    let res (runresult measure)
-    ifelse is-number? res [
-      set label precision res 2
-      set size res
-    ]
-    [
-      set label res
-    ]
+;; Allows the user to mouse over and highlight all bicomponents
+to highlight-bicomponents
+  if mouse-inside? [ 
+    nw:set-snapshot turtles get-links-to-use
+    highlight-clusters nw:bicomponent-clusters
   ]
-  normalize-sizes
+  display
 end
 
-to normalize-sizes
-  if count turtles > 0 [
-    let sizes sort [ size ] of turtles
-    let delta last sizes - first sizes
-    ifelse delta = 0 
-    [ ask turtles [ set size 1 ] ]
-    [ ask turtles [ set size ((size - first sizes) / delta) * 2 + 0.5 ]
-    ]
+;; Allows the user to mouse over and highlight all maximal cliques
+to highlight-maximal-cliques
+  if (links-to-use != "undirected") [
+    user-message "Maximal cliques only work with undirected links."
+    stop
+  ]
+  if mouse-inside? [ 
+    nw:set-snapshot turtles unlinks
+    highlight-clusters nw:maximal-cliques
+  ]
+  display
+end
+
+;; Colorizes the biggest maximal clique in the graph, or a random one if there is more than one
+to find-biggest-clique
+  if (links-to-use != "undirected") [
+    user-message "Maximal cliques only work with undirected links."
+    stop
+  ]
+  nw:set-snapshot turtles unlinks
+  ;; color-clusters takes a list of lists (clusters) 
+  ;; but we only have one, so we package it in a list
+  color-clusters (list nw:biggest-maximal-clique)
+end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Highlighting and coloring of clusters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Allows the user to mouse over different nodes and 
+;; highlight all the clusters that this node is a part of
+to highlight-clusters [ clusters ]
+  ;; get the node with neighbors that is closest to the mouse
+  let node min-one-of turtles [ distancexy mouse-xcor mouse-ycor ]
+  if node != nobody and node != highlighted-node [
+    set highlighted-node node
+    ;; find all clusters the node is in and assign them different colors
+    color-clusters filter [ member? node ? ] clusters
+    ;; highlight target node
+    ask node [ set color white ]
   ]
 end
+
+to color-clusters [ clusters ]
+  ;; reset all colors
+  ask turtles [ set color gray - 3 ]
+  ask links [ set color gray - 3 ]
+  let n length clusters
+  let colors ifelse-value (n <= 12)
+    [ n-of n remove gray remove white base-colors ] ;; choose base colors other than white and gray
+    [ n-values n [ random 140 ] ] ;; too many clusters to be picky about color - just go random! (should not really happen...)
+  
+    ;; loop through the clusters and colors zipped together
+    (foreach clusters colors [      
+      let cluster ?1
+      let cluster-color ?2
+      foreach cluster [ ;; for each node in the cluster
+        ask ? [
+          ;; give the node the color of its cluster
+          set color cluster-color
+          ;; colorize the links from the node to other nodes in the same cluster
+          ;; link color is slightly darker...
+          ask my-unlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
+          ask my-in-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
+          ask my-out-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
+        ] 
+      ]
+    ])
+end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Centrality Measures
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to betweenness
   centrality task nw:betweenness-centrality
@@ -171,46 +171,94 @@ to closeness
   centrality task nw:closeness-centrality
 end
 
-; Generators --------------------------------------
+;; Takes a centrality measure as a reporter task, runs it for all nodes
+;; and set labels, sizes and colors of turtles to illustrate result
+to centrality [ measure ]
+  nw:set-snapshot turtles get-links-to-use
+  ask turtles [
+    let res (runresult measure) ;; run the task for the turtle
+    ifelse is-number? res [
+      set label precision res 2
+      set size res ;; this will be normalized later
+    ]
+    [ ;; if the result is not a number, it is because eigenvector returned false (in the case of disconnected graphs
+      set label res
+      set size 1
+    ]
+  ]
+  normalize-sizes-and-colors
+end
+
+;; We want the size of the turtles to reflect their centrality, but different measures 
+;; give different ranges of size, so we normalize the sizes according to the formula 
+;; below. We then use the normalized sizes to pick an appropriate color.
+to normalize-sizes-and-colors
+  if count turtles > 0 [
+    let sizes sort [ size ] of turtles ;; initial sizes in decreasing order
+    let delta last sizes - first sizes ;; difference between smallest and biggest
+    ifelse delta = 0 [ ;; if they are all the same size
+      ask turtles [ set size 1 ]
+    ]
+    [ ;; remap the size to a range between 0.5 and 2.5
+      ask turtles [ set size ((size - first sizes) / delta) * 2 + 0.5 ]
+    ]
+    ;; use size to set color between (red - 2.5) and (red - 0.5), which gives a nice gradient
+    ask turtles [ set color red - 3 + size ]
+  ]
+end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generators
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to preferential-attachment
   nw:generate-preferential-attachment turtles get-links-to-use nb-nodes []
+  layout-once
   update-plots
 end
 
 to ring
   nw:generate-ring turtles get-links-to-use nb-nodes []
+  layout-once
   update-plots
 end  
 
 to star
   nw:generate-star turtles get-links-to-use nb-nodes []
+  layout-once
   update-plots
 end  
 
 to wheel
-  if directed and wheel-inward [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ]
-  if directed and not wheel-inward [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ]
-  if not directed [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ]
+  if (links-to-use = "directed") and wheel-inward [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ]
+  if (links-to-use = "directed") and not wheel-inward [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ]
+  if (links-to-use != "directed") [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ]
+  layout-once
   update-plots
 end  
 
 to lattice-2d
   nw:generate-lattice-2d turtles get-links-to-use nb-rows nb-cols wrap []
+  layout-once
   update-plots
 end
 
 to small-world
-  nw:generate-small-world turtles get-links-to-use nb-rows-sw nb-cols-sw clustering-exp is-toroidal []
+  nw:generate-small-world turtles get-links-to-use nb-rows-sw nb-cols-sw clustering-exponent is-toroidal []
+  layout-once
   update-plots
 end
 
 to generate-random
   nw:generate-random turtles get-links-to-use nb-nodes connexion-prob []
+  layout-once
   update-plots
 end
 
-; Save / Load -----------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Saving and loading of matrices
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 to save
   nw:set-snapshot turtles get-links-to-use
   nw:save-matrix "matrix.txt"
@@ -219,6 +267,10 @@ end
 to load
   nw:load-matrix "matrix.txt" turtles get-links-to-use
 end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Reporters for monitors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to-report mean-path-length
   nw:set-snapshot turtles links
@@ -254,9 +306,9 @@ ticks
 
 BUTTON
 450
-95
+90
 560
-128
+123
 NIL
 betweenness
 NIL
@@ -305,7 +357,7 @@ nb-nodes
 nb-nodes
 0
 1000
-16
+200
 1
 1
 NIL
@@ -320,7 +372,7 @@ nb-clusters
 nb-clusters
 2
 14
-3
+14
 1
 1
 NIL
@@ -328,41 +380,13 @@ HORIZONTAL
 
 TEXTBOX
 450
-70
+65
 600
-88
+83
 Centrality
 12
 0.0
 1
-
-BUTTON
-245
-230
-425
-263
-bicomponent clusters
-bicomponent
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-MONITOR
-365
-180
-425
-225
-nb
-length subgraphs
-17
-1
-11
 
 BUTTON
 10
@@ -383,9 +407,9 @@ NIL
 
 BUTTON
 10
-120
+130
 225
-153
+163
 NIL
 preferential-attachment
 NIL
@@ -400,9 +424,9 @@ NIL
 
 BUTTON
 10
-350
+370
 125
-383
+403
 NIL
 lattice-2d
 NIL
@@ -417,9 +441,9 @@ NIL
 
 SLIDER
 130
-315
+335
 225
-348
+368
 nb-rows
 nb-rows
 0
@@ -432,9 +456,9 @@ HORIZONTAL
 
 SLIDER
 130
-350
+370
 225
-383
+403
 nb-cols
 nb-cols
 0
@@ -447,9 +471,9 @@ HORIZONTAL
 
 SWITCH
 10
-315
+335
 125
-348
+368
 wrap
 wrap
 1
@@ -468,9 +492,9 @@ Generators
 
 BUTTON
 450
-130
+125
 560
-163
+158
 NIL
 eigenvector
 NIL
@@ -485,9 +509,9 @@ NIL
 
 BUTTON
 10
-260
+280
 70
-293
+313
 random
 generate-random
 NIL
@@ -502,9 +526,9 @@ NIL
 
 SLIDER
 75
-260
+280
 225
-293
+313
 connexion-prob
 connexion-prob
 0
@@ -517,9 +541,9 @@ HORIZONTAL
 
 BUTTON
 10
-475
+495
 120
-508
+528
 NIL
 small-world
 NIL
@@ -534,14 +558,14 @@ NIL
 
 SLIDER
 125
-440
+460
 225
-473
+493
 nb-rows-sw
 nb-rows-sw
 0
 100
-4
+6
 1
 1
 NIL
@@ -549,14 +573,14 @@ HORIZONTAL
 
 SLIDER
 125
-475
+495
 225
-508
+528
 nb-cols-sw
 nb-cols-sw
 0
 100
-3
+6
 1
 1
 NIL
@@ -564,14 +588,14 @@ HORIZONTAL
 
 SLIDER
 10
-405
+425
 225
-438
-clustering-exp
-clustering-exp
+458
+clustering-exponent
+clustering-exponent
 0
 10
-0.3
+7.3
 0.1
 1
 NIL
@@ -579,9 +603,9 @@ HORIZONTAL
 
 SWITCH
 10
-440
+460
 120
-473
+493
 is-toroidal
 is-toroidal
 1
@@ -590,39 +614,11 @@ is-toroidal
 
 BUTTON
 450
-165
+160
 560
-198
+193
 NIL
 closeness
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-MONITOR
-305
-180
-362
-225
-current
-highlighted-subgraph
-17
-1
-11
-
-BUTTON
-245
-180
-300
-225
-next
-next-subgraph
 NIL
 1
 T
@@ -657,17 +653,17 @@ CHOOSER
 55
 links-to-use
 links-to-use
-"all links" "undirected" "directed"
-1
+"undirected" "directed" "all links"
+0
 
 PLOT
 245
-360
+310
 560
-520
+470
 Degree distribution
-NIL
-NIL
+Degrees
+Nb nodes
 0.0
 10.0
 0.0
@@ -680,9 +676,9 @@ PENS
 
 BUTTON
 450
-230
+225
 560
-263
+258
 NIL
 save
 NIL
@@ -697,9 +693,9 @@ NIL
 
 BUTTON
 450
-265
+260
 560
-298
+293
 NIL
 load
 NIL
@@ -714,9 +710,9 @@ NIL
 
 MONITOR
 330
-535
+485
 415
-580
+530
 NIL
 count turtles
 17
@@ -725,9 +721,9 @@ count turtles
 
 MONITOR
 245
-535
+485
 325
-580
+530
 NIL
 count links
 17
@@ -736,26 +732,9 @@ count links
 
 BUTTON
 245
-265
+255
 425
-298
-maximal cliques
-find-cliques
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-245
-320
-425
-353
+288
 biggest maximal clique
 find-biggest-clique
 NIL
@@ -770,9 +749,9 @@ NIL
 
 BUTTON
 10
-155
+175
 225
-188
+208
 NIL
 ring
 NIL
@@ -787,9 +766,9 @@ NIL
 
 BUTTON
 10
-225
+245
 85
-258
+278
 NIL
 wheel
 NIL
@@ -804,9 +783,9 @@ NIL
 
 SWITCH
 90
+245
 225
-225
-258
+278
 wheel-inward
 wheel-inward
 1
@@ -815,9 +794,9 @@ wheel-inward
 
 BUTTON
 10
-190
+210
 225
-223
+243
 NIL
 star
 NIL
@@ -832,9 +811,9 @@ NIL
 
 MONITOR
 420
-535
+485
 560
-580
+530
 Mean path length
 mean-path-length
 3
@@ -849,7 +828,7 @@ CHOOSER
 layout
 layout
 "circle" "spring" "radial" "tutte"
-0
+1
 
 BUTTON
 339
@@ -887,12 +866,46 @@ NIL
 
 TEXTBOX
 450
-205
+200
 550
-223
+218
 Matrix File
 12
 0.0
+1
+
+BUTTON
+245
+175
+425
+208
+NIL
+highlight-bicomponents
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+245
+215
+425
+248
+NIL
+highlight-maximal-cliques
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 1
 
 @#$#@#$#@
