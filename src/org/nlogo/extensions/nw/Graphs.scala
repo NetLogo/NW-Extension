@@ -38,6 +38,7 @@ trait NetLogoGraph {
   val world = linkSet.world
 
   lazy val isDirected = links.forall(_.isDirectedLink)
+  lazy val isUndirected = links.forall(!_.isDirectedLink)
 
   def links: Iterable[Link]
   def turtles: Iterable[Turtle]

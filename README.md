@@ -313,10 +313,14 @@ A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset o
 
 The result is reported as a list of lists of turtles. Note that one turtle can be a member of more than one maximal clique at once.
 
+The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
+
 #### biggest-maximal-clique
 `nw:biggest-maximal-clique`
 
 The biggest maximal clique is, as its name implies, the biggest [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. The result is reported a list of turtles in the clique. If more than one cliques are tied for the title of biggest clique, only one of them is reported at random.
+
+The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
 ### Generators
 

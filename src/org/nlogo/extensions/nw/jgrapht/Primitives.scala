@@ -13,6 +13,7 @@ import org.nlogo.api.Argument
 import org.nlogo.api.Context
 import org.nlogo.api.DefaultCommand
 import org.nlogo.api.DefaultReporter
+import org.nlogo.api.ExtensionException
 import org.nlogo.nvm
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
@@ -23,18 +24,26 @@ trait Primitives {
 
   object MaximalCliques extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) =
-      toLogoList(getGraph(context).asJGraphTGraph
+    override def report(args: Array[Argument], context: Context) = {
+      val g = getGraph(context)
+      // TODO: This should probably be dealt with in graph construction:
+      if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
+      toLogoList(g.asJGraphTGraph
         .bronKerboschCliqueFinder
         .cliques)
+    }
   }
 
   object BiggestMaximalClique extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) =
-      toLogoList(getGraph(context).asJGraphTGraph
+    override def report(args: Array[Argument], context: Context) = {
+      val g = getGraph(context)
+      // TODO: This should probably be dealt with in graph construction:
+      if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
+      toLogoList(g.asJGraphTGraph
         .bronKerboschCliqueFinder
         .biggestClique(context.getRNG))
+    }
   }
 
   object RingGeneratorPrim extends DefaultCommand {

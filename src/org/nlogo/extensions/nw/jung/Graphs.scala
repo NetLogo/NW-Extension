@@ -64,6 +64,8 @@ trait Graph
     g
   }
 
+  // TODO: find a better way to do that...
+  lazy val isConnected = dijkstraShortestPath.meanLinkPathLength.isDefined
 }
 
 class DirectedGraph(
