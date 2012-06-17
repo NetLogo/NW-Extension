@@ -356,7 +356,7 @@ The number of nodes must be at least three.
 #### generate-star
 `nw:generate-star` _turtle-breed_ _link-breed_ _nb-nodes_
 
-
+Generates a [star network](http://en.wikipedia.org/wiki/Star_graph) in which there is one central turtle and every other turtle is connected only to this central node. The number of turtles can be as low as one, but it won't look much like a star.
 
 #### generate-wheel, generate-wheel-inward, generate-wheel-outward
 `nw:generate-wheel` _turtle-breed_ _link-breed_ _nb-nodes_
