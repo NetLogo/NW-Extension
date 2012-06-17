@@ -327,13 +327,19 @@ The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/
 The generators are amongst the only primitives that do not operate on the current network snapshot. Instead, all of them take a turtle breed and a link breed as inputs and generate a new network using the given breeds.
 
 #### generate-preferential-attachment
-`nw:generate-preferential-attachment` _turtle-breed_ _link-breed_ _nb-nodes_
+`nw:generate-preferential-attachment` _turtle-breed_ _link-breed_ _nb-nodes_ _command-task_
 
 Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
 
-In this version of the primitive, turtles are added, one by one, each forming one link to a previously added turtle, until _nb-nodes_ is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added.
+In this version of the primitive, turtles are added, one by one, each forming one link to a previously added turtle, until _nb-nodes_ is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added. Future versions of the primitive might provide more flexibility in the way the network is generated.
 
-Future versions of the primitive might provide more flexibility in the way the network is generated.
+Once the network is created, _command-task_ is executed for each turtle in the network. For example:
+
+    nw:generate-preferential-attachment turtles links 100 [ set color red ]
+
+Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
+
+    nw:generate-preferential-attachment turtles links 100 []
 
 #### generate-random
 `nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection_probability_
