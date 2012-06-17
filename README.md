@@ -92,9 +92,9 @@ The reason we did not do it like this right away is that there currently is no e
 - [Generators](https://github.com/nicolaspayette/netlogo-network#generators)
 - [Import / Export](https://github.com/nicolaspayette/netlogo-network#import--export)
 
-## General
+### General
 
-### set-snapshot
+#### set-snapshot
 
 `nw:set-snapshot` _turtleset_ _linkset_
 
