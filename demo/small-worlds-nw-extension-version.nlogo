@@ -285,7 +285,7 @@ to do-highlight
   ]
 end
 
-; Copyright 2005 Uri Wilensky.
+; Copyright 2012 Uri Wilensky.
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
