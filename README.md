@@ -8,6 +8,8 @@ This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use 
 
 This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/nicolaspayette/netlogo-network/issues?state=open), but it should not be used for production code.
 
+Also, be aware that the syntax of some primitives **will** change in future versions of the extension.  You will have to modify your code accordingly. 
+
 The source code for the extension is currently hosted online at
 https://github.com/nicolaspayette/netlogo-network.
 
@@ -382,9 +384,32 @@ The _link-breed_ must be directed.
 ### Import / Export
 
 #### save-matrix
-`nw:save-matrix`
+`nw:save-matrix` _file-name_
+
+Saves the current network snapshot to _file-name_, as a text file, in the form of a simple connection matrix.
+
+Here is, for example, a undirected ring network with four nodes:
+
+    0.00 1.00 0.00 1.00 
+    1.00 0.00 1.00 0.00 
+    0.00 1.00 0.00 1.00 
+    1.00 0.00 1.00 0.00 
+
+And here is the directed version:
+
+    0.00 1.00 0.00 0.00 
+    0.00 0.00 1.00 0.00 
+    0.00 0.00 0.00 1.00 
+    1.00 0.00 0.00 0.00 
+
+At the moment, `nw:save-matrix` does not support link weights. Every link is represented as a "1.00" in the connection matrix. This will change in a future version of the extension.
+
 #### load-matrix
-`nw:load-matrix`
+`nw:load-matrix` _file-name_ _turtle-breed_ _link-breed_
+
+
+
+At the moment, `nw:load-matrix` does not support link weights.
 
 ## Building
 
