@@ -339,18 +339,45 @@ Generates a new random network of _nb-nodes_ turtles in which each one has a  _c
 
 Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
 
-The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close by nodes when adding new links. A clustering exponent of `2.0` is typically used.
+The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
 #### generate-lattice-2d
-`nw:generate-lattice-2d`
+`nw:generate-lattice-2d` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _is-toroidal_
+
+Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column_count_ columns. The grid will wrap around itsef if _is_toroidal_ is `true`.
+
 #### generate-ring
-`nw:generate-ring`
+`nw:generate-ring` _turtle-breed_ _link-breed_ _nb-nodes_
+
+Generates a [ring network](http://en.wikipedia.org/wiki/Ring_network) of _nb-nodes_ turtles, in which each turtle is connected to exactly two other turtles.
+
+The number of nodes must be at least three.
+
 #### generate-star
-`nw:generate-star`
+`nw:generate-star` _turtle-breed_ _link-breed_ _nb-nodes_
+
+
+
 #### generate-wheel, generate-wheel-inward, generate-wheel-outward
-`nw:generate-wheel`
-`nw:generate-wheel-inward`
-`nw:generate-wheel-outward`
+`nw:generate-wheel` _turtle-breed_ _link-breed_ _nb-nodes_
+
+Generates a [wheel network](http://en.wikipedia.org/wiki/Wheel_graph), which is basically a [ring network](http://en.wikipedia.org/wiki/Ring_network) with an additional "central" turtle that is connected to every other turtle.
+
+The number of nodes must be at least four.
+
+The _link-breed_ must be undirected.
+
+`nw:generate-wheel-inward` _turtle-breed_ _link-breed_ _nb-nodes_
+
+Generates a wheel network in which the "spokes" are pointing towards the central turtle.
+
+The _link-breed_ must be directed.
+
+`nw:generate-wheel-outward` _turtle-breed_ _link-breed_ _nb-nodes_
+
+Generates a wheel network in which the "spokes" are pointing away from the central turtle.
+
+The _link-breed_ must be directed.
 
 ### Import / Export
 
