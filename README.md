@@ -407,9 +407,27 @@ At the moment, `nw:save-matrix` does not support link weights. Every link is rep
 #### load-matrix
 `nw:load-matrix` _file-name_ _turtle-breed_ _link-breed_
 
-
+Generates a new network according to the connection matrix saved in _file-name_, using _turtle-breed_ and _link-breed_ to create the new turtles and links.
 
 At the moment, `nw:load-matrix` does not support link weights.
+
+Please be aware that the breeds that use use to load the matrix may be different from those that you used when you saved it.
+
+For example:
+
+    extensions [ nw ]
+    directed-link-breed [ dirlinks dirlink ]
+    to go
+      clear-all
+      crt 5 [ create-dirlinks-to other turtles ]
+      nw:set-snapshot turtles dirlinks
+      nw:save-matrix "matrix.txt"
+      clear-all
+      nw:load-matrix "matrix.txt" turtles links
+      layout-circle turtles 10
+    end
+
+..._will_ give you back **undirected** links, even if you saved directed links into the matrix.
 
 ## Building
 
