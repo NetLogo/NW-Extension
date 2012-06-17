@@ -148,7 +148,7 @@ The `nw:distance-to` version of the primitive assumes that each link counts for 
 ##### Example:
 
     links-own [ weight ]
-    to link-distance-example
+    to go
       clear-all
       create-turtles 5
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
@@ -185,7 +185,7 @@ If no path exist between the source and the target turtles, all primitives will 
 ##### Example:
 
     links-own [ weight ]
-    to link-path-example
+    to go
       clear-all
       create-turtles 5
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
@@ -220,7 +220,7 @@ Reports false unless paths exist between all pairs.
 ##### Example:
 
     links-own [ weight ]
-    to mean-link-path-length-example
+    to go
       clear-all
       create-turtles 3
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
