@@ -358,7 +358,7 @@ nb-nodes
 nb-nodes
 0
 1000
-535
+145
 1
 1
 NIL
@@ -373,7 +373,7 @@ nb-clusters
 nb-clusters
 2
 14
-14
+8
 1
 1
 NIL
@@ -777,7 +777,7 @@ CHOOSER
 layout
 layout
 "circle" "spring" "radial" "tutte"
-0
+1
 
 BUTTON
 339
@@ -872,11 +872,9 @@ spokes-direction
 
 This model demonstrates various features of the Netlogo Network extension.
 
-It is not a model _of_ anything per se, but rather a collection of tools that allow you the generate various kind of networks, lay them out on screen, and get information about them.
-
 ## HOW IT WORKS
 
-The extension offers many different network "generators": primitives that allow you to generate various shape of networks. This model provides buttons and controls for adjusting the different parameters of these generators and actu
+It is not a model _of_ anything per se, but rather a collection of tools that allow you the generate various kind of networks, lay them out on screen, and get information about them.
 
 ## HOW TO USE IT
 
@@ -886,45 +884,104 @@ The next thing to think about is if you want to use directed or undirected links
 
 As an aside, also note that the value of the **links-to-use** chooser is used by the different clusterers and measures as well. Be careful to use the right value for the network you are interested in! For example, if you ask for betweenness centrality with "directed links" selected in the chooser, but the network on the screen is undirected, the betweenness centrality values will all be zero, because the algorithm only takes directed links into account!
 
-Now that you know what kind of links you want, it's time to generate a network.
+On the right of the **links-to-use** chooser, is another one called **layout**. NetLogo currently offers four different kinds of layouts (this is not new in the extension - they were all available before): [circle](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-circle), [radial](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-radial), [spring](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-spring) and [tutte](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-tutte). The chosen layout will be applied automatically when generating new networks, but you can also apply yourself by clicking the **layout once** button. The **layout** forever button reapplies the layout continuously. This is mostly useful for the spring layout, which looks better if it is run multiple times.
+
+Now that you know what kind of links you want, and how you want it to look, it's time to generate a network!
+
+### Generators
 
 The first thing that you will see in the **Generators** section of the model is a slider labeled **nb-nodes**. As you might have guessed, this will allow you to specify the number of nodes you want to have in your network. The first five generator buttons (**preferential attachment**, **ring**, **star**, **wheel**, and **random**) will take the value of that slider into account.
 
 Here is a description of each of them:
 
-### preferential attachment
+#### preferential attachment
 
 Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
 
 Turtles are added, one by one, each forming one link to a previously added turtle, until _nb-nodes_ is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added.
 
-### ring
+#### ring
 
 Generates a [ring network](http://en.wikipedia.org/wiki/Ring_network) of **nb-nodes** turtles, in which each turtle is connected to exactly two other turtles.
 
-### star
+#### star
 
 Generates a [star network](http://en.wikipedia.org/wiki/Star_graph) in which there is one central turtle and every other turtle is connected only to this central node. The number of turtles can be as low as one, but it won't look much like a star.
 
-### wheel
+#### wheel
 
 Generates a [wheel network](http://en.wikipedia.org/wiki/Wheel_graph), which is basically a [ring network](http://en.wikipedia.org/wiki/Ring_network) with an additional "central" turtle that is connected to every other turtle. The number of nodes must be at least four.
 
 On the right side of the **wheel** button, you will see a chooser allowing you the select either "inward" or "outward". This will allow to specify if the "spokes" of the wheel point toward the central turtle (inward) or away from it (outward). This is, of course, meaningful only in the case of a directed network.
 
-### random
+#### random
 
 Generates a new random network of _nb-nodes_ turtles in which each one has a  connection probability (between 0 and 1) of being connected to each other turtles (this is specified through the **connection-prob** slider). The algorithm uses the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
-### lattice 2D
+#### lattice 2D
 
 Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of **nb-rows** rows and **nb-cols** columns. The grid will wrap around itsef if the **wrap** switch is set to on.
 
-### small world
+#### small world
 
 Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
 
 The generator uses the same sliders and switch as the lattice 2D generator, namely, **nb-rows**, **nb-cols** and **wrap**. The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if **wrap** is on). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the **clustering-exponent**, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
+
+### Clusters and cliques
+
+Now that you have generated one or more networks, there are things that you might want to know about them.
+
+#### k-means
+
+Partitions the turtles in the current network into **nb-clusters** different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings based on the _x y coordinates_ of the turtles. If this does not seem very network related, it is because it isn't. But in a future version of the extension, we will support clustering based on the distance in the network.
+
+#### weak component clusters
+
+This button will assign a different color to all the "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
+
+#### highlight bicomponents
+
+Clicking on this button will put you in a mode where you use your mouse to highlight the different [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it).
+
+Note that one turtle can be a member of more than one bicomponent at once. If it is the case, all the bicomponents that the target turtle is part of will be highlighted when you move your mouse pointer near it, but they will be of different color.
+
+#### highlight maximal cliques
+
+The general usage for this is the same as for the **highlight bicomponents** mode. Note you should not try to use both highlight modes at the same time.
+
+A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
+
+#### biggest maximal clique
+
+This simply highlights the biggest of all the maximal cliques in the networks. If there are multiple cliques that are equally big (as is often the case), it simply highlights one at random.
+
+### Centrality measures
+
+Besides all the clusterers and the clique finder, you can also calculate some centrality measures on your networks. All the centrality measures will label the nodes will the result of the calculation and adjust their size and color to reflect that result.
+
+#### betweenness
+
+To calculate the [betweenness centrality](http://en.wikipedia.org/wiki/Betweenness_centrality) of a turtle, you take every other possible pairs of turtles and, for each pair, you calculate the proportion of shortest paths between members of the pair that passes through the current turtle. The betweeness centrality of a turtle is the sum of these.
+
+#### eigenvector
+
+The [Eigenvector centrality](http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality) of a node can be thought of as the proportion of its time that an agent forever "walking" at random on the network would spend on this node. In practice, turtles that are connected to a lot of other turtles that are themselves well-connected (and so) get a higher Eigenvector centrality score.
+
+Eigenvector centrality is only defined for connected networks, and will report `false` for disconnected graphs.
+
+#### closeness
+
+The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_centrality) of a turtle is defined as the inverse of the sum of it's distances to all other turtles.
+
+Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
+
+
+### Import / Export
+
+Finally, you can save and load your networks. This is done through the use of simple text files containing an [adjacency matrix](http://en.wikipedia.org/wiki/Adjacency_matrix).
+
+The model currently always save the network to your NetLogo directory in a file called `matrix.txt` when you click the **save** button. When you click the **load** button, it reads from the same location and creates a new network from the file.
 
 ## THINGS TO NOTICE
 
@@ -1267,7 +1324,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
