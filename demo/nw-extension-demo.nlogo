@@ -924,7 +924,7 @@ Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph)
 
 Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
 
-The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
+The generator uses the same sliders and switch as the lattice 2D generator, namely, **nb-rows**, **nb-cols** and **wrap**. The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if **wrap** is on). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the **clustering-exponent**, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
 ## THINGS TO NOTICE
 
@@ -1267,7 +1267,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.1
+NetLogo 5.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
