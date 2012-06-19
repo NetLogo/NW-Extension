@@ -21,6 +21,7 @@ end
 
 to make-turtles
   crt num-nodes
+  nw:set-snapshot turtles links ;; build a first snapshot of the network
   layout-circle turtles max-pxcor - 1
 end
 
@@ -37,19 +38,32 @@ to go
   ]
   add-edge
   highlight-giant-component
-  layout
+  if layout? [
+    adjust-sizes
+    layout
+  ]
   tick
+end
+
+to-report measure
+  if preferential-attachment = "degree" [ report task [ count my-links ] ]
+  if preferential-attachment = "betweenness centrality" [ report task [ nw:betweenness-centrality ] ]
+  if preferential-attachment = "closeness centrality" [ report task [ nw:closeness-centrality ] ]
+  report task [ 1 ] ; used for "none" - they all get equal values
 end
 
 to highlight-giant-component
   nw:set-snapshot turtles links
+  ; nw:weak-component-clusters gives you a list of all the components in the network,
+  ; each component being itself represented as a list. The get the biggest component
+  ; (this "giant" one), we sort them in reverse size order and take the first one.
   let giant-component first sort-by [length ?1 > length ?2] nw:weak-component-clusters
   if length giant-component > giant-component-size [
     set giant-component-size length giant-component
     ask turtles [ set color gray + 2 ]
     ask turtle-set giant-component [ set color red ]
   ]
-  ask links [ set color [color] of end1 ]  ;; recolor all edges
+  ask links [ set color [ color ] of end1 - 2]  ;; recolor all edges
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,17 +72,48 @@ end
 
 ;; pick a random missing edge and create it
 to add-edge
-  let node1 one-of turtles
-  let node2 one-of turtles
-  ask node1 [
-    ifelse link-neighbor? node2 or node1 = node2
-    ;; if there's already an edge there, then go back
-    ;; and pick new turtles
-    [ add-edge ]
-    ;; else, go ahead and make it
-    [ create-link-with node2 ]
-  ]
 
+  let node1 nobody
+  let node2 nobody
+  while [ node2 = nobody ] [
+    ask one-of turtles [
+      set node1 self
+      set node2 choose-node other turtles with [ not link-neighbor? myself ]
+    ]
+  ]
+  ask node1 [ create-link-with node2 ]
+  nw:set-snapshot turtles links ;; always update the snapshot after an edge is created
+
+end
+
+;; This code is adapted from the "Preferential Attachment" model from the library
+;; The idea behind the code is a bit tricky to understand.
+;; Basically we take the sum of the current preferential attachment measure
+;; for all the candidates, and that's how many "tickets" we have in our lottery.
+;; Then we pick a random "ticket" (a random number).  Then we step
+;; through the candidates to figure out which node holds the winning ticket.
+to-report choose-node [ candidates ]
+  let total random-float sum ([ runresult measure ] of candidates)
+  ifelse total = 0 [
+    ; having a total of zero means they're all equal weight anyway
+    report one-of candidates
+  ]
+  [ 
+    let chosen-node nobody
+    ask candidates [
+      let result runresult measure
+      ;; if there's no winner yet...
+      if chosen-node = nobody [
+        ifelse result > total [ 
+          set chosen-node self 
+        ]
+        [ 
+          set total total - result 
+        ]
+      ]
+    ]
+    report chosen-node
+  ]
 end
 
 ;;;;;;;;;;;;;;
@@ -89,7 +134,28 @@ to do-layout
 end
 
 
-; Copyright 2005 Uri Wilensky.
+;; We want the size of the turtles to reflect their centrality, but different measures 
+;; give different ranges of size, so we normalize the sizes according to the formula 
+;; below. We then use the normalized sizes to pick an appropriate color.
+to adjust-sizes
+  if count turtles > 0 [
+    let results sort [ runresult measure ] of turtles ;; results of the measure in increasing order
+    let delta last results - first results ;; difference between biggest and smallest
+    let base-size world-width / 80 ; set a base-size relative to the width of the world
+    ifelse delta = 0 [ ;; if they all have the same value
+      ask turtles [ set size base-size ]
+    ]
+    [ ;; remap the size to a range of sizes from the base size to quadruple the base size
+      let size-range base-size * 3
+      ; note that we call runresult measure a second time, but since the results are 
+      ; all cached in the network snapshot, there is no significant cost to that
+      ask turtles [ set size base-size + (((runresult measure - first results) / delta) * size-range) ]
+    ]    
+  ]
+end
+
+
+; Copyright 2012 Uri Wilensky.
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -162,7 +228,7 @@ num-nodes
 num-nodes
 2
 500
-80
+40
 1
 1
 NIL
@@ -242,6 +308,16 @@ NIL
 NIL
 NIL
 1
+
+CHOOSER
+52
+486
+269
+531
+preferential-attachment
+preferential-attachment
+"none" "degree" "betweenness centrality" "closeness centrality"
+3
 
 @#$#@#$#@
 ## WHAT IS IT?
