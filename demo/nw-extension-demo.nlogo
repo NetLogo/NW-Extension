@@ -191,8 +191,8 @@ end
 ;; below. We then use the normalized sizes to pick an appropriate color.
 to normalize-sizes-and-colors
   if count turtles > 0 [
-    let sizes sort [ size ] of turtles ;; initial sizes in decreasing order
-    let delta last sizes - first sizes ;; difference between smallest and biggest
+    let sizes sort [ size ] of turtles ;; initial sizes in increasing order
+    let delta last sizes - first sizes ;; difference between biggest and smallest
     ifelse delta = 0 [ ;; if they are all the same size
       ask turtles [ set size 1 ]
     ]
@@ -263,6 +263,8 @@ end
 
 to load
   nw:load-matrix "matrix.txt" turtles get-links-to-use
+  layout-once
+  update-plots
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -358,7 +360,7 @@ nb-nodes
 nb-nodes
 0
 1000
-145
+8
 1
 1
 NIL
@@ -373,7 +375,7 @@ nb-clusters
 nb-clusters
 2
 14
-8
+11
 1
 1
 NIL
@@ -449,7 +451,7 @@ nb-rows
 nb-rows
 0
 20
-10
+8
 1
 1
 NIL
@@ -464,7 +466,7 @@ nb-cols
 nb-cols
 0
 20
-17
+8
 1
 1
 NIL
@@ -777,7 +779,7 @@ CHOOSER
 layout
 layout
 "circle" "spring" "radial" "tutte"
-1
+0
 
 BUTTON
 339
