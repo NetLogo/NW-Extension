@@ -208,48 +208,42 @@ end
 ;; Generators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to preferential-attachment
-  nw:generate-preferential-attachment turtles get-links-to-use nb-nodes []
+
+to generate [ generator-task ]
+  set-default-shape turtles "circle"
+  run generator-task
   layout-once
   update-plots
+end
+
+to preferential-attachment
+  generate task [ nw:generate-preferential-attachment turtles get-links-to-use nb-nodes [] ]
 end
 
 to ring
-  nw:generate-ring turtles get-links-to-use nb-nodes []
-  layout-once
-  update-plots
+  generate task [ nw:generate-ring turtles get-links-to-use nb-nodes [] ]
 end  
 
 to star
-  nw:generate-star turtles get-links-to-use nb-nodes []
-  layout-once
-  update-plots
+  generate task [ nw:generate-star turtles get-links-to-use nb-nodes [] ]
 end  
 
 to wheel
-  if (links-to-use = "directed") and spokes-direction = "inward" [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ]
-  if (links-to-use = "directed") and spokes-direction = "outward" [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ]
-  if (links-to-use != "directed") [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ]
-  layout-once
-  update-plots
+  if (links-to-use = "directed") and spokes-direction = "inward" [ generate task [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ] ]
+  if (links-to-use = "directed") and spokes-direction = "outward" [ generate task [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ] ]
+  if (links-to-use != "directed") [ generate task [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ] ]
 end  
 
 to lattice-2d
-  nw:generate-lattice-2d turtles get-links-to-use nb-rows nb-cols wrap []
-  layout-once
-  update-plots
+  generate task [ nw:generate-lattice-2d turtles get-links-to-use nb-rows nb-cols wrap [] ]
 end
 
 to small-world
-  nw:generate-small-world turtles get-links-to-use nb-rows nb-cols clustering-exponent wrap []
-  layout-once
-  update-plots
+  generate task [ nw:generate-small-world turtles get-links-to-use nb-rows nb-cols clustering-exponent wrap [] ]
 end
 
 to generate-random
-  nw:generate-random turtles get-links-to-use nb-nodes connexion-prob []
-  layout-once
-  update-plots
+  generate task [ nw:generate-random turtles get-links-to-use nb-nodes connexion-prob [] ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -262,9 +256,7 @@ to save
 end
 
 to load
-  nw:load-matrix "matrix.txt" turtles get-links-to-use
-  layout-once
-  update-plots
+  generate task [ nw:load-matrix "matrix.txt" turtles get-links-to-use ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1326,7 +1318,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.1
+NetLogo 5.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
