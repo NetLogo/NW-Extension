@@ -46,6 +46,8 @@ to go
 end
 
 to-report measure
+  ; returns a different reporter task that can be run by the turtles, depending on which
+  ; preferential attachment mecanism is selected in the chooser.
   if preferential-attachment = "degree" [ report task [ count my-links ] ]
   if preferential-attachment = "betweenness centrality" [ report task [ nw:betweenness-centrality ] ]
   if preferential-attachment = "closeness centrality" [ report task [ nw:closeness-centrality ] ]
@@ -86,13 +88,13 @@ to add-edge
 
 end
 
-;; This code is adapted from the "Preferential Attachment" model from the library
-;; The idea behind the code is a bit tricky to understand.
-;; Basically we take the sum of the current preferential attachment measure
-;; for all the candidates, and that's how many "tickets" we have in our lottery.
-;; Then we pick a random "ticket" (a random number).  Then we step
-;; through the candidates to figure out which node holds the winning ticket.
 to-report choose-node [ candidates ]
+  ;; This code is adapted from the "Preferential Attachment" model from the library
+  ;; The idea behind the code is a bit tricky to understand.
+  ;; Basically we take the sum of the current preferential attachment measure
+  ;; for all the candidates, and that's how many "tickets" we have in our lottery.
+  ;; Then we pick a random "ticket" (a random number).  Then we step
+  ;; through the candidates to figure out which node holds the winning ticket.
   let total random-float sum ([ runresult measure ] of candidates)
   ifelse total = 0 [
     ; having a total of zero means they're all equal weight anyway
@@ -119,6 +121,7 @@ end
 ;;;;;;;;;;;;;;
 ;;; Layout ;;;
 ;;;;;;;;;;;;;;
+
 to layout
   if not layout? [ stop ]
   ;; the number 10 here is arbitrary; more repetitions slows down the
@@ -134,10 +137,10 @@ to do-layout
 end
 
 
-;; We want the size of the turtles to reflect their centrality, but different measures 
-;; give different ranges of size, so we normalize the sizes according to the formula 
-;; below. We then use the normalized sizes to pick an appropriate color.
 to adjust-sizes
+  ;; We want the size of the turtles to reflect their centrality, but different measures 
+  ;; give different ranges of size, so we normalize the sizes according to the formula 
+  ;; below. We then use the normalized sizes to pick an appropriate color.
   if count turtles > 0 [
     let results sort [ runresult measure ] of turtles ;; results of the measure in increasing order
     let delta last results - first results ;; difference between biggest and smallest
@@ -159,13 +162,13 @@ end
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-393
-17
+385
+19
 858
-503
+513
 45
 45
-5.0
+5.09
 1
 10
 1
@@ -186,10 +189,10 @@ ticks
 30.0
 
 BUTTON
-67
-39
+20
+20
 130
-72
+53
 setup
 setup
 NIL
@@ -203,10 +206,10 @@ NIL
 1
 
 BUTTON
-109
-78
-172
-111
+135
+60
+245
+93
 go
 go
 T
@@ -220,10 +223,10 @@ NIL
 1
 
 SLIDER
-207
-36
-379
-69
+135
+20
+245
+53
 num-nodes
 num-nodes
 2
@@ -235,10 +238,10 @@ NIL
 HORIZONTAL
 
 PLOT
-17
-175
-380
-452
+20
+160
+360
+440
 Growth of the giant component
 Connections per node
 Fraction in giant component
@@ -254,10 +257,10 @@ PENS
 "transition" 1.0 0 -7500403 true "plot-pen-up\nplotxy 1 0\nplot-pen-down\nplotxy 1 1" ""
 
 MONITOR
-226
-114
-359
-159
+200
+105
+360
+150
 Giant component size
 giant-component-size
 3
@@ -265,10 +268,10 @@ giant-component-size
 11
 
 BUTTON
-24
-78
-105
-111
+20
+60
+130
+93
 go once
 go
 NIL
@@ -282,10 +285,10 @@ NIL
 1
 
 SWITCH
-227
-73
-359
-106
+250
+20
+360
+53
 layout?
 layout?
 0
@@ -293,10 +296,10 @@ layout?
 -1000
 
 BUTTON
-47
-116
-149
-149
+250
+60
+360
+93
 redo layout
 do-layout\ndisplay
 T
@@ -310,14 +313,14 @@ NIL
 1
 
 CHOOSER
-52
-486
-269
-531
+20
+105
+195
+150
 preferential-attachment
 preferential-attachment
 "none" "degree" "betweenness centrality" "closeness centrality"
-3
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -342,6 +345,8 @@ The REDO LAYOUT button runs the layout-step procedure continuously to improve th
 
 A monitor shows the current size of the giant component, and the plot shows how the giant component's size changes over time.
 
+The "network extension version" of this model follows the advice that was given in the "EXTENDING THE MODEL" section of the info tab, and adds a preferential attachment mecanism that allows you to change how the nodes that get the new edge at each turn are selected. The default is mode is "none", and this is exactly like in the original model. You can, however, select either "degree", "betweenness centrality" or "closeness centrality". In these cases, nodes that have a high value for the selected measure have a better chance of getting a new edge. See the [documentation of the extension](https://github.com/nicolaspayette/netlogo-network#centrality) for explanation of the two centrality measures and the actual code of the model for the random selection mecanism.
+
 ## THINGS TO NOTICE
 
 The y-axis of the plot shows the fraction of all nodes that are included in the giant component.  The x-axis shows the average number of connections per node. The vertical line on the plot shows where the average number of connections per node equals 1.  What happens to the rate of growth of the giant component at this point?
@@ -356,13 +361,19 @@ Run the model again, this time slowly, a step at a time.  Watch how the componen
 
 Run it with a small number of nodes (like 10) and watch the plot.  How does it differ from the plot you get when you run it with a large number of nodes (like 300)?  If you do multiple runs with the same number of nodes, how much does the shape of the plot vary from run to run?  You can turn off the LAYOUT? switch to get results faster.
 
+Now try the different preferential attachment mecanisms. How do they affect the growth of the giant component?
+
 ## EXTENDING THE MODEL
 
-Right now the probability of any two nodes getting connected to each other is the same. Can you think of ways to make some nodes more attractive to connect to than others?  How would that impact the formation of the giant component?
+Compared to the version in the model library, we have already added a preferential attachment mecanism that can be based on either node degree, node betweenness or node centrality. Can you think of other measures that could be used for that?
+
+Would egeinvector centrality work as well? If not, why?
 
 ## NETWORK CONCEPTS
 
-Identification of the connected components is done using a standard search algorithm called "depth first search."  "Depth first" means that the algorithm first goes deep into a branch of connections, tracing them out all the way to the end.  For a given node it explores its neighbor's neighbors (and then their neighbors, etc) before moving on to its own next neighbor.  The algorithm is recursive so eventually all reachable nodes from a particular starting node will be explored.  Since we need to find every reachable node, and since it doesn't matter what order we find them in, another algorithm such as "breadth first search" would have worked equally well.  We chose depth first search because it is the simplest to code.
+In the model library version of the this model, identification of the connected components is done using a standard search algorithm called "depth-first search."
+
+This version uses the `weak-component-clusters` primitive of the network extension instead. Internally, the primitive uses a "breadth-first search" algorithm instead of a depth-first search algorithm, but for finding components, the two work just as well.
 
 The position of the nodes is determined by the "spring" method, which is further described in the Preferential Attachment model.
 
@@ -393,12 +404,12 @@ S. Janson, D.E. Knuth, T. Luczak, and B. Pittel. The birth of the giant componen
 ## HOW TO CITE
 
 If you mention this model in a publication, we ask that you include these citations for the model itself and for the NetLogo software:  
-- Wilensky, U. (2005).  NetLogo Giant Component model.  http://ccl.northwestern.edu/netlogo/models/GiantComponent.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.  
+- Wilensky, U. (2012).  NetLogo Giant Component model - network extension version. http://ccl.northwestern.edu/netlogo/models/GiantComponent.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.  
 - Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.  
 
 ## COPYRIGHT AND LICENSE
 
-Copyright 2005 Uri Wilensky.
+Copyright 2012 Uri Wilensky.
 
 ![CC BY-NC-SA 3.0](http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
 
@@ -707,5 +718,5 @@ Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 
 @#$#@#$#@
-0
+1
 @#$#@#$#@
