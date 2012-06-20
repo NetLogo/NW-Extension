@@ -45,11 +45,11 @@ to setup
   ;; Colors:
   set default-node-color gray
   set default-link-color gray - 1
-  set highlighted-node-color red
-  set highlighted-neighbor-color red + 2
-  set highlighted-link-color yellow
+  set highlighted-node-color pink
+  set highlighted-neighbor-color blue + 1
+  set highlighted-link-color blue - 1
   set rewired-link-color green - 2
-  set between-neighbors-link-color orange
+  set between-neighbors-link-color yellow
   
   set currently-highlighted-node nobody  
   
@@ -114,9 +114,11 @@ to rewire-one
     ;; plot the results
     let connected? do-calculations
     update-plots
+    display
   ]
   [ 
     user-message "All edges have already been rewired once."
+    stop
   ]
 end
 
@@ -176,6 +178,14 @@ to rewire-all
   
   ;; do the plotting
   update-plots
+end
+
+to sweep
+  ; runs the "rewire all" procedure with incremental values of rewiring-probability
+  set rewiring-probability precision (rewiring-probability + 0.01) 2
+  if rewiring-probability > 1 [ set rewiring-probability 0 ]
+  rewire-all
+  display
 end
 
 ;; do-calculations reports true if the network is connected,
@@ -262,7 +272,10 @@ to do-highlight
   
   ;; remove previous highlights
   ask turtles [ set color default-node-color ]
-  ask links [ set color ifelse-value rewired? [ rewired-link-color ] [ default-link-color ] ]
+  ask links [ 
+    set color ifelse-value rewired? [ rewired-link-color ] [ default-link-color ] 
+    set thickness 0
+  ]
   
   ;; highlight the chosen node
   ask node [ set color highlighted-node-color ]
@@ -274,10 +287,12 @@ to do-highlight
     ;; highlight edges connecting the chosen node to its neighbors
     ask my-links [
       ifelse (end1 = node or end2 = node) [
+        set thickness 0.2
         set color highlighted-link-color
       ]
       [
         if (member? end1 neighbor-nodes and member? end2 neighbor-nodes) [ 
+          set thickness 0.2
           set color between-neighbors-link-color 
         ]
       ]
@@ -346,14 +361,14 @@ true
 true
 "" "if not rewire-one? [ stop ]"
 PENS
-"apl" 1.0 2 -65485 true "" "plotxy number-rewired / count links\n       average-path-length / average-path-length-of-lattice"
+"apl" 1.0 2 -65485 true "" "plotxy number-rewired / count links\n       (ifelse-value (average-path-length = false) [ 99999 ] [ average-path-length ])\n         / average-path-length-of-lattice"
 "cc" 1.0 2 -10899396 true "" ";; note: dividing by initial value to normalize the plot\nplotxy number-rewired / count links\n       clustering-coefficient / clustering-coefficient-of-lattice"
 
 BUTTON
 10
 50
-320
-83
+156
+84
 Rewire one
 rewire-one
 NIL
@@ -367,15 +382,15 @@ NIL
 1
 
 SLIDER
-110
-280
-320
-313
+84
+281
+261
+315
 rewiring-probability
 rewiring-probability
 0
 1
-0.6
+0.94
 0.01
 1
 NIL
@@ -384,8 +399,8 @@ HORIZONTAL
 BUTTON
 10
 280
-107
-313
+80
+314
 Rewire all
 rewire-all
 NIL
@@ -449,7 +464,7 @@ NIL
 1.0
 0.0
 1.0
-true
+false
 true
 "" "if not rewire-all? [ stop ]"
 PENS
@@ -459,8 +474,8 @@ PENS
 BUTTON
 10
 10
-82
-43
+85
+44
 Setup
 setup
 NIL
@@ -485,11 +500,11 @@ Nodes
 10.0
 0.0
 15.0
-true
+false
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:betweenness-centrality ] of turtles\nlet y-min first ys\nlet y-max last ys\nset-plot-pen-interval (y-max - y-min) / 10\nset-plot-x-range precision first ys 3 precision last ys 3\nhistogram ys"
+"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:betweenness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
 
 PLOT
 810
@@ -507,7 +522,7 @@ true
 false
 "" ""
 PENS
-"default" 0.05 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:closeness-centrality ] of turtles\nlet y-min first ys\nlet y-max last ys\nset-plot-pen-interval (y-max - y-min) / 10\nset-plot-x-range precision y-min 3 precision y-max 3\nhistogram ys"
+"default" 0.05 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:closeness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
 
 PLOT
 810
@@ -525,7 +540,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:eigenvector-centrality ] of turtles\nlet y-min first ys\nlet y-max last ys\nset-plot-pen-interval (y-max - y-min) / 10\nset-plot-x-range precision y-min 3 precision y-max 3\nhistogram ys"
+"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:eigenvector-centrality ] of turtles\nifelse not empty? ys [\n  let y-min first ys\n  let y-max last ys\n  if y-max > y-min [\n    set-plot-pen-interval (y-max - y-min) / 10\n    set-plot-x-range y-min y-max\n    histogram ys\n  ]\n]\n[\n  clear-plot\n]"
 
 MONITOR
 940
@@ -548,6 +563,40 @@ Avg path length
 3
 1
 11
+
+BUTTON
+169
+50
+320
+84
+Rewire one
+rewire-one
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+264
+281
+320
+315
+Sweep
+sweep
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -574,7 +623,7 @@ The NUM-NODES slider controls the size of the network.  Choose a size and press 
 
 Pressing the REWIRE-ONE button picks one edge at random, rewires it, and then plots the resulting network properties. The REWIRE-ONE button always rewires at least one edge (i.e., it ignores the REWIRING-PROBABILITY).
 
-Pressing the REWIRE-ALL button re-creates the initial network (each node connected to its two neighbors on each side for a total of four neighbors) and rewires all the edges with the current rewiring probability, then plots the resulting network properties on the rewire-all plot. Changing the REWIRING-PROBABILITY slider changes the fraction of links rewired after each run.
+Pressing the REWIRE-ALL button re-creates the initial network (each node connected to its two neighbors on each side for a total of four neighbors) and rewires all the edges with the current rewiring probability, then plots the resulting network properties on the rewire-all plot. Changing the REWIRING-PROBABILITY slider changes the fraction of links rewired after each run. The SWEEP button will automatically try the REWIRE-ALL procedure for all the range of possible rewiring probabilities.
 
 When you press HIGHLIGHT and then point to node in the view it color-codes the nodes and edges.  The node itself turns pink. Its neighbors and the edges connecting the node to those neighbors turn blue. Edges connecting the neighbors of the node to each other turn yellow. The amount of yellow between neighbors can gives you an indication of the clustering coefficient for that node.  The NODE-PROPERTIES monitor displays the average path length and clustering coefficient of the highlighted node only.  The AVERAGE-PATH-LENGTH and CLUSTERING-COEFFICIENT monitors display the values for the entire network.
 
@@ -598,15 +647,9 @@ Try to see if you can produce the same results if you start with a different ini
 
 In a precursor to this model, Watts and Strogatz created an "alpha" model where the rewiring was not based on a global rewiring probability.  Instead, the probability that a node got connected to another node depended on how many mutual connections the two nodes had. The extent to which mutual connections mattered was determined by the parameter "alpha."  Create the "alpha" model and see if it also can result in small world formation.
 
-## NETWORK CONCEPTS
-
-In this model we need to find the shortest paths between all pairs of nodes.  This is accomplished through the use of a standard dynamic programming algorithm called the Floyd Warshall algorithm. You may have noticed that the model runs slowly for large number of nodes.  That is because the time it takes for the Floyd Warshall algorithm (or other "all-pairs-shortest-path" algorithm) to run grows polynomially with the number of nodes.  For more information on the Floyd Warshall algorithm please consult:  http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm
-
 ## NETLOGO FEATURES
 
-Links are used extensively in this model.
-
-Lists are used heavily in the procedures that calculates shortest paths.
+In this model we need to find the shortest paths between all pairs of nodes. The version of this model that is in the NetLogo model library uses the [Floyd Warshall algorithm](http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm). This version directly use the network extension's mean-path-length primitive (which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) internally instead.
 
 ## RELATED MODELS
 
@@ -928,7 +971,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.1
+NetLogo 5.0.2
 @#$#@#$#@
 setup
 repeat 5 [rewire-one]
