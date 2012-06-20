@@ -1,10 +1,12 @@
 extensions [ nw ]
 
+; we have two different kinf of link breeds, one directed and one undirected, just
+; to show what the different networks look like with directed vs. undirected links
 directed-link-breed [ dirlinks dirlink ]
 undirected-link-breed [ unlinks unlink ]
 
 globals [
-  highlighted-node
+  highlighted-node  ; used for the "highlight mode" buttons to keep track of the currently highlighted node
 ]
 
 to clear
@@ -26,7 +28,7 @@ end
 
 to redo-layout [ forever? ]
   if layout = "radial" and count turtles > 1 [
-    layout-radial turtles links ( max-one-of turtles [ count my-links ] )
+    layout-radial turtles links ( max-one-of turtles [ count my-links + count my-out-links + count my-in-links ] )
   ]
   if layout = "spring" [
     repeat ifelse-value forever? [ 1 ] [ 50 ] [
@@ -208,8 +210,9 @@ end
 ;; Generators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 to generate [ generator-task ]
+  ; we have a general "generate" procedure that basically just takes a task 
+  ; parameter and run it, but takes care of calling layout and update stuff
   set-default-shape turtles "circle"
   run generator-task
   layout-once
@@ -229,9 +232,17 @@ to star
 end  
 
 to wheel
-  if (links-to-use = "directed") and spokes-direction = "inward" [ generate task [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ] ]
-  if (links-to-use = "directed") and spokes-direction = "outward" [ generate task [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ] ]
-  if (links-to-use != "directed") [ generate task [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ] ]
+  ifelse (links-to-use = "directed") [
+    ifelse spokes-direction = "inward" [ 
+      generate task [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ] 
+    ]
+    [ ; if it's not inward, it's outward
+      generate task [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ] 
+    ]
+  ]
+  [ ; for an undirected network, we don't care about spokes
+    generate task [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ]
+  ]
 end  
 
 to lattice-2d
@@ -352,7 +363,7 @@ nb-nodes
 nb-nodes
 0
 1000
-8
+15
 1
 1
 NIL
@@ -608,7 +619,7 @@ CHOOSER
 links-to-use
 links-to-use
 "undirected" "directed"
-0
+1
 
 PLOT
 245
@@ -771,7 +782,7 @@ CHOOSER
 layout
 layout
 "circle" "spring" "radial" "tutte"
-0
+2
 
 BUTTON
 339
@@ -1318,7 +1329,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
