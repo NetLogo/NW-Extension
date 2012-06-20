@@ -6,7 +6,11 @@ directed-link-breed [ dirlinks dirlink ]
 undirected-link-breed [ unlinks unlink ]
 
 globals [
-  highlighted-node  ; used for the "highlight mode" buttons to keep track of the currently highlighted node
+  highlighted-node                ; used for the "highlight mode" buttons to keep track of the currently highlighted node
+  highlight-bicomponents-on       ; indicates that highlight-bicomponents mode is active
+  stop-highlight-bicomponents     ; indicates that highlight-bicomponents mode needs to stop
+  highlight-maximal-cliques-on    ; indicates highlight-maximal-cliques mode is active
+  stop-highlight-maximal-cliques  ; indicates highlight-maximal-cliques mode needs to stop
 ]
 
 to clear
@@ -31,10 +35,11 @@ to redo-layout [ forever? ]
     layout-radial turtles links ( max-one-of turtles [ count my-links + count my-out-links + count my-in-links ] )
   ]
   if layout = "spring" [
+    let factor sqrt count turtles
+    if factor = 0 [ set factor 1 ]
     repeat ifelse-value forever? [ 1 ] [ 50 ] [
-      let factor sqrt count turtles
-      if factor = 0 [ set factor 1 ]
       layout-spring turtles links (1 / factor) (14 / factor) (1.5 / factor)
+      display
       if not forever? [ wait 0.005 ]
     ]
   ]
@@ -53,9 +58,9 @@ to layout-once
   redo-layout false
 end
 
-to layout-forever
+to spring-forever
+  set layout "spring" 
   redo-layout true
-  display
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -77,6 +82,19 @@ end
 
 ;; Allows the user to mouse over and highlight all bicomponents
 to highlight-bicomponents
+  
+  if stop-highlight-bicomponents = true [
+    ; we're asked to stop - do so
+    set stop-highlight-bicomponents false
+    set highlight-bicomponents-on false
+    stop
+  ]
+  set highlight-bicomponents-on true ; we're on!
+  if highlight-maximal-cliques-on = true [
+    ; if the other guy is on, he needs to stop
+    set stop-highlight-maximal-cliques true
+  ]
+  
   if mouse-inside? [ 
     nw:set-snapshot turtles get-links-to-use
     highlight-clusters nw:bicomponent-clusters
@@ -90,6 +108,18 @@ to highlight-maximal-cliques
     user-message "Maximal cliques only work with undirected links."
     stop
   ]
+  if stop-highlight-maximal-cliques = true [
+    ; we're asked to stop - do so
+    set stop-highlight-maximal-cliques false
+    set highlight-maximal-cliques-on false
+    stop
+  ]
+  set highlight-maximal-cliques-on true ; we're on!
+  if highlight-bicomponents-on = true [
+    ; if the other guy is on, he needs to stop
+    set stop-highlight-bicomponents true
+  ]
+
   if mouse-inside? [ 
     nw:set-snapshot turtles unlinks
     highlight-clusters nw:maximal-cliques
@@ -134,7 +164,7 @@ to color-clusters [ clusters ]
   let n length clusters
   let colors ifelse-value (n <= 12)
     [ n-of n remove gray remove white base-colors ] ;; choose base colors other than white and gray
-    [ n-values n [ random 140 ] ] ;; too many clusters to be picky about color - just go random! (should not really happen...)
+    [ n-values n [ approximate-hsb (random 255) (255) (100 + random 100) ] ] ; too many colors - pick random ones
   
     ;; loop through the clusters and colors zipped together
     (foreach clusters colors [      
@@ -201,8 +231,7 @@ to normalize-sizes-and-colors
     [ ;; remap the size to a range between 0.5 and 2.5
       ask turtles [ set size ((size - first sizes) / delta) * 2 + 0.5 ]
     ]
-    ;; use size to set color between (red - 2.5) and (red - 0.5), which gives a nice gradient
-    ask turtles [ set color red - 3 + size ]
+    ask turtles [ set color scale-color red size 0 5 ] ; using a higher range max not to get too white...
   ]
 end
 
@@ -363,7 +392,7 @@ nb-nodes
 nb-nodes
 0
 1000
-15
+50
 1
 1
 NIL
@@ -539,7 +568,7 @@ connexion-prob
 connexion-prob
 0
 1
-0.19
+0.2
 0.01
 1
 NIL
@@ -571,7 +600,7 @@ clustering-exponent
 clustering-exponent
 0
 10
-9.8
+2
 0.1
 1
 NIL
@@ -619,7 +648,7 @@ CHOOSER
 links-to-use
 links-to-use
 "undirected" "directed"
-1
+0
 
 PLOT
 245
@@ -775,21 +804,21 @@ mean-path-length
 11
 
 CHOOSER
-245
+355
 10
-337
+447
 55
 layout
 layout
-"circle" "spring" "radial" "tutte"
-2
+"spring" "circle" "radial" "tutte"
+0
 
 BUTTON
-339
+245
 10
-444
+347
 55
-layout once
+layout
 layout-once
 NIL
 1
@@ -802,12 +831,12 @@ NIL
 1
 
 BUTTON
-450
+455
 10
 560
 55
-layout
-layout-forever
+spring
+spring-forever
 T
 1
 T
@@ -883,19 +912,19 @@ It is not a model _of_ anything per se, but rather a collection of tools that al
 
 ## HOW TO USE IT
 
-The first thing you should do is press the **clear** button. This will set the default shape of turtles so that they look like circles instead of arrows. At any later time, you can press the [clear] button again to erase everything and start over.
-
-The next thing to think about is if you want to use directed or undirected links. The **links-to-use** chooser will allow you to specify that: all the generators will use the kind of links specfied in the chooser. You can generate different networks with different kinds of links without clearing everything in between.
+The first thing to think about is if you want to use directed or undirected links. The **links-to-use** chooser will allow you to specify that: all the generators will use the kind of links specfied in the chooser. You can generate different networks with different kinds of links without clearing everything in between.
 
 As an aside, also note that the value of the **links-to-use** chooser is used by the different clusterers and measures as well. Be careful to use the right value for the network you are interested in! For example, if you ask for betweenness centrality with "directed links" selected in the chooser, but the network on the screen is undirected, the betweenness centrality values will all be zero, because the algorithm only takes directed links into account!
 
-On the right of the **links-to-use** chooser, is another one called **layout**. NetLogo currently offers four different kinds of layouts (this is not new in the extension - they were all available before): [circle](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-circle), [radial](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-radial), [spring](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-spring) and [tutte](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-tutte). The chosen layout will be applied automatically when generating new networks, but you can also apply yourself by clicking the **layout once** button. The **layout** forever button reapplies the layout continuously. This is mostly useful for the spring layout, which looks better if it is run multiple times.
+On the right of the **links-to-use** chooser, is another one called **layout**. NetLogo currently offers four different kinds of layouts (this is not new in the extension - they were all available before): [circle](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-circle), [radial](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-radial), [spring](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-spring) and [tutte](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-tutte). The chosen layout will be applied automatically when generating new networks, but you can also apply yourself by clicking the **layout** button. One special case is the "spring" layout, which works better when applied multiple times (or even continuously). To make it easy to do that, we have a **spring** forever button. When you click this button, it will automatically choose "spring" layout and apply it as long as the button is pressed.
 
 Now that you know what kind of links you want, and how you want it to look, it's time to generate a network!
 
 ### Generators
 
 The first thing that you will see in the **Generators** section of the model is a slider labeled **nb-nodes**. As you might have guessed, this will allow you to specify the number of nodes you want to have in your network. The first five generator buttons (**preferential attachment**, **ring**, **star**, **wheel**, and **random**) will take the value of that slider into account.
+
+Note that at any time, you can press the **clear** button to erase everything and start over.
 
 Here is a description of each of them:
 
@@ -1329,7 +1358,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.1
+NetLogo 5.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
