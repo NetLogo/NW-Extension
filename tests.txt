@@ -1,5 +1,6 @@
 # Ideally, for each primitive, we should think about cases such as:
 # - Parameter values: negative, 0, 1, possible maximums (e.g. 1E38)
+# - same input twice (e.g. distance to self)
 # Different network configurations:
 # - empty networks
 # - partially disconnected networks
@@ -48,7 +49,7 @@ in-link-radius-source-set-filtering
 
 ### turtles-in-out-radius, turtles-in-in-radius
 
-in-out-link-radius
+turtles-in-out-radius
   extensions [nw]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
@@ -56,19 +57,21 @@ in-out-link-radius
   sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 0 => [0 1]
   sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 1 => [1]
 
-in-in-link-radius
-  extensions [network]
+turtles-in-in-radius
+  extensions [nw]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  sort [who] of [turtles network:in-in-link-radius 1 links] of turtle 0 => [0]
-  sort [who] of [turtles network:in-in-link-radius 1 links] of turtle 1 => [0 1]
+  O> nw:set-snapshot turtles links
+  sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 0 => [0]
+  sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 1 => [0 1]
 
 ### link-distance
 
 distance-to-self
-  extensions [network]
+  extensions [nw]
   O> crt 1
-  [network:link-distance turtle 0 links] of turtle 0 => 0
+  O> nw:set-snapshot turtles links
+  [ nw:distance-to turtle 0 ] of turtle 0 => 0
 
 distance-two-turtles-no-links
   extensions [network]
