@@ -180,10 +180,9 @@ trait Primitives {
     override def report(args: Array[Argument], context: Context): AnyRef = {
       val source = context.getAgent.asInstanceOf[Turtle]
       val target = args(0).getAgent.asInstanceOf[Turtle]
-      val path = getGraph(context).asJungGraph
-        .dijkstraShortestPath
-        .getPath(source, target)
-      toLogoObject(Option(path.size).filterNot(0==).getOrElse(false))
+      val graph = getGraph(context).asJungGraph
+      val distance = Option(graph.dijkstraShortestPath.getDistance(source, target))
+      toLogoObject(distance.getOrElse(false))
     }
   }
 
@@ -196,15 +195,9 @@ trait Primitives {
       val source = context.getAgent.asInstanceOf[Turtle]
       val target = args(0).getAgent.asInstanceOf[Turtle]
       val weightVariable = args(1).getString.toUpperCase
-      val linkWeights = getGraph(context).asJungGraph
-        .dijkstraShortestPath(weightVariable)
-        .getPath(source, target)
-        .asScala
-        .map(_.getTurtleOrLinkVariable(weightVariable).asInstanceOf[Double])
-      toLogoObject(Option(linkWeights)
-        .filterNot(_.size == 0)
-        .map(_.sum)
-        .getOrElse(false))
+      val graph = getGraph(context).asJungGraph
+      val distance = Option(graph.dijkstraShortestPath(weightVariable).getDistance(source, target))
+      toLogoObject(distance.getOrElse(false))
     }
   }
 
