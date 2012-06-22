@@ -1,41 +1,60 @@
-### in-link-radius
+# Ideally, for each primitive, we should think about cases such as:
+# - Parameter values: negative, 0, 1, possible maximums (e.g. 1E38)
+# Different network configurations:
+# - empty networks
+# - partially disconnected networks
+# - completely disconnect networks
+# - Directed vs. undirected networks
+#   - using undirected primitives with directed notworks
+#   - using directed versions of primitives on undirected networks
+# For primitives using weights:
+# - non numeric weights
+# - negative weights
 
-in-link-radius-negative-radius
-  extensions [network]
+### turtles-in-radius
+
+turtles-in-radius-negative-radius
+  extensions [nw]
   O> crt 1
-  [turtles network:in-link-radius -1 links] of turtle 0 => ERROR Extension exception: radius cannot be negative
+  O> nw:set-snapshot turtles links
+  [nw:turtles-in-radius -1] of turtle 0 => ERROR Extension exception: radius cannot be negative
 
-in-link-radius-zero-radius
-  extensions [network]
+turtles-in-radius-zero-radius
+  extensions [nw]
   O> crt 5
-  remove-duplicates [count turtles network:in-link-radius 0 links] of turtles => [1]
+  O> nw:set-snapshot turtles links
+  remove-duplicates [count nw:turtles-in-radius 0] of turtles => [1]
 
-in-link-radius-two-circles
-  extensions [network]
+turtles-in-radius-two-circles
+  extensions [nw]
   O> crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
   O> crt 8 [ create-link-with turtle ((who - 8 + 1) mod 8 + 8) ]
-  remove-duplicates [count turtles network:in-link-radius 0 links] of turtles => [1]
-  remove-duplicates [count turtles network:in-link-radius 1 links] of turtles => [3]
-  remove-duplicates [count turtles network:in-link-radius 2 links] of turtles => [5]
-  remove-duplicates [count turtles network:in-link-radius 3 links] of turtles => [7]
-  remove-duplicates [count turtles network:in-link-radius 4 links] of turtles => [8]
-  remove-duplicates [count turtles network:in-link-radius 5 links] of turtles => [8]
-  remove-duplicates [count turtles network:in-link-radius 1E38 links] of turtles => [8]
+  O> nw:set-snapshot turtles links
+  remove-duplicates [count nw:turtles-in-radius 0] of turtles => [1]
+  remove-duplicates [count nw:turtles-in-radius 1 ] of turtles => [3]
+  remove-duplicates [count nw:turtles-in-radius 2 ] of turtles => [5]
+  remove-duplicates [count nw:turtles-in-radius 3 ] of turtles => [7]
+  remove-duplicates [count nw:turtles-in-radius 4 ] of turtles => [8]
+  remove-duplicates [count nw:turtles-in-radius 5 ] of turtles => [8]
+  # Turned off because much too slow (see Issue #42 on github):
+  #remove-duplicates [count nw:turtles-in-radius 1E38 ] of turtles => [8]
 
 in-link-radius-source-set-filtering
-  extensions [network]
+  extensions [nw]
   O> crt 8 [ create-links-with other turtles ]
   O> set glob1 turtles with [who mod 2 = 0]
-  sort [who] of [glob1 network:in-link-radius 10 links] of turtle 0 => [0 2 4 6]
+  O> nw:set-snapshot glob1 links
+  sort [who] of [nw:turtles-in-radius 10] of turtle 0 => [0 2 4 6]
 
-### in-out-link-radius, in-in-link-radius
+### turtles-in-out-radius, turtles-in-in-radius
 
 in-out-link-radius
-  extensions [network]
+  extensions [nw]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  sort [who] of [turtles network:in-out-link-radius 1 links] of turtle 0 => [0 1]
-  sort [who] of [turtles network:in-out-link-radius 1 links] of turtle 1 => [1]
+  O> nw:set-snapshot turtles links
+  sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 0 => [0 1]
+  sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 1 => [1]
 
 in-in-link-radius
   extensions [network]

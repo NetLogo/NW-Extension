@@ -122,16 +122,13 @@ trait Algorithms {
   }
 
   def kNeighborhood(source: Turtle, radius: Int, edgeType: KNeighborhoodFilter.EdgeType) = {
-    val agents =
-      if (radius == 0)
-        // Jung's algorithm doesn't return the source turtle for radius 0, but we do want it
-        Array[Agent](source)
-      else
-        new KNeighborhoodFilter(source, radius, edgeType)
-          .transform(this.asSparseGraph) // TODO: ugly hack; fix when we fork jung
-          .getVertices
-          .asScala
-          .toArray[Agent]
+    val agents = new KNeighborhoodFilter(source, radius, edgeType)
+      .transform(this.asSparseGraph) // TODO: ugly hack; fix when we fork jung
+      .getVertices
+      .asScala
+      .toSet
+      .+(source) // make sure source is there, as Jung doesn't include isolates
+      .toArray[Agent]
     new ArrayAgentSet(classOf[Turtle], agents, nlg.world)
   }
 }
