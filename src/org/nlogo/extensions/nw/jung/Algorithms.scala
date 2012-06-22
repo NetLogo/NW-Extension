@@ -121,16 +121,19 @@ trait Algorithms {
       } else Seq()
   }
 
-  def kNeighborhood(source: Turtle, radius: Int, edgeType: KNeighborhoodFilter.EdgeType) =
-    new ArrayAgentSet(
-      classOf[Turtle],
-      new KNeighborhoodFilter(source, radius, edgeType)
-        .transform(this.asSparseGraph) // TODO: ugly hack; fix when we fork jung
-        .getVertices
-        .asScala
-        .filterNot(_ == source)
-        .toArray[Agent],
-      nlg.world)
+  def kNeighborhood(source: Turtle, radius: Int, edgeType: KNeighborhoodFilter.EdgeType) = {
+    val agents =
+      if (radius == 0)
+        // Jung's algorithm doesn't return the source turtle for radius 0, but we do want it
+        Array[Agent](source)
+      else
+        new KNeighborhoodFilter(source, radius, edgeType)
+          .transform(this.asSparseGraph) // TODO: ugly hack; fix when we fork jung
+          .getVertices
+          .asScala
+          .toArray[Agent]
+    new ArrayAgentSet(classOf[Turtle], agents, nlg.world)
+  }
 }
 
 trait UndirectedAlgorithms extends Algorithms {
