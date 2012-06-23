@@ -74,102 +74,117 @@ distance-to-self
   [ nw:distance-to turtle 0 ] of turtle 0 => 0
 
 distance-two-turtles-no-links
-  extensions [network]
+  extensions [nw]
   O> crt 2
-  [network:link-distance turtle 0 links] of turtle 1 => false
-  [network:link-distance turtle 1 links] of turtle 0 => false
+  O> nw:set-snapshot turtles links
+  [ nw:distance-to turtle 0 ] of turtle 1 => false
+  [ nw:distance-to turtle 1 ] of turtle 0 => false
 
 distance-one-undirected-link
-  extensions [network]
+  extensions [nw]
   O> crt 2 [ create-links-with other turtles ]
-  [network:link-distance turtle 0 links] of turtle 1 => 1
-  [network:link-distance turtle 1 links] of turtle 0 => 1
+  O> nw:set-snapshot turtles links
+  [ nw:distance-to turtle 0 ] of turtle 1 => 1
+  [ nw:distance-to turtle 1 ] of turtle 0 => 1
 
 distance-one-directed-link
-  extensions [network]
+  extensions [nw]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  [network:link-distance turtle 0 links] of turtle 1 => false
-  [network:link-distance turtle 1 links] of turtle 0 => 1
+  O> nw:set-snapshot turtles links
+  [ nw:distance-to turtle 0 ] of turtle 1 => false
+  [ nw:distance-to turtle 1 ] of turtle 0 => 1
 
 distance-always-one-in-fully-connected-network
-  extensions [network]
-  to-report distances report [network:link-distance myself links] of link-neighbors end
+  extensions [ nw ]
+  to-report distances report [ nw:distance-to myself ] of link-neighbors end
   O> crt 10 [ create-links-with other turtles ]
+  O> nw:set-snapshot turtles links
   remove-duplicates reduce sentence [distances] of turtles => [1]
 
 distance-along-chain
-  extensions [network]
+  extensions [ nw ]
   O> crt 5 [ if who < 4 [ create-link-with turtle (who + 1) ] ]
-  sort [network:link-distance turtle 0 links] of turtles => [0 1 2 3 4]
-  sort [network:link-distance turtle 4 links] of turtles => [0 1 2 3 4]
-  sort remove-duplicates [network:link-distance turtle 2 links] of turtles => [0 1 2]
+  O> nw:set-snapshot turtles links
+  sort [ nw:distance-to turtle 0 ] of turtles => [0 1 2 3 4]
+  sort [ nw:distance-to turtle 4 ] of turtles => [0 1 2 3 4]
+  sort remove-duplicates [ nw:distance-to turtle 2 ] of turtles => [0 1 2]
 
 distance-around-circle
-  extensions [network]
+  extensions [ nw ]
   O> crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
-  sort [network:link-distance turtle 0 links] of turtles => [0 1 1 2 2 3 3 4]
+  O> nw:set-snapshot turtles links
+  sort [ nw:distance-to turtle 0 ] of turtles => [0 1 1 2 2 3 3 4]
 
 distance-around-two-circles
-  extensions [network]
+  extensions [ nw ]
   O> crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
   O> crt 8 [ create-link-with turtle ((who - 8 + 1) mod 8 + 8) ]
-  sort [network:link-distance turtle 0 links] of turtles with [who < 8] => [0 1 1 2 2 3 3 4]
-  sort [network:link-distance turtle 8 links] of turtles with [who >= 8] => [0 1 1 2 2 3 3 4]
-  remove-duplicates [network:link-distance turtle 8 links] of turtles with [who < 8] => [false]
-  remove-duplicates [network:link-distance turtle 0 links] of turtles with [who >= 8] => [false]
+  O> nw:set-snapshot turtles links
+  sort [ nw:distance-to turtle 0 ] of turtles with [who < 8] => [0 1 1 2 2 3 3 4]
+  sort [ nw:distance-to turtle 8 ] of turtles with [who >= 8] => [0 1 1 2 2 3 3 4]
+  remove-duplicates [ nw:distance-to turtle 8 ] of turtles with [who < 8] => [false]
+  remove-duplicates [ nw:distance-to turtle 0 ] of turtles with [who >= 8] => [false]
 
 ### link-path
 
 link-path-self
-  extensions [network]
+  extensions [ nw ]
   O> crt 1
-  [network:link-path turtle 0 links] of turtle 0 => []
+  O> nw:set-snapshot turtles links
+  [ nw:path-to turtle 0 ] of turtle 0 => []
 
 link-path-no-path
-  extensions [network]
+  extensions [ nw ]
   O> crt 2
-  [network:link-path turtle 1 links] of turtle 0 => []
-  [network:link-path turtle 0 links] of turtle 1 => []
+  O> nw:set-snapshot turtles links
+  [ nw:path-to turtle 1 ] of turtle 0 => []
+  [ nw:path-to turtle 0 ] of turtle 1 => []
 
 link-path-undirected-pair
-  extensions [network]
+  extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  (word [network:link-path turtle 1 links] of turtle 0) => "[(link 0 1)]"
-  (word [network:link-path turtle 0 links] of turtle 1) => "[(link 0 1)]"
+  O> nw:set-snapshot turtles links
+  (word [ nw:path-to turtle 1 ] of turtle 0) => "[(link 0 1)]"
+  (word [ nw:path-to turtle 0 ] of turtle 1) => "[(link 0 1)]"
 
 link-path-a-b-c-undirected
-  extensions [network]
+  extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  (word [network:link-path turtle 2 links] of turtle 0) => "[(link 0 1) (link 1 2)]"
-  (word [network:link-path turtle 0 links] of turtle 2) => "[(link 1 2) (link 0 1)]"
+  O> nw:set-snapshot turtles links
+  (word [ nw:path-to turtle 2 ] of turtle 0) => "[(link 0 1) (link 1 2)]"
+  (word [ nw:path-to turtle 0 ] of turtle 2) => "[(link 1 2) (link 0 1)]"
 
 link-path-a-b-c-directed
-  extensions [network]
+  extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-to turtle 1 ]
   O> ask turtle 1 [ create-link-to turtle 2 ]
-  (word [network:link-path turtle 2 links] of turtle 0) => "[(link 0 1) (link 1 2)]"
-  (word [network:link-path turtle 0 links] of turtle 2) => "[]"
+  O> nw:set-snapshot turtles links
+  (word [ nw:path-to turtle 2 ] of turtle 0) => "[(link 0 1) (link 1 2)]"
+  (word [ nw:path-to turtle 0 ] of turtle 2) => "[]"
 
 link-path-fully-connected
-  extensions [network]
+  extensions [ nw ]
   O> crt 6 [ create-links-with other turtles ]
-  (word sort map [(word ?)] [network:link-path turtle 0 links] of turtles) => "[[(link 0 1)] [(link 0 2)] [(link 0 3)] [(link 0 4)] [(link 0 5)] []]"
+  O> nw:set-snapshot turtles links
+  (word sort map [(word ?)] [ nw:path-to turtle 0 ] of turtles) => "[[(link 0 1)] [(link 0 2)] [(link 0 3)] [(link 0 4)] [(link 0 5)] []]"
 
 link-path-on-a-circle
-  extensions [network]
+  extensions [ nw ]
   O> crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
-  sort [length network:link-path turtle 0 links] of turtles => [0 1 1 2 2 3]
+  O> nw:set-snapshot turtles links
+  sort [length nw:path-to turtle 0 ] of turtles => [0 1 1 2 2 3]
 
 ### link-path-turtles
 
 link-path-turtles-self
-  extensions [network]
+  extensions [ nw ]
   O> crt 1
-  map [[who] of ?] [network:link-path-turtles turtle 0 links] of turtle 0 => [0]
+  O> nw:set-snapshot turtles links
+  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 0 => [0]
 
 link-path-turtles-no-path
   extensions [network]
