@@ -126,29 +126,29 @@ distance-around-two-circles
   remove-duplicates [ nw:distance-to turtle 8 ] of turtles with [who < 8] => [false]
   remove-duplicates [ nw:distance-to turtle 0 ] of turtles with [who >= 8] => [false]
 
-### link-path
+### path-to
 
-link-path-self
+path-to-self
   extensions [ nw ]
   O> crt 1
   O> nw:set-snapshot turtles links
   [ nw:path-to turtle 0 ] of turtle 0 => []
 
-link-path-no-path
+path-to-no-path
   extensions [ nw ]
   O> crt 2
   O> nw:set-snapshot turtles links
   [ nw:path-to turtle 1 ] of turtle 0 => []
   [ nw:path-to turtle 0 ] of turtle 1 => []
 
-link-path-undirected-pair
+path-to-undirected-pair
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
   O> nw:set-snapshot turtles links
   (word [ nw:path-to turtle 1 ] of turtle 0) => "[(link 0 1)]"
   (word [ nw:path-to turtle 0 ] of turtle 1) => "[(link 0 1)]"
 
-link-path-a-b-c-undirected
+path-to-a-b-c-undirected
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 ]
@@ -157,7 +157,7 @@ link-path-a-b-c-undirected
   (word [ nw:path-to turtle 2 ] of turtle 0) => "[(link 0 1) (link 1 2)]"
   (word [ nw:path-to turtle 0 ] of turtle 2) => "[(link 1 2) (link 0 1)]"
 
-link-path-a-b-c-directed
+path-to-a-b-c-directed
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-to turtle 1 ]
@@ -166,97 +166,113 @@ link-path-a-b-c-directed
   (word [ nw:path-to turtle 2 ] of turtle 0) => "[(link 0 1) (link 1 2)]"
   (word [ nw:path-to turtle 0 ] of turtle 2) => "[]"
 
-link-path-fully-connected
+path-to-fully-connected
   extensions [ nw ]
   O> crt 6 [ create-links-with other turtles ]
   O> nw:set-snapshot turtles links
   (word sort map [(word ?)] [ nw:path-to turtle 0 ] of turtles) => "[[(link 0 1)] [(link 0 2)] [(link 0 3)] [(link 0 4)] [(link 0 5)] []]"
 
-link-path-on-a-circle
+path-to-on-a-circle
   extensions [ nw ]
   O> crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
   O> nw:set-snapshot turtles links
-  sort [length nw:path-to turtle 0 ] of turtles => [0 1 1 2 2 3]
+  sort [ length nw:path-to turtle 0 ] of turtles => [0 1 1 2 2 3]
 
-### link-path-turtles
+### turtles-on-path-to
 
-link-path-turtles-self
+turtles-on-path-to-self
   extensions [ nw ]
   O> crt 1
   O> nw:set-snapshot turtles links
   map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 0 => [0]
 
-link-path-turtles-no-path
-  extensions [network]
+turtles-on-path-to-no-path
+  extensions [ nw ]
   O> crt 2
-  map [[who] of ?] [network:link-path-turtles turtle 1 links] of turtle 0 => []
-  map [[who] of ?] [network:link-path-turtles turtle 0 links] of turtle 1 => []
+  O> nw:set-snapshot turtles links
+  map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => []
+  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => []
 
-link-path-turtles-undirected-pair
-  extensions [network]
+turtles-on-path-to-undirected-pair
+  extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  map [[who] of ?] [network:link-path-turtles turtle 1 links] of turtle 0 => [0 1]
-  map [[who] of ?] [network:link-path-turtles turtle 0 links] of turtle 1 => [1 0]
+  O> nw:set-snapshot turtles links
+  map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
+  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => [1 0]
 
-link-path-turtles-fully-connected
-  extensions [network]
+turtles-on-path-to-fully-connected
+  extensions [ nw ]
   O> crt 6 [ create-links-with other turtles ]
-  sort [length network:link-path-turtles turtle 0 links] of turtles => [1 2 2 2 2 2]
+  O> nw:set-snapshot turtles links
+  sort [length nw:turtles-on-path-to turtle 0 ] of turtles => [1 2 2 2 2 2]
 
-link-path-turtles-on-a-circle
-  extensions [network]
+turtles-on-path-to-on-a-circle
+  extensions [ nw ]
   O> crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
-  sort [length network:link-path-turtles turtle 0 links] of turtles => [1 2 2 3 3 4]
+  O> nw:set-snapshot turtles links
+  sort [length nw:turtles-on-path-to turtle 0 ] of turtles => [1 2 2 3 3 4]
 
-### mean-link-path-length
+### mean-path-length
 
 ## undirected links
 
-mean-link-path-length-empty
-  extensions [network]
-  network:mean-link-path-length turtles links => false
+mean-path-length-empty
+  extensions [ nw ]
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => false
 
-mean-link-path-length-one-turtle
-  extensions [network]
-  network:mean-link-path-length turtles links => false
+mean-path-length-one-turtle
+  extensions [ nw ]
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => false
 
-mean-link-path-length-two-unconnected-turtles
-  extensions [network]
+mean-path-length-two-unconnected-turtles
+  extensions [ nw ]
   O> crt 2
-  network:mean-link-path-length turtles links => false
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => false
 
-mean-link-path-length-two-connected-turtles
-  extensions [network]
+mean-path-length-two-connected-turtles
+  extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  network:mean-link-path-length turtles links => 1
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => 1
 
-mean-link-path-length-fully-connected
-  extensions [network]
+mean-path-length-fully-connected
+  extensions [ nw ]
   O> crt 10 [ create-links-with other turtles ]
-  network:mean-link-path-length turtles links => 1
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => 1
 
-mean-link-path-length-on-a-pentagon
-  extensions [network]
+mean-path-length-on-a-pentagon
+  extensions [ nw ]
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
-  network:mean-link-path-length turtles links => 1.5
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => 1.5
 
-mean-link-path-length-pairs-of-turtles-on-a-pentagon
-  extensions [network]
+mean-path-length-pairs-of-turtles-on-a-pentagon
+  extensions [ nw ]
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
-  network:mean-link-path-length (turtle-set turtle 0 turtle 1) links => 1
-  network:mean-link-path-length (turtle-set turtle 1 turtle 0) links => 1
-  network:mean-link-path-length (turtle-set turtle 0 turtle 2) links => 2
-  network:mean-link-path-length (turtle-set turtle 2 turtle 0) links => 2
+  O> nw:set-snapshot (turtle-set turtle 0 turtle 1) links
+  nw:mean-path-length => 1
+  O> nw:set-snapshot (turtle-set turtle 1 turtle 0) links
+  nw:mean-path-length => 1
+  O> nw:set-snapshot (turtle-set turtle 0 turtle 2) links
+  nw:mean-path-length => false
+  O> nw:set-snapshot (turtle-set turtle 2 turtle 0) links
+  nw:mean-path-length => false
 
 ## directed links
 
-mean-link-path-length-directed-two-half-connected-turtles
-  extensions [network]
+mean-path-length-directed-two-half-connected-turtles
+  extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-links-to other turtles ]
-  network:mean-link-path-length turtles links => false
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => false
 
-mean-link-path-length-directed-two-connected-turtles
-  extensions [network]
+mean-path-length-directed-two-connected-turtles
+  extensions [ nw ]
   O> crt 2 [ create-links-to other turtles ]
-  network:mean-link-path-length turtles links => 1
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => 1
