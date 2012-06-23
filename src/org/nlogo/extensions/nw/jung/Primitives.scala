@@ -124,11 +124,15 @@ trait Primitives {
     override def report(args: Array[Argument], context: Context): AnyRef = {
       val source = context.getAgent.asInstanceOf[Turtle]
       val target = args(0).getAgent.asInstanceOf[Turtle]
-      val linkPath =
-        getGraph(context).asJungGraph
-          .dijkstraShortestPath
-          .getPath(source, target)
-      LogoList.fromVector(linkPathToTurtlePath(source, linkPath))
+      val path =
+        if (source == target)
+          Vector(source)
+        else {
+          val graph = getGraph(context).asJungGraph
+          val linkPath = graph.dijkstraShortestPath.getPath(source, target)
+          linkPathToTurtlePath(source, linkPath)
+        }
+      LogoList.fromVector(path)
     }
   }
 
@@ -140,11 +144,17 @@ trait Primitives {
     override def report(args: Array[Argument], context: Context): AnyRef = {
       val source = context.getAgent.asInstanceOf[Turtle]
       val target = args(0).getAgent.asInstanceOf[Turtle]
-      val linkPath =
-        getGraph(context).asJungGraph
-          .dijkstraShortestPath(args(1).getString.toUpperCase)
-          .getPath(source, target)
-      LogoList.fromVector(linkPathToTurtlePath(source, linkPath))
+
+      val path =
+        if (source == target)
+          Vector(source)
+        else {
+          val graph = getGraph(context).asJungGraph
+          val weightVariable = args(1).getString.toUpperCase
+          val linkPath = graph.dijkstraShortestPath(weightVariable).getPath(source, target)
+          linkPathToTurtlePath(source, linkPath)
+        }
+      LogoList.fromVector(path)
     }
   }
 
