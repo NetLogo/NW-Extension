@@ -276,3 +276,16 @@ mean-path-length-directed-two-connected-turtles
   O> crt 2 [ create-links-to other turtles ]
   O> nw:set-snapshot turtles links
   nw:mean-path-length => 1
+
+## centrality primitives
+
+### closeness-centrality
+
+closeness-centrality-simple-undirected
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  O> ask turtle 1 [ create-link-with turtle 2 ]
+  O> nw:set-snapshot turtles links
+  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+    
