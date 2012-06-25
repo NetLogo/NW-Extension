@@ -35,6 +35,16 @@ object NetworkExtensionUtil {
       else throw new ExtensionException(
         I18N.errors.get("org.nlogo.$common.thatAgentIsDead"))
   }
+
+  implicit def LinkToRichLink(link: org.nlogo.agent.Link) = new RichLink(link)
+  class RichLink(link: org.nlogo.agent.Link) {
+    def getBreedOrLinkVariable(variable: String) =
+      link.world.program.linksOwn.indexOf(variable) match {
+        case -1 => link.getLinkBreedVariable(variable)
+        case i  => link.getLinkVariable(i)
+      }
+  }
+
   implicit def AgentSetToRichAgentSet(agentSet: AgentSet) = new RichAgentSet(agentSet)
   class RichAgentSet(agentSet: AgentSet) {
     def isLinkSet = classOf[Link].isAssignableFrom(agentSet.`type`)
