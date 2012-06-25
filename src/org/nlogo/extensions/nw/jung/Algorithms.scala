@@ -20,6 +20,7 @@ import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality
 import org.nlogo.api.ExtensionException
 import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 import java.util.Random
+import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
 
 // TODO: catch exceptions from Jung and give meaningful error messages 
 
@@ -59,7 +60,7 @@ trait Algorithms {
 
   def dijkstraShortestPath(variable: String) =
     dijkstraMemo.getOrElseUpdate(variable,
-      new RichDijkstra(_.getTurtleOrLinkVariable(variable).asInstanceOf[Double]))
+      new RichDijkstra(_.getBreedOrLinkVariable(variable).asInstanceOf[Double]))
 
   class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
     extends DijkstraShortestPath(self, functionToTransformer(weightFunction), true) {
