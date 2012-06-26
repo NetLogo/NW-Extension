@@ -64,8 +64,8 @@ trait Graph
     g
   }
 
-  // If the whole graph is only one cluster, then it's connected
-  lazy val isConnected = weakComponentClusterer.clusters.size == 1
+  // If the whole graph is only one cluster, then it's weakly connected
+  lazy val isWeaklyConnected = weakComponentClusterer.clusters.size == 1
 }
 
 class DirectedGraph(
