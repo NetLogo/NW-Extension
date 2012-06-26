@@ -64,8 +64,8 @@ trait Graph
     g
   }
 
-  // TODO: find a better way to do that...
-  lazy val isConnected = dijkstraShortestPath.meanLinkPathLength.isDefined
+  // If the whole graph is only one cluster, then it's connected
+  lazy val isConnected = weakComponentClusterer.clusters.size == 1
 }
 
 class DirectedGraph(
