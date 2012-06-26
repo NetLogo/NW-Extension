@@ -259,6 +259,8 @@ In this implementation, the sum of the egeinvector centralities for a network sh
 
 Eigenvector centrality is only defined for connected networks, and the primitive will report `false` for disconnected graphs. (Just like `distance-to` does when there is no path to the target turtle.)
 
+As of now, the primitive treats every network as if it were an undirected network (even if the links are directed). Future versions will take the direction of links into account.
+
 As of now, link weights are not taken into account.
 
 #### closeness-centrality
