@@ -65,7 +65,7 @@ turtles-in-in-radius
   sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 0 => [0]
   sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 1 => [0 1]
 
-### link-distance
+### distance-to
 
 distance-to-self
   extensions [nw]
@@ -400,6 +400,21 @@ betweenness-centrality-bigger-connected-directed-graph
   O> ask turtle 4 [ create-link-to turtle 5 ]    
   O> nw:set-snapshot turtles links
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 0 0 0 7 0]
+
+### eigenvector-centrality
+
+eigenvector-centrality-empty
+  extensions [ nw ]
+  O> nw:set-snapshot turtles links
+  [ nw:eigenvector-centrality ] of turtles => []
+
+eigenvector-centrality-single-isolate
+  extensions [ nw ]
+  O> crt 1
+  O> nw:set-snapshot turtles links
+  [ nw:eigenvector-centrality ] of turtle 0 => 0
+  
+
 
 ## weighted primitives
 
