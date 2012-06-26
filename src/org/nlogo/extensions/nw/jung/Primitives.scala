@@ -74,7 +74,7 @@ trait Primitives {
   object EigenvectorCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T--")
     override def report(args: Array[Argument], context: Context) = {
-      val g = getGraph(context).asJungGraph
+      val g = getGraph(context).asUndirectedJungGraph
       // make sure graph is connected
       if (g.isWeaklyConnected) // TODO: Actually, it should be STRONGLY connected
         g.eigenvectorCentrality
