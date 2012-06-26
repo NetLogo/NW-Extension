@@ -76,7 +76,7 @@ trait Primitives {
     override def report(args: Array[Argument], context: Context) = {
       val g = getGraph(context).asJungGraph
       // make sure graph is connected
-      if (g.isConnected)
+      if (g.isWeaklyConnected) // TODO: Actually, it should be STRONGLY connected
         g.eigenvectorCentrality
           .getScore(context.getAgent.asInstanceOf[Turtle])
       else
