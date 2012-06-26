@@ -132,14 +132,16 @@ trait Algorithms {
       .toArray[Agent]
     new ArrayAgentSet(classOf[Turtle], agents, nlg.world)
   }
+
+  lazy val weakComponentClusterer = new WeakComponentClusterer[Turtle, Link] {
+    def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
+  }
+
 }
 
 trait UndirectedAlgorithms extends Algorithms {
   self: UndirectedGraph =>
   lazy val bicomponentClusterer = new BicomponentClusterer[Turtle, Link] {
-    def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
-  }
-  lazy val weakComponentClusterer = new WeakComponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
   }
 }

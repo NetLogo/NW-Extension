@@ -58,7 +58,7 @@ trait Primitives {
   object WeakComponentClusters extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
     override def report(args: Array[Argument], context: Context) =
-      toLogoList(getGraph(context).asUndirectedJungGraph
+      toLogoList(getGraph(context).asJungGraph
         .weakComponentClusterer
         .clusters)
   }
