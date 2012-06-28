@@ -15,13 +15,12 @@ object Matrix {
       ).save(graph, filename)
   }
 
-  def load(filename: String, turtleBreed: AgentSet, linkBreed: AgentSet, rng: Random) {
+  def load(filename: String, turtleBreed: AgentSet, linkBreed: AgentSet, rng: Random) =
     DummyGraph.importToNetLogo(
       new jung.io.MatrixFile(
         null, // TODO: provide weight key (null means 1) 
         DummyGraph.factoryFor(linkBreed), DummyGraph.vertexFactory, DummyGraph.edgeFactory)
         .load(filename),
       turtleBreed, linkBreed, rng)
-  }
 
 }

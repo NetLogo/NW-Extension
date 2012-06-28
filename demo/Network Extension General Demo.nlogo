@@ -249,41 +249,41 @@ to generate [ generator-task ]
 end
 
 to preferential-attachment
-  generate task [ nw:generate-preferential-attachment turtles get-links-to-use nb-nodes [] ]
+  generate task [ nw:generate-preferential-attachment turtles get-links-to-use nb-nodes ]
 end
 
 to ring
-  generate task [ nw:generate-ring turtles get-links-to-use nb-nodes [] ]
+  generate task [ nw:generate-ring turtles get-links-to-use nb-nodes ]
 end  
 
 to star
-  generate task [ nw:generate-star turtles get-links-to-use nb-nodes [] ]
+  generate task [ nw:generate-star turtles get-links-to-use nb-nodes ]
 end  
 
 to wheel
   ifelse (links-to-use = "directed") [
     ifelse spokes-direction = "inward" [ 
-      generate task [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes [] ] 
+      generate task [ nw:generate-wheel-inward turtles get-links-to-use nb-nodes ] 
     ]
     [ ; if it's not inward, it's outward
-      generate task [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes [] ] 
+      generate task [ nw:generate-wheel-outward turtles get-links-to-use nb-nodes ] 
     ]
   ]
   [ ; for an undirected network, we don't care about spokes
-    generate task [ nw:generate-wheel turtles get-links-to-use nb-nodes [] ]
+    generate task [ nw:generate-wheel turtles get-links-to-use nb-nodes ]
   ]
 end  
 
 to lattice-2d
-  generate task [ nw:generate-lattice-2d turtles get-links-to-use nb-rows nb-cols wrap [] ]
+  generate task [ nw:generate-lattice-2d turtles get-links-to-use nb-rows nb-cols wrap ]
 end
 
 to small-world
-  generate task [ nw:generate-small-world turtles get-links-to-use nb-rows nb-cols clustering-exponent wrap [] ]
+  generate task [ nw:generate-small-world turtles get-links-to-use nb-rows nb-cols clustering-exponent wrap ]
 end
 
 to generate-random
-  generate task [ nw:generate-random turtles get-links-to-use nb-nodes connexion-prob [] ]
+  generate task [ nw:generate-random turtles get-links-to-use nb-nodes connexion-prob ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -811,7 +811,7 @@ CHOOSER
 layout
 layout
 "spring" "circle" "radial" "tutte"
-0
+1
 
 BUTTON
 245
@@ -899,7 +899,7 @@ CHOOSER
 spokes-direction
 spokes-direction
 "inward" "outward"
-0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1358,7 +1358,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
