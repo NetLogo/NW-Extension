@@ -472,10 +472,6 @@ Unless they are already present, the Makefile will download the needed Jung and 
 
 If compilation succeeds, `nw.jar` will be created. To use the extension, this file and all the other jars will need to be in the `extensions/nw` folder under your NetLogo installation.
 
-## Credits
-
-The first versions of the network primitives were written by Forrest Stonedahl. They were then ported to a NetLogo 5.0 extension by Seth Tisue.
-
 ## Terms of Use
 
 Copyright 1999-2012 by Uri Wilensky.
