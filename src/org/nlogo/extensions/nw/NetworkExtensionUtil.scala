@@ -1,6 +1,7 @@
 package org.nlogo.extensions.nw
 
 import org.nlogo.api
+import org.nlogo.agent
 import org.nlogo.api.Dump
 import org.nlogo.api.Agent
 import org.nlogo.api.AgentSet
@@ -74,15 +75,24 @@ object NetworkExtensionUtil {
         I18N.errors.get("Expected input to be an undirected link breed"))
   }
 
-  def runCommandTaskForTurtles(turtles: TraversableOnce[Turtle], commandTaskArgument: Argument, context: Context) {
-    val command = commandTaskArgument.getCommandTask.asInstanceOf[nvm.CommandTask]
-    val emptyArgs = Array[AnyRef]()
-    val nvmContext = context.asInstanceOf[nvm.ExtensionContext].nvmContext
-    for (turtle <- turtles) {
-      val newContext = new nvm.Context(nvmContext.job, turtle,
-        nvmContext.ip, nvmContext.activation)
-      command.perform(newContext, emptyArgs)
+  trait turtleCreatingCommand extends api.DefaultCommand with nvm.CustomAssembled {
+    // the command itself is observer-only. inside the block is turtle code.
+    override def getAgentClassString = "O:-T--"
+    def createTurtles(args: Array[api.Argument], context: api.Context): TraversableOnce[agent.Turtle]
+    override def perform(args: Array[api.Argument], context: api.Context) {
+      val world = context.getAgent.world.asInstanceOf[agent.World]
+      val extContext = context.asInstanceOf[nvm.ExtensionContext]
+      val nvmContext = extContext.nvmContext
+      val turtles = createTurtles(args, context).toArray[agent.Agent]
+      turtles.foreach(extContext.workspace.joinForeverButtons)
+      val agentSet = new agent.ArrayAgentSet(classOf[agent.Turtle], turtles, world)
+      nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
+    }
+    def assemble(a: nvm.AssemblerAssistant) {
+      a.block()
+      a.done()
     }
   }
+
 }
 

@@ -1,6 +1,6 @@
 package org.nlogo.extensions.nw.jgrapht
 
-import org.nlogo.extensions.nw.NetworkExtensionUtil.runCommandTaskForTurtles
+import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
 import org.nlogo.api.ScalaConversions.toLogoList
 import org.nlogo.api
 import api.Syntax._
@@ -39,64 +39,54 @@ trait Primitives {
     }
   }
 
-  object RingGeneratorPrim extends DefaultCommand {
+  object RingGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .ringGraphGenerator(args(2).getIntValue, context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(3), context)
-    }
   }
 
-  object StarGeneratorPrim extends DefaultCommand {
+  object StarGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .starGraphGenerator(args(2).getIntValue, context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(3), context)
-    }
   }
 
-  object WheelGeneratorPrim extends DefaultCommand {
+  object WheelGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireUndirectedLinkBreed)
         .wheelGraphGenerator(args(2).getIntValue, true, context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(3), context)
-    }
   }
 
-  object WheelGeneratorInwardPrim extends DefaultCommand {
+  object WheelGeneratorInwardPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
         .wheelGraphGenerator(args(2).getIntValue, true, context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(3), context)
-    }
   }
 
-  object WheelGeneratorOutwardPrim extends DefaultCommand {
+  object WheelGeneratorOutwardPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
         .wheelGraphGenerator(args(2).getIntValue, false, context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(3), context)
-    }
   }
 
 }

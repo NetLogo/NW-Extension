@@ -3,6 +3,7 @@ package org.nlogo.extensions.nw.jung
 import scala.collection.JavaConverters.asScalaBufferConverter
 import org.nlogo.api
 import org.nlogo.nvm
+import org.nlogo.agent
 import api.DefaultCommand
 import api.DefaultReporter
 import api.ExtensionException
@@ -210,38 +211,34 @@ trait Primitives {
     }
   }
 
-  object BarabasiAlbertGeneratorPrim extends api.DefaultCommand {
+  object BarabasiAlbertGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .barabasiAlbert(args(2).getIntValue, context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(3), context)
-    }
   }
 
-  object ErdosRenyiGeneratorPrim extends api.DefaultCommand {
+  object ErdosRenyiGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .erdosRenyi(
           nbVertices = args(2).getIntValue,
           connexionProbability = args(3).getDoubleValue,
           rng = context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(4), context)
-    }
   }
 
-  object KleinbergSmallWorldGeneratorPrim extends api.DefaultCommand {
+  object KleinbergSmallWorldGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .kleinbergSmallWorld(
@@ -250,15 +247,13 @@ trait Primitives {
           clusteringExponent = args(4).getDoubleValue,
           isToroidal = args(5).getBooleanValue,
           rng = context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(6), context)
-    }
   }
 
-  object Lattice2DGeneratorPrim extends api.DefaultCommand {
+  object Lattice2DGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .lattice2D(
@@ -266,25 +261,8 @@ trait Primitives {
           colCount = args(3).getIntValue,
           isToroidal = args(4).getBooleanValue,
           rng = context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(5), context)
-    }
   }
 
-  object Lattice2DGeneratorPrimWithBlock extends api.DefaultCommand {
-    override def getSyntax = commandSyntax(
-      Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandTaskType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
-      val newTurtles = new Generator(
-        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
-        linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .lattice2D(
-          rowCount = args(2).getIntValue,
-          colCount = args(3).getIntValue,
-          isToroidal = args(4).getBooleanValue,
-          rng = context.getRNG)
-      runCommandTaskForTurtles(newTurtles, args(5), context)
-    }
-  }
   object SaveMatrix extends api.DefaultCommand {
     override def getSyntax = commandSyntax(Array(StringType))
     override def perform(args: Array[api.Argument], context: api.Context) {
@@ -292,15 +270,14 @@ trait Primitives {
     }
   }
 
-  object LoadMatrix extends api.DefaultCommand {
-    override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType))
-    override def perform(args: Array[api.Argument], context: api.Context) {
+  object LoadMatrix extends turtleCreatingCommand {
+    override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
       Matrix.load(
         filename = args(0).getString,
         turtleBreed = args(1).getAgentSet.requireTurtleBreed,
         linkBreed = args(2).getAgentSet.requireLinkBreed,
         rng = context.getRNG)
-    }
   }
 
   abstract class InRadiusPrim extends DefaultReporter {
