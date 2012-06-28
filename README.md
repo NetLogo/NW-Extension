@@ -331,95 +331,72 @@ The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/
 The generators are amongst the only primitives that do not operate on the current network snapshot. Instead, all of them take a turtle breed and a link breed as inputs and generate a new network using the given breeds.
 
 #### generate-preferential-attachment
-`nw:generate-preferential-attachment` _turtle-breed_ _link-breed_ _nb-nodes_ _command-task_
+
+`nw:generate-preferential-attachment` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
 
 Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
 
 In this version of the primitive, turtles are added, one by one, each forming one link to a previously added turtle, until _nb-nodes_ is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added. Future versions of the primitive might provide more flexibility in the way the network is generated.
 
-Once the network is created, _command-task_ is executed for each turtle in the network. For example:
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-preferential-attachment turtles links 100 [ set color red ]
 
-Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
-
-    nw:generate-preferential-attachment turtles links 100 []
-
 #### generate-random
-`nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection_probability_ _command-task_
+`nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection_probability_ _optional-command-block_
 
 Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
-Once the network is created, _command-task_ is executed for each turtle in the network. For example:
-
-    nw:generate-random turtles links 100 0.5 [ set color red ]
-
-Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-random turtles links 100 0.5 [ set color red ]
 
 #### generate-small-world
-`nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _clustering-exponent_ _is-toroidal_ _command-task_
+`nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _clustering-exponent_ _is-toroidal_ _optional-command-block_
 
 Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
 
 The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
-Once the network is created, _command-task_ is executed for each turtle in the network. For example:
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-small-world turtles links 10 10 2.0 false [ set color red ]
 
-Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
-
-    nw:generate-small-world turtles links 10 10 2.0 false []
-
 #### generate-lattice-2d
-`nw:generate-lattice-2d` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _is-toroidal_ _command-task_
+`nw:generate-lattice-2d` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _is-toroidal_ _optional-command-block_
 
 Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column_count_ columns. The grid will wrap around itsef if _is_toroidal_ is `true`.
 
-Once the network is created, _command-task_ is executed for each turtle in the network. For example:
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-lattice-2d turtles links 10 10 false [ set color red ]
 
-Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
-
-    nw:generate-lattice-2d turtles links 10 10 false []
-
 #### generate-ring
-`nw:generate-ring` _turtle-breed_ _link-breed_ _nb-nodes_ _command-task_
+`nw:generate-ring` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
 
 Generates a [ring network](http://en.wikipedia.org/wiki/Ring_network) of _nb-nodes_ turtles, in which each turtle is connected to exactly two other turtles.
 
 The number of nodes must be at least three.
 
-Once the network is created, _command-task_ is executed for each turtle in the network. For example:
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-ring turtles links 100 [ set color red ]
 
-Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
-
-    nw:generate-ring turtles links 100 []
-
 #### generate-star
-`nw:generate-star` _turtle-breed_ _link-breed_ _nb-nodes_ _command-task_
+`nw:generate-star` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
 
 Generates a [star network](http://en.wikipedia.org/wiki/Star_graph) in which there is one central turtle and every other turtle is connected only to this central node. The number of turtles can be as low as one, but it won't look much like a star.
 
-Once the network is created, _command-task_ is executed for each turtle in the network. For example:
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-star turtles links 100 [ set color red ]
 
-Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
-
-    nw:generate-star turtles links 100 []
-
 #### generate-wheel, generate-wheel-inward, generate-wheel-outward
-`nw:generate-wheel` _turtle-breed_ _link-breed_ _nb-nodes_ _command-task_
+`nw:generate-wheel` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
 
-`nw:generate-wheel-inward` _turtle-breed_ _link-breed_ _nb-nodes_ _command-task_
+`nw:generate-wheel-inward` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
 
-`nw:generate-wheel-outward` _turtle-breed_ _link-breed_ _nb-nodes_ _command-task_
+`nw:generate-wheel-outward` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
 
 Generates a [wheel network](http://en.wikipedia.org/wiki/Wheel_graph), which is basically a [ring network](http://en.wikipedia.org/wiki/Ring_network) with an additional "central" turtle that is connected to every other turtle.
 
@@ -427,13 +404,9 @@ The number of nodes must be at least four.
 
 The `nw:generate-wheel` only works with undirected link breeds. The `nw:generate-wheel-inward` and `nw:generate-wheel-outward` versions only work with directed _link-breed_. The `inward` and `outward` part of the primitive names refer to the direction that the "spokes" of the wheel point to relative to the central turtle.
 
-Once the network is created, _command-task_ is executed for each turtle in the network. For example:
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-wheel turtles links 100 [ set color red ]
-
-Note that, at the moment, the _command-task_ is **not** optional. If you don't want to do anything with your turtles, just pass it empty square brackets:
-
-    nw:generate-wheel turtles links 100 []
 
 ### Import / Export
 
@@ -459,7 +432,7 @@ And here is the directed version:
 At the moment, `nw:save-matrix` does not support link weights. Every link is represented as a "1.00" in the connection matrix. This will change in a future version of the extension.
 
 #### load-matrix
-`nw:load-matrix` _file-name_ _turtle-breed_ _link-breed_
+`nw:load-matrix` _file-name_ _turtle-breed_ _link-breed_ _optional-command-block_
 
 Generates a new network according to the connection matrix saved in _file-name_, using _turtle-breed_ and _link-breed_ to create the new turtles and links.
 
@@ -482,6 +455,10 @@ For example:
     end
 
 ..._will_ give you back **undirected** links, even if you saved directed links into the matrix.
+
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
+
+      nw:load-matrix "matrix.txt" turtles links [ set color red ]
 
 ## Building
 
