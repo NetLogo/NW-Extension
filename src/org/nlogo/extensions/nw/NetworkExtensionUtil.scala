@@ -15,7 +15,6 @@ import org.nlogo.api.Context
 import org.nlogo.api.TypeNames
 import org.nlogo.api.DefaultReporter
 import org.nlogo.api.Primitive
-import org.nlogo.nvm.ExtensionContext
 import org.nlogo.nvm
 
 object NetworkExtensionUtil {
@@ -78,7 +77,7 @@ object NetworkExtensionUtil {
   def runCommandTaskForTurtles(turtles: TraversableOnce[Turtle], commandTaskArgument: Argument, context: Context) {
     val command = commandTaskArgument.getCommandTask.asInstanceOf[nvm.CommandTask]
     val emptyArgs = Array[AnyRef]()
-    val nvmContext = context.asInstanceOf[ExtensionContext].nvmContext
+    val nvmContext = context.asInstanceOf[nvm.ExtensionContext].nvmContext
     for (turtle <- turtles) {
       val newContext = new nvm.Context(nvmContext.job, turtle,
         nvmContext.ip, nvmContext.activation)
