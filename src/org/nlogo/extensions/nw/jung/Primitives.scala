@@ -1,31 +1,14 @@
 package org.nlogo.extensions.nw.jung
 
 import scala.collection.JavaConverters.asScalaBufferConverter
-import org.nlogo.api.ScalaConversions.toLogoList
-import org.nlogo.api.ScalaConversions.toLogoObject
-import org.nlogo.api.Syntax.AgentsetType
-import org.nlogo.api.Syntax.BooleanType
-import org.nlogo.api.Syntax.CommandTaskType
-import org.nlogo.api.Syntax.LinksetType
-import org.nlogo.api.Syntax.ListType
-import org.nlogo.api.Syntax.NumberType
-import org.nlogo.api.Syntax.StringType
-import org.nlogo.api.Syntax.TurtleType
-import org.nlogo.api.Syntax.TurtlesetType
-import org.nlogo.api.Syntax.commandSyntax
-import org.nlogo.api.Syntax.reporterSyntax
-import org.nlogo.api.Argument
-import org.nlogo.api.Context
-import org.nlogo.api.DefaultCommand
-import org.nlogo.api.DefaultReporter
-import org.nlogo.api.ExtensionException
-import org.nlogo.api.LogoList
-import org.nlogo.api.Turtle
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
-import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
-import org.nlogo.extensions.nw.NetworkExtensionUtil.runCommandTaskForTurtles
+import org.nlogo.api
+import org.nlogo.nvm
+import api.DefaultCommand
+import api.DefaultReporter
+import api.ExtensionException
+import api.ScalaConversions._
+import api.Syntax._
+import org.nlogo.extensions.nw.NetworkExtensionUtil._
 import org.nlogo.extensions.nw.NetworkExtension
 import org.nlogo.extensions.nw.StaticNetLogoGraph
 
@@ -37,7 +20,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(
       Array(NumberType, NumberType, NumberType),
       ListType)
-    override def report(args: Array[Argument], context: Context) =
+    override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asJungGraph
         .kMeansClusterer
         .clusters(
@@ -49,7 +32,7 @@ trait Primitives {
 
   object BicomponentClusters extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) =
+    override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asUndirectedJungGraph
         .bicomponentClusterer
         .clusters)
@@ -57,7 +40,7 @@ trait Primitives {
 
   object WeakComponentClusters extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) =
+    override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asJungGraph
         .weakComponentClusterer
         .clusters)
@@ -65,7 +48,7 @@ trait Primitives {
 
   object BetweennessCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T-L")
-    override def report(args: Array[Argument], context: Context) =
+    override def report(args: Array[api.Argument], context: api.Context) =
       Double.box(getGraph(context).asJungGraph
         .betweennessCentrality
         .get(context.getAgent))
@@ -73,12 +56,12 @@ trait Primitives {
 
   object EigenvectorCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T--")
-    override def report(args: Array[Argument], context: Context) = {
+    override def report(args: Array[api.Argument], context: api.Context) = {
       val g = getGraph(context).asUndirectedJungGraph
       // make sure graph is connected
       if (g.isWeaklyConnected) // TODO: Actually, it should be STRONGLY connected
         g.eigenvectorCentrality
-          .getScore(context.getAgent.asInstanceOf[Turtle])
+          .getScore(context.getAgent.asInstanceOf[api.Turtle])
       else
         java.lang.Boolean.FALSE
     }
@@ -86,10 +69,10 @@ trait Primitives {
 
   object ClosenessCentralityPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType, "-T--")
-    override def report(args: Array[Argument], context: Context) =
+    override def report(args: Array[api.Argument], context: api.Context) =
       getGraph(context).asJungGraph
         .closenessCentrality
-        .getScore(context.getAgent.asInstanceOf[Turtle])
+        .getScore(context.getAgent.asInstanceOf[api.Turtle])
   }
 
   object PathToPrim extends DefaultReporter {
@@ -97,10 +80,10 @@ trait Primitives {
       Array(TurtleType),
       ListType,
       "-T--")
-    override def report(args: Array[Argument], context: Context): AnyRef = {
-      val source = context.getAgent.asInstanceOf[Turtle]
-      val target = args(0).getAgent.asInstanceOf[Turtle]
-      LogoList.fromJava(
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[api.Turtle]
+      val target = args(0).getAgent.asInstanceOf[api.Turtle]
+      api.LogoList.fromJava(
         getGraph(context).asJungGraph
           .dijkstraShortestPath
           .getPath(source, target))
@@ -121,9 +104,9 @@ trait Primitives {
       Array(TurtleType),
       ListType,
       "-T--")
-    override def report(args: Array[Argument], context: Context): AnyRef = {
-      val source = context.getAgent.asInstanceOf[Turtle]
-      val target = args(0).getAgent.asInstanceOf[Turtle]
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[api.Turtle]
+      val target = args(0).getAgent.asInstanceOf[api.Turtle]
       val path =
         if (source == target)
           Vector(source)
@@ -132,7 +115,7 @@ trait Primitives {
           val linkPath = graph.dijkstraShortestPath.getPath(source, target)
           linkPathToTurtlePath(source, linkPath)
         }
-      LogoList.fromVector(path)
+      api.LogoList.fromVector(path)
     }
   }
 
@@ -141,9 +124,9 @@ trait Primitives {
       Array(TurtleType, StringType),
       ListType,
       "-T--")
-    override def report(args: Array[Argument], context: Context): AnyRef = {
-      val source = context.getAgent.asInstanceOf[Turtle]
-      val target = args(0).getAgent.asInstanceOf[Turtle]
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[api.Turtle]
+      val target = args(0).getAgent.asInstanceOf[api.Turtle]
 
       val path =
         if (source == target)
@@ -154,13 +137,13 @@ trait Primitives {
           val linkPath = graph.dijkstraShortestPath(weightVariable).getPath(source, target)
           linkPathToTurtlePath(source, linkPath)
         }
-      LogoList.fromVector(path)
+      api.LogoList.fromVector(path)
     }
   }
 
   object MeanPathLengthPrim extends DefaultReporter {
     override def getSyntax = reporterSyntax(NumberType | BooleanType)
-    override def report(args: Array[Argument], context: Context): AnyRef = {
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
       getGraph(context).asJungGraph
         .dijkstraShortestPath
         .meanLinkPathLength
@@ -173,7 +156,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(
       Array(StringType),
       NumberType | BooleanType)
-    override def report(args: Array[Argument], context: Context): AnyRef = {
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
       getGraph(context).asJungGraph
         .dijkstraShortestPath(args(0).getString.toUpperCase)
         .meanLinkPathLength
@@ -187,9 +170,9 @@ trait Primitives {
       Array(TurtleType),
       NumberType | BooleanType,
       "-T--")
-    override def report(args: Array[Argument], context: Context): AnyRef = {
-      val source = context.getAgent.asInstanceOf[Turtle]
-      val target = args(0).getAgent.asInstanceOf[Turtle]
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[api.Turtle]
+      val target = args(0).getAgent.asInstanceOf[api.Turtle]
       val graph = getGraph(context).asJungGraph
       val distance = Option(graph.dijkstraShortestPath.getDistance(source, target))
       toLogoObject(distance.getOrElse(false))
@@ -201,9 +184,9 @@ trait Primitives {
       Array(TurtleType, StringType),
       NumberType | BooleanType,
       "-T--")
-    override def report(args: Array[Argument], context: Context): AnyRef = {
-      val source = context.getAgent.asInstanceOf[Turtle]
-      val target = args(0).getAgent.asInstanceOf[Turtle]
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[api.Turtle]
+      val target = args(0).getAgent.asInstanceOf[api.Turtle]
       val weightVariable = args(1).getString.toUpperCase
       val graph = getGraph(context).asJungGraph
       val distance = Option(graph.dijkstraShortestPath(weightVariable).getDistance(source, target))
@@ -216,21 +199,21 @@ trait Primitives {
       Array(TurtleType, StringType),
       NumberType | BooleanType,
       "-T--")
-    override def report(args: Array[Argument], context: Context): AnyRef = {
-      val source = context.getAgent.asInstanceOf[Turtle]
-      val target = args(0).getAgent.asInstanceOf[Turtle]
+    override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
+      val source = context.getAgent.asInstanceOf[api.Turtle]
+      val target = args(0).getAgent.asInstanceOf[api.Turtle]
       val weightVariable = args(1).getString.toUpperCase
-      LogoList.fromJava(
+      api.LogoList.fromJava(
         getGraph(context).asJungGraph
           .dijkstraShortestPath(weightVariable)
           .getPath(source, target))
     }
   }
 
-  object BarabasiAlbertGeneratorPrim extends DefaultCommand {
+  object BarabasiAlbertGeneratorPrim extends api.DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
@@ -239,10 +222,10 @@ trait Primitives {
     }
   }
 
-  object ErdosRenyiGeneratorPrim extends DefaultCommand {
+  object ErdosRenyiGeneratorPrim extends api.DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
@@ -254,10 +237,10 @@ trait Primitives {
     }
   }
 
-  object KleinbergSmallWorldGeneratorPrim extends DefaultCommand {
+  object KleinbergSmallWorldGeneratorPrim extends api.DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
@@ -271,10 +254,10 @@ trait Primitives {
     }
   }
 
-  object Lattice2DGeneratorPrim extends DefaultCommand {
+  object Lattice2DGeneratorPrim extends api.DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
@@ -287,16 +270,31 @@ trait Primitives {
     }
   }
 
-  object SaveMatrix extends DefaultCommand {
+  object Lattice2DGeneratorPrimWithBlock extends api.DefaultCommand {
+    override def getSyntax = commandSyntax(
+      Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandTaskType))
+    override def perform(args: Array[api.Argument], context: api.Context) {
+      val newTurtles = new Generator(
+        turtleBreed = args(0).getAgentSet.requireTurtleBreed,
+        linkBreed = args(1).getAgentSet.requireLinkBreed)
+        .lattice2D(
+          rowCount = args(2).getIntValue,
+          colCount = args(3).getIntValue,
+          isToroidal = args(4).getBooleanValue,
+          rng = context.getRNG)
+      runCommandTaskForTurtles(newTurtles, args(5), context)
+    }
+  }
+  object SaveMatrix extends api.DefaultCommand {
     override def getSyntax = commandSyntax(Array(StringType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       Matrix.save(getGraph(context).asJungGraph, args(0).getString)
     }
   }
 
-  object LoadMatrix extends DefaultCommand {
+  object LoadMatrix extends api.DefaultCommand {
     override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       Matrix.load(
         filename = args(0).getString,
         turtleBreed = args(1).getAgentSet.requireTurtleBreed,
@@ -311,9 +309,9 @@ trait Primitives {
       Array(NumberType),
       TurtlesetType,
       "-T--")
-    override def report(args: Array[Argument], context: Context) = {
+    override def report(args: Array[api.Argument], context: api.Context) = {
       val graph = getGraph(context).asJungGraph
-      val source = context.getAgent.asInstanceOf[Turtle]
+      val source = context.getAgent.asInstanceOf[api.Turtle]
       val radius = args(0).getIntValue
       if (radius < 0) throw new ExtensionException("radius cannot be negative")
       graph.kNeighborhood(source, radius, edgeType)

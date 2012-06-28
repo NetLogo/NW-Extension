@@ -2,18 +2,11 @@ package org.nlogo.extensions.nw.jgrapht
 
 import org.nlogo.extensions.nw.NetworkExtensionUtil.runCommandTaskForTurtles
 import org.nlogo.api.ScalaConversions.toLogoList
-import org.nlogo.api.Syntax.LinksetType
-import org.nlogo.api.Syntax.ListType
-import org.nlogo.api.Syntax.NumberType
-import org.nlogo.api.Syntax.TurtlesetType
-import org.nlogo.api.Syntax.CommandTaskType
-import org.nlogo.api.Syntax.commandSyntax
-import org.nlogo.api.Syntax.reporterSyntax
-import org.nlogo.api.Argument
-import org.nlogo.api.Context
-import org.nlogo.api.DefaultCommand
-import org.nlogo.api.DefaultReporter
-import org.nlogo.api.ExtensionException
+import org.nlogo.api
+import api.Syntax._
+import api.DefaultReporter
+import api.DefaultCommand
+import api.ExtensionException
 import org.nlogo.nvm
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
@@ -24,7 +17,7 @@ trait Primitives {
 
   object MaximalCliques extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) = {
+    override def report(args: Array[api.Argument], context: api.Context) = {
       val g = getGraph(context)
       // TODO: This should probably be dealt with in graph construction:
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
@@ -36,7 +29,7 @@ trait Primitives {
 
   object BiggestMaximalClique extends DefaultReporter {
     override def getSyntax = reporterSyntax(ListType)
-    override def report(args: Array[Argument], context: Context) = {
+    override def report(args: Array[api.Argument], context: api.Context) = {
       val g = getGraph(context)
       // TODO: This should probably be dealt with in graph construction:
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
@@ -49,7 +42,7 @@ trait Primitives {
   object RingGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
@@ -61,7 +54,7 @@ trait Primitives {
   object StarGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
@@ -73,7 +66,7 @@ trait Primitives {
   object WheelGeneratorPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireUndirectedLinkBreed)
@@ -85,7 +78,7 @@ trait Primitives {
   object WheelGeneratorInwardPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
@@ -97,7 +90,7 @@ trait Primitives {
   object WheelGeneratorOutwardPrim extends DefaultCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandTaskType))
-    override def perform(args: Array[Argument], context: Context) {
+    override def perform(args: Array[api.Argument], context: api.Context) {
       val newTurtles = new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
