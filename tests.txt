@@ -412,7 +412,7 @@ eigenvector-centrality-single-isolate
   extensions [ nw ]
   O> crt 1
   O> nw:set-snapshot turtles links
-  [ nw:eigenvector-centrality ] of turtle 0 => 0
+  [ nw:eigenvector-centrality ] of turtle 0 => 1
   
 
 
