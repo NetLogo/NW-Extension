@@ -2,7 +2,7 @@
 
 This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the current version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network/blob/master/README.md#building)) or **[download it from here](https://github.com/downloads/nicolaspayette/netlogo-network/nw-ext-alpha-0.05.zip)**.
+This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network/blob/master/README.md#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-alpha-0.05.zip)**.
 
 (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
@@ -11,7 +11,7 @@ This extension is at a very early stage of development.  Users are invited to ex
 Also, be aware that the syntax of some primitives **will** change in future versions of the extension.  You will have to modify your code accordingly. 
 
 The source code for the extension is currently hosted online at
-https://github.com/nicolaspayette/netlogo-network.
+https://github.com/NetLogo/NW-Extension.
 
 ## Changes
 
@@ -84,13 +84,13 @@ The reason we did not do it like this right away is that there currently is no e
 
 ## Primitives
 
-- [General](https://github.com/nicolaspayette/netlogo-network#general)
-- [Path and Distance](https://github.com/nicolaspayette/netlogo-network#path-and-distance)
-- [Centrality](https://github.com/nicolaspayette/netlogo-network#centrality)
-- [Clusterers](https://github.com/nicolaspayette/netlogo-network#clusterers)
-- [Cliques](https://github.com/nicolaspayette/netlogo-network#cliques)
-- [Generators](https://github.com/nicolaspayette/netlogo-network#generators)
-- [Import / Export](https://github.com/nicolaspayette/netlogo-network#import--export)
+- [General](https://github.com/NetLogo/NW-Extension#general)
+- [Path and Distance](https://github.com/NetLogo/NW-Extension#path-and-distance)
+- [Centrality](https://github.com/NetLogo/NW-Extension#centrality)
+- [Clusterers](https://github.com/NetLogo/NW-Extension#clusterers)
+- [Cliques](https://github.com/NetLogo/NW-Extension#cliques)
+- [Generators](https://github.com/NetLogo/NW-Extension#generators)
+- [Import / Export](https://github.com/NetLogo/NW-Extension#import--export)
 
 ### General
 
@@ -100,7 +100,7 @@ The reason we did not do it like this right away is that there currently is no e
 
 Builds a static internal representation of the network formed by all the turtles in _turtleset_ and all the links in _linkset_ that connect two turtles from _turtleset_. This network snapshot is the one that will be used by all other primitives (unless specified otherwise) until a new snapshot is created.
 
-(At the moment, only the [generator primitives](https://github.com/nicolaspayette/netlogo-network#generators) and [`nw:load-matrix`](https://github.com/nicolaspayette/netlogo-network#load-matrix) are exceptions to this rule.)
+(At the moment, only the [generator primitives](https://github.com/NetLogo/NW-Extension#generators) and [`nw:load-matrix`](https://github.com/NetLogo/NW-Extension#load-matrix) are exceptions to this rule.)
 
 Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
 
@@ -509,5 +509,5 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 [Jung](http://jung.sourceforge.net/) is licensed under the [BSD license](http://jung.sourceforge.net/license.txt) and [JGraphT](http://jgrapht.org/) is licensed under the [LGPL license](http://jgrapht.org/LGPL.html).
 
-[turtle]: https://github.com/nicolaspayette/netlogo-network/raw/master/turtle.gif  "Turtle"
-[link]: https://github.com/nicolaspayette/netlogo-network/raw/master/link.gif  "Link"
+[turtle]: https://github.com/NetLogo/NW-Extension/raw/master/turtle.gif  "Turtle"
+[link]: https://github.com/NetLogo/NW-Extension/raw/master/link.gif  "Link"
