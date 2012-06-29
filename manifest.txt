@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Extension-Name: nw
-Class-Manager: org.nlogo.extensions.nw.NetworkExtension
-NetLogo-Extension-API-Version: 5.0

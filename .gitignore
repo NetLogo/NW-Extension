@@ -1,8 +1,9 @@
 *~
 *.orig
-/classes
 /jung-src/
 /jgrapht-src/
+/project/
+/target/
 *.jar
 *.gz
 *.zip
