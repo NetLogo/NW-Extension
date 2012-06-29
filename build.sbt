@@ -53,7 +53,6 @@ packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime
           Seq(jar, jar + ".pack.gz")}
       for(extra <- zipExtras)
         IO.copyFile(base / extra, base / "nw" / extra)
-      s.log.info(zipExtras.toString)
       Process("zip nw.zip " + zipExtras.map("nw/" + _).mkString(" ")).!!
       IO.delete(base / "nw")
     }
