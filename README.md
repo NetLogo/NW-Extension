@@ -50,7 +50,7 @@ Some examples:
 - `nw:set-snapshot turtles friendships` will give you all the bankers and clients and friendships between any of them.
 - `nw:set-snapshot bankers friendships` will give you all the bankers, and only friendships between bankers.
 - `nw:set-snapshot bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
-- `nw:set-snapshot clients accounts` will give all the clients and accounts between each other, but since in our fictionnal example clients can only have accounts with bankers, this will be a completely disconnected network.
+- `nw:set-snapshot clients accounts` will give you all the clients, and accounts between each other, but since in our fictionnal example clients can only have accounts with bankers, this will be a completely disconnected network.
 
 Now one very important thing that you need to understand about `set-snapshot` is that, as its name suggests, it takes a static picture of the network at the time you call it. All subsequent network operations will use this static picture, _even if turtles or links have been created or died in the meantime_, until you call `set-snapshot` again.
 
