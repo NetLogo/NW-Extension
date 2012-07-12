@@ -280,6 +280,13 @@ trait Primitives {
         rng = context.getRNG)
   }
 
+  object SaveGraphML extends api.DefaultCommand {
+    override def getSyntax = commandSyntax(Array(StringType))
+    override def perform(args: Array[api.Argument], context: api.Context) {
+      GraphML.save(getGraph(context).asJungGraph, args(0).getString)
+    }
+  }
+
   abstract class InRadiusPrim extends DefaultReporter {
     val edgeType: KNeighborhoodFilter.EdgeType
     override def getSyntax = reporterSyntax(
