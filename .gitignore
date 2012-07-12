@@ -4,6 +4,7 @@
 /jgrapht-src/
 /project/
 /target/
+classes/
 *.jar
 *.gz
 *.zip
