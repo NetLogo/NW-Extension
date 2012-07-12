@@ -60,6 +60,8 @@ class NetworkExtension extends DefaultClassManager
     add("save-matrix", SaveMatrix)
     add("load-matrix", LoadMatrix)
 
+    add("save-graphml", SaveGraphML)
+
   }
 }
 
