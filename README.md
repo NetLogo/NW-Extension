@@ -2,11 +2,11 @@
 
 This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the current version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network/blob/master/README.md#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-alpha-0.05.zip)**.
+This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network/blob/master/README.md#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-alpha-0.07.zip)**.
 
 (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
-This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues?state=open), but it should not be used for production code.
+This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues?state=open), but it should not be used for production code. As matter of fact, a look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of developement.
 
 Also, be aware that the syntax of some primitives **will** change in future versions of the extension.  You will have to modify your code accordingly. 
 
@@ -50,7 +50,7 @@ Some examples:
 - `nw:set-snapshot turtles friendships` will give you all the bankers and clients and friendships between any of them.
 - `nw:set-snapshot bankers friendships` will give you all the bankers, and only friendships between bankers.
 - `nw:set-snapshot bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
-- `nw:set-snapshot clients accounts` will give all the clients and accounts between each other, but since in our fictionnal example clients can only have accounts with bankers, this will be a completely disconnected network.
+- `nw:set-snapshot clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
 
 Now one very important thing that you need to understand about `set-snapshot` is that, as its name suggests, it takes a static picture of the network at the time you call it. All subsequent network operations will use this static picture, _even if turtles or links have been created or died in the meantime_, until you call `set-snapshot` again.
 
