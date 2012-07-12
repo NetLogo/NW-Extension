@@ -21,6 +21,7 @@ import org.nlogo.api.ExtensionException
 import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
 import java.util.Random
 import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
+import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
 
 // TODO: catch exceptions from Jung and give meaningful error messages 
 
@@ -48,11 +49,6 @@ trait Ranker {
 trait Algorithms {
   self: Graph =>
 
-  private def functionToTransformer[I, O](f: Function1[I, O]) =
-    new org.apache.commons.collections15.Transformer[I, O] {
-      override def transform(i: I) = f(i)
-    }
-
   lazy private val dijkstraMemo: mutable.Map[String, RichDijkstra] = mutable.Map()
 
   def dijkstraShortestPath =
@@ -63,7 +59,7 @@ trait Algorithms {
       new RichDijkstra(_.getBreedOrLinkVariable(variable).asInstanceOf[Double]))
 
   class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
-    extends DijkstraShortestPath(self, functionToTransformer(weightFunction), true) {
+    extends DijkstraShortestPath(self, weightFunction, true) {
 
     def meanLinkPathLength: Option[Double] = {
 

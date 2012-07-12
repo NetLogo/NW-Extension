@@ -19,6 +19,12 @@ import org.nlogo.api.Primitive
 import org.nlogo.nvm
 
 object NetworkExtensionUtil {
+
+  implicit def functionToTransformer[I, O](f: Function1[I, O]) =
+    new org.apache.commons.collections15.Transformer[I, O] {
+      override def transform(i: I) = f(i)
+    }
+
   implicit def AgentSetToNetLogoAgentSet(agentSet: AgentSet) =
     agentSet.asInstanceOf[org.nlogo.agent.AgentSet]
   implicit def AgentToNetLogoAgent(agent: Agent) =
