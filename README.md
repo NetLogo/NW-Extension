@@ -85,7 +85,9 @@ The reason we did not do it like this right away is that there currently is no e
 ## Primitives
 
 - [General](https://github.com/NetLogo/NW-Extension#general)
+    - [`set-snapshot`](https://github.com/NetLogo/NW-Extension#set-snapshot)
 - [Path and Distance](https://github.com/NetLogo/NW-Extension#path-and-distance)
+    - [`turtles-in-radius`, `turtles-in-out-radius`, `turtles-in-in-radius`](https://github.com/NetLogo/NW-Extension#turtles-in-radius-turtles-in-out-radius-turtles-in-in-radius), [`distance-to`, `weighted-distance-to`](https://github.com/NetLogo/NW-Extension/#distance-to-weighted-distance-to), [`path-to`, `turtles-on-path-to`, `weighted-path-to`, `turtles-on-weighted-path-to`](https://github.com/NetLogo/NW-Extension#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [`mean-path-length`, `mean-weighted-path-length`](https://github.com/NetLogo/NW-Extension/blob/master/README.md#mean-path-length-mean-weighted-path-length)
 - [Centrality](https://github.com/NetLogo/NW-Extension#centrality)
 - [Clusterers](https://github.com/NetLogo/NW-Extension#clusterers)
 - [Cliques](https://github.com/NetLogo/NW-Extension#cliques)
