@@ -2,7 +2,7 @@
 
 This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the current version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network/blob/master/README.md#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-alpha-0.07.zip)**.
+This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-alpha-0.07.zip)**.
 
 (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
@@ -85,14 +85,19 @@ The reason we did not do it like this right away is that there currently is no e
 ## Primitives
 
 - [General](https://github.com/NetLogo/NW-Extension#general)
-    - [`set-snapshot`](https://github.com/NetLogo/NW-Extension#set-snapshot)
+    - [set-snapshot](https://github.com/NetLogo/NW-Extension#set-snapshot)
 - [Path and Distance](https://github.com/NetLogo/NW-Extension#path-and-distance)
-    - [`turtles-in-radius`, `turtles-in-out-radius`, `turtles-in-in-radius`](https://github.com/NetLogo/NW-Extension#turtles-in-radius-turtles-in-out-radius-turtles-in-in-radius), [`distance-to`, `weighted-distance-to`](https://github.com/NetLogo/NW-Extension/#distance-to-weighted-distance-to), [`path-to`, `turtles-on-path-to`, `weighted-path-to`, `turtles-on-weighted-path-to`](https://github.com/NetLogo/NW-Extension#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [`mean-path-length`, `mean-weighted-path-length`](https://github.com/NetLogo/NW-Extension/blob/master/README.md#mean-path-length-mean-weighted-path-length)
+    - [turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius](https://github.com/NetLogo/NW-Extension#turtles-in-radius-turtles-in-out-radius-turtles-in-in-radius), [distance-to, weighted-distance-to](https://github.com/NetLogo/NW-Extension/#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](https://github.com/NetLogo/NW-Extension#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](https://github.com/NetLogo/NW-Extension#mean-path-length-mean-weighted-path-length)
 - [Centrality](https://github.com/NetLogo/NW-Extension#centrality)
+    - [betweenness-centrality](https://github.com/NetLogo/NW-Extension#betweenness-centrality), [eigenvector-centrality](https://github.com/NetLogo/NW-Extension#eigenvector-centrality), [closeness-centrality](https://github.com/NetLogo/NW-Extension#closeness-centrality)
 - [Clusterers](https://github.com/NetLogo/NW-Extension#clusterers)
+    - [k-means-clusters](https://github.com/NetLogo/NW-Extension#k-means-clusters), [bicomponent-clusters](https://github.com/NetLogo/NW-Extension#bicomponent-clusters), [weak-component-clusters](https://github.com/NetLogo/NW-Extension#weak-component-clusters)
 - [Cliques](https://github.com/NetLogo/NW-Extension#cliques)
+    - [maximal-cliques](https://github.com/NetLogo/NW-Extension#maximal-cliques), [biggest-maximal-clique](https://github.com/NetLogo/NW-Extension#biggest-maximal-clique)
 - [Generators](https://github.com/NetLogo/NW-Extension#generators)
+    - [generate-preferential-attachment](https://github.com/NetLogo/NW-Extension#generate-preferential-attachment), [generate-random](https://github.com/NetLogo/NW-Extension#generate-random), [generate-small-world](https://github.com/NetLogo/NW-Extension#generate-small-world), [generate-lattice-2d](https://github.com/NetLogo/NW-Extension#generate-lattice-2d), [generate-ring](https://github.com/NetLogo/NW-Extension#generate-ring), [generate-star](https://github.com/NetLogo/NW-Extension#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](https://github.com/NetLogo/NW-Extension#generate-wheel-generate-wheel-inward-generate-wheel-outward)
 - [Import / Export](https://github.com/NetLogo/NW-Extension#import--export)
+    - [save-matrix](https://github.com/NetLogo/NW-Extension#save-matrix), [load-matrix](https://github.com/NetLogo/NW-Extension#load-matrix)
 
 ### General
 
