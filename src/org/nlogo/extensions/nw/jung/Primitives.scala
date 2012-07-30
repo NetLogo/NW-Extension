@@ -283,7 +283,7 @@ trait Primitives {
   object SaveGraphML extends api.DefaultCommand {
     override def getSyntax = commandSyntax(Array(StringType))
     override def perform(args: Array[api.Argument], context: api.Context) {
-      GraphML.save(getGraph(context).asJungGraph, args(0).getString)
+      GraphML.save(getGraph(context), args(0).getString)
     }
   }
 
