@@ -54,9 +54,16 @@ trait Algorithms {
   def dijkstraShortestPath =
     dijkstraMemo.getOrElseUpdate("1.0", new RichDijkstra(_ => 1.0))
 
-  def dijkstraShortestPath(variable: String) =
-    dijkstraMemo.getOrElseUpdate(variable,
-      new RichDijkstra(_.getBreedOrLinkVariable(variable).asInstanceOf[Double]))
+  def dijkstraShortestPath(variable: String) = {
+    val weightFunction = (link: Link) => {
+      val value = link.getBreedOrLinkVariable(variable)
+      try value.asInstanceOf[java.lang.Number]
+      catch {
+        case e: Exception => throw new ExtensionException("Weight variable must be numeric.")
+      }
+    }
+    dijkstraMemo.getOrElseUpdate(variable, new RichDijkstra(weightFunction))
+  }
 
   class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
     extends DijkstraShortestPath(self, weightFunction, true) {
