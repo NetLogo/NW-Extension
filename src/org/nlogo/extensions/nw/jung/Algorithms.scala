@@ -82,6 +82,9 @@ trait Algorithms {
 
     }
 
+    override def getDistance(source: Turtle, target: Turtle) =
+      try super.getDistance(source, target)
+      catch { case e: Exception => throw new ExtensionException(e) }
   }
 
   lazy val betweennessCentrality = new BetweennessCentrality(this) with Ranker
