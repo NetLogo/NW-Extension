@@ -6,7 +6,7 @@
 # - partially disconnected networks
 # - completely disconnect networks
 # - Directed vs. undirected networks
-#   - using undirected primitives with directed notworks
+#   - using undirected primitives with directed networks
 #   - using directed versions of primitives on undirected networks
 # For primitives using weights:
 # - non numeric weights
@@ -291,7 +291,7 @@ closeness-centrality-single-isolate
   O> crt 1
   O> nw:set-snapshot turtles links
   [ nw:closeness-centrality ] of turtle 0 => 0
-  
+
 closeness-centrality-simple-undirected
   extensions [ nw ]
   O> crt 3
@@ -309,7 +309,7 @@ closeness-centrality-simple-directed
   O> ask turtle 2 [ create-directed-link-to turtle 1 ]
   O> nw:set-snapshot turtles directed-links
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
-  
+
 closeness-centrality-bigger-directed
   extensions [ nw ]
   O> crt 6
@@ -413,10 +413,12 @@ eigenvector-centrality-single-isolate
   O> crt 1
   O> nw:set-snapshot turtles links
   [ nw:eigenvector-centrality ] of turtle 0 => 1
-  
-
 
 ## weighted primitives
+
+# to check:
+# - non numeric weights
+# - negative weights
 
 ### weighted-distance-to
 
@@ -427,3 +429,36 @@ weighted-distance-to-between-two-turtles
   O> nw:set-snapshot turtles undirected-links
   [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 => 0.5
 
+weighted-distance-to-self
+  extensions [nw]
+  O> crt 1
+  O> nw:set-snapshot turtles undirected-links
+  [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 0 => 0
+
+weighted-distance-two-turtles-no-links
+  extensions [nw]
+  O> crt 2
+  O> nw:set-snapshot turtles undirected-links
+  [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 1 => false
+  [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 => false
+
+weighted-distance-one-unbreeded-undirected-link-using-thickness
+  extensions [nw]
+  O> crt 2 [ create-links-with other turtles [ set thickness 0.5 ]]
+  O> nw:set-snapshot turtles links
+  [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 => 0.5
+  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 0.5
+
+weighted-distance-one-unbreeded-directed-link-using-thickness
+  extensions [nw]
+  O> crt 2 
+  O> ask turtle 0 [ create-link-to turtle 1 [ set thickness 0.5 ]]
+  O> nw:set-snapshot turtles links
+  [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 => false
+  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 0.5
+
+### weighted-path-to
+
+### turtles-on-weighted-path-to
+
+### mean-weighted-path-length
