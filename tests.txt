@@ -346,7 +346,7 @@ betweenness-centrality-single-isolate
   O> crt 1
   O> nw:set-snapshot turtles links
   [ nw:betweenness-centrality ] of turtle 0 => 0
-  
+
 betweenness-centrality-simple-undirected
   extensions [ nw ]
   O> crt 3
@@ -354,7 +354,7 @@ betweenness-centrality-simple-undirected
   O> ask turtle 1 [ create-link-with turtle 2 ]
   O> nw:set-snapshot turtles links
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0]
-  
+
 betweenness-centrality-disconnected-undirected  
   extensions [ nw ]
   O> crt 6
@@ -377,8 +377,7 @@ betweenness-centrality-disconnected-directed-triangles
   O> crt 3 [ create-link-to turtle (((who - 2) mod 3) + 3) ]
   O> nw:set-snapshot turtles links
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [1 1 1 1 1 1]
-  
-  
+
 betweenness-centrality-connected-directed-triangles
   extensions [ nw ]
   O> crt 3 [ create-link-to turtle ((who + 1) mod 3) ]
@@ -416,10 +415,6 @@ eigenvector-centrality-single-isolate
 
 ## weighted primitives
 
-# to check:
-# - non numeric weights
-# - negative weights
-
 ### weighted-distance-to
 
 weighted-distance-to-between-two-turtles
@@ -428,6 +423,13 @@ weighted-distance-to-between-two-turtles
   O> ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
   O> nw:set-snapshot turtles undirected-links
   [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 => 0.5
+
+weighted-distance-to-variable-name-case-should-not-matter
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
+  O> nw:set-snapshot turtles undirected-links
+  [ nw:weighted-distance-to turtle 1 "WEIGHT" ] of turtle 0 => 0.5
 
 weighted-distance-to-self
   extensions [nw]
@@ -458,6 +460,26 @@ weighted-distance-one-unbreeded-directed-link-using-thickness
   [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 0.5
 
 ### weighted-path-to
+
+weighted-path-to-self
+  extensions [ nw ]
+  O> crt 1
+  O> nw:set-snapshot turtles undirected-links
+  [ nw:weighted-path-to turtle 0 "weight" ] of turtle 0 => []
+
+weighted-path-to-no-path
+  extensions [ nw ]
+  O> crt 2
+  O> nw:set-snapshot turtles undirected-links
+  [ nw:weighted-path-to turtle 1 "weight" ] of turtle 0 => []
+  [ nw:weighted-path-to turtle 0 "weight" ] of turtle 1 => []
+
+weighted-path-to-undirected-pair
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles [ set thickness 1 ]]
+  O> nw:set-snapshot turtles links
+  (word [ nw:weighted-path-to turtle 1 "thickness" ] of turtle 0) => "[(link 0 1)]"
+  (word [ nw:weighted-path-to turtle 0 "thickness" ] of turtle 1) => "[(link 0 1)]"
 
 ### turtles-on-weighted-path-to
 
