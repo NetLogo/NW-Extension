@@ -82,6 +82,10 @@ trait Algorithms {
 
     }
 
+    override def getPath(source: Turtle, target: Turtle) =
+      try super.getPath(source, target)
+      catch { case e: Exception => throw new ExtensionException(e) }
+
     override def getDistance(source: Turtle, target: Turtle) =
       try super.getDistance(source, target)
       catch { case e: Exception => throw new ExtensionException(e) }
