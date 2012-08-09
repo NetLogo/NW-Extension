@@ -17,6 +17,7 @@ import org.nlogo.api.TypeNames
 import org.nlogo.api.DefaultReporter
 import org.nlogo.api.Primitive
 import org.nlogo.nvm
+import org.nlogo.api.AgentException
 
 object NetworkExtensionUtil {
 
@@ -45,9 +46,13 @@ object NetworkExtensionUtil {
   implicit def LinkToRichLink(link: org.nlogo.agent.Link) = new RichLink(link)
   class RichLink(link: org.nlogo.agent.Link) {
     def getBreedOrLinkVariable(variable: String) =
-      link.world.program.linksOwn.indexOf(variable) match {
-        case -1 => link.getLinkBreedVariable(variable)
-        case i  => link.getLinkVariable(i)
+      try {
+        link.world.program.linksOwn.indexOf(variable) match {
+          case -1 => link.getLinkBreedVariable(variable)
+          case i  => link.getLinkVariable(i)
+        }
+      } catch {
+        case e: Exception => throw new ExtensionException(e)
       }
   }
 
