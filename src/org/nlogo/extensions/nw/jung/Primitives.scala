@@ -218,7 +218,7 @@ trait Primitives {
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .barabasiAlbert(args(2).getIntValue, context.getRNG)
+        .barabasiAlbert(getIntValueWithMinimum(args(2), 1), context.getRNG)
   }
 
   object ErdosRenyiGeneratorPrim extends turtleCreatingCommand {
@@ -229,7 +229,7 @@ trait Primitives {
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .erdosRenyi(
-          nbVertices = args(2).getIntValue,
+          nbVertices = getIntValueWithMinimum(args(2), 1),
           connexionProbability = args(3).getDoubleValue,
           rng = context.getRNG)
   }
@@ -242,8 +242,8 @@ trait Primitives {
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .kleinbergSmallWorld(
-          rowCount = args(2).getIntValue,
-          colCount = args(3).getIntValue,
+          rowCount = getIntValueWithMinimum(args(2), 2, "rows"),
+          colCount = getIntValueWithMinimum(args(3), 2, "columns"),
           clusteringExponent = args(4).getDoubleValue,
           isToroidal = args(5).getBooleanValue,
           rng = context.getRNG)
@@ -257,8 +257,8 @@ trait Primitives {
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
         .lattice2D(
-          rowCount = args(2).getIntValue,
-          colCount = args(3).getIntValue,
+          rowCount = getIntValueWithMinimum(args(2), 2, "rows"),
+          colCount = getIntValueWithMinimum(args(3), 2, "columns"),
           isToroidal = args(4).getBooleanValue,
           rng = context.getRNG)
   }
