@@ -65,11 +65,15 @@ trait Primitives {
   object WheelGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
-    def createTurtles(args: Array[api.Argument], context: api.Context) =
+    def createTurtles(args: Array[api.Argument], context: api.Context) = {
+      val nbTurtles = args(2).getIntValue
+      if (nbTurtles < 4) 
+        throw new ExtensionException("The number of turtles in a wheel network must be at least 4.")
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireUndirectedLinkBreed)
-        .wheelGraphGenerator(args(2).getIntValue, true, context.getRNG)
+        .wheelGraphGenerator(nbTurtles, true, context.getRNG)
+    }
   }
 
   object WheelGeneratorInwardPrim extends turtleCreatingCommand {
