@@ -42,14 +42,11 @@ trait Primitives {
   object RingGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
-    def createTurtles(args: Array[api.Argument], context: api.Context) = {
-      val nbTurtles = args(2).getIntValue
-      if (nbTurtles < 3) throw new ExtensionException("The number of turtles in a ring network must be at least 3.")
+    def createTurtles(args: Array[api.Argument], context: api.Context) = 
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .ringGraphGenerator(nbTurtles, context.getRNG)
-    }
+        .ringGraphGenerator(getIntValueWithMinimum(args(2), 3), context.getRNG)
   }
 
   object StarGeneratorPrim extends turtleCreatingCommand {
@@ -59,21 +56,17 @@ trait Primitives {
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .starGraphGenerator(args(2).getIntValue, context.getRNG)
+        .starGraphGenerator(getIntValueWithMinimum(args(2), 1), context.getRNG)
   }
 
   object WheelGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
-    def createTurtles(args: Array[api.Argument], context: api.Context) = {
-      val nbTurtles = args(2).getIntValue
-      if (nbTurtles < 4) 
-        throw new ExtensionException("The number of turtles in a wheel network must be at least 4.")
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireUndirectedLinkBreed)
-        .wheelGraphGenerator(nbTurtles, true, context.getRNG)
-    }
+        .wheelGraphGenerator(getIntValueWithMinimum(args(2), 4), true, context.getRNG)
   }
 
   object WheelGeneratorInwardPrim extends turtleCreatingCommand {
@@ -83,7 +76,7 @@ trait Primitives {
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
-        .wheelGraphGenerator(args(2).getIntValue, true, context.getRNG)
+        .wheelGraphGenerator(getIntValueWithMinimum(args(2), 4), true, context.getRNG)
   }
 
   object WheelGeneratorOutwardPrim extends turtleCreatingCommand {
@@ -93,7 +86,7 @@ trait Primitives {
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireDirectedLinkBreed)
-        .wheelGraphGenerator(args(2).getIntValue, false, context.getRNG)
+        .wheelGraphGenerator(getIntValueWithMinimum(args(2), 4), false, context.getRNG)
   }
 
 }
