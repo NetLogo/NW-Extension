@@ -2,14 +2,17 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/org.nlogo/NetLogo/jars/NetLogo-5.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/jgrapht/jgrapht-jdk1.6/jars/jgrapht-jdk1.6-0.8.3.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/net.sourceforge.collections/collections-generic/jars/collections-generic-4.01.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/colt/colt/jars/colt-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/concurrent/concurrent/jars/concurrent-1.3.4.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/net.sf.jung/jung-algorithms-2.0.2-nlfork/jars/jung-algorithms-2.0.2-nlfork-0.1.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/net.sf.jung/jung-api/jars/jung-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/net.sf.jung/jung-graph-impl/jars/jung-graph-impl-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/net.sf.jung/jung-io/jars/jung-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/org.codehaus.woodstox/wstx-asl/jars/wstx-asl-3.2.6.jar"/>
+	<classpathentry kind="lib" path="/home/nicolas/.ivy2/cache/stax/stax-api/jars/stax-api-1.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="jung-algorithms-2.0.2-nlfork-0.1.jar" sourcepath="/jung-algorithms/src"/>
-	<classpathentry kind="lib" path="collections-generic-4.01.jar"/>
-	<classpathentry kind="lib" path="colt-1.2.0.jar"/>
-	<classpathentry kind="lib" path="jung-api-2.0.1.jar" sourcepath="/jung-api/src"/>
-	<classpathentry kind="lib" path="jung-graph-impl-2.0.1.jar" sourcepath="/home/nicolas/git/NetLogo/extensions/network/jung-src/jung-graph-impl-2.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="jung-io-2.0.1.jar" sourcepath="/jung-io/src"/>
-	<classpathentry kind="lib" path="jgrapht-jdk1.6-0.8.3.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/NetLogo-5.0.1"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="output" path="target"/>
 </classpath>
