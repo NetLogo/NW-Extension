@@ -104,7 +104,8 @@ object NetworkExtensionUtil {
       a.done()
     }
 
-    // helper function to validate a minimum number of turtles:
+    // helper function to validate a minimum number of "things" (could be nodes, rows, columns, etc.)
+    // and throw an appropriate exception if the value is below that minimum
     protected def getIntValueWithMinimum(arg: api.Argument, minimum: Int, things: String = "nodes") = {
       val nb = arg.getIntValue
       if (nb < minimum)
