@@ -42,11 +42,14 @@ trait Primitives {
   object RingGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
-    def createTurtles(args: Array[api.Argument], context: api.Context) =
+    def createTurtles(args: Array[api.Argument], context: api.Context) = {
+      val nbTurtles = args(2).getIntValue
+      if (nbTurtles < 3) throw new ExtensionException("The number of turtles in a ring network must be at least 3.")
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)
-        .ringGraphGenerator(args(2).getIntValue, context.getRNG)
+        .ringGraphGenerator(nbTurtles, context.getRNG)
+    }
   }
 
   object StarGeneratorPrim extends turtleCreatingCommand {
