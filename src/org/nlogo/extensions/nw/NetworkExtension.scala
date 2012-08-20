@@ -1,5 +1,7 @@
 package org.nlogo.extensions.nw
 
+import scala.collection.JavaConverters.seqAsJavaListConverter
+
 import org.nlogo.api.Syntax.AgentsetType
 import org.nlogo.api.Syntax.commandSyntax
 import org.nlogo.api.Argument
@@ -17,7 +19,20 @@ class NetworkExtension extends DefaultClassManager
   with jung.Primitives
   with jgrapht.Primitives {
 
+  override def additionalJars = Seq(
+    "collections-generic-4.01.jar",
+    "colt-1.2.0.jar",
+    "concurrent-1.3.4.jar",
+    "jgrapht-jdk1.6-0.8.3.jar",
+    "jung-algorithms-2.0.2-nlfork-0.1.jar",
+    "jung-api-2.0.1.jar",
+    "jung-graph-impl-2.0.1.jar",
+    "jung-io-2.0.1.jar",
+    "stax-api-1.0.1.jar",
+    "wstx-asl-3.2.6.jar").asJava
+
   override def load(primManager: PrimitiveManager) {
+
     val add = primManager.addPrimitive _
 
     add("set-snapshot", SnapshotPrim)
