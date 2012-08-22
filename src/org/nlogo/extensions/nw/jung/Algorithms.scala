@@ -1,32 +1,26 @@
 package org.nlogo.extensions.nw.jung
 
-import org.nlogo.agent.ArrayAgentSet
+import java.util.Random
+
+import scala.Option.option2Iterable
 import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 import scala.collection.mutable
+
 import org.nlogo.agent.Agent
+import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
-import edu.uci.ics.jung.algorithms.cluster.BicomponentClusterer
-import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer
-import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
-import edu.uci.ics.jung.algorithms.util.KMeansClusterer
-import edu.uci.ics.jung.algorithms.importance.AbstractRanker
-import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality
-import edu.uci.ics.jung.algorithms.scoring.PageRank
-import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality
 import org.nlogo.api.ExtensionException
-import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
-import java.util.Random
 import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
 import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
 
-// TODO: catch exceptions from Jung and give meaningful error messages 
+import edu.uci.ics.jung.{ algorithms => jungalg }
 
 trait Ranker {
-  self: AbstractRanker[Turtle, Link] =>
+  self: jungalg.importance.AbstractRanker[Turtle, Link] =>
 
   private def toScoreMap[A <: Agent](m: java.util.Map[A, Number]) =
     m.asScala.map(x => x._1 -> x._2.doubleValue).toMap
@@ -66,7 +60,7 @@ trait Algorithms {
   }
 
   class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
-    extends DijkstraShortestPath(self, weightFunction, true) {
+      extends jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true) {
 
     def meanLinkPathLength: Option[Double] = {
 
@@ -98,8 +92,11 @@ trait Algorithms {
       catch { case e: Exception => throw new ExtensionException(e) }
   }
 
-  lazy val betweennessCentrality = new BetweennessCentrality(this) with Ranker
-  lazy val eigenvectorCentrality = new PageRank(this, 0.0) {
+  object BetweennessCentrality
+    extends jungalg.importance.BetweennessCentrality(this)
+    with Ranker
+
+  object EigenvectorCentrality extends jungalg.scoring.PageRank(this, 0.0) {
     evaluate()
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
@@ -107,7 +104,8 @@ trait Algorithms {
       getVertexScore(turtle)
     }
   }
-  lazy val closenessCentrality = new ClosenessCentrality(this) {
+
+  object ClosenessCentrality extends jungalg.scoring.ClosenessCentrality(this) {
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
         throw new ExtensionException(turtle + " is not a member of the current snapshot")
@@ -116,10 +114,9 @@ trait Algorithms {
         Double.box(0.0) // for isolates
       else res
     }
-
   }
 
-  lazy val kMeansClusterer = new KMeansClusterer[Turtle] {
+  object KMeansClusterer extends jungalg.util.KMeansClusterer[Turtle] {
     lazy val locations =
       self.nlg.turtles.map(t => t -> Array(t.xcor, t.ycor)).toMap.asJava
 
@@ -132,8 +129,11 @@ trait Algorithms {
       } else Seq()
   }
 
-  def kNeighborhood(source: Turtle, radius: Int, edgeType: KNeighborhoodFilter.EdgeType) = {
-    val agents = new KNeighborhoodFilter(source, radius, edgeType)
+  def kNeighborhood(
+    source: Turtle,
+    radius: Int,
+    edgeType: jungalg.filters.KNeighborhoodFilter.EdgeType) = {
+    val agents = new jungalg.filters.KNeighborhoodFilter(source, radius, edgeType)
       .transform(this.asSparseGraph) // TODO: ugly hack; fix when we fork jung
       .getVertices
       .asScala
@@ -143,7 +143,7 @@ trait Algorithms {
     new ArrayAgentSet(classOf[Turtle], agents, nlg.world)
   }
 
-  lazy val weakComponentClusterer = new WeakComponentClusterer[Turtle, Link] {
+  object WeakComponentClusterer extends jungalg.cluster.WeakComponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
   }
 
@@ -151,7 +151,7 @@ trait Algorithms {
 
 trait UndirectedAlgorithms extends Algorithms {
   self: UndirectedGraph =>
-  lazy val bicomponentClusterer = new BicomponentClusterer[Turtle, Link] {
+  object BicomponentClusterer extends jungalg.cluster.BicomponentClusterer[Turtle, Link] {
     def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
   }
 }

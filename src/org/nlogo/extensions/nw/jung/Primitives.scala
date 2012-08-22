@@ -23,7 +23,7 @@ trait Primitives {
       ListType)
     override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asJungGraph
-        .kMeansClusterer
+        .KMeansClusterer
         .clusters(
           nbClusters = args(0).getIntValue,
           maxIterations = args(1).getIntValue,
@@ -35,7 +35,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(ListType)
     override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asUndirectedJungGraph
-        .bicomponentClusterer
+        .BicomponentClusterer
         .clusters)
   }
 
@@ -43,7 +43,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(ListType)
     override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asJungGraph
-        .weakComponentClusterer
+        .WeakComponentClusterer
         .clusters)
   }
 
@@ -51,7 +51,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(NumberType, "-T-L")
     override def report(args: Array[api.Argument], context: api.Context) =
       Double.box(getGraph(context).asJungGraph
-        .betweennessCentrality
+        .BetweennessCentrality
         .get(context.getAgent))
   }
 
@@ -61,8 +61,8 @@ trait Primitives {
       val g = getGraph(context).asUndirectedJungGraph
       // make sure graph is connected
       if (g.isWeaklyConnected) // TODO: Actually, it should be STRONGLY connected
-        g.eigenvectorCentrality
-          .getScore(context.getAgent.asInstanceOf[api.Turtle])
+        g.EigenvectorCentrality
+          .getScore(TurtleToNetLogoTurtle(context.getAgent.asInstanceOf[api.Turtle]))
       else
         java.lang.Boolean.FALSE
     }
@@ -72,7 +72,7 @@ trait Primitives {
     override def getSyntax = reporterSyntax(NumberType, "-T--")
     override def report(args: Array[api.Argument], context: api.Context) =
       getGraph(context).asJungGraph
-        .closenessCentrality
+        .ClosenessCentrality
         .getScore(context.getAgent.asInstanceOf[api.Turtle])
   }
 
