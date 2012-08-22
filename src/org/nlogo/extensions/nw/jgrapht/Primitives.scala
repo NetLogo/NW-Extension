@@ -22,7 +22,7 @@ trait Primitives {
       // TODO: This should probably be dealt with in graph construction:
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
       toLogoList(g.asJGraphTGraph
-        .bronKerboschCliqueFinder
+        .BronKerboschCliqueFinder
         .cliques)
     }
   }
@@ -34,7 +34,7 @@ trait Primitives {
       // TODO: This should probably be dealt with in graph construction:
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
       toLogoList(g.asJGraphTGraph
-        .bronKerboschCliqueFinder
+        .BronKerboschCliqueFinder
         .biggestClique(context.getRNG))
     }
   }
