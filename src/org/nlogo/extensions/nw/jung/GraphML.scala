@@ -9,11 +9,15 @@ import org.nlogo.agent
 import org.nlogo.api
 import edu.uci.ics.jung
 import org.nlogo.extensions.nw.NetLogoGraph
+import org.nlogo.api.ExtensionException
 import scala.collection.JavaConverters._
 
 object GraphML {
 
   def save(graph: NetLogoGraph, filename: String) {
+
+    if (org.nlogo.workspace.AbstractWorkspace.isApplet)
+      throw new ExtensionException("Cannot save GraphML file when in applet mode.")
 
     val graphMLWriter = new jung.io.GraphMLWriter[agent.Turtle, agent.Link]
 
