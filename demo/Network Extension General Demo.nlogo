@@ -287,17 +287,23 @@ to generate-random
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Saving and loading of matrices
+;; Saving and loading of network files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to save
+to save-matrix
   nw:set-snapshot turtles get-links-to-use
   nw:save-matrix "matrix.txt"
 end
 
-to load
+to load-matrix
   generate task [ nw:load-matrix "matrix.txt" turtles get-links-to-use ]
 end
+
+to save-graphml
+  nw:set-snapshot turtles get-links-to-use
+  nw:save-graphml "graph.xml"
+end
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reporters for monitors
@@ -459,9 +465,9 @@ NIL
 
 BUTTON
 120
-455
+430
 225
-490
+465
 lattice 2D
 lattice-2d
 NIL
@@ -476,9 +482,9 @@ NIL
 
 SLIDER
 120
-380
+355
 225
-413
+388
 nb-rows
 nb-rows
 0
@@ -491,9 +497,9 @@ HORIZONTAL
 
 SLIDER
 10
-380
+355
 115
-413
+388
 nb-cols
 nb-cols
 0
@@ -506,9 +512,9 @@ HORIZONTAL
 
 SWITCH
 10
-415
+390
 225
-448
+423
 wrap
 wrap
 1
@@ -576,9 +582,9 @@ HORIZONTAL
 
 BUTTON
 10
-455
+430
 115
-490
+465
 small world
 small-world
 NIL
@@ -593,9 +599,9 @@ NIL
 
 SLIDER
 10
-492
+467
 225
-525
+500
 clustering-exponent
 clustering-exponent
 0
@@ -652,9 +658,9 @@ links-to-use
 
 PLOT
 245
-310
+355
 560
-470
+515
 Degree distribution
 Degrees
 Nb nodes
@@ -673,8 +679,8 @@ BUTTON
 225
 560
 258
-NIL
-save
+save matrix
+save-matrix
 NIL
 1
 T
@@ -690,8 +696,8 @@ BUTTON
 260
 560
 293
-NIL
-load
+load matrix
+load-matrix
 NIL
 1
 T
@@ -704,9 +710,9 @@ NIL
 
 MONITOR
 330
-485
-415
 530
+415
+575
 NIL
 count turtles
 17
@@ -715,9 +721,9 @@ count turtles
 
 MONITOR
 245
-485
-325
 530
+325
+575
 NIL
 count links
 17
@@ -794,9 +800,9 @@ NIL
 
 MONITOR
 420
-485
-560
 530
+560
+575
 Mean path length
 mean-path-length
 3
@@ -847,16 +853,6 @@ NIL
 NIL
 1
 
-TEXTBOX
-450
-200
-550
-218
-Matrix File
-12
-0.0
-1
-
 BUTTON
 245
 175
@@ -899,6 +895,33 @@ CHOOSER
 spokes-direction
 spokes-direction
 "inward" "outward"
+1
+
+TEXTBOX
+455
+205
+605
+223
+Files
+12
+0.0
+1
+
+BUTTON
+450
+305
+560
+338
+save GraphML
+save-graphml
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 1
 
 @#$#@#$#@
