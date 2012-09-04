@@ -46,7 +46,7 @@ packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime
       pack200(path.getName)
     }
     if(Process("git diff --quiet --exit-code HEAD").! == 0) {
-      Process("git archive -o nw.zip --prefix=nw/ HEAD").!!
+      //Process("git archive -o nw.zip --prefix=nw/ HEAD").!!
       IO.createDirectory(base / "nw")
       val zipExtras = 
         (libraryJarPaths.map(_.getName) :+ "nw.jar")
