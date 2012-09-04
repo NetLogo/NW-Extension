@@ -49,8 +49,9 @@ packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime
       Process("git archive -o nw.zip --prefix=nw/ HEAD").!!
       IO.createDirectory(base / "nw")
       val zipExtras = 
-        (libraryJarPaths.map(_.getName) :+ "nw.jar").flatMap{jar =>
-          Seq(jar, jar + ".pack.gz")}
+        (libraryJarPaths.map(_.getName) :+ "nw.jar")
+          .filterNot(_ == "NetLogoLite-5.0.2.jar")
+          .flatMap{ jar => Seq(jar, jar + ".pack.gz") }
       for(extra <- zipExtras)
         IO.copyFile(base / extra, base / "nw" / extra)
       Process("zip nw.zip " + zipExtras.map("nw/" + _).mkString(" ")).!!
