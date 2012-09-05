@@ -2,7 +2,7 @@
 
 This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the current version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-alpha-0.07.zip)**.
+This version of the extension is **not** pre-installed in NetLogo 5.0.1. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-alpha-0.08.zip)**.
 
 (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
@@ -22,9 +22,9 @@ Compared to the current extension, this new version offers:
 - **Clusterers**: find bicomponent and weak component clusters in your network.
 - **Clique finder**: find all maximal cliques or the biggest maximal clique in your network.
 - **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
-- **Import/Export**: save and load your networks using plain text matrix files.
+- **Import/Export**: save and load your networks using plain text matrix files, or export them to [GraphML](http://graphml.graphdrawing.org/).
 
-There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import/export to other formats like [GraphML](http://graphml.graphdrawing.org/) and [Pajek](http://pajek.imfm.si/doku.php), some new network layouts, and more algorithms and measures.
+There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import from [GraphML](http://graphml.graphdrawing.org/), some new network layouts, and more algorithms and measures.
 
 To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network librairies: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
 
@@ -466,6 +466,132 @@ For example:
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
       nw:load-matrix "matrix.txt" turtles links [ set color red ]
+
+#### save-graphml
+`save-graphml` _file-name_
+
+You can save the current snapshot to GraphML. The following NetLogo code:
+
+```
+extensions [ nw ]
+
+breed [ bankers banker ]
+bankers-own [ bank-name ]
+breed [ clients client ]
+clients-own [ hometown ]
+
+undirected-link-breed [ friendships friendship ]
+
+directed-link-breed [ accounts account ]
+accounts-own [ amount ]
+
+to go
+  clear-all
+  create-bankers 1 [ 
+    set bank-name "The Bank" 
+  ]
+  create-clients 1 [
+    set hometown "Turtle City"
+    create-friendship-with banker 0
+    create-account-to banker 0 [
+      set amount 9999.99
+    ]
+  ]
+  nw:set-snapshot turtles links
+  nw:save-graphml "graph.xml"
+end
+```
+
+Will produce the following GraphML file:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="PEN-MODE" for="node"/>
+<key id="YCOR" for="node"/>
+<key id="PEN-SIZE" for="node"/>
+<key id="LABEL" for="node"/>
+<key id="SHAPE" for="node"/>
+<key id="BREED" for="node"/>
+<key id="WHO" for="node"/>
+<key id="HIDDEN?" for="node"/>
+<key id="LABEL-COLOR" for="node"/>
+<key id="HEADING" for="node"/>
+<key id="BANK-NAME" for="node"/>
+<key id="HOMETOWN" for="node"/>
+<key id="COLOR" for="node"/>
+<key id="XCOR" for="node"/>
+<key id="SIZE" for="node"/>
+<key id="END1" for="edge"/>
+<key id="TIE-MODE" for="edge"/>
+<key id="END2" for="edge"/>
+<key id="LABEL-COLOR" for="edge"/>
+<key id="THICKNESS" for="edge"/>
+<key id="LABEL" for="edge"/>
+<key id="SHAPE" for="edge"/>
+<key id="BREED" for="edge"/>
+<key id="COLOR" for="edge"/>
+<key id="AMOUNT" for="edge"/>
+<key id="HIDDEN?" for="edge"/>
+<graph edgedefault="directed">
+<node id="banker 0">
+<data key="PEN-MODE">up</data>
+<data key="YCOR">0</data>
+<data key="PEN-SIZE">1</data>
+<data key="LABEL"></data>
+<data key="SHAPE">default</data>
+<data key="BREED">bankers</data>
+<data key="WHO">0</data>
+<data key="HIDDEN?">false</data>
+<data key="LABEL-COLOR">9.9</data>
+<data key="HEADING">346</data>
+<data key="BANK-NAME">The Bank</data>
+<data key="COLOR">85</data>
+<data key="XCOR">0</data>
+<data key="SIZE">1</data>
+</node>
+<node id="client 1">
+<data key="PEN-MODE">up</data>
+<data key="YCOR">0</data>
+<data key="PEN-SIZE">1</data>
+<data key="LABEL"></data>
+<data key="SHAPE">default</data>
+<data key="BREED">clients</data>
+<data key="WHO">1</data>
+<data key="HIDDEN?">false</data>
+<data key="LABEL-COLOR">9.9</data>
+<data key="HEADING">244</data>
+<data key="HOMETOWN">Turtle City</data>
+<data key="COLOR">105</data>
+<data key="XCOR">0</data>
+<data key="SIZE">1</data>
+</node>
+<edge source="client 1" target="banker 0">
+<data key="END1">(client 1)</data>
+<data key="TIE-MODE">none</data>
+<data key="END2">(banker 0)</data>
+<data key="LABEL-COLOR">9.9</data>
+<data key="THICKNESS">0</data>
+<data key="LABEL"></data>
+<data key="SHAPE">default</data>
+<data key="BREED">accounts</data>
+<data key="COLOR">5</data>
+<data key="AMOUNT">9999.99</data>
+<data key="HIDDEN?">false</data>
+</edge>
+</graph>
+</graphml>
+
+```
+
+A few things to notice:
+
+- The breed is stored as data field, both for nodes and edges.
+- The data includes both NetLogo's internal variables and the variables that were defined as either `breeds-own`, `turtles-own`, `linkbreeds-own` or `links-own`.
+- This example only has a directed link, and you will notice the `<graph edgedefault="directed">` element. If we had only undirected links, we would have `<graph edgedefault="undirected">`. What if we try to mix both kinds of link? At the moment, the extension will save such a "mixed" graph as if it were an undirected graph (see [this issue](https://github.com/NetLogo/NW-Extension/issues/58) for more details). The order of the `source` and `target` will be respected, however, so if you know which breeds represent directed links, you can figure it out _a posteriori_.
+- At the moment, all data is written as if it was the output of a NetLogo `print` command and the GraphML `attr.type` is not set for the keys. It will be [added eventually](https://github.com/NetLogo/NW-Extension/issues/60).
 
 ## Building
 
