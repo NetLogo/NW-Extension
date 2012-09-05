@@ -593,6 +593,10 @@ A few things to notice:
 - This example only has a directed link, and you will notice the `<graph edgedefault="directed">` element. If we had only undirected links, we would have `<graph edgedefault="undirected">`. What if we try to mix both kinds of link? At the moment, the extension will save such a "mixed" graph as if it were an undirected graph (see [this issue](https://github.com/NetLogo/NW-Extension/issues/58) for more details). The order of the `source` and `target` will be respected, however, so if you know which breeds represent directed links, you can figure it out _a posteriori_.
 - At the moment, all data is written as if it was the output of a NetLogo `print` command and the GraphML `attr.type` is not set for the keys. It will be [added eventually](https://github.com/NetLogo/NW-Extension/issues/60).
 
+## Using the extension with applets
+
+If you want to use the extension with applets, you will find the the distributed `nw.zip` contains a folder `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo 5.0.2 distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental. Please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
+
 ## Building
 
 The extension is written in Scala (version 2.9.2).
