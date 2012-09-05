@@ -595,7 +595,7 @@ A few things to notice:
 
 ## Using the extension with applets
 
-If you want to use the extension with applets, you will find the the distributed `nw.zip` contains a folder `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo 5.0.2 distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental. Please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
+If you want to use the extension with applets, you will find that the distributed `nw-ext-alpha-0.0x.zip` contains a folder `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo 5.0.2 distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental. Please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
 
 ## Building
 
