@@ -46,7 +46,9 @@ packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime
       pack200(path.getName)
     }
     if(Process("git diff --quiet --exit-code HEAD").! == 0) {
-      //Process("git archive -o nw.zip --prefix=nw/ HEAD").!!
+      // copy everything thing we need for distribution in
+      // a temporary "nw" directory, which we will then zip
+      // before deleting it.
       IO.createDirectory(base / "nw")
       val zipExtras = 
         (libraryJarPaths.map(_.getName) :+ "nw.jar")
@@ -54,7 +56,9 @@ packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime
           .flatMap{ jar => Seq(jar, jar + ".pack.gz") }
       for(extra <- zipExtras)
         IO.copyFile(base / extra, base / "nw" / extra)
-      Process("zip nw.zip " + zipExtras.map("nw/" + _).mkString(" ")).!!
+      for (dir <- Seq("alternate-netlogolite", "demo"))
+        IO.copyDirectory(base / dir, base / "nw" / dir)
+      Process("zip -r nw.zip nw").!!
       IO.delete(base / "nw")
     }
     else {
