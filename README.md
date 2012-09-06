@@ -606,6 +606,10 @@ A few things to notice:
 - This example only has a directed link, and you will notice the `<graph edgedefault="directed">` element. If we had only undirected links, we would have `<graph edgedefault="undirected">`. What if we try to mix both kinds of link? At the moment, the extension will save such a "mixed" graph as if it were an undirected graph (see [this issue](https://github.com/NetLogo/NW-Extension/issues/58) for more details). The order of the `source` and `target` will be respected, however, so if you know which breeds represent directed links, you can figure it out _a posteriori_.
 - At the moment, all data is written as if it was the output of a NetLogo `print` command and the GraphML `attr.type` is not set for the keys. It will be [added eventually](https://github.com/NetLogo/NW-Extension/issues/60).
 
+## A note regarding floating point calculations
+
+Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge.net/), the two network librairies that we use internally, use [`strictfp` floating point calculations](http://en.wikipedia.org/wiki/Strictfp). This does mean that exact reproducibility of results involving floating point calculations between different architectures are not fully guaranteed. (NetLogo itself [does always use strict math](http://ccl.northwestern.edu/netlogo/docs/faq.html#reproduce) so this only applies to some primitives of the NW extension.
+
 ## Using the extension with applets
 
 If you want to use the extension with applets, you will find that the distributed `nw-ext-alpha-0.0x.zip` contains a folder named `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo 5.0.2 distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental, and might not be supported in the final release of the extension. Nonetheless, please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
