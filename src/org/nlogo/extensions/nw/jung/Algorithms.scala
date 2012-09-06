@@ -1,3 +1,5 @@
+// (C) Uri Wilensky. https://github.com/NetLogo/NW-Extension
+
 package org.nlogo.extensions.nw.jung
 
 import java.util.Random

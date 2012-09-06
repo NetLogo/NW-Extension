@@ -1,3 +1,5 @@
+// (C) Uri Wilensky. https://github.com/NetLogo/NW-Extension
+
 package org.nlogo.extensions.nw.jgrapht
 
 import java.lang.IllegalArgumentException
