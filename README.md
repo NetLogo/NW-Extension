@@ -26,7 +26,7 @@ Compared to the current extension, this new version offers:
 
 There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import from [GraphML](http://graphml.graphdrawing.org/), some new network layouts, and more algorithms and measures.
 
-To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network librairies: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
+To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network libraries: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
 
 ## Usage
 
