@@ -8,7 +8,7 @@ import edu.uci.ics.jung.algorithms.generators.random.EppsteinPowerLawGenerator
 import edu.uci.ics.jung.algorithms.generators.random.ErdosRenyiGenerator
 import edu.uci.ics.jung.algorithms.generators.random.KleinbergSmallWorldGenerator
 import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
-import java.util.Random
+import org.nlogo.util.MersenneTwisterFast
 
 class Generator(
   turtleBreed: AgentSet,
@@ -19,13 +19,13 @@ class Generator(
   lazy val edgeFactory = DummyGraph.edgeFactory
   lazy val vertexFactory = DummyGraph.vertexFactory
 
-  def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean, rng: Random) =
+  def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean, rng: MersenneTwisterFast) =
     DummyGraph.importToNetLogo(new Lattice2DGenerator(
       graphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, isToroidal)
       .create, turtleBreed, linkBreed, rng)
 
-  def barabasiAlbert(nbVertices: Int, rng: Random) = {
+  def barabasiAlbert(nbVertices: Int, rng: MersenneTwisterFast) = {
     val gen = new BarabasiAlbertGenerator(
       graphFactory, vertexFactory, edgeFactory,
       1, 1, new java.util.HashSet[DummyGraph.Vertex])
@@ -35,7 +35,7 @@ class Generator(
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng, sorted = true)
   }
 
-  def erdosRenyi(nbVertices: Int, connexionProbability: Double, rng: Random) = {
+  def erdosRenyi(nbVertices: Int, connexionProbability: Double, rng: MersenneTwisterFast) = {
     val gen = new ErdosRenyiGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       nbVertices, connexionProbability)
@@ -44,7 +44,7 @@ class Generator(
   }
 
   def kleinbergSmallWorld(rowCount: Int, colCount: Int,
-    clusteringExponent: Double, isToroidal: Boolean, rng: Random) = {
+    clusteringExponent: Double, isToroidal: Boolean, rng: MersenneTwisterFast) = {
     val gen = new KleinbergSmallWorldGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, clusteringExponent, isToroidal)
