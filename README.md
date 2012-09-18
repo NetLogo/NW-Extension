@@ -612,7 +612,7 @@ Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge
 
 ## Using the extension with applets
 
-If you want to use the extension with applets, you will find that the distributed `nw-ext-alpha-0.0x.zip` contains a folder named `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo 5.0.2 distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental, and might not be supported in the final release of the extension. Nonetheless, please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
+If you want to use the extension with applets, you will find that the distributed `nw-ext-beta-0.0x.zip` contains a folder named `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo 5.0.2 distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental, and might not be supported in the final release of the extension. Nonetheless, please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
 
 General information on applets is available in the [NetLogo documentation](http://ccl.northwestern.edu/netlogo/docs/applet.html).
 
