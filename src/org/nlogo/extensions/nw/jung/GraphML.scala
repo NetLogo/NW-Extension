@@ -34,19 +34,36 @@ object GraphML {
         adder(variableName, null, null, transformer)
       }
     }
+    
+    val program = graph.world.program
 
-    addBreedVariables(
-      graph.world.program.breedsOwn.asScala.values.flatMap(_.asScala),
+
+    val turtlesOwn = program.turtlesOwn.asScala
+    val linksOwn = program.linksOwn.asScala
+
+    addVariables(
+      turtlesOwn,
+      (t: agent.Turtle, v: String) => turtlesOwn.contains(v),
+      (t: agent.Turtle, v: String) => t.getVariable(turtlesOwn.indexOf(v)),
+      graphMLWriter.addVertexData _)
+    addVariables(
+      linksOwn,
+      (t: agent.Link, v: String) => linksOwn.contains(v),
+      (t: agent.Link, v: String) => t.getVariable(linksOwn.indexOf(v)),
+      graphMLWriter.addEdgeData _)
+
+    addVariables(
+      program.breedsOwn.asScala.values.flatMap(_.asScala),
       (t: agent.Turtle, v: String) => graph.world.breedOwns(t.getBreed, v),
       (t: agent.Turtle, v: String) => t.getBreedVariable(v),
       graphMLWriter.addVertexData _)
-    addBreedVariables(
-      graph.world.program.linkBreedsOwn.asScala.values.flatMap(_.asScala),
+    addVariables(
+      program.linkBreedsOwn.asScala.values.flatMap(_.asScala),
       (l: agent.Link, v: String) => graph.world.linkBreedOwns(l.getBreed, v),
       (l: agent.Link, v: String) => l.getLinkBreedVariable(v),
       graphMLWriter.addEdgeData _)
 
-    def addBreedVariables[T <: agent.Agent](
+    def addVariables[T <: agent.Agent](
       vars: Iterable[String],
       varChecker: (T, String) => Boolean,
       varGetter: (T, String) => Object,
