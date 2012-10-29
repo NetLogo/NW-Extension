@@ -11,3 +11,5 @@ classes/
 
 # eclipse cache file
 .cache
+.settings
+
