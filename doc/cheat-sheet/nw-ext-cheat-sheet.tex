@@ -1,0 +1,203 @@
+\documentclass[12pt]{article}
+\usepackage{fontspec}
+\setmainfont{Linux Libertine O}
+\setmonofont[Scale=MatchLowercase]{DejaVu Sans Mono}
+\usepackage[margin=0.75in]{geometry}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage[english]{babel} %
+\usepackage[babel]{csquotes} %
+\MakeOuterQuote{"}
+\fvset{xleftmargin=1cm}
+\usepackage{url}
+
+\newenvironment{prim}{
+  \leftskip 0cm
+  \vskip 6 pt
+  \ttfamily
+  \bfseries
+}{
+  \hrule
+  \vskip 6 pt
+}
+
+\newcommand{\param}[1]{\texttt{\textit{\textmd{#1}}}}
+
+\begin{document}
+{
+  \begin{center}
+  \Huge NetLogo NW Extension \textsuperscript{\small(Beta 0.02)} — Cheat Sheet
+  \\
+  \normalsize For download and complete documentation, see: \\
+  \url{https://github.com/NetLogo/NW-Extension}
+  \end{center}
+  \vspace{1 em}
+}
+
+\leftskip 1 cm
+
+\begin{prim}
+nw:set-snapshot \param{turtleset linkset}
+\end{prim}
+
+Builds a static internal representation of the network formed by all the turtles
+in \param{turtleset} and all the links in \param{linkset} that connect two
+turtles from \param{turtleset}. This network snapshot is the one that will be used by
+other primitives until a new snapshot is created. Example:
+\begin{Verbatim}
+nw:set-snapshot turtles links
+\end{Verbatim}
+
+
+\begin{prim}
+nw:betweenness-centrality,
+nw:eigenvector-centrality,
+nw:closeness-centrality
+\end{prim}
+
+These primitives calculates different centrality measures for a turtle. Example:
+\begin{Verbatim}
+nw:set-snapshot turtles links
+ask turtles [ set size nw:betweenness-centrality ]
+\end{Verbatim}
+
+\begin{prim}
+nw:k-means-clusters \param{nb-clusters max-iterations
+convergence-threshold}
+\end{prim}
+
+Partitions the turtles in the current snapshot into nb-clusters different
+groups. It uses the \emph{x y} coordinates of the turtles to group them together, not
+their distance in the network. Example:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+let clusters nw:k-means-clusters 10 500 0.01
+\end{Verbatim}
+
+\begin{prim}
+nw:bicomponent-clusters
+\end{prim}
+
+Reports the list of bicomponent clusters in the current network snapshot. The
+result is reported as a list of lists of turtles. One turtle can be a member of
+more than one bicomponent at once. Example:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+let clusters nw:bicomponent-clusters
+\end{Verbatim}
+
+\begin{prim}
+nw:weak-component-clusters
+\end{prim}
+
+Reports the list of "weakly" connected components in the current network
+snapshot. The result is reported as a list of lists of turtles. One turtle
+cannot be a member of more than one weakly connected component at once.
+Example:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+let clusters nw:weak-component-clusters
+\end{Verbatim}
+
+\begin{prim}
+nw:maximal-cliques
+\end{prim}
+
+A clique is a subset of a network in which every node has a direct link to every
+other node. A maximal clique is a clique that is not, itself, contained in a
+bigger clique. The result is reported as a list of lists of turtles. One turtle can be a member of more than one maximal clique at once. The
+primitive uses the Bron–Kerbosch algorithm and only works with undirected links.
+Example:
+\begin{Verbatim}
+nw:set-snapshot turtles links
+let cliques nw:maximal-cliques
+\end{Verbatim}
+
+\begin{prim}
+nw:biggest-maximal-clique
+\end{prim}
+
+The biggest maximal clique is, as its name implies, the biggest clique in the
+current snapshot. The result is reported a list of turtles in the clique. If
+more than one cliques are tied for the title of biggest clique, only one of them
+is reported at random. Example:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+let biggest-clique nw:biggest-maximal-clique
+\end{Verbatim}
+
+\begin{prim}
+nw:generate-preferential-attachment
+\param{turtle-breed link-breed nb-nodes [ commands ]}\\
+nw:generate-random
+\param{turtle-breed link-breed nb-nodes connection-prb [ commands ]}\\
+nw:generate-small-world
+\param{turtle-breed link-breed rows cols exp toroidal? [ commands ]}
+nw:generate-lattice-2d
+\param{turtle-breed link-breed rows cols exp toroidal? [ commands ]}\\
+nw:generate-ring
+\param{turtle-breed link-breed nb-nodes [ commands ]}\\
+nw:generate-star
+\param{turtle-breed link-breed nb-nodes [ commands ]}\\
+nw:generate-wheel
+\param{turtle-breed link-breed nb-nodes [ commands ]}\\
+nw:generate-wheel-inward
+\param{turtle-breed link-breed nb-nodes [ commands ]}\\
+nw:generate-wheel-outward
+\param{turtle-breed link-breed nb-nodes [ commands ]}
+\end{prim}
+
+The generators are amongst the only primitives that do not operate on the
+current network snapshot. Instead, all of them take a turtle breed and a link
+breed as inputs and generate a new network using the given breeds. Examples:
+
+\begin{Verbatim}
+nw:generate-preferential-attachment turtles links 100 [ set color red ]
+nw:generate-random turtles links 100 0.5 [ set color green ]
+nw:generate-small-world turtles links 10 10 2.0 false [ set color blue ]
+nw:generate-wheel turtles links 100 [ set color yellow ]
+\end{Verbatim}
+
+\begin{prim}
+nw:save-matrix \param{file-name}
+\end{prim}
+
+Saves the current network snapshot to \param{file-name}, as a text file, in the
+form of a simple connection matrix. At the moment, nw:save-matrix does not
+support link weights. Every link is represented as a "1.00" in the connection
+matrix. Example:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+nw:save-matrix "matrix.txt"
+\end{Verbatim}
+
+\begin{prim}
+nw:load-matrix \param{file-name turtle-breed link-breed [ commands ]}
+\end{prim}
+
+Generates a new network according to the connection matrix saved in
+\param{file-name}, using turtle-breed and link-breed to create the new turtles
+and links. Please be aware that the breeds that use use to load the matrix may
+be different from those that you used when you saved it. Example:
+
+\begin{Verbatim}
+nw:load-matrix "matrix.txt" turtles links
+\end{Verbatim}
+
+\begin{prim}
+save-graphml \param{file-name}
+\end{prim}
+
+Saves the current snapshot in the GraphML format, including every attribute of
+the turtles and links included in the snapshot. Example:
+\begin{Verbatim}
+nw:set-snapshot turtles links
+nw:save-graphml "graph.xml"
+\end{Verbatim}
+
+\end{document}

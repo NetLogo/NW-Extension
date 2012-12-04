@@ -13,3 +13,7 @@ classes/
 .cache
 .settings
 
+# latex temp files
+*.log
+*.aux
+
