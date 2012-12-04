@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[10pt]{article}
 \usepackage{fontspec}
 \setmainfont{Linux Libertine O}
 \setmonofont[Scale=MatchLowercase]{DejaVu Sans Mono}
@@ -17,11 +17,15 @@
   \ttfamily
   \bfseries
 }{
+  \vskip 2 pt
   \hrule
   \vskip 6 pt
 }
 
 \newcommand{\param}[1]{\texttt{\textit{\textmd{#1}}}}
+
+\newcommand{\cat}[1]{\vspace{1 em}{\parindent -1cm \scshape \bfseries \large
+#1}}
 
 \begin{document}
 {
@@ -36,6 +40,8 @@
 
 \leftskip 1 cm
 
+\cat{General Primitive}
+
 \begin{prim}
 nw:set-snapshot \param{turtleset linkset}
 \end{prim}
@@ -48,6 +54,7 @@ other primitives until a new snapshot is created. Example:
 nw:set-snapshot turtles links
 \end{Verbatim}
 
+\cat{Centrality Primitives}
 
 \begin{prim}
 nw:betweenness-centrality,
@@ -60,6 +67,92 @@ These primitives calculates different centrality measures for a turtle. Example:
 nw:set-snapshot turtles links
 ask turtles [ set size nw:betweenness-centrality ]
 \end{Verbatim}
+
+\cat{Distance and Path-Finding Primitives}
+
+\begin{prim}
+nw:distance-to \param{target-turtle}\\
+nw:weighted-distance-to \param{target-turtle weight-variable-name}
+\end{prim}
+
+Finds the shortest path to the target turtle and reports the total distance for
+this path, or false if no path exists in the current snapshot. The
+\texttt{nw:distance-to version} of the primitive assumes that each link counts
+for a distance of one. The \texttt{nw:weighted-distance-to} version accepts a
+\param{weight-variable-name} parameter, which must be a string naming the link
+variable to use as the weight of each link in distance calculations. The weights cannot
+be negative numbers. Example:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+ask turtle 0 [ show nw:distance-to turtle 2 ]
+ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
+\end{Verbatim}
+
+\begin{prim}
+nw:path-to \param{target-turtle}\\
+nw:turtles-on-path-to \param{target-turtle}\\
+nw:weighted-path-to \param{target-turtle weight-variable-name}\\
+nw:turtles-on-weighted-path-to \param{target-turtle weight-variable-name}
+\end{prim}
+
+Finds the shortest path to the target turtle and reports the actual path between
+the source and the target turtle. The \texttt{nw:path-to} and
+\texttt{nw:weighted-path-to} variants will report the list of links that
+constitute the path, while the \texttt{nw:turtles-on-path-to} and
+\texttt{nw:turtles-on-weighted-path-to} variants will report the list of turtles
+along the path, including the source and destination turtles.
+As with the link distance primitives, the \texttt{nw:weighted-path-to} and
+\texttt{nw:turtles-on-weighted-path-to} accept a \param{weight-variable-name}
+parameter, which must be a string naming the link variable to use as the weight
+of each link in distance calculations. The weights cannot be negative numbers.
+If no path exist between the source and the target turtles, all primitives will
+report an empty list. Examples:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+ask turtle 0 [ show nw:path-to turtle 2 ]
+ask turtle 0 [ show nw:turtles-on-path-to turtle 2 ]
+ask turtle 0 [ show nw:weighted-path-to turtle 2 "weight" ]
+ask turtle 0 [ show nw:turtles-on-weighted-path-to turtle 2 "weight" ]
+\end{Verbatim}
+
+\begin{prim}
+nw:turtles-in-radius \param{radius}\\
+nw:turtles-in-out-radius \param{radius}\\
+nw:turtles-in-in-radius \param{radius}
+\end{prim}
+
+Returns the set of turtles within the given distance (number of links followed)
+of the calling turtle in the current snapshot.
+The \texttt{turtles-in-radius} form works with undirected links. The other two
+forms work with directed links; out or in specifies whether links are followed
+in the normal direction (\texttt{out}), or in reverse (\texttt{in}). Example:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+ask turtle 0 [ show sort nw:turtles-in-radius 1 ]
+\end{Verbatim}
+
+
+\begin{prim}
+nw:mean-path-length\\
+nw:mean-weighted-path-length \param{weight-variable-name}
+\end{prim}
+
+Reports the average shortest-path length between all distinct pairs of nodes in
+the current snapshot. If the \texttt{nw:mean-weighted-path-length} is used, the
+distances will be calculated using \param{weight-variable-name}. The weights
+cannot be negative numbers. Reports false unless paths exist between all pairs.
+Examples:
+
+\begin{Verbatim}
+nw:set-snapshot turtles links
+show nw:mean-path-length
+show nw:mean-weighted-path-length "weight"
+\end{Verbatim}
+
+\cat{Clusterers and Clique Finder Primitives}
 
 \begin{prim}
 nw:k-means-clusters \param{nb-clusters max-iterations
@@ -116,6 +209,8 @@ nw:set-snapshot turtles links
 let cliques nw:maximal-cliques
 \end{Verbatim}
 
+\pagebreak
+
 \begin{prim}
 nw:biggest-maximal-clique
 \end{prim}
@@ -130,13 +225,15 @@ nw:set-snapshot turtles links
 let biggest-clique nw:biggest-maximal-clique
 \end{Verbatim}
 
+\cat{Generator Primitives}
+
 \begin{prim}
 nw:generate-preferential-attachment
 \param{turtle-breed link-breed nb-nodes [ commands ]}\\
 nw:generate-random
 \param{turtle-breed link-breed nb-nodes connection-prb [ commands ]}\\
 nw:generate-small-world
-\param{turtle-breed link-breed rows cols exp toroidal? [ commands ]}
+\param{turtle-breed link-breed rows cols exp toroidal? [ commands ]}\\
 nw:generate-lattice-2d
 \param{turtle-breed link-breed rows cols exp toroidal? [ commands ]}\\
 nw:generate-ring
@@ -161,6 +258,8 @@ nw:generate-random turtles links 100 0.5 [ set color green ]
 nw:generate-small-world turtles links 10 10 2.0 false [ set color blue ]
 nw:generate-wheel turtles links 100 [ set color yellow ]
 \end{Verbatim}
+
+\cat{Import/Export Primitives}
 
 \begin{prim}
 nw:save-matrix \param{file-name}
@@ -190,7 +289,7 @@ nw:load-matrix "matrix.txt" turtles links
 \end{Verbatim}
 
 \begin{prim}
-save-graphml \param{file-name}
+nw:save-graphml \param{file-name}
 \end{prim}
 
 Saves the current snapshot in the GraphML format, including every attribute of
