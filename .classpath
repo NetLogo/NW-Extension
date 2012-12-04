@@ -12,7 +12,7 @@
 	<classpathentry kind="lib" path="~/.ivy2/cache/org.codehaus.woodstox/wstx-asl/jars/wstx-asl-3.2.6.jar"/>
 	<classpathentry kind="lib" path="~/.ivy2/cache/stax/stax-api/jars/stax-api-1.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="NetLogoLite-5.0.2.jar" sourcepath="/NetLogo-5.0.2/src/main"/>
+	<classpathentry kind="lib" path="NetLogoLite-5.0.3.jar" sourcepath="/NetLogo-5.0.3/src/main"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>
