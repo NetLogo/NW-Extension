@@ -13,6 +13,8 @@ Also, be aware that the syntax of some primitives **will** change in future vers
 The source code for the extension is currently hosted online at
 https://github.com/NetLogo/NW-Extension.
 
+A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](https://github.com/NetLogo/NW-Extension/blob/master/doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
+
 ## Changes
 
 Compared to the current extension, this new version offers:
