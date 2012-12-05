@@ -1,6 +1,6 @@
 # The "New" NetLogo Network Extension
 
-This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the current version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
+This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the previous version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
 
 This version of the extension is **not** pre-installed in NetLogo 5.0.2. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
 
