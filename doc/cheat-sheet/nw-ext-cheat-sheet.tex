@@ -187,8 +187,8 @@ convergence-threshold}
 \end{prim}
 
 \begin{doc}
-Partitions the turtles in the current snapshot into nb-clusters different
-groups. It uses the \emph{x y} coordinates of the turtles to group them together, not
+Partitions the turtles in the current snapshot into \param{nb-clusters}
+different groups. It uses the \emph{x y} coordinates of the turtles to group them together, not
 their distance in the network. Example:
 
 \begin{Verbatim}
@@ -284,8 +284,9 @@ nw:generate-wheel-outward
 
 \begin{doc}
 The generators are amongst the only primitives that do not operate on the
-current network snapshot. Instead, all of them take a turtle breed and a link
-breed as inputs and generate a new network using the given breeds. Examples:
+current network snapshot. Instead, all of them take a \param{turtle-breed} and a
+\param{link-breed} as inputs and generate a new network using the given breeds.
+Examples:
 
 \begin{Verbatim}
 nw:generate-preferential-attachment turtles links 100 [ set color red ]
@@ -319,8 +320,8 @@ nw:load-matrix \param{file-name turtle-breed link-breed [ commands ]}
 
 \begin{doc}
 Generates a new network according to the connection matrix saved in
-\param{file-name}, using turtle-breed and link-breed to create the new turtles
-and links. Please be aware that the breeds that use use to load the matrix may
+\param{file-name}, using \param{turtle-breed} and \param{link-breed} to create
+the new turtles and links. Please be aware that the breeds that use use to load the matrix may
 be different from those that you used when you saved it. Example:
 
 \begin{Verbatim}
