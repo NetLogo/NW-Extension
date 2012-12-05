@@ -4,15 +4,18 @@
 \setmonofont[Scale=MatchLowercase]{DejaVu Sans Mono}
 \usepackage[margin=0.75in]{geometry}
 \usepackage[parfill]{parskip}
+
+\newlength{\docindent}
+\setlength{\docindent}{0.5cm}
 \usepackage{fancyvrb}
+\fvset{xleftmargin=\docindent}
 \usepackage[english]{babel} %
 \usepackage[babel]{csquotes} %
 \MakeOuterQuote{"}
-\fvset{xleftmargin=1cm}
 \usepackage{url}
+\usepackage{color}
 
 \newenvironment{prim}{
-  \leftskip 0cm
   \vskip 6 pt
   \ttfamily
   \bfseries
@@ -22,10 +25,26 @@
   \vskip 6 pt
 }
 
+\newenvironment{doc}{
+  \leftskip 0.5 cm
+}
+{}
+
 \newcommand{\param}[1]{\texttt{\textit{\textmd{#1}}}}
 
-\newcommand{\cat}[1]{\vspace{1 em}{\parindent -1cm \scshape \bfseries \large
-#1}}
+\definecolor{gray}{rgb}{0.9,0.9,0.9}
+
+\newcommand{\cat}[1]{
+  \vspace{1em}
+  \colorbox{gray}{\makebox[\textwidth][l]{
+    \vspace{1em}
+    \scshape \bfseries \large #1
+  }
+}}
+
+%\colorbox{blue}{\makebox[\textwidth-2\fboxsep][l]{\bfseries\color{white}
+% Academic Achievements}}
+
 
 \begin{document}
 {
@@ -38,14 +57,12 @@
   \vspace{1 em}
 }
 
-\leftskip 1 cm
-
 \cat{General Primitive}
 
 \begin{prim}
 nw:set-snapshot \param{turtleset linkset}
 \end{prim}
-
+\begin{doc}
 Builds a static internal representation of the network formed by all the turtles
 in \param{turtleset} and all the links in \param{linkset} that connect two
 turtles from \param{turtleset}. This network snapshot is the one that will be used by
@@ -53,6 +70,7 @@ other primitives until a new snapshot is created. Example:
 \begin{Verbatim}
 nw:set-snapshot turtles links
 \end{Verbatim}
+\end{doc}
 
 \cat{Centrality Primitives}
 
@@ -61,12 +79,13 @@ nw:betweenness-centrality,
 nw:eigenvector-centrality,
 nw:closeness-centrality
 \end{prim}
-
-These primitives calculates different centrality measures for a turtle. Example:
+\begin{doc}
+These primitives calculate different centrality measures for a turtle. Example:
 \begin{Verbatim}
 nw:set-snapshot turtles links
 ask turtles [ set size nw:betweenness-centrality ]
 \end{Verbatim}
+\end{doc}
 
 \cat{Distance and Path-Finding Primitives}
 
@@ -75,19 +94,21 @@ nw:distance-to \param{target-turtle}\\
 nw:weighted-distance-to \param{target-turtle weight-variable-name}
 \end{prim}
 
+\begin{doc}
 Finds the shortest path to the target turtle and reports the total distance for
 this path, or false if no path exists in the current snapshot. The
 \texttt{nw:distance-to version} of the primitive assumes that each link counts
 for a distance of one. The \texttt{nw:weighted-distance-to} version accepts a
 \param{weight-variable-name} parameter, which must be a string naming the link
 variable to use as the weight of each link in distance calculations. The weights cannot
-be negative numbers. Example:
+be negative numbers.\\Example:
 
 \begin{Verbatim}
 nw:set-snapshot turtles links
 ask turtle 0 [ show nw:distance-to turtle 2 ]
 ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
 \end{Verbatim}
+\end{doc}
 
 \begin{prim}
 nw:path-to \param{target-turtle}\\
@@ -96,6 +117,7 @@ nw:weighted-path-to \param{target-turtle weight-variable-name}\\
 nw:turtles-on-weighted-path-to \param{target-turtle weight-variable-name}
 \end{prim}
 
+\begin{doc}
 Finds the shortest path to the target turtle and reports the actual path between
 the source and the target turtle. The \texttt{nw:path-to} and
 \texttt{nw:weighted-path-to} variants will report the list of links that
@@ -116,6 +138,7 @@ ask turtle 0 [ show nw:turtles-on-path-to turtle 2 ]
 ask turtle 0 [ show nw:weighted-path-to turtle 2 "weight" ]
 ask turtle 0 [ show nw:turtles-on-weighted-path-to turtle 2 "weight" ]
 \end{Verbatim}
+\end{doc}
 
 \begin{prim}
 nw:turtles-in-radius \param{radius}\\
@@ -123,6 +146,7 @@ nw:turtles-in-out-radius \param{radius}\\
 nw:turtles-in-in-radius \param{radius}
 \end{prim}
 
+\begin{doc}
 Returns the set of turtles within the given distance (number of links followed)
 of the calling turtle in the current snapshot.
 The \texttt{turtles-in-radius} form works with undirected links. The other two
@@ -133,6 +157,7 @@ in the normal direction (\texttt{out}), or in reverse (\texttt{in}). Example:
 nw:set-snapshot turtles links
 ask turtle 0 [ show sort nw:turtles-in-radius 1 ]
 \end{Verbatim}
+\end{doc}
 
 
 \begin{prim}
@@ -140,6 +165,7 @@ nw:mean-path-length\\
 nw:mean-weighted-path-length \param{weight-variable-name}
 \end{prim}
 
+\begin{doc}
 Reports the average shortest-path length between all distinct pairs of nodes in
 the current snapshot. If the \texttt{nw:mean-weighted-path-length} is used, the
 distances will be calculated using \param{weight-variable-name}. The weights
@@ -151,6 +177,7 @@ nw:set-snapshot turtles links
 show nw:mean-path-length
 show nw:mean-weighted-path-length "weight"
 \end{Verbatim}
+\end{doc}
 
 \cat{Clusterers and Clique Finder Primitives}
 
@@ -159,6 +186,7 @@ nw:k-means-clusters \param{nb-clusters max-iterations
 convergence-threshold}
 \end{prim}
 
+\begin{doc}
 Partitions the turtles in the current snapshot into nb-clusters different
 groups. It uses the \emph{x y} coordinates of the turtles to group them together, not
 their distance in the network. Example:
@@ -167,38 +195,42 @@ their distance in the network. Example:
 nw:set-snapshot turtles links
 let clusters nw:k-means-clusters 10 500 0.01
 \end{Verbatim}
+\end{doc}
 
 \begin{prim}
 nw:bicomponent-clusters
 \end{prim}
 
+\begin{doc}
 Reports the list of bicomponent clusters in the current network snapshot. The
 result is reported as a list of lists of turtles. One turtle can be a member of
 more than one bicomponent at once. Example:
-
 \begin{Verbatim}
 nw:set-snapshot turtles links
 let clusters nw:bicomponent-clusters
 \end{Verbatim}
+\end{doc}
 
 \begin{prim}
 nw:weak-component-clusters
 \end{prim}
 
+\begin{doc}
 Reports the list of "weakly" connected components in the current network
 snapshot. The result is reported as a list of lists of turtles. One turtle
 cannot be a member of more than one weakly connected component at once.
 Example:
-
 \begin{Verbatim}
 nw:set-snapshot turtles links
 let clusters nw:weak-component-clusters
 \end{Verbatim}
+\end{doc}
 
 \begin{prim}
 nw:maximal-cliques
 \end{prim}
 
+\begin{doc}
 A clique is a subset of a network in which every node has a direct link to every
 other node. A maximal clique is a clique that is not, itself, contained in a
 bigger clique. The result is reported as a list of lists of turtles. One turtle can be a member of more than one maximal clique at once. The
@@ -208,6 +240,7 @@ Example:
 nw:set-snapshot turtles links
 let cliques nw:maximal-cliques
 \end{Verbatim}
+\end{doc}
 
 \pagebreak
 
@@ -215,15 +248,16 @@ let cliques nw:maximal-cliques
 nw:biggest-maximal-clique
 \end{prim}
 
+\begin{doc}
 The biggest maximal clique is, as its name implies, the biggest clique in the
 current snapshot. The result is reported a list of turtles in the clique. If
 more than one cliques are tied for the title of biggest clique, only one of them
 is reported at random. Example:
-
 \begin{Verbatim}
 nw:set-snapshot turtles links
 let biggest-clique nw:biggest-maximal-clique
 \end{Verbatim}
+\end{doc}
 
 \cat{Generator Primitives}
 
@@ -248,6 +282,7 @@ nw:generate-wheel-outward
 \param{turtle-breed link-breed nb-nodes [ commands ]}
 \end{prim}
 
+\begin{doc}
 The generators are amongst the only primitives that do not operate on the
 current network snapshot. Instead, all of them take a turtle breed and a link
 breed as inputs and generate a new network using the given breeds. Examples:
@@ -258,6 +293,7 @@ nw:generate-random turtles links 100 0.5 [ set color green ]
 nw:generate-small-world turtles links 10 10 2.0 false [ set color blue ]
 nw:generate-wheel turtles links 100 [ set color yellow ]
 \end{Verbatim}
+\end{doc}
 
 \cat{Import/Export Primitives}
 
@@ -265,6 +301,7 @@ nw:generate-wheel turtles links 100 [ set color yellow ]
 nw:save-matrix \param{file-name}
 \end{prim}
 
+\begin{doc}
 Saves the current network snapshot to \param{file-name}, as a text file, in the
 form of a simple connection matrix. At the moment, nw:save-matrix does not
 support link weights. Every link is represented as a "1.00" in the connection
@@ -274,11 +311,13 @@ matrix. Example:
 nw:set-snapshot turtles links
 nw:save-matrix "matrix.txt"
 \end{Verbatim}
+\end{doc}
 
 \begin{prim}
 nw:load-matrix \param{file-name turtle-breed link-breed [ commands ]}
 \end{prim}
 
+\begin{doc}
 Generates a new network according to the connection matrix saved in
 \param{file-name}, using turtle-breed and link-breed to create the new turtles
 and links. Please be aware that the breeds that use use to load the matrix may
@@ -287,16 +326,19 @@ be different from those that you used when you saved it. Example:
 \begin{Verbatim}
 nw:load-matrix "matrix.txt" turtles links
 \end{Verbatim}
+\end{doc}
 
 \begin{prim}
 nw:save-graphml \param{file-name}
 \end{prim}
 
+\begin{doc}
 Saves the current snapshot in the GraphML format, including every attribute of
 the turtles and links included in the snapshot. Example:
 \begin{Verbatim}
 nw:set-snapshot turtles links
 nw:save-graphml "graph.xml"
 \end{Verbatim}
+\end{doc}
 
 \end{document}
