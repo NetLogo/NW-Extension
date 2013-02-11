@@ -1,9 +1,17 @@
 scalaVersion := "2.9.2"
 
-scalaSource in Compile <<= baseDirectory(_ / "src")
+scalaSource in Compile <<= baseDirectory(_ / "src" / "main")
+
+scalaSource in Test <<= baseDirectory(_ / "src" / "test")
+
+javaSource in Compile <<= baseDirectory(_ / "src" / "main")
+
+javaSource in Test <<= baseDirectory(_ / "src" / "test")
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
                       "-encoding", "us-ascii")
+
+retrieveManaged := true
 
 libraryDependencies ++= Seq(
   "org.nlogo" % "NetLogoLite" % "5.0.3" from
