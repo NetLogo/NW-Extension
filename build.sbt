@@ -20,11 +20,10 @@ libraryDependencies ++= Seq(
     "http://ccl.northwestern.edu/devel/jgrapht-jdk1.6-0.8.3.jar",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
   "colt" % "colt" % "1.2.0",
-  "net.sf.jung" % "jung-algorithms-2.0.2-nlfork" % "0.1" from
-    "http://ccl.northwestern.edu/devel/jung-algorithms-2.0.2-nlfork-0.1.jar",
+  "net.sf.jung" % "jung-algorithms" % "2.0.1",
   "net.sf.jung" % "jung-api" % "2.0.1",
   "net.sf.jung" % "jung-graph-impl" % "2.0.1",
-  "net.sf.jung" % "jung-io" % "2.0.1" exclude("net.sf.jung", "jung-algorithms")
+  "net.sf.jung" % "jung-io" % "2.0.1"
 )
 
 artifactName := { (_, _, _) => "nw.jar" }

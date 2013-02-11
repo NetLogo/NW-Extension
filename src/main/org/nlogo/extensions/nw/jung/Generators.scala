@@ -29,7 +29,12 @@ class Generator(
     val gen = new BarabasiAlbertGenerator(
       graphFactory, vertexFactory, edgeFactory,
       1, 1, new java.util.HashSet[DummyGraph.Vertex])
-    gen.setRandom(rng)
+
+    // use reflection to set our own rng
+    val mRandomField = gen.getClass.getDeclaredField("mRandom")
+    mRandomField.setAccessible(true)
+    mRandomField.set(gen, rng)
+
     while (gen.create.getVertexCount < nbVertices)
       gen.evolveGraph(1)
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng, sorted = true)
@@ -39,7 +44,12 @@ class Generator(
     val gen = new ErdosRenyiGenerator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       nbVertices, connexionProbability)
-    gen.setRandom(rng)
+
+    // use reflection to set our own rng
+    val mRandomField = gen.getClass.getDeclaredField("mRandom")
+    mRandomField.setAccessible(true)
+    mRandomField.set(gen, rng)
+
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng)
   }
 
