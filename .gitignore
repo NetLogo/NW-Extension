@@ -9,7 +9,9 @@ classes/
 *.gz
 *.zip
 
-# eclipse cache file
+# eclipse files
+.project
+.classpath
 .cache
 .settings
 
