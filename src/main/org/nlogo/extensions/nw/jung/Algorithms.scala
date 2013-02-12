@@ -3,14 +3,12 @@
 package org.nlogo.extensions.nw.jung
 
 import java.util.Random
-
 import scala.Option.option2Iterable
 import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 import scala.collection.mutable
-
 import org.nlogo.agent.Agent
 import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.agent.Link
@@ -18,7 +16,6 @@ import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
 import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
-
 import edu.uci.ics.jung.{ algorithms => jungalg }
 
 trait Ranker {
@@ -62,27 +59,28 @@ trait Algorithms {
   }
 
   class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
-      extends jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true) {
+    extends jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true) {
 
     def meanLinkPathLength: Option[Double] = {
-
-      // Build a seq of all optional lengths for paths from all nodes to all nodes,
-      // where None means that there is no path between two nodes
-      val pathLengths = for {
-        source <- nlg.turtles.toSeq // toSeq makes sure we don't get a set
-        target <- nlg.turtles.toSeq
-        if target != source
-        path = getPath(source, target)
-        weights = path.asScala.map(weightFunction(_).doubleValue)
-      } yield Option(weights).filterNot(_.isEmpty).map(_.sum)
-
-      for {
-        allLengths <- Option(pathLengths)
-        if allLengths.nonEmpty // exclude the empty graph, returns None
-        if allLengths.forall(_.isDefined) // exclude disconnected graphs, returns None
-        lengths = allLengths.flatten
-      } yield lengths.sum / lengths.size.toDouble
-
+      import scala.util.control.Breaks._
+      var sum = 0.0
+      var n = 0
+      breakable {
+        for {
+          source <- nlg.turtles
+          target <- nlg.turtles
+          if target != source
+          distance = getDistance(source, target)
+        } {
+          if (distance == null) {
+            sum = Double.NaN
+            break
+          }
+          n += 1
+          sum += distance.doubleValue
+        }
+      }
+      Option(sum / n).filterNot(_.isNaN)
     }
 
     override def getPath(source: Turtle, target: Turtle) =
