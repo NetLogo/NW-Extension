@@ -238,6 +238,13 @@ mean-path-length-two-connected-turtles
   O> nw:set-snapshot turtles links
   nw:mean-path-length => 1
 
+mean-path-length-two-connected-and-one-unconnected-turtles
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> crt 1
+  O> nw:set-snapshot turtles links
+  nw:mean-path-length => false
+
 mean-path-length-fully-connected
   extensions [ nw ]
   O> crt 10 [ create-links-with other turtles ]
