@@ -68,9 +68,10 @@ trait Algorithms {
       breakable {
         for {
           source <- nlg.turtles
-          target <- nlg.turtles
-          if target != source
-          distance = getDistance(source, target)
+          distMap = getDistanceMap(source).asScala
+          targetDistPair <- distMap
+          if targetDistPair._1 != source
+          distance = targetDistPair._2
         } {
           if (distance == null) {
             sum = Double.NaN
