@@ -285,8 +285,18 @@ trait Primitives {
   object SaveGraphML extends api.DefaultCommand {
     override def getSyntax = commandSyntax(Array(StringType))
     override def perform(args: Array[api.Argument], context: api.Context) {
-      GraphML.save(getGraph(context), args(0).getString)
+      GraphMLExport.save(getGraph(context), args(0).getString)
     }
+  }
+
+  object LoadGraphML extends turtleCreatingCommand {
+    override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
+      GraphMLImport.load(
+        fileName = args(0).getString,
+        turtleBreed = args(1).getAgentSet.requireTurtleBreed,
+        linkBreed = args(2).getAgentSet.requireLinkBreed,
+        rng = context.getRNG)
   }
 
   abstract class InRadiusPrim extends DefaultReporter {

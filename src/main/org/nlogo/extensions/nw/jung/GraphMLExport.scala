@@ -13,8 +13,9 @@ import edu.uci.ics.jung
 import org.nlogo.extensions.nw.NetLogoGraph
 import org.nlogo.api.ExtensionException
 import scala.collection.JavaConverters._
+import org.nlogo.agent.AgentSet
 
-object GraphML {
+object GraphMLExport {
 
   def save(graph: NetLogoGraph, filename: String) {
 
@@ -34,9 +35,8 @@ object GraphML {
         adder(variableName, null, null, transformer)
       }
     }
-    
-    val program = graph.world.program
 
+    val program = graph.world.program
 
     val turtlesOwn = program.turtlesOwn.asScala
     val linksOwn = program.linksOwn.asScala

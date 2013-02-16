@@ -2,11 +2,14 @@
 
 package org.nlogo.extensions.nw.jung
 
-import edu.uci.ics.jung
-import org.apache.commons.collections15.Factory
-import org.nlogo.agent.AgentSet
-import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import java.util.Random
+
+import scala.collection.JavaConverters.collectionAsScalaIterableConverter
+
+import org.apache.commons.collections15.Factory
+import org.nlogo.agent.{ AgentSet, Turtle }
+
+import edu.uci.ics.jung
 
 object DummyGraph {
   // TODO: the vertex id thing is a ugly hack to get around the fact that 
@@ -25,19 +28,6 @@ object DummyGraph {
     }
   }
 
-  def factoryFor(linkBreed: AgentSet) =
-    if (linkBreed.isDirected)
-      new Factory[jung.graph.Graph[Vertex, Edge]]() {
-        def create = new jung.graph.DirectedSparseGraph[Vertex, Edge]
-      }
-    else
-      new Factory[jung.graph.Graph[Vertex, Edge]]() {
-        def create = new jung.graph.UndirectedSparseGraph[Vertex, Edge]
-      }
-
-  def directedFactory = jung.graph.DirectedSparseGraph.getFactory[Vertex, Edge]
-  def undirectedFactory = jung.graph.UndirectedSparseGraph.getFactory[Vertex, Edge]
-
   def importToNetLogo(
     graph: jung.graph.Graph[Vertex, Edge],
     turtleBreed: AgentSet,
@@ -45,21 +35,19 @@ object DummyGraph {
     rng: Random,
     sorted: Boolean = false) = {
     val w = turtleBreed.world
+
     val vs = graph.getVertices.asScala
-    val m = (if (sorted) vs.toSeq.sortBy(_.id) else vs).map { v =>
-      v -> turtleBreed.world.createTurtle(
-        turtleBreed,
-        rng.nextInt(14), // color
-        rng.nextInt(360)) // heading
-    }.toMap
-    graph.getEdges.asScala
-      .map(graph.getEndpoints(_))
-      .foreach { endPoints =>
-        w.linkManager.createLink(
-          m(endPoints.getFirst),
-          m(endPoints.getSecond),
-          linkBreed)
-      }
-    m.valuesIterator // return turtles
+    val vertices = if (sorted) vs.toSeq.sortBy(_.id) else vs
+
+    val turtles: Map[Vertex, Turtle] =
+      vertices.map { v =>
+        v -> createTurtle(turtleBreed, rng)
+      }(collection.breakOut)
+
+    graph.getEdges.asScala.foreach { e =>
+      createLink(turtles, graph.getEndpoints(e), linkBreed)
+    }
+
+    turtles.valuesIterator
   }
 }

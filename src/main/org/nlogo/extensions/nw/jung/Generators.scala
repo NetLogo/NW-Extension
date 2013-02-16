@@ -14,8 +14,11 @@ class Generator(
   turtleBreed: AgentSet,
   linkBreed: AgentSet) {
 
-  lazy val graphFactory = DummyGraph.factoryFor(linkBreed)
-  lazy val undirectedGraphFactory = DummyGraph.undirectedFactory
+  type V = DummyGraph.Vertex
+  type E = DummyGraph.Edge
+
+  lazy val graphFactory = factoryFor[V, E](linkBreed)
+  lazy val undirectedGraphFactory = undirectedFactory[V, E]
   lazy val edgeFactory = DummyGraph.edgeFactory
   lazy val vertexFactory = DummyGraph.vertexFactory
 
@@ -28,7 +31,7 @@ class Generator(
   def barabasiAlbert(nbVertices: Int, rng: MersenneTwisterFast) = {
     val gen = new BarabasiAlbertGenerator(
       graphFactory, vertexFactory, edgeFactory,
-      1, 1, new java.util.HashSet[DummyGraph.Vertex])
+      1, 1, new java.util.HashSet[V])
 
     // use reflection to set our own rng
     val mRandomField = gen.getClass.getDeclaredField("mRandom")
@@ -60,6 +63,7 @@ class Generator(
       rowCount, colCount, clusteringExponent, isToroidal)
     gen.setRandom(rng)
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng)
+
   }
 
 }
