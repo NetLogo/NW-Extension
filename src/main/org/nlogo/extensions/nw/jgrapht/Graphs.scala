@@ -63,10 +63,10 @@ trait Graph
   override def removeVertex(vertex: Turtle) = throw sys.error("not implemented")
 
   object BronKerboschCliqueFinder extends jgrapht.alg.BronKerboschCliqueFinder(this) {
-    def allCliques: Seq[api.AgentSet] =
-      toTurtleSets(getAllMaximalCliques.asScala, nlg.world)
-    def biggestCliques: Seq[api.AgentSet] =
-      toTurtleSets(getBiggestMaximalCliques.asScala, nlg.world)
+    def allCliques(rng: java.util.Random): Seq[api.AgentSet] =
+      toTurtleSets(getAllMaximalCliques.asScala, nlg.world, rng)
+    def biggestCliques(rng: java.util.Random): Seq[api.AgentSet] =
+      toTurtleSets(getBiggestMaximalCliques.asScala, nlg.world, rng)
   }
 }
 

@@ -303,7 +303,7 @@ Partitions the turtles in the current snapshot into _nb-clusters_ different grou
 
 Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, ***not*** their distance in the network. This is coming in a future version of the extension.
 
-The primitive reports a list of agentsets representing the different clusters. Each turtle can only be part of one cluster.
+The primitive reports a list of agentsets, in random order, representing the different clusters. Each turtle can only be part of one cluster.
 
 Note that k-means include a part of randomness, and may give different results everytime it runs.
 
@@ -321,14 +321,14 @@ Note that k-means include a part of randomness, and may give different results e
 #### bicomponent-clusters
 `nw:bicomponent-clusters`
 
-Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network snapshot. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of agentsets. Note that one turtle can be a member of more than one bicomponent at once.
+Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network snapshot. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one bicomponent at once.
 
 #### weak-component-clusters
 `nw:weak-component-clusters`
 
 Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network snapshot. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
 
-The result is reported as a list of agentsets. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
+The result is reported as a list of agentsets, in random order. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
 
 ### Cliques
 
@@ -337,14 +337,14 @@ The result is reported as a list of agentsets. Note that one turtle _cannot_ be 
 
 A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
 
-The result is reported as a list of agentsets. Note that one turtle can be a member of more than one maximal clique at once.
+The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one maximal clique at once.
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
 #### biggest-maximal-cliques
 `nw:biggest-maximal-cliques`
 
-The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. Often, more than one clique are tied for the title of biggest clique, so the result if reported as a list of agentsets. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
+The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. Often, more than one clique are tied for the title of biggest clique, so the result if reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 

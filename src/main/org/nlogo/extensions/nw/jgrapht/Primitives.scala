@@ -3,7 +3,7 @@
 package org.nlogo.extensions.nw.jgrapht
 
 import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
-import org.nlogo.api.ScalaConversions.toLogoList
+import org.nlogo.api.ScalaConversions._
 import org.nlogo.api
 import api.Syntax._
 import api.DefaultReporter
@@ -25,7 +25,7 @@ trait Primitives {
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
       toLogoList(g.asJGraphTGraph
         .BronKerboschCliqueFinder
-        .allCliques)
+        .allCliques(context.getRNG))
     }
   }
 
@@ -37,7 +37,7 @@ trait Primitives {
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
       toLogoList(g.asJGraphTGraph
         .BronKerboschCliqueFinder
-        .biggestCliques)
+        .biggestCliques(context.getRNG))
     }
   }
 

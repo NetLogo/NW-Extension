@@ -39,7 +39,7 @@ trait Primitives {
     override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asUndirectedJungGraph
         .BicomponentClusterer
-        .clusters)
+        .clusters(context.getRNG))
   }
 
   object WeakComponentClusters extends DefaultReporter {
@@ -47,7 +47,7 @@ trait Primitives {
     override def report(args: Array[api.Argument], context: api.Context) =
       toLogoList(getGraph(context).asJungGraph
         .WeakComponentClusterer
-        .clusters)
+        .clusters(context.getRNG))
   }
 
   object BetweennessCentralityPrim extends DefaultReporter {

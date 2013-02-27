@@ -119,21 +119,24 @@ trait Algorithms {
     nbClusters: Int,
     maxIterations: Int,
     convergenceThreshold: Double,
-    rng: Random)
+    rng: java.util.Random)
     extends jungalg.util.KMeansClusterer[Turtle] {
+    rand = rng
     val locations = nlg.turtles.map(t => t -> Array(t.xcor, t.ycor)).toMap.asJava
     val world = nlg.world
-    def clusters: Seq[api.AgentSet] =
-      if (nlg.turtles.isEmpty)
-        Seq.empty
-      else {
-        rand = rng
-        setMaxIterations(maxIterations)
-        setConvergenceThreshold(convergenceThreshold)
-        cluster(locations, nbClusters).asScala.map {
-          m => toTurtleSet(m.keySet, world)
-        }(collection.breakOut)
-      }
+    def clusters: Seq[api.AgentSet] = {
+      val cs =
+        if (nlg.turtles.isEmpty)
+          Seq.empty
+        else {
+          setMaxIterations(maxIterations)
+          setConvergenceThreshold(convergenceThreshold)
+          cluster(locations, nbClusters)
+            .asScala
+            .map(_.keySet)(collection.breakOut)
+        }
+      toTurtleSets(cs, world, rng)
+    }
   }
 
   def kNeighborhood(
@@ -151,7 +154,7 @@ trait Algorithms {
 
   object WeakComponentClusterer
     extends jungalg.cluster.WeakComponentClusterer[Turtle, Link] {
-    def clusters = toTurtleSets(transform(self).asScala, nlg.world)
+    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, nlg.world, rng)
   }
 
 }
@@ -160,7 +163,7 @@ trait UndirectedAlgorithms extends Algorithms {
   self: UndirectedGraph =>
   object BicomponentClusterer
     extends jungalg.cluster.BicomponentClusterer[Turtle, Link] {
-    def clusters = toTurtleSets(transform(self).asScala, nlg.world)
+    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, nlg.world, rng)
   }
 }
 
