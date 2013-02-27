@@ -23,14 +23,15 @@ trait Primitives {
     override def getSyntax = reporterSyntax(
       Array(NumberType, NumberType, NumberType),
       ListType)
-    override def report(args: Array[api.Argument], context: api.Context) =
-      toLogoList(getGraph(context).asJungGraph
-        .KMeansClusterer
-        .clusters(
-          nbClusters = args(0).getIntValue,
-          maxIterations = args(1).getIntValue,
-          convergenceThreshold = args(2).getDoubleValue,
-          rng = context.getRNG))
+    override def report(args: Array[api.Argument], context: api.Context) = {
+      val graph = getGraph(context).asJungGraph
+      val clusterer = new graph.KMeansClusterer(
+        nbClusters = args(0).getIntValue,
+        maxIterations = args(1).getIntValue,
+        convergenceThreshold = args(2).getDoubleValue,
+        rng = context.getRNG)
+      toLogoList(clusterer.clusters)
+    }
   }
 
   object BicomponentClusters extends DefaultReporter {

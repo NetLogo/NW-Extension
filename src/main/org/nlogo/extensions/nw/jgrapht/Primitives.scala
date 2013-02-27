@@ -25,19 +25,19 @@ trait Primitives {
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
       toLogoList(g.asJGraphTGraph
         .BronKerboschCliqueFinder
-        .cliques)
+        .allCliques)
     }
   }
 
   object BiggestMaximalClique extends DefaultReporter {
-    override def getSyntax = reporterSyntax(ListType)
+    override def getSyntax = reporterSyntax(TurtlesetType)
     override def report(args: Array[api.Argument], context: api.Context) = {
       val g = getGraph(context)
       // TODO: This should probably be dealt with in graph construction:
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
-      toLogoList(g.asJGraphTGraph
+      g.asJGraphTGraph
         .BronKerboschCliqueFinder
-        .biggestClique(context.getRNG))
+        .biggestClique(context.getRNG)
     }
   }
 

@@ -6,10 +6,11 @@ import java.lang.IllegalArgumentException
 
 import scala.collection.JavaConverters._
 
-import org.nlogo.agent.Link
-import org.nlogo.agent.Turtle
+import org.nlogo.agent.{ Link, Turtle }
+import org.nlogo.api
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetLogoGraph
+import org.nlogo.extensions.nw.util.TurtleSetsConverters.{ emptyTurtleSet, toTurtleSets }
 import org.nlogo.util.MersenneTwisterFast
 
 import org.jgrapht
@@ -61,20 +62,19 @@ trait Graph
   override def removeEdge(edge: Link) = throw sys.error("not implemented")
   override def removeVertex(vertex: Turtle) = throw sys.error("not implemented")
 
-    object BronKerboschCliqueFinder extends jgrapht.alg.BronKerboschCliqueFinder(this) {
-    private def toScala(cliques: java.util.Collection[java.util.Set[Turtle]]) =
-      cliques.asScala.map(_.asScala.view.toSeq).view.toSeq
-    def cliques = toScala(getAllMaximalCliques)
-    def biggestClique(rng: MersenneTwisterFast) = {
-      val cliques = toScala(getBiggestMaximalCliques)
-      cliques.size match {
-        case 0 => Seq[Turtle]()
-        case 1 => cliques(0)
-        case n => cliques(rng.nextInt(n))
-      }
+  object BronKerboschCliqueFinder extends jgrapht.alg.BronKerboschCliqueFinder(this) {
+    def allCliques: Seq[api.AgentSet] =
+      toTurtleSets(getAllMaximalCliques.asScala, nlg.world)
+    def biggestCliques: Seq[api.AgentSet] =
+      toTurtleSets(getBiggestMaximalCliques.asScala, nlg.world)
+    def biggestClique(rng: MersenneTwisterFast): api.AgentSet = {
+      val cliques = biggestCliques
+      if (cliques.isEmpty)
+        emptyTurtleSet(nlg.world)
+      else
+        cliques(rng.nextInt(cliques.size))
     }
   }
-  
 }
 
 class UndirectedGraph(

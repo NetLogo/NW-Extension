@@ -170,16 +170,14 @@ to color-clusters [ clusters ]
     (foreach clusters colors [      
       let cluster ?1
       let cluster-color ?2
-      foreach cluster [ ;; for each node in the cluster
-        ask ? [
-          ;; give the node the color of its cluster
-          set color cluster-color
-          ;; colorize the links from the node to other nodes in the same cluster
-          ;; link color is slightly darker...
-          ask my-unlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
-          ask my-in-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
-          ask my-out-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
-        ] 
+      ask cluster [ ;; for each node in the cluster
+        ;; give the node the color of its cluster
+        set color cluster-color
+        ;; colorize the links from the node to other nodes in the same cluster
+        ;; link color is slightly darker...
+        ask my-unlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
+        ask my-in-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
+        ask my-out-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
       ]
     ])
 end
@@ -413,7 +411,7 @@ nb-clusters
 nb-clusters
 2
 14
-11
+5
 1
 1
 NIL
@@ -817,7 +815,7 @@ CHOOSER
 layout
 layout
 "spring" "circle" "radial" "tutte"
-1
+0
 
 BUTTON
 245
@@ -1381,7 +1379,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

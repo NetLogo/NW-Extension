@@ -2,21 +2,20 @@
 
 package org.nlogo.extensions.nw.jung
 
-import java.util.Random
-import scala.Option.option2Iterable
-import scala.collection.JavaConverters.asScalaSetConverter
-import scala.collection.JavaConverters.collectionAsScalaIterableConverter
-import scala.collection.JavaConverters.mapAsJavaMapConverter
-import scala.collection.JavaConverters.mapAsScalaMapConverter
+import java.util.{ Random, Set => JSet }
+
+import scala.collection.JavaConverters._
 import scala.collection.mutable
-import org.nlogo.agent.Agent
-import org.nlogo.agent.ArrayAgentSet
-import org.nlogo.agent.Link
-import org.nlogo.agent.Turtle
+import scala.util.control.Breaks.{ break, breakable }
+
+import org.nlogo.agent.{ Agent, ArrayAgentSet, Link, Turtle, World }
+import org.nlogo.api
 import org.nlogo.api.ExtensionException
-import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
-import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
+import org.nlogo.extensions.nw.NetworkExtensionUtil.{ LinkToRichLink, functionToTransformer }
+
 import edu.uci.ics.jung.{ algorithms => jungalg }
+
+import org.nlogo.extensions.nw.util.TurtleSetsConverters._
 
 trait Ranker {
   self: jungalg.importance.AbstractRanker[Turtle, Link] =>
@@ -116,17 +115,25 @@ trait Algorithms {
     }
   }
 
-  object KMeansClusterer extends jungalg.util.KMeansClusterer[Turtle] {
-    lazy val locations =
-      self.nlg.turtles.map(t => t -> Array(t.xcor, t.ycor)).toMap.asJava
-
-    def clusters(nbClusters: Int, maxIterations: Int, convergenceThreshold: Double, rng: Random) =
-      if (nlg.turtles.nonEmpty) {
+  class KMeansClusterer(
+    nbClusters: Int,
+    maxIterations: Int,
+    convergenceThreshold: Double,
+    rng: Random)
+    extends jungalg.util.KMeansClusterer[Turtle] {
+    val locations = nlg.turtles.map(t => t -> Array(t.xcor, t.ycor)).toMap.asJava
+    val world = nlg.world
+    def clusters: Seq[api.AgentSet] =
+      if (nlg.turtles.isEmpty)
+        Seq.empty
+      else {
         rand = rng
         setMaxIterations(maxIterations)
         setConvergenceThreshold(convergenceThreshold)
-        cluster(locations, nbClusters).asScala.map(_.keySet.asScala.toSeq).toSeq
-      } else Seq()
+        cluster(locations, nbClusters).asScala.map {
+          m => toTurtleSet(m.keySet, world)
+        }(collection.breakOut)
+      }
   }
 
   def kNeighborhood(
@@ -139,20 +146,21 @@ trait Algorithms {
       .asScala
       .toSet
       .+(source) // make sure source is there, as Jung doesn't include isolates
-      .toArray[Agent]
-    new ArrayAgentSet(classOf[Turtle], agents, nlg.world)
+    toTurtleSet(agents, nlg.world)
   }
 
-  object WeakComponentClusterer extends jungalg.cluster.WeakComponentClusterer[Turtle, Link] {
-    def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
+  object WeakComponentClusterer
+    extends jungalg.cluster.WeakComponentClusterer[Turtle, Link] {
+    def clusters = toTurtleSets(transform(self).asScala, nlg.world)
   }
 
 }
 
 trait UndirectedAlgorithms extends Algorithms {
   self: UndirectedGraph =>
-  object BicomponentClusterer extends jungalg.cluster.BicomponentClusterer[Turtle, Link] {
-    def clusters = transform(self).asScala.toSeq.map(_.asScala.toSeq)
+  object BicomponentClusterer
+    extends jungalg.cluster.BicomponentClusterer[Turtle, Link] {
+    def clusters = toTurtleSets(transform(self).asScala, nlg.world)
   }
 }
 
