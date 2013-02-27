@@ -29,22 +29,22 @@ trait Primitives {
     }
   }
 
-  object BiggestMaximalClique extends DefaultReporter {
-    override def getSyntax = reporterSyntax(TurtlesetType)
+  object BiggestMaximalCliques extends DefaultReporter {
+    override def getSyntax = reporterSyntax(ListType)
     override def report(args: Array[api.Argument], context: api.Context) = {
       val g = getGraph(context)
       // TODO: This should probably be dealt with in graph construction:
       if (!g.isUndirected) throw new ExtensionException("Current graph must be undirected")
-      g.asJGraphTGraph
+      toLogoList(g.asJGraphTGraph
         .BronKerboschCliqueFinder
-        .biggestClique(context.getRNG)
+        .biggestCliques)
     }
   }
 
   object RingGeneratorPrim extends turtleCreatingCommand {
     override def getSyntax = commandSyntax(
       Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
-    def createTurtles(args: Array[api.Argument], context: api.Context) = 
+    def createTurtles(args: Array[api.Argument], context: api.Context) =
       new Generator(
         turtleBreed = args(0).getAgentSet.requireTurtleBreed,
         linkBreed = args(1).getAgentSet.requireLinkBreed)

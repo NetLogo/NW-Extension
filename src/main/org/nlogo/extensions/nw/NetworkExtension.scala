@@ -62,7 +62,7 @@ class NetworkExtension extends DefaultClassManager
     add("weak-component-clusters", WeakComponentClusters)
 
     add("maximal-cliques", MaximalCliques)
-    add("biggest-maximal-clique", BiggestMaximalClique)
+    add("biggest-maximal-cliques", BiggestMaximalCliques)
 
     add("generate-preferential-attachment", BarabasiAlbertGeneratorPrim)
     add("generate-random", ErdosRenyiGeneratorPrim)

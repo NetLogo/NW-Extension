@@ -67,13 +67,6 @@ trait Graph
       toTurtleSets(getAllMaximalCliques.asScala, nlg.world)
     def biggestCliques: Seq[api.AgentSet] =
       toTurtleSets(getBiggestMaximalCliques.asScala, nlg.world)
-    def biggestClique(rng: MersenneTwisterFast): api.AgentSet = {
-      val cliques = biggestCliques
-      if (cliques.isEmpty)
-        emptyTurtleSet(nlg.world)
-      else
-        cliques(rng.nextInt(cliques.size))
-    }
   }
 }
 

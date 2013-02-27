@@ -341,10 +341,10 @@ The result is reported as a list of agentsets. Note that one turtle can be a mem
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
-#### biggest-maximal-clique
-`nw:biggest-maximal-clique`
+#### biggest-maximal-cliques
+`nw:biggest-maximal-cliques`
 
-The biggest maximal clique is, as its name implies, the biggest [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. The result is reported a agentset of turtles in the clique. If more than one cliques are tied for the title of biggest clique, only one of them is reported at random.
+The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. Often, more than one clique are tied for the title of biggest clique, so the result if reported as a list of agentsets. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 

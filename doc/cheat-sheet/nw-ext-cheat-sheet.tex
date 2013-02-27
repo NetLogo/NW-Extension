@@ -245,17 +245,16 @@ let cliques nw:maximal-cliques
 \pagebreak
 
 \begin{prim}
-nw:biggest-maximal-clique
+nw:biggest-maximal-cliques
 \end{prim}
 
 \begin{doc}
-The biggest maximal clique is, as its name implies, the biggest clique in the
-current snapshot. The result is reported a list of turtles in the clique. If
-more than one cliques are tied for the title of biggest clique, only one of them
-is reported at random. Example:
+The biggest maximal cliques are, as the name implies, the biggest cliques in the
+current snapshot. Often, more than one clique are tied for the title of biggest
+clique, so the result if reported as a list of agentsets. Example:
 \begin{Verbatim}
 nw:set-snapshot turtles links
-let biggest-clique nw:biggest-maximal-clique
+let biggest-clique one-of nw:biggest-maximal-cliques
 \end{Verbatim}
 \end{doc}
 

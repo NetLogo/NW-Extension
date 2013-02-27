@@ -128,15 +128,13 @@ to highlight-maximal-cliques
 end
 
 ;; Colorizes the biggest maximal clique in the graph, or a random one if there is more than one
-to find-biggest-clique
+to find-biggest-cliques
   if (links-to-use != "undirected") [
     user-message "Maximal cliques only work with undirected links."
     stop
   ]
   nw:set-snapshot turtles unlinks
-  ;; color-clusters takes a list of lists (clusters) 
-  ;; but we only have one, so we package it in a list
-  color-clusters (list nw:biggest-maximal-clique)
+  color-clusters nw:biggest-maximal-cliques
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,7 +394,7 @@ nb-nodes
 nb-nodes
 0
 1000
-50
+60
 1
 1
 NIL
@@ -487,7 +485,7 @@ nb-rows
 nb-rows
 0
 20
-8
+10
 1
 1
 NIL
@@ -502,7 +500,7 @@ nb-cols
 nb-cols
 0
 20
-8
+10
 1
 1
 NIL
@@ -733,8 +731,8 @@ BUTTON
 255
 425
 288
-biggest maximal clique
-find-biggest-clique
+biggest maximal cliques
+find-biggest-cliques
 NIL
 1
 T
