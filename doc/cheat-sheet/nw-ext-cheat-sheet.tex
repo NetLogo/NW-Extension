@@ -203,8 +203,8 @@ nw:bicomponent-clusters
 
 \begin{doc}
 Reports the list of bicomponent clusters in the current network snapshot. The
-result is reported as a list of lists of turtles. One turtle can be a member of
-more than one bicomponent at once. Example:
+result is reported as a list of agentsets of turtles. One turtle can be a member
+of more than one bicomponent at once. Example:
 \begin{Verbatim}
 nw:set-snapshot turtles links
 let clusters nw:bicomponent-clusters
@@ -217,7 +217,7 @@ nw:weak-component-clusters
 
 \begin{doc}
 Reports the list of "weakly" connected components in the current network
-snapshot. The result is reported as a list of lists of turtles. One turtle
+snapshot. The result is reported as a list of agentsets of turtles. One turtle
 cannot be a member of more than one weakly connected component at once.
 Example:
 \begin{Verbatim}
@@ -233,8 +233,9 @@ nw:maximal-cliques
 \begin{doc}
 A clique is a subset of a network in which every node has a direct link to every
 other node. A maximal clique is a clique that is not, itself, contained in a
-bigger clique. The result is reported as a list of lists of turtles. One turtle can be a member of more than one maximal clique at once. The
-primitive uses the Bron–Kerbosch algorithm and only works with undirected links.
+bigger clique. The result is reported as a list of agentsets of turtles. One
+turtle can be a member of more than one maximal clique at once. The primitive
+uses the Bron–Kerbosch algorithm and only works with undirected links.
 Example:
 \begin{Verbatim}
 nw:set-snapshot turtles links
