@@ -2,20 +2,36 @@
 
 package org.nlogo.extensions.nw.jung
 
-import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.collection.JavaConverters._
+
 import org.nlogo.api
-import org.nlogo.nvm
-import org.nlogo.agent
-import api.DefaultCommand
-import api.DefaultReporter
-import api.ExtensionException
-import api.ScalaConversions._
-import api.Syntax._
-import org.nlogo.extensions.nw.NetworkExtensionUtil._
+import org.nlogo.api.DefaultReporter
+import org.nlogo.api.ExtensionException
+import org.nlogo.api.ScalaConversions.toLogoList
+import org.nlogo.api.ScalaConversions.toLogoObject
+import org.nlogo.api.Syntax.BooleanType
+import org.nlogo.api.Syntax.CommandBlockType
+import org.nlogo.api.Syntax.LinksetType
+import org.nlogo.api.Syntax.ListType
+import org.nlogo.api.Syntax.NumberType
+import org.nlogo.api.Syntax.OptionalType
+import org.nlogo.api.Syntax.StringType
+import org.nlogo.api.Syntax.TurtleType
+import org.nlogo.api.Syntax.TurtlesetType
+import org.nlogo.api.Syntax.commandSyntax
+import org.nlogo.api.Syntax.reporterSyntax
 import org.nlogo.extensions.nw.NetworkExtension
-import org.nlogo.extensions.nw.StaticNetLogoGraph
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToNetLogoAgent
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleToNetLogoTurtle
+import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
+import org.nlogo.extensions.nw.jung.io.GraphMLExport
+import org.nlogo.extensions.nw.jung.io.GraphMLImport
+import org.nlogo.extensions.nw.jung.io.Matrix
 
 import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
+
 trait Primitives {
   self: NetworkExtension =>
 

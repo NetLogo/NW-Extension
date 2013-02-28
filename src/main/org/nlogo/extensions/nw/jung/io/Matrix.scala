@@ -1,14 +1,17 @@
 // (C) Uri Wilensky. https://github.com/NetLogo/NW-Extension
 
-package org.nlogo.extensions.nw.jung
+package org.nlogo.extensions.nw.jung.io
+
+import java.util.Random
 
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
-import edu.uci.ics.jung
-import java.util.Random
-import org.nlogo.workspace.AbstractWorkspace
 import org.nlogo.api.ExtensionException
+import org.nlogo.extensions.nw.jung.DummyGraph
+import org.nlogo.extensions.nw.jung.factoryFor
+
+import edu.uci.ics.jung
 
 object Matrix {
 

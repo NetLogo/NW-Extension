@@ -1,19 +1,22 @@
 // (C) Uri Wilensky. https://github.com/NetLogo/NW-Extension
 
-package org.nlogo.extensions.nw.jung
+package org.nlogo.extensions.nw.jung.io
 
 import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
+
+import scala.annotation.implicitNotFound
+import scala.collection.JavaConverters._
+
 import org.apache.commons.collections15.Transformer
-import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
 import org.nlogo.agent
 import org.nlogo.api
-import edu.uci.ics.jung
-import org.nlogo.extensions.nw.NetLogoGraph
 import org.nlogo.api.ExtensionException
-import scala.collection.JavaConverters._
-import org.nlogo.agent.AgentSet
+import org.nlogo.extensions.nw.NetLogoGraph
+import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
+
+import edu.uci.ics.jung
 
 object GraphMLExport {
 

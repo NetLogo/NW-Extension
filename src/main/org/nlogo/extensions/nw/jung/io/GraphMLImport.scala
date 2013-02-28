@@ -1,15 +1,27 @@
-package org.nlogo.extensions.nw.jung
+package org.nlogo.extensions.nw.jung.io
 
-import java.io.{ BufferedReader, FileReader }
+import java.io.BufferedReader
+import java.io.FileReader
 
 import scala.Option.option2Iterable
-import scala.collection.JavaConverters.{ asScalaBufferConverter, asScalaSetConverter, collectionAsScalaIterableConverter, mapAsScalaMapConverter }
+import scala.annotation.implicitNotFound
+import scala.collection.JavaConverters._
 
-import org.nlogo.agent.{ Agent, AgentSet, Turtle }
+import org.nlogo.agent.Agent
+import org.nlogo.agent.AgentSet
+import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
+import org.nlogo.extensions.nw.jung.createLink
+import org.nlogo.extensions.nw.jung.createTurtle
+import org.nlogo.extensions.nw.jung.factoryFor
+import org.nlogo.extensions.nw.jung.transformer
 
 import edu.uci.ics.jung
-import edu.uci.ics.jung.io.graphml.{ AbstractMetadata, EdgeMetadata, GraphMLReader2, GraphMetadata, Key }
+import edu.uci.ics.jung.io.graphml.AbstractMetadata
+import edu.uci.ics.jung.io.graphml.EdgeMetadata
+import edu.uci.ics.jung.io.graphml.GraphMLReader2
+import edu.uci.ics.jung.io.graphml.GraphMetadata
+import edu.uci.ics.jung.io.graphml.Key
 import edu.uci.ics.jung.io.graphml.Metadata.MetadataType
 import edu.uci.ics.jung.io.graphml.NodeMetadata
 
