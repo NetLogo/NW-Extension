@@ -155,7 +155,9 @@ The `turtles-in-radius` form works with undirected links.  The other two forms w
 
 Will output:
 
-    (turtle 0): [(turtle 1) (turtle 2)]
+    (turtle 0): [(turtle 0) (turtle 1) (turtle 2)]
+
+As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#in-radius) primitive.
 
 #### distance-to, weighted-distance-to
 
