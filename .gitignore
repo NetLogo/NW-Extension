@@ -14,6 +14,7 @@ classes/
 .classpath
 .cache
 .settings
+.texlipse
 
 # latex temp files
 *.log
