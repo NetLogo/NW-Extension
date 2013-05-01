@@ -369,6 +369,8 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 
 Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
+The algorithm is O(n²) for directed networks and O(n²/2) for undirected networks, so generating more than a couple thousand nodes will likely take a very long time.
+
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-random turtles links 100 0.5 [ set color red ]

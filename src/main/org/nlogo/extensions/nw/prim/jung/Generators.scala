@@ -19,19 +19,6 @@ class BarabasiAlbertGenerator extends turtleCreatingCommand {
       .barabasiAlbert(getIntValueWithMinimum(args(2), 1), context.getRNG)
 }
 
-class ErdosRenyiGenerator extends turtleCreatingCommand {
-  override def getSyntax = commandSyntax(
-    Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType))
-  def createTurtles(args: Array[api.Argument], context: api.Context) =
-    new Generator(
-      turtleBreed = args(0).getAgentSet.requireTurtleBreed,
-      linkBreed = args(1).getAgentSet.requireLinkBreed)
-      .erdosRenyi(
-        nbVertices = getIntValueWithMinimum(args(2), 1),
-        connexionProbability = args(3).getDoubleValue,
-        rng = context.getRNG)
-}
-
 class KleinbergSmallWorldGenerator extends turtleCreatingCommand {
   override def getSyntax = commandSyntax(
     Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType))

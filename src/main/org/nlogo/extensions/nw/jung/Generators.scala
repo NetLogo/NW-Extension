@@ -3,12 +3,11 @@
 package org.nlogo.extensions.nw.jung
 
 import org.nlogo.agent.AgentSet
-import edu.uci.ics.jung.algorithms.generators.random.BarabasiAlbertGenerator
-import edu.uci.ics.jung.algorithms.generators.random.EppsteinPowerLawGenerator
-import edu.uci.ics.jung.algorithms.generators.random.ErdosRenyiGenerator
-import edu.uci.ics.jung.algorithms.generators.random.KleinbergSmallWorldGenerator
-import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
 import org.nlogo.util.MersenneTwisterFast
+
+import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
+import edu.uci.ics.jung.algorithms.generators.random.BarabasiAlbertGenerator
+import edu.uci.ics.jung.algorithms.generators.random.KleinbergSmallWorldGenerator
 
 class Generator(
   turtleBreed: AgentSet,
@@ -43,19 +42,6 @@ class Generator(
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng, sorted = true)
   }
 
-  def erdosRenyi(nbVertices: Int, connexionProbability: Double, rng: MersenneTwisterFast) = {
-    val gen = new ErdosRenyiGenerator(
-      undirectedGraphFactory, vertexFactory, edgeFactory,
-      nbVertices, connexionProbability)
-
-    // use reflection to set our own rng
-    val mRandomField = gen.getClass.getDeclaredField("mRandom")
-    mRandomField.setAccessible(true)
-    mRandomField.set(gen, rng)
-
-    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng)
-  }
-
   def kleinbergSmallWorld(rowCount: Int, colCount: Int,
     clusteringExponent: Double, isToroidal: Boolean, rng: MersenneTwisterFast) = {
     val gen = new KleinbergSmallWorldGenerator(
@@ -63,8 +49,6 @@ class Generator(
       rowCount, colCount, clusteringExponent, isToroidal)
     gen.setRandom(rng)
     DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng)
-
   }
-
 }
 

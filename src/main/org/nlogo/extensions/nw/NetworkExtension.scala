@@ -5,7 +5,16 @@ package org.nlogo.extensions.nw
 import scala.collection.JavaConverters._
 
 import org.nlogo.api
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.api.{
+  Argument,
+  Context,
+  DefaultCommand
+}
+import org.nlogo.api.Syntax._
+import org.nlogo.extensions.nw.NetworkExtensionUtil.{
+  AgentSetToNetLogoAgentSet,
+  AgentSetToRichAgentSet
+}
 
 class NetworkExtension extends api.DefaultClassManager {
 
@@ -69,7 +78,7 @@ class NetworkExtension extends api.DefaultClassManager {
     add("biggest-maximal-cliques", new prim.jgrapht.BiggestMaximalCliques(getGraph))
 
     add("generate-preferential-attachment", new prim.jung.BarabasiAlbertGenerator)
-    add("generate-random", new prim.jung.ErdosRenyiGenerator)
+    add("generate-random", new prim.ErdosRenyiGenerator)
     add("generate-small-world", new prim.jung.KleinbergSmallWorldGenerator)
     add("generate-lattice-2d", new prim.jung.Lattice2DGenerator)
 

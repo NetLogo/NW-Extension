@@ -491,3 +491,25 @@ weighted-path-to-undirected-pair
 ### turtles-on-weighted-path-to
 
 ### mean-weighted-path-length
+
+## generators
+
+generate-random-undirected-fully-connected
+  extensions [ nw ]
+  O> nw:generate-random turtles links 2 1.0
+  (word sort links) =>  "[(link 0 1)]"
+
+generate-random-undirected-unconnected
+  extensions [ nw ]
+  O> nw:generate-random turtles links 2 0.0
+  (word sort links) =>  "[]"
+
+generate-random-directed-fully-connected
+  extensions [ nw ]
+  O> nw:generate-random turtles directed-links 2 1.0
+  (word sort directed-links) =>  "[(directed-link 0 1) (directed-link 1 0)]"
+
+generate-random-directed-unconnected
+  extensions [ nw ]
+  O> nw:generate-random turtles directed-links 2 0.0
+  (word sort directed-links) =>  "[]"
