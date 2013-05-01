@@ -28,12 +28,6 @@ package object jung {
   def directedFactory[V, E] = jg.DirectedSparseGraph.getFactory[V, E]
   def undirectedFactory[V, E] = jg.UndirectedSparseGraph.getFactory[V, E]
 
-  def createTurtle(turtleBreed: AgentSet, rng: java.util.Random) =
-    turtleBreed.world.createTurtle(
-      turtleBreed,
-      rng.nextInt(14), // color
-      rng.nextInt(360)) // heading
-
   def createLink[V](turtles: Map[V, Turtle], endPoints: Pair[V], linkBreed: AgentSet) =
     linkBreed.world.linkManager.createLink(
       turtles(endPoints.getFirst),

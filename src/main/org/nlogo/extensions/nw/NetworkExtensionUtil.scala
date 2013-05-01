@@ -20,6 +20,7 @@ import org.nlogo.api.DefaultReporter
 import org.nlogo.api.Primitive
 import org.nlogo.nvm
 import org.nlogo.api.AgentException
+import org.nlogo.util.MersenneTwisterFast
 
 object NetworkExtensionUtil {
 
@@ -117,6 +118,12 @@ object NetworkExtensionUtil {
     }
 
   }
+
+  def createTurtle(turtleBreed: agent.AgentSet, rng: MersenneTwisterFast) =
+    turtleBreed.world.createTurtle(
+      turtleBreed,
+      rng.nextInt(14), // color
+      rng.nextInt(360)) // heading
 
 }
 
