@@ -2,20 +2,21 @@
 
 package org.nlogo.extensions.nw.prim.jung
 
+import scala.annotation.implicitNotFound
+
 import org.nlogo.api
 import org.nlogo.api.Syntax._
-import org.nlogo.extensions.nw.NetLogoGraph
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
+import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
 import org.nlogo.extensions.nw.jung.io.GraphMLExport
 import org.nlogo.extensions.nw.jung.io.GraphMLImport
 
-class SaveGraphML(getGraph: api.Context => NetLogoGraph)
+class SaveGraphML(getGraphContext: api.World => GraphContext)
   extends api.DefaultCommand {
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
-    GraphMLExport.save(getGraph(context), args(0).getString)
+    GraphMLExport.save(getGraphContext(context.getAgent.world), args(0).getString)
   }
 }
 

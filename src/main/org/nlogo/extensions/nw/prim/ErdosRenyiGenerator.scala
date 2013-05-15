@@ -5,11 +5,8 @@ package org.nlogo.extensions.nw.prim
 import org.nlogo.api
 import org.nlogo.api.ExtensionException
 import org.nlogo.api.Syntax._
-import org.nlogo.extensions.nw.NetworkExtensionUtil.{
-  AgentSetToNetLogoAgentSet,
-  AgentSetToRichAgentSet,
-  turtleCreatingCommand
-}
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
 import org.nlogo.extensions.nw.algorithms
 
 class ErdosRenyiGenerator extends turtleCreatingCommand {

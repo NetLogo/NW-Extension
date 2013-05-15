@@ -2,15 +2,18 @@
 
 package org.nlogo.extensions.nw.jgrapht
 
-import scala.collection.JavaConverters.asScalaSetConverter
+import java.util.Random
+
+import scala.collection.JavaConverters._
+
+import org.jgrapht.VertexFactory
 import org.jgrapht.generate.GraphGenerator
 import org.jgrapht.generate.RingGraphGenerator
 import org.jgrapht.generate.StarGraphGenerator
 import org.jgrapht.generate.WheelGraphGenerator
-import org.jgrapht.VertexFactory
 import org.nlogo.agent.AgentSet
+
 import org.jgrapht
-import java.util.Random
 
 class Vertex
 class Edge

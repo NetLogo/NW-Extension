@@ -1,10 +1,11 @@
 package org.nlogo.extensions.nw
 
-import org.apache.commons.collections15.Transformer
-import edu.uci.ics.jung.{ graph => jg }
-import org.nlogo.agent.AgentSet
 import org.apache.commons.collections15.Factory
+import org.apache.commons.collections15.Transformer
+import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
+
+import edu.uci.ics.jung.{graph => jg}
 import edu.uci.ics.jung.graph.util.Pair
 
 package object jung {

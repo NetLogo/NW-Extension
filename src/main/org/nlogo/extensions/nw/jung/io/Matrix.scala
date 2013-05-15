@@ -2,9 +2,12 @@
 
 package org.nlogo.extensions.nw.jung.io
 
-import org.nlogo.agent.{ AgentSet, Link, Turtle }
+import org.nlogo.agent.AgentSet
+import org.nlogo.agent.Link
+import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
-import org.nlogo.extensions.nw.jung.{ DummyGraph, factoryFor }
+import org.nlogo.extensions.nw.jung.DummyGraph
+import org.nlogo.extensions.nw.jung.factoryFor
 import org.nlogo.util.MersenneTwisterFast
 
 import edu.uci.ics.jung

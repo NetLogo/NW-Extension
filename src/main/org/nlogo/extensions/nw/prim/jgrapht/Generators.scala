@@ -4,7 +4,6 @@ package org.nlogo.extensions.nw.prim.jgrapht
 
 import org.nlogo.api
 import org.nlogo.api.Syntax._
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
 import org.nlogo.extensions.nw.jgrapht.Generator

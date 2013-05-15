@@ -2,8 +2,8 @@ package org.nlogo.extensions.nw.algorithms
 
 import org.nlogo.agent
 import org.nlogo.agent.AgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.util.MersenneTwisterFast
-import org.nlogo.extensions.nw.NetworkExtensionUtil._
 
 object ErdosRenyiGenerator {
   def generate(

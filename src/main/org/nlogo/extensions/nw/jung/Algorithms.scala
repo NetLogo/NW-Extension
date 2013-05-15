@@ -2,20 +2,21 @@
 
 package org.nlogo.extensions.nw.jung
 
-import java.util.{ Random, Set => JSet }
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.util.control.Breaks.{ break, breakable }
+import scala.util.control.Breaks.break
+import scala.util.control.Breaks.breakable
 
-import org.nlogo.agent.{ Agent, ArrayAgentSet, Link, Turtle, World }
-import org.nlogo.api
+import org.nlogo.agent.Agent
+import org.nlogo.agent.Link
+import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
-import org.nlogo.extensions.nw.NetworkExtensionUtil.{ LinkToRichLink, functionToTransformer }
+import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
+import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
+import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
+import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
 
-import edu.uci.ics.jung.{ algorithms => jungalg }
-
-import org.nlogo.extensions.nw.util.TurtleSetsConverters._
+import edu.uci.ics.jung.{algorithms => jungalg}
 
 trait Ranker {
   self: jungalg.importance.AbstractRanker[Turtle, Link] =>
@@ -66,8 +67,8 @@ trait Algorithms {
       var n = 0
       breakable {
         for {
-          source <- nlg.turtles
-          target <- nlg.turtles
+          source <- gc.turtles
+          target <- gc.turtles
           if target != source
           distance = getDistance(source, target)
         } {
@@ -125,12 +126,12 @@ trait Algorithms {
       .asScala
       .toSet
       .+(source) // make sure source is there, as Jung doesn't include isolates
-    toTurtleSet(agents, nlg.world)
+    toTurtleSet(agents, gc.world)
   }
 
   object WeakComponentClusterer
     extends jungalg.cluster.WeakComponentClusterer[Turtle, Link] {
-    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, nlg.world, rng)
+    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, gc.world, rng)
   }
 
 }
@@ -139,7 +140,7 @@ trait UndirectedAlgorithms extends Algorithms {
   self: UndirectedGraph =>
   object BicomponentClusterer
     extends jungalg.cluster.BicomponentClusterer[Turtle, Link] {
-    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, nlg.world, rng)
+    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, gc.world, rng)
   }
 }
 

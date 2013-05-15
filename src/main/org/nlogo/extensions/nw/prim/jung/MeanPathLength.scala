@@ -4,13 +4,13 @@ package org.nlogo.extensions.nw.prim.jung
 
 import org.nlogo.api
 import org.nlogo.api.Syntax._
-import org.nlogo.extensions.nw.NetLogoGraph
+import org.nlogo.extensions.nw.GraphContext
 
-class MeanPathLength(getGraph: api.Context => NetLogoGraph)
+class MeanPathLength(getGraphContext: api.World => GraphContext)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    getGraph(context).asJungGraph
+    getGraphContext(context.getAgent.world).asJungGraph
       .dijkstraShortestPath
       .meanLinkPathLength
       .map(Double.box)
@@ -18,13 +18,13 @@ class MeanPathLength(getGraph: api.Context => NetLogoGraph)
   }
 }
 
-class MeanWeightedPathLength(getGraph: api.Context => NetLogoGraph)
+class MeanWeightedPathLength(getGraphContext: api.World => GraphContext)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(StringType),
     NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    getGraph(context).asJungGraph
+    getGraphContext(context.getAgent.world).asJungGraph
       .dijkstraShortestPath(args(0).getString.toUpperCase)
       .meanLinkPathLength
       .map(Double.box)

@@ -6,21 +6,21 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
 
-import scala.annotation.implicitNotFound
 import scala.collection.JavaConverters._
 
 import org.apache.commons.collections15.Transformer
 import org.nlogo.agent
 import org.nlogo.api
 import org.nlogo.api.ExtensionException
-import org.nlogo.extensions.nw.NetLogoGraph
+import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
 
 import edu.uci.ics.jung
 
 object GraphMLExport {
 
-  def save(graph: NetLogoGraph, filename: String) {
+  def save(graphContext: GraphContext, filename: String) {
+    val world = graphContext.world
 
     if (org.nlogo.workspace.AbstractWorkspace.isApplet)
       throw new ExtensionException("Cannot save GraphML file when in applet mode.")
@@ -39,7 +39,7 @@ object GraphMLExport {
       }
     }
 
-    val program = graph.world.program
+    val program = world.program
 
     val turtlesOwn = program.turtlesOwn.asScala
     val linksOwn = program.linksOwn.asScala
@@ -57,12 +57,12 @@ object GraphMLExport {
 
     addVariables(
       program.breedsOwn.asScala.values.flatMap(_.asScala),
-      (t: agent.Turtle, v: String) => graph.world.breedOwns(t.getBreed, v),
+      (t: agent.Turtle, v: String) => world.breedOwns(t.getBreed, v),
       (t: agent.Turtle, v: String) => t.getBreedVariable(v),
       graphMLWriter.addVertexData _)
     addVariables(
       program.linkBreedsOwn.asScala.values.flatMap(_.asScala),
-      (l: agent.Link, v: String) => graph.world.linkBreedOwns(l.getBreed, v),
+      (l: agent.Link, v: String) => world.linkBreedOwns(l.getBreed, v),
       (l: agent.Link, v: String) => l.getLinkBreedVariable(v),
       graphMLWriter.addEdgeData _)
 
@@ -80,7 +80,7 @@ object GraphMLExport {
     }
 
     val printWriter = new PrintWriter(new BufferedWriter(new FileWriter(filename)))
-    graphMLWriter.save(graph.asJungGraph, printWriter)
+    graphMLWriter.save(graphContext.asJungGraph, printWriter)
 
   }
 
