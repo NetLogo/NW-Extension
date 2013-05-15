@@ -70,7 +70,6 @@ class NetworkExtension extends api.DefaultClassManager {
     add("eigenvector-centrality", new prim.jung.EigenvectorCentrality(getGraph))
     add("closeness-centrality", new prim.jung.ClosenessCentrality(getGraph))
 
-    add("k-means-clusters", new prim.jung.KMeansClusters(getGraph))
     add("bicomponent-clusters", new prim.jung.BicomponentClusters(getGraph))
     add("weak-component-clusters", new prim.jung.WeakComponentClusters(getGraph))
 

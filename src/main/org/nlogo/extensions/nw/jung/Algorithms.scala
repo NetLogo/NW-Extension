@@ -115,30 +115,6 @@ trait Algorithms {
     }
   }
 
-  class KMeansClusterer(
-    nbClusters: Int,
-    maxIterations: Int,
-    convergenceThreshold: Double,
-    rng: java.util.Random)
-    extends jungalg.util.KMeansClusterer[Turtle] {
-    rand = rng
-    val locations = nlg.turtles.map(t => t -> Array(t.xcor, t.ycor)).toMap.asJava
-    val world = nlg.world
-    def clusters: Seq[api.AgentSet] = {
-      val cs =
-        if (nlg.turtles.isEmpty)
-          Seq.empty
-        else {
-          setMaxIterations(maxIterations)
-          setConvergenceThreshold(convergenceThreshold)
-          cluster(locations, nbClusters)
-            .asScala
-            .map(_.keySet)(collection.breakOut)
-        }
-      toTurtleSets(cs, world, rng)
-    }
-  }
-
   def kNeighborhood(
     source: Turtle,
     radius: Int,
