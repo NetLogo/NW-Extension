@@ -16,7 +16,7 @@ object TurtleSetsConverters {
   def toTurtleSet(turtles: java.lang.Iterable[Turtle], world: World): api.AgentSet =
     toTurtleSet(turtles.asScala, world)
 
-  def toTurtleSet(turtles: Traversable[Turtle], world: World): api.AgentSet = {
+  def toTurtleSet(turtles: Iterable[Turtle], world: World): api.AgentSet = {
     val agents = turtles.toArray[Agent]
     new ArrayAgentSet(classOf[Turtle], agents, world)
   }
