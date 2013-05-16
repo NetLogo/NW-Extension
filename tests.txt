@@ -34,14 +34,13 @@ turtles-in-radius-two-circles
   remove-duplicates [count nw:turtles-in-radius 3 ] of turtles => [7]
   remove-duplicates [count nw:turtles-in-radius 4 ] of turtles => [8]
   remove-duplicates [count nw:turtles-in-radius 5 ] of turtles => [8]
-  # Turned off because much too slow (see Issue #42 on github):
-  #remove-duplicates [count nw:turtles-in-radius 1E38 ] of turtles => [8]
+  remove-duplicates [count nw:turtles-in-radius 1E38 ] of turtles => [8]
 
 in-link-radius-source-set-filtering
   extensions [nw]
   O> crt 8 [ create-links-with other turtles ]
-  O> set glob1 turtles with [who mod 2 = 0]
-  O> nw:set-context glob1 links
+  O> ask turtles with [who mod 2 = 0] [ set breed mice ]
+  O> nw:set-context mice links
   sort [who] of [nw:turtles-in-radius 10] of turtle 0 => [0 2 4 6]
 
 ### turtles-in-out-radius, turtles-in-in-radius
@@ -227,14 +226,12 @@ mean-path-length-on-a-pentagon
 
 mean-path-length-pairs-of-turtles-on-a-pentagon
   extensions [ nw ]
+  O> nw:set-context mice links
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
-  O> nw:set-snapshot (turtle-set turtle 0 turtle 1) links
+  O> ask (turtle-set turtle 0 turtle 1) [ set breed mice ]
   nw:mean-path-length => 1
-  O> nw:set-snapshot (turtle-set turtle 1 turtle 0) links
-  nw:mean-path-length => 1
-  O> nw:set-snapshot (turtle-set turtle 0 turtle 2) links
-  nw:mean-path-length => false
-  O> nw:set-snapshot (turtle-set turtle 2 turtle 0) links
+  O> ask turtles [ set breed turtles ]
+  O> ask (turtle-set turtle 0 turtle 2) [ set breed mice ]
   nw:mean-path-length => false
 
 ## directed links
