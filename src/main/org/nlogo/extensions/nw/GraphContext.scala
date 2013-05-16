@@ -30,12 +30,12 @@ class GraphContext(
   private val linkManager = world.linkManager
 
   def isValidTurtle(turtle: Turtle) =
-    turtleSet.contains(turtle)
+    turtle.getBreed eq turtleSet
   def validTurtle(turtle: Turtle): Option[Turtle] =
     if (isValidTurtle(turtle)) Some(turtle) else None
 
   def isValidLink(link: Link) =
-    linkSet.contains(link)
+    (link.getBreed eq linkSet) && isValidTurtle(link.end1) && isValidTurtle(link.end2)
   def validLink(link: Link): Option[Link] =
     if (isValidLink(link)) Some(link) else None
 
@@ -46,17 +46,17 @@ class GraphContext(
   def turtles: Iterable[Turtle] = turtleSet.asIterable[Turtle]
 
   def allEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksWith(turtle, linkSet).asIterable[Link]
+    linkManager.findLinksWith(turtle, linkSet).asIterable[Link].filter(isValidLink)
   def allNeighbors(turtle: Turtle): Iterable[Turtle] =
     linkManager.findLinkedWith(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
 
   def directedInEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksTo(turtle, linkSet).asIterable[Link]
+    linkManager.findLinksTo(turtle, linkSet).asIterable[Link].filter(isValidLink)
   def inNeighbors(turtle: Turtle): Iterable[Turtle] =
     linkManager.findLinkedTo(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
 
   def directedOutEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksFrom(turtle, linkSet).asIterable[Link]
+    linkManager.findLinksFrom(turtle, linkSet).asIterable[Link].filter(isValidLink)
   def outNeighbors(turtle: Turtle): Iterable[Turtle] =
     linkManager.findLinkedFrom(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
 
