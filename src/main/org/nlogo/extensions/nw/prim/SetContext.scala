@@ -14,6 +14,6 @@ class SetContext(setContext: GraphContext => Unit)
   override def perform(args: Array[api.Argument], context: api.Context) {
     val turtleSet = args(0).getAgentSet.requireTurtleBreed
     val linkSet = args(1).getAgentSet.requireLinkBreed
-    setContext(new GraphContext(linkSet, turtleSet))
+    setContext(new GraphContext(turtleSet, linkSet))
   }
 }
