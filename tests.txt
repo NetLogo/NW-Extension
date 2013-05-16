@@ -224,13 +224,17 @@ mean-path-length-on-a-pentagon
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
   nw:mean-path-length => 1.5
 
-mean-path-length-pairs-of-turtles-on-a-pentagon
+mean-path-length-connected-pair-of-turtles-on-a-pentagon
   extensions [ nw ]
   O> nw:set-context mice links
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
   O> ask (turtle-set turtle 0 turtle 1) [ set breed mice ]
   nw:mean-path-length => 1
-  O> ask turtles [ set breed turtles ]
+
+mean-path-length-disconnected-pair-of-turtles-on-a-pentagon
+  extensions [ nw ]
+  O> nw:set-context mice links
+  O> crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
   O> ask (turtle-set turtle 0 turtle 2) [ set breed mice ]
   nw:mean-path-length => false
 
