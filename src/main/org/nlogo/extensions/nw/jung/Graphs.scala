@@ -57,15 +57,6 @@ trait Graph
   def addEdge(link: Link, turtles: Pair[_ <: Turtle], edgeType: EdgeType): Boolean =
     throw sys.error("not implemented")
 
-  lazy val asSparseGraph: ics.jung.graph.SparseGraph[Turtle, Link] = {
-    val g = new ics.jung.graph.SparseGraph[Turtle, Link]()
-    gc.turtles.foreach(g.addVertex)
-    gc.links.foreach { l =>
-      g.addEdge(l, new ics.jung.graph.util.Pair(l.end1, l.end2), edgeType)
-    }
-    g
-  }
-
   // If the whole graph is only one cluster, then it's weakly connected
   lazy val isWeaklyConnected = WeakComponentClusterer.transform(this).size == 1
 }
