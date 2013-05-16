@@ -47,16 +47,22 @@ class GraphContext(
 
   def allEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksWith(turtle, linkSet).asIterable[Link]
+  def allNeighbors(turtle: Turtle): Iterable[Turtle] =
+    linkManager.findLinkedWith(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
 
   def directedInEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksTo(turtle, linkSet).asIterable[Link]
+  def inNeighbors(turtle: Turtle): Iterable[Turtle] =
+    linkManager.findLinkedTo(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
 
   def directedOutEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksFrom(turtle, linkSet).asIterable[Link]
+  def outNeighbors(turtle: Turtle): Iterable[Turtle] =
+    linkManager.findLinkedFrom(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
 
   // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
-  def inEdges(turtle: Turtle) =
+  def inEdges(turtle: Turtle): Iterable[Link] =
     if (isDirected) directedInEdges(turtle) else allEdges(turtle)
-  def outEdges(turtle: Turtle) =
+  def outEdges(turtle: Turtle): Iterable[Link] =
     if (isDirected) directedOutEdges(turtle) else allEdges(turtle)
 }
