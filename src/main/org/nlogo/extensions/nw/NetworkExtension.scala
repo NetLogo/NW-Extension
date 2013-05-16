@@ -38,9 +38,9 @@ class NetworkExtension extends api.DefaultClassManager {
 
     add("set-context", new prim.SetContext(setGraphContext))
 
-    add("turtles-in-radius", new prim.jung.TurtlesInRadius(getGraphContext))
-    add("turtles-in-out-radius", new prim.jung.TurtlesInOutRadius(getGraphContext))
-    add("turtles-in-in-radius", new prim.jung.TurtlesInInRadius(getGraphContext))
+    add("turtles-in-radius", new org.nlogo.extensions.nw.prim.TurtlesInRadius(getGraphContext))
+    add("turtles-in-out-radius", new org.nlogo.extensions.nw.prim.TurtlesInOutRadius(getGraphContext))
+    add("turtles-in-in-radius", new org.nlogo.extensions.nw.prim.TurtlesInInRadius(getGraphContext))
 
     add("mean-path-length", new prim.jung.MeanPathLength(getGraphContext))
     add("mean-weighted-path-length", new prim.jung.MeanWeightedPathLength(getGraphContext))

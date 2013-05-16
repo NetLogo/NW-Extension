@@ -1,44 +1,51 @@
 // (C) Uri Wilensky. https://github.com/NetLogo/NW-Extension
 
-package org.nlogo.extensions.nw.prim.jung
+package org.nlogo.extensions.nw.prim
 
 import org.nlogo.agent
 import org.nlogo.api
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContext
+import org.nlogo.extensions.nw.algorithms.InRadius._
+import scala.collection.JavaConverters._
+import org.nlogo.extensions.nw.util.TurtleSetsConverters._
+import org.nlogo.agent.AgentSet
 
-import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter
-
-abstract class InRadiusPrim extends api.DefaultReporter {
-  val edgeType: KNeighborhoodFilter.EdgeType
+trait InRadiusPrim extends api.DefaultReporter {
   val getGraphContext: api.World => GraphContext
+  val directed:Boolean
+  val reverse:Boolean
   override def getSyntax = reporterSyntax(
     Array(NumberType),
     TurtlesetType,
     "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val world = context.getAgent.world.asInstanceOf[agent.World]
+    val graphContext = getGraphContext(context.getAgent.world)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val radius = args(0).getIntValue
     if (radius < 0) throw new api.ExtensionException("radius cannot be negative")
-    graph.kNeighborhood(source, radius, edgeType)
+    inRadius(graphContext, source, radius, directed, reverse)
   }
 }
 
 class TurtlesInRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val edgeType = KNeighborhoodFilter.EdgeType.IN_OUT
+  override val directed = false
+  override val reverse = false
 }
 
 class TurtlesInInRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val edgeType = KNeighborhoodFilter.EdgeType.IN
+  override val directed = true
+  override val reverse = true
 }
 
 class TurtlesInOutRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val edgeType = KNeighborhoodFilter.EdgeType.OUT
+  override val directed = true
+  override val reverse = false
 }

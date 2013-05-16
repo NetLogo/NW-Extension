@@ -16,7 +16,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
 
-import edu.uci.ics.jung.{algorithms => jungalg}
+import edu.uci.ics.jung.{ algorithms => jungalg }
 
 trait Ranker {
   self: jungalg.importance.AbstractRanker[Turtle, Link] =>
@@ -87,9 +87,10 @@ trait Algorithms {
       try super.getPath(source, target)
       catch { case e: Exception => throw new ExtensionException(e) }
 
-    override def getDistance(source: Turtle, target: Turtle) =
+    override def getDistance(source: Turtle, target: Turtle) = {
       try super.getDistance(source, target)
       catch { case e: Exception => throw new ExtensionException(e) }
+    }
   }
 
   object BetweennessCentrality
@@ -100,7 +101,7 @@ trait Algorithms {
     evaluate()
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
-        throw new ExtensionException(turtle + " is not a member of the current snapshot")
+        throw new ExtensionException(turtle + " is not a member of the current graph")
       getVertexScore(turtle)
     }
   }
@@ -108,25 +109,12 @@ trait Algorithms {
   object ClosenessCentrality extends jungalg.scoring.ClosenessCentrality(this) {
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
-        throw new ExtensionException(turtle + " is not a member of the current snapshot")
+        throw new ExtensionException(turtle + " is not a member of the current graph")
       val res = getVertexScore(turtle)
       if (res.isNaN)
         Double.box(0.0) // for isolates
       else res
     }
-  }
-
-  def kNeighborhood(
-    source: Turtle,
-    radius: Int,
-    edgeType: jungalg.filters.KNeighborhoodFilter.EdgeType) = {
-    val agents = new jungalg.filters.KNeighborhoodFilter(source, radius, edgeType)
-      .transform(this.asSparseGraph) // TODO: ugly hack; fix when we fork jung
-      .getVertices
-      .asScala
-      .toSet
-      .+(source) // make sure source is there, as Jung doesn't include isolates
-    toTurtleSet(agents, gc.world)
   }
 
   object WeakComponentClusterer
