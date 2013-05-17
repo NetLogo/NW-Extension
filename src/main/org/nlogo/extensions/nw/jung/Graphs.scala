@@ -33,9 +33,7 @@ trait Graph
   override def getEdgeCount(): Int = gc.linkCount
 
   override def getNeighbors(turtle: Turtle): Collection[Turtle] =
-    gc.validTurtle(turtle).map { t =>
-      (gc.outEdges(t).map(_.end2) ++ gc.inEdges(t).map(_.end1)).asJavaCollection
-    }.orNull
+    gc.validTurtle(turtle).map(gc.allNeighbors(_).asJavaCollection).orNull
 
   override def getVertexCount(): Int = gc.turtleCount
   override def getVertices(): Collection[Turtle] = gc.turtles.asJavaCollection
