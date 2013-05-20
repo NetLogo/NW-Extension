@@ -463,3 +463,24 @@ generate-random-directed-unconnected
   extensions [ nw ]
   O> nw:generate-random turtles directed-links 2 0.0
   (word sort directed-links) =>  "[]"
+
+## weak-component-clusterer
+
+weak-components-empty-graph
+  extensions [ nw ]
+  (word nw:weak-component-clusters) => "[]"
+
+weak-components-single-isolate
+  extensions [ nw ]
+  O> crt 1
+  (word map [[who] of ?] nw:weak-component-clusters) => "[[0]]"
+
+weak-components-two-isolates
+  extensions [ nw ]
+  O> crt 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0] [1]]"
+
+weak-components-connected-undirected-pair
+weak-components-connected-directed-pair
+weak-components-two-connected-undirected-pairs
+weak-components-two-connected-directed-pairs
