@@ -2,8 +2,6 @@
 
 package org.nlogo.extensions.nw
 
-import scala.collection.JavaConverters._
-
 import org.nlogo.agent
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
@@ -66,7 +64,16 @@ object NetworkExtensionUtil {
       else throw new ExtensionException(
         "Expected input to be an undirected link breed")
 
-    def asIterable[A]: Iterable[A] = agentSet.agents.asScala.view.map(_.asInstanceOf[A])
+    private class AgentSetIterable[T <: Agent] extends Iterable[T] {
+      override def iterator: Iterator[T] = {
+        val it = agentSet.iterator()
+        new Iterator[T] {
+          def hasNext = it.hasNext
+          def next() = it.next().asInstanceOf[T]
+        }
+      }
+    }
+    def asIterable[T <: Agent]: Iterable[T] = new AgentSetIterable
   }
 
   trait turtleCreatingCommand extends api.DefaultCommand with nvm.CustomAssembled {
