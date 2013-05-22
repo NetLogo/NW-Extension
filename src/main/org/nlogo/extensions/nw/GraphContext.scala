@@ -5,19 +5,45 @@ package org.nlogo.extensions.nw
 import org.nlogo.agent.Link
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
+import org.nlogo.api.SimpleChangeEvent
+import org.nlogo.api.SimpleChangeEventPublisher
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 
 class GraphContext(
   private val turtleSet: TreeAgentSet,
   private val linkSet: TreeAgentSet) {
 
-  def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
-  def asDirectedJungGraph: jung.DirectedGraph = new jung.DirectedGraph(this)
-  def asUndirectedJungGraph: jung.UndirectedGraph = new jung.UndirectedGraph(this)
+  class AgentSetSub(agentSet: TreeAgentSet) extends SimpleChangeEventPublisher#Sub {
+    agentSet.simpleChangeEventPublisher.subscribe(this)
+    override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent) {
+      // If an agentset changes, get rid of our cached jung graphs.
+      // If we were ever to cache stuff in JGraphT graphs too, we'd
+      // have to do the same for them. NP 2013-05-22.
+      directedJungGraph = None
+      undirectedJungGraph = None
+    }
+  }
+  val turtleSetChangeEventSub = new AgentSetSub(turtleSet)
+  val linkSetChangeEventSub = new AgentSetSub(linkSet)
 
+  def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
+  private var directedJungGraph: Option[jung.DirectedGraph] = None
+  def asDirectedJungGraph: jung.DirectedGraph =
+    directedJungGraph.getOrElse {
+      val g = new jung.DirectedGraph(this)
+      directedJungGraph = Some(g)
+      g
+    }
+  private var undirectedJungGraph: Option[jung.UndirectedGraph] = None
+  def asUndirectedJungGraph: jung.UndirectedGraph =
+    undirectedJungGraph.getOrElse {
+      val g = new jung.UndirectedGraph(this)
+      undirectedJungGraph = Some(g)
+      g
+    }
   def asJGraphTGraph: jgrapht.Graph = if (isDirected) asDirectedJGraphTGraph else asUndirectedJGraphTGraph
-  def asDirectedJGraphTGraph = new jgrapht.DirectedGraph(this)
-  def asUndirectedJGraphTGraph = new jgrapht.UndirectedGraph(this)
+  lazy val asDirectedJGraphTGraph = new jgrapht.DirectedGraph(this)
+  lazy val asUndirectedJGraphTGraph = new jgrapht.UndirectedGraph(this)
 
   /* Until an actual link has been created, the directedness of the links agentset
    * is not defined: i.e., both  linkSet.isDirected and linkSet.isUndirected will 
