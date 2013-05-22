@@ -316,7 +316,7 @@ closeness-centrality-bigger-directed
   O> ask turtle 5 [ create-directed-link-to turtle 0 ]
   O> ask turtle 5 [ create-directed-link-to turtle 4 ]
   O> nw:set-context turtles directed-links
-  map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [0.4 0.5 0.625 0 1 0.667] 
+  map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [0.4 0.5 0.625 0 1 0.667]
 
 closeness-centrality-disconnected-pentagon-triangle
   extensions [ nw ]
@@ -324,7 +324,7 @@ closeness-centrality-disconnected-pentagon-triangle
   O> crt 3 [ create-link-with turtle (((who - 4) mod 3) + 5)]
   O> ask turtle 5 [ create-link-with turtle 6 ]
   O> ask turtle 6 [ create-link-with turtle 7 ]
-  O> ask turtle 7 [ create-link-with turtle 5 ]  
+  O> ask turtle 7 [ create-link-with turtle 5 ]
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 0.67 0.67 0.67 0.67 1 1 1]
 
 ### betweenness-centrality
@@ -345,7 +345,7 @@ betweenness-centrality-simple-undirected
   O> ask turtle 1 [ create-link-with turtle 2 ]
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0]
 
-betweenness-centrality-disconnected-undirected  
+betweenness-centrality-disconnected-undirected
   extensions [ nw ]
   O> crt 6
   O> ask turtle 0 [ create-link-with turtle 1 ]
@@ -372,7 +372,7 @@ betweenness-centrality-connected-directed-triangles
   O> ask turtle 0 [ create-link-to turtle 3 ]
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [7 1 4 7 4 1]
 
-betweenness-centrality-bigger-connected-directed-graph    
+betweenness-centrality-bigger-connected-directed-graph
   extensions [ nw ]
   O> crt 6
   O> ask turtle 0 [ create-link-to turtle 4 ]
@@ -382,7 +382,7 @@ betweenness-centrality-bigger-connected-directed-graph
   O> ask turtle 2 [ create-link-to turtle 1 ]
   O> ask turtle 4 [ create-link-to turtle 3 ]
   O> ask turtle 4 [ create-link-to turtle 0 ]
-  O> ask turtle 4 [ create-link-to turtle 5 ]    
+  O> ask turtle 4 [ create-link-to turtle 5 ]
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 0 0 0 7 0]
 
 ### eigenvector-centrality
@@ -435,7 +435,7 @@ weighted-distance-one-unbreeded-undirected-link-using-thickness
 
 weighted-distance-one-unbreeded-directed-link-using-thickness
   extensions [nw]
-  O> crt 2 
+  O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 [ set thickness 0.5 ]]
   [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 => false
   [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 0.5
