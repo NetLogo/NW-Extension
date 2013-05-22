@@ -12,6 +12,20 @@
 # - non numeric weights
 # - negative weights
 
+### set-context tests
+
+distance-after-changes
+  extensions [nw]
+  O> crt 2
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  [ nw:distance-to turtle 1 ] of turtle 0 => 1
+  O> ask links [ die ]
+  [ nw:distance-to turtle 1 ] of turtle 0 => false
+  O> crt 1
+  O> ask turtle 0 [ create-link-with turtle 2 ]
+  O> ask turtle 2 [ create-link-with turtle 1 ]
+  [ nw:distance-to turtle 1 ] of turtle 0 => 2
+
 ### turtles-in-radius
 
 turtles-in-radius-negative-radius
