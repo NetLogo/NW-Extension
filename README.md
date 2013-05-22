@@ -8,7 +8,7 @@ This version of the extension is **not** pre-installed in NetLogo 5.0.3. To use 
 
 This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues?state=open), but it should not be used for production code. As matter of fact, a look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of developement.
 
-Also, be aware that the syntax of some primitives **will** change in future versions of the extension.  You will have to modify your code accordingly. 
+Also, be aware that the syntax of some primitives **will** change in future versions of the extension.  You will have to modify your code accordingly.
 
 The source code for the extension is currently hosted online at
 https://github.com/NetLogo/NW-Extension.
@@ -36,7 +36,7 @@ The first thing that one needs to understand in order to work with the network e
 
     breed [ bankers banker ]
     breed [ clients client ]
-    
+
     undirected-link-breed [ friendships friendship ]
     directed-link-breed [ accounts account ]
 
@@ -130,17 +130,17 @@ Note that if turtles and links are created or die, changes will **not** be refle
 
 #### turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius
 
-![turtle][turtle] `nw:turtles-in-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-radius` _radius_
 
-![turtle][turtle] `nw:turtles-in-out-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-out-radius` _radius_
 
-![turtle][turtle] `nw:turtles-in-in-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-in-radius` _radius_
 
 Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
 
 The `turtles-in-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
 
-##### Example: 
+##### Example:
 
     clear-all
     create-turtles 5
@@ -378,7 +378,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### generate-small-world
 `nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _clustering-exponent_ _is-toroidal_ _optional-command-block_
 
-Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
+Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model).
 
 The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
@@ -441,17 +441,17 @@ Saves the current network snapshot to _file-name_, as a text file, in the form o
 
 Here is, for example, a undirected ring network with four nodes:
 
-    0.00 1.00 0.00 1.00 
-    1.00 0.00 1.00 0.00 
-    0.00 1.00 0.00 1.00 
-    1.00 0.00 1.00 0.00 
+    0.00 1.00 0.00 1.00
+    1.00 0.00 1.00 0.00
+    0.00 1.00 0.00 1.00
+    1.00 0.00 1.00 0.00
 
 And here is the directed version:
 
-    0.00 1.00 0.00 0.00 
-    0.00 0.00 1.00 0.00 
-    0.00 0.00 0.00 1.00 
-    1.00 0.00 0.00 0.00 
+    0.00 1.00 0.00 0.00
+    0.00 0.00 1.00 0.00
+    0.00 0.00 0.00 1.00
+    1.00 0.00 0.00 0.00
 
 At the moment, `nw:save-matrix` does not support link weights. Every link is represented as a "1.00" in the connection matrix. This will change in a future version of the extension.
 
@@ -504,8 +504,8 @@ accounts-own [ amount ]
 
 to go
   clear-all
-  create-bankers 1 [ 
-    set bank-name "The Bank" 
+  create-bankers 1 [
+    set bank-name "The Bank"
   ]
   create-clients 1 [
     set hometown "Turtle City"
@@ -524,7 +524,7 @@ Will produce the following GraphML file:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <key id="PEN-MODE" for="node"/>
 <key id="YCOR" for="node"/>
