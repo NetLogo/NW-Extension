@@ -6,7 +6,6 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.control.Breaks.break
 import scala.util.control.Breaks.breakable
-
 import org.nlogo.agent.Agent
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
@@ -15,7 +14,6 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
 import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
-
 import edu.uci.ics.jung.{ algorithms => jungalg }
 
 trait Ranker {
@@ -42,10 +40,7 @@ trait Ranker {
 trait Algorithms {
   self: Graph =>
 
-  lazy private val dijkstraMemo: mutable.Map[String, RichDijkstra] = mutable.Map()
-
-  def dijkstraShortestPath =
-    dijkstraMemo.getOrElseUpdate("1.0", new RichDijkstra(_ => 1.0))
+  val dijkstraShortestPath = new RichDijkstra(_ => 1.0)
 
   def dijkstraShortestPath(variable: String) = {
     val weightFunction = (link: Link) => {
@@ -55,12 +50,11 @@ trait Algorithms {
         case e: Exception => throw new ExtensionException("Weight variable must be numeric.")
       }
     }
-    dijkstraMemo.getOrElseUpdate(variable, new RichDijkstra(weightFunction))
+    new RichDijkstra(weightFunction)
   }
 
   class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
     extends jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true) {
-
     def meanLinkPathLength: Option[Double] = {
       import scala.util.control.Breaks._
       var sum = 0.0
