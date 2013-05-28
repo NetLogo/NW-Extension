@@ -35,7 +35,7 @@ class PathTo(getGraphContext: api.World => GraphContext)
     val graph = getGraphContext(context.getAgent.world).asJungGraph
     api.LogoList.fromJava(
       graph
-        .dijkstraShortestPath
+        .unweightedDijkstraShortestPath
         .getPath(source, target))
   }
 }
@@ -54,7 +54,9 @@ class TurtlesOnPathTo(getGraphContext: api.World => GraphContext)
         Vector(source)
       else {
         val graph = getGraphContext(context.getAgent.world).asJungGraph
-        val linkPath = graph.dijkstraShortestPath.getPath(source, target)
+        val linkPath = graph
+          .unweightedDijkstraShortestPath
+          .getPath(source, target)
         Distance.linkPathToTurtlePath(source, linkPath)
       }
     api.LogoList.fromVector(path)
@@ -77,7 +79,9 @@ class TurtlesOnWeightedPathTo(getGraphContext: api.World => GraphContext)
       else {
         val graph = getGraphContext(context.getAgent.world).asJungGraph
         val weightVariable = args(1).getString.toUpperCase
-        val linkPath = graph.dijkstraShortestPath(weightVariable).getPath(source, target)
+        val linkPath = graph
+          .weightedDijkstraShortestPath(weightVariable)
+          .getPath(source, target)
         Distance.linkPathToTurtlePath(source, linkPath)
       }
     api.LogoList.fromVector(path)
@@ -97,7 +101,7 @@ class WeightedPathTo(getGraphContext: api.World => GraphContext)
     val graph = getGraphContext(context.getAgent.world).asJungGraph
     api.LogoList.fromJava(
       graph
-        .dijkstraShortestPath(weightVariable)
+        .weightedDijkstraShortestPath(weightVariable)
         .getPath(source, target))
   }
 }

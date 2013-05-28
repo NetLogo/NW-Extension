@@ -10,9 +10,8 @@ class MeanPathLength(getGraphContext: api.World => GraphContext)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    getGraphContext(context.getAgent.world).asJungGraph
-      .dijkstraShortestPath
-      .meanLinkPathLength
+    val g = getGraphContext(context.getAgent.world).asJungGraph
+    g.meanLinkPathLength(g.unweightedDijkstraShortestPath)
       .map(Double.box)
       .getOrElse(java.lang.Boolean.FALSE)
   }
@@ -24,9 +23,9 @@ class MeanWeightedPathLength(getGraphContext: api.World => GraphContext)
     Array(StringType),
     NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    getGraphContext(context.getAgent.world).asJungGraph
-      .dijkstraShortestPath(args(0).getString.toUpperCase)
-      .meanLinkPathLength
+    val weightVariable = args(0).getString.toUpperCase
+    val g = getGraphContext(context.getAgent.world).asJungGraph
+    g.meanLinkPathLength(g.weightedDijkstraShortestPath(weightVariable))
       .map(Double.box)
       .getOrElse(java.lang.Boolean.FALSE)
   }

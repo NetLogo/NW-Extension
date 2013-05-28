@@ -40,9 +40,9 @@ trait Ranker {
 trait Algorithms {
   self: Graph =>
 
-  val dijkstraShortestPath = new RichDijkstra(_ => 1.0)
+  val unweightedDijkstraShortestPath = new jungalg.shortestpath.DijkstraShortestPath(self, true)
 
-  def dijkstraShortestPath(variable: String) = {
+  def weightedDijkstraShortestPath(variable: String) = {
     val weightFunction = (link: Link) => {
       val value = link.getBreedOrLinkVariable(variable)
       try value.asInstanceOf[java.lang.Number]
@@ -50,41 +50,29 @@ trait Algorithms {
         case e: Exception => throw new ExtensionException("Weight variable must be numeric.")
       }
     }
-    new RichDijkstra(weightFunction)
+    new jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true)
   }
 
-  class RichDijkstra(weightFunction: Function1[Link, java.lang.Number])
-    extends jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true) {
-    def meanLinkPathLength: Option[Double] = {
-      import scala.util.control.Breaks._
-      var sum = 0.0
-      var n = 0
-      breakable {
-        for {
-          source <- gc.turtles
-          target <- gc.turtles
-          if target != source
-          distance = getDistance(source, target)
-        } {
-          if (distance == null) {
-            sum = Double.NaN
-            break
-          }
-          n += 1
-          sum += distance.doubleValue
+  def meanLinkPathLength(dijkstra: jungalg.shortestpath.DijkstraShortestPath[Turtle, Link]): Option[Double] = {
+    import scala.util.control.Breaks._
+    var sum = 0.0
+    var n = 0
+    breakable {
+      for {
+        source <- gc.turtles
+        target <- gc.turtles
+        if target != source
+        distance = dijkstra.getDistance(source, target)
+      } {
+        if (distance == null) {
+          sum = Double.NaN
+          break
         }
+        n += 1
+        sum += distance.doubleValue
       }
-      Option(sum / n).filterNot(_.isNaN)
     }
-
-    override def getPath(source: Turtle, target: Turtle) =
-      try super.getPath(source, target)
-      catch { case e: Exception => throw new ExtensionException(e) }
-
-    override def getDistance(source: Turtle, target: Turtle) = {
-      try super.getDistance(source, target)
-      catch { case e: Exception => throw new ExtensionException(e) }
-    }
+    Option(sum / n).filterNot(_.isNaN)
   }
 
   object BetweennessCentrality
