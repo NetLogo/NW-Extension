@@ -4,7 +4,7 @@ package org.nlogo.extensions.nw
 
 import scala.collection.JavaConverters._
 
-import org.nlogo.agent.TreeAgentSet
+import org.nlogo.agent
 import org.nlogo.api
 
 class NetworkExtension extends api.DefaultClassManager {
@@ -26,8 +26,8 @@ class NetworkExtension extends api.DefaultClassManager {
   def getGraphContext(world: api.World) =
     _graphContext.getOrElse {
       val gc = new GraphContext(
-        world.turtles.asInstanceOf[TreeAgentSet],
-        world.links.asInstanceOf[TreeAgentSet])
+        world.asInstanceOf[agent.World],
+        "TURTLES", "LINKS")
       _graphContext = Some(gc)
       gc
     }

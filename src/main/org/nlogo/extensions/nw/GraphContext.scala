@@ -8,39 +8,44 @@ import org.nlogo.agent.Turtle
 import org.nlogo.api.SimpleChangeEvent
 import org.nlogo.api.SimpleChangeEventPublisher
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+import org.nlogo.agent.World
+import org.nlogo.agent.AgentSet
 
 class GraphContext(
-  private val turtleSet: TreeAgentSet,
-  private val linkSet: TreeAgentSet) {
+  val world: World,
+  val turtleBreedName: String,
+  val linkBreedName: String) {
 
-  class AgentSetSub(agentSet: TreeAgentSet) extends SimpleChangeEventPublisher#Sub {
-    agentSet.simpleChangeEventPublisher.subscribe(this)
-    override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent) {
-      // If an agentset changes, get rid of our cached jung graphs.
-      // If we were ever to cache stuff in JGraphT graphs too, we'd
-      // have to do the same for them. NP 2013-05-22.
-      directedJungGraph = None
-      undirectedJungGraph = None
-    }
+  def turtleSet: AgentSet = turtleBreedName match {
+    case "TURTLES" => world.turtles
+    case name      => Option(world.getBreed(name)).getOrElse(world.noTurtles())
   }
-  val turtleSetChangeEventSub = new AgentSetSub(turtleSet)
-  val linkSetChangeEventSub = new AgentSetSub(linkSet)
+
+  def linkSet: AgentSet = linkBreedName match {
+    case "LINKS" => world.links
+    case name    => Option(world.getLinkBreed(name)).getOrElse(world.noLinks())
+  }
 
   def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   private var directedJungGraph: Option[jung.DirectedGraph] = None
   def asDirectedJungGraph: jung.DirectedGraph =
-    directedJungGraph.getOrElse {
-      val g = new jung.DirectedGraph(this)
-      directedJungGraph = Some(g)
-      g
-    }
+    directedJungGraph
+      .filter(_.valid)
+      .getOrElse {
+        val g = new jung.DirectedGraph(this)
+        directedJungGraph = Some(g)
+        g
+      }
   private var undirectedJungGraph: Option[jung.UndirectedGraph] = None
   def asUndirectedJungGraph: jung.UndirectedGraph =
-    undirectedJungGraph.getOrElse {
-      val g = new jung.UndirectedGraph(this)
-      undirectedJungGraph = Some(g)
-      g
-    }
+    undirectedJungGraph
+      .filter(_.valid)
+      .getOrElse {
+        val g = new jung.UndirectedGraph(this)
+        undirectedJungGraph = Some(g)
+        g
+      }
+
   def asJGraphTGraph: jgrapht.Graph = if (isDirected) asDirectedJGraphTGraph else asUndirectedJGraphTGraph
   lazy val asDirectedJGraphTGraph = new jgrapht.DirectedGraph(this)
   lazy val asUndirectedJGraphTGraph = new jgrapht.UndirectedGraph(this)
@@ -52,7 +57,6 @@ class GraphContext(
    */
   def isDirected = linkSet.isDirected
 
-  val world = linkSet.world
   private val linkManager = world.linkManager
 
   def isValidTurtle(turtle: Turtle) =
