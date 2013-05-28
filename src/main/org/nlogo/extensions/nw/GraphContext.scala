@@ -26,6 +26,10 @@ class GraphContext(
     case name    => Option(world.getLinkBreed(name)).getOrElse(world.noLinks())
   }
 
+  override def toString() =
+    "Turtle breed: " + turtleBreedName + "\n" + turtleSet + "\n" +
+      "Link breed: " + linkBreedName + "\n" + linkSet
+
   def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   private var directedJungGraph: Option[jung.DirectedGraph] = None
   def asDirectedJungGraph: jung.DirectedGraph =
