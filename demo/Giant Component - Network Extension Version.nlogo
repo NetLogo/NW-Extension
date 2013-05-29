@@ -21,7 +21,6 @@ end
 
 to make-turtles
   crt num-nodes
-  nw:set-snapshot turtles links ;; build a first snapshot of the network
   layout-circle turtles max-pxcor - 1
 end
 
@@ -55,13 +54,12 @@ to-report measure
 end
 
 to highlight-giant-component
-  nw:set-snapshot turtles links
   ; nw:weak-component-clusters gives you a list of all the components in the network,
-  ; each component being itself represented as a list. The get the biggest component
+  ; each component being represented as an agentset. The get the biggest component
   ; (this "giant" one), we sort them in reverse size order and take the first one.
-  let giant-component first sort-by [length ?1 > length ?2] nw:weak-component-clusters
-  if length giant-component > giant-component-size [
-    set giant-component-size length giant-component
+  let giant-component first sort-by [ count ?1 > count ?2 ] nw:weak-component-clusters
+  if count giant-component > giant-component-size [
+    set giant-component-size count giant-component
     ask turtles [ set color gray + 2 ]
     ask turtle-set giant-component [ set color red ]
   ]
@@ -84,8 +82,6 @@ to add-edge
     ]
   ]
   ask node1 [ create-link-with node2 ]
-  nw:set-snapshot turtles links ;; always update the snapshot after an edge is created
-
 end
 
 to-report choose-node [ candidates ]
@@ -700,7 +696,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.1
+NetLogo 5.0.5
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

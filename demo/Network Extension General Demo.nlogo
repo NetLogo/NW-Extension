@@ -67,16 +67,9 @@ end
 ;; Clusterers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Clusters the graph according to turtle position
-to k-means
-  nw:set-snapshot turtles get-links-to-use
-  let clusters nw:k-means-clusters nb-clusters 1000 0.001
-  if length clusters > 0 [ color-clusters clusters ]
-end   
-
 ;; Colorizes each node according to which component it is part of
 to weak-component
-  nw:set-snapshot turtles get-links-to-use
+  nw:set-context turtles get-links-to-use
   color-clusters nw:weak-component-clusters
 end
 
@@ -96,7 +89,7 @@ to highlight-bicomponents
   ]
   
   if mouse-inside? [ 
-    nw:set-snapshot turtles get-links-to-use
+    nw:set-context turtles get-links-to-use
     highlight-clusters nw:bicomponent-clusters
   ]
   display
@@ -121,7 +114,7 @@ to highlight-maximal-cliques
   ]
 
   if mouse-inside? [ 
-    nw:set-snapshot turtles unlinks
+    nw:set-context turtles unlinks
     highlight-clusters nw:maximal-cliques
   ]
   display
@@ -133,7 +126,7 @@ to find-biggest-cliques
     user-message "Maximal cliques only work with undirected links."
     stop
   ]
-  nw:set-snapshot turtles unlinks
+  nw:set-context turtles unlinks
   color-clusters nw:biggest-maximal-cliques
 end
 
@@ -199,7 +192,7 @@ end
 ;; Takes a centrality measure as a reporter task, runs it for all nodes
 ;; and set labels, sizes and colors of turtles to illustrate result
 to centrality [ measure ]
-  nw:set-snapshot turtles get-links-to-use
+  nw:set-context turtles get-links-to-use
   ask turtles [
     let res (runresult measure) ;; run the task for the turtle
     ifelse is-number? res [
@@ -287,7 +280,7 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to save-matrix
-  nw:set-snapshot turtles get-links-to-use
+  nw:set-context turtles get-links-to-use
   nw:save-matrix "matrix.txt"
 end
 
@@ -296,7 +289,7 @@ to load-matrix
 end
 
 to save-graphml
-  nw:set-snapshot turtles get-links-to-use
+  nw:set-context turtles get-links-to-use
   nw:save-graphml "graph.xml"
 end
 
@@ -306,7 +299,7 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to-report mean-path-length
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   report nw:mean-path-length
 end
 
@@ -368,23 +361,6 @@ Clusterers & Cliques
 0.0
 1
 
-BUTTON
-245
-90
-315
-123
-NIL
-k-means
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 SLIDER
 10
 85
@@ -395,21 +371,6 @@ nb-nodes
 0
 1000
 60
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-315
-90
-425
-123
-nb-clusters
-nb-clusters
-2
-14
-5
 1
 1
 NIL
@@ -1377,7 +1338,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 5.0.5
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

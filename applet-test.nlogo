@@ -1,6 +1,8 @@
 extensions [ nw ]
 globals [ glob1 ]
 
+breed [ mice mouse ]
+
 directed-link-breed [ directed-links directed-link ]
 directed-links-own [ lvar ]
 
@@ -74,7 +76,7 @@ end
 to turtles-in-radius-zero-radius
   clear-all
   crt 5
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show remove-duplicates [count nw:turtles-in-radius 0] of turtles ;=> [1]
 end
 
@@ -82,7 +84,7 @@ to turtles-in-radius-two-circles
   clear-all
   crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
   crt 8 [ create-link-with turtle ((who - 8 + 1) mod 8 + 8) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show remove-duplicates [count nw:turtles-in-radius 0] of turtles ;=> [1]
   output-show remove-duplicates [count nw:turtles-in-radius 1 ] of turtles ;=> [3]
   output-show remove-duplicates [count nw:turtles-in-radius 2 ] of turtles ;=> [5]
@@ -94,8 +96,8 @@ end
 to in-link-radius-source-set-filtering
   clear-all
   crt 8 [ create-links-with other turtles ]
-  set glob1 turtles with [who mod 2 = 0]
-  nw:set-snapshot glob1 links
+  ask turtles with [who mod 2 = 0] [ set breed mice ]
+  nw:set-context mice links
   output-show sort [who] of [nw:turtles-in-radius 10] of turtle 0 ;=> [0 2 4 6]
 end
 
@@ -103,7 +105,7 @@ to turtles-in-out-radius
   clear-all
   crt 2
   ask turtle 0 [ create-link-to turtle 1 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 0 ;=> [0 1]
   output-show sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 1 ;=> [1]
 end
@@ -112,7 +114,7 @@ to turtles-in-in-radius
   clear-all
   crt 2
   ask turtle 0 [ create-link-to turtle 1 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 0 ;=> [0]
   output-show sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 1 ;=> [0 1]
 end
@@ -120,14 +122,14 @@ end
 to distance-to-self
   clear-all
   crt 1
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:distance-to turtle 0 ] of turtle 0 ;=> 0
 end
 
 to distance-two-turtles-no-links
   clear-all
   crt 2
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:distance-to turtle 0 ] of turtle 1 ;=> false
   output-show [ nw:distance-to turtle 1 ] of turtle 0 ;=> false
 end
@@ -135,7 +137,7 @@ end
 to distance-one-undirected-link
   clear-all
   crt 2 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:distance-to turtle 0 ] of turtle 1 ;=> 1
   output-show [ nw:distance-to turtle 1 ] of turtle 0 ;=> 1
 end
@@ -144,7 +146,7 @@ to distance-one-directed-link
   clear-all
   crt 2
   ask turtle 0 [ create-link-to turtle 1 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:distance-to turtle 0 ] of turtle 1 ;=> false
   output-show [ nw:distance-to turtle 1 ] of turtle 0 ;=> 1
 end
@@ -154,14 +156,14 @@ to-report distances report [ nw:distance-to myself ] of link-neighbors end
 to distance-always-one-in-fully-connected-network
   clear-all
   crt 10 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show remove-duplicates reduce sentence [distances] of turtles ;=> [1]
 end
 
 to distance-along-chain
   clear-all
   crt 5 [ if who < 4 [ create-link-with turtle (who + 1) ] ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [ nw:distance-to turtle 0 ] of turtles ;=> [0 1 2 3 4]
   output-show sort [ nw:distance-to turtle 4 ] of turtles ;=> [0 1 2 3 4]
   output-show sort remove-duplicates [ nw:distance-to turtle 2 ] of turtles ;=> [0 1 2]
@@ -170,7 +172,7 @@ end
 to distance-around-circle
   clear-all
   crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [ nw:distance-to turtle 0 ] of turtles ;=> [0 1 1 2 2 3 3 4]
 end
 
@@ -178,7 +180,7 @@ to distance-around-two-circles
   clear-all
   crt 8 [ create-link-with turtle ((who + 1) mod 8) ]
   crt 8 [ create-link-with turtle ((who - 8 + 1) mod 8 + 8) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [ nw:distance-to turtle 0 ] of turtles with [who < 8] ;=> [0 1 1 2 2 3 3 4]
   output-show sort [ nw:distance-to turtle 8 ] of turtles with [who >= 8] ;=> [0 1 1 2 2 3 3 4]
   output-show remove-duplicates [ nw:distance-to turtle 8 ] of turtles with [who < 8] ;=> [false]
@@ -188,14 +190,14 @@ end
 to path-to-self
   clear-all
   crt 1
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:path-to turtle 0 ] of turtle 0 ;=> []
 end
 
 to path-to-no-path
   clear-all
   crt 2
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:path-to turtle 1 ] of turtle 0 ;=> []
   output-show [ nw:path-to turtle 0 ] of turtle 1 ;=> []
 end
@@ -203,7 +205,7 @@ end
 to path-to-undirected-pair
   clear-all
   crt 2 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show (word [ nw:path-to turtle 1 ] of turtle 0) ;=> "[(link 0 1)]"
   output-show (word [ nw:path-to turtle 0 ] of turtle 1) ;=> "[(link 0 1)]"
 end
@@ -213,7 +215,7 @@ to path-to-a-b-c-undirected
   crt 3
   ask turtle 0 [ create-link-with turtle 1 ]
   ask turtle 1 [ create-link-with turtle 2 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show (word [ nw:path-to turtle 2 ] of turtle 0) ;=> "[(link 0 1) (link 1 2)]"
   output-show (word [ nw:path-to turtle 0 ] of turtle 2) ;=> "[(link 1 2) (link 0 1)]"
 end
@@ -223,7 +225,7 @@ to path-to-a-b-c-directed
   crt 3
   ask turtle 0 [ create-link-to turtle 1 ]
   ask turtle 1 [ create-link-to turtle 2 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show (word [ nw:path-to turtle 2 ] of turtle 0) ;=> "[(link 0 1) (link 1 2)]"
   output-show (word [ nw:path-to turtle 0 ] of turtle 2) ;=> "[]"
 end
@@ -231,28 +233,28 @@ end
 to path-to-fully-connected
   clear-all
   crt 6 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show (word sort map [(word ?)] [ nw:path-to turtle 0 ] of turtles) ;=> "[[(link 0 1)] [(link 0 2)] [(link 0 3)] [(link 0 4)] [(link 0 5)] []]"
 end
 
 to path-to-on-a-circle
   clear-all
   crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [ length nw:path-to turtle 0 ] of turtles ;=> [0 1 1 2 2 3]
 end
 
 to turtles-on-path-to-self
   clear-all
   crt 1
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 0 ;=> [0]
 end
 
 to turtles-on-path-to-no-path
   clear-all
   crt 2
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 ;=> []
   output-show map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 ;=> []
 end
@@ -260,7 +262,7 @@ end
 to turtles-on-path-to-undirected-pair
   clear-all
   crt 2 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 ;=> [0 1]
   output-show map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 ;=> [1 0]
 end
@@ -268,95 +270,90 @@ end
 to turtles-on-path-to-fully-connected
   clear-all
   crt 6 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [length nw:turtles-on-path-to turtle 0 ] of turtles ;=> [1 2 2 2 2 2]
 end
 
 to turtles-on-path-to-on-a-circle
   clear-all
   crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show sort [length nw:turtles-on-path-to turtle 0 ] of turtles ;=> [1 2 2 3 3 4]
 end
 
 to mean-path-length-empty
   clear-all
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> false
 end
 
 to mean-path-length-one-turtle
   clear-all
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> false
 end
 
 to mean-path-length-two-unconnected-turtles
   clear-all
   crt 2
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> false
 end
 
 to mean-path-length-two-connected-turtles
   clear-all
   crt 2 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> 1
 end
 
 to mean-path-length-fully-connected
   clear-all
   crt 10 [ create-links-with other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> 1
 end
 
 to mean-path-length-on-a-pentagon
   clear-all
   crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> 1.5
 end
 
-to mean-path-length-pairs-of-turtles-on-a-pentagon
+to mean-path-length-pairs-of-turtles-on-a-pentagon  
   clear-all
+  nw:set-context mice links
   crt 5 [ create-link-with turtle ((who + 1) mod 5) ]
-  nw:set-snapshot (turtle-set turtle 0 turtle 1) links
+  ask (turtle-set turtle 0 turtle 1) [ set breed mice ]  
   output-show nw:mean-path-length ;=> 1
-  nw:set-snapshot (turtle-set turtle 1 turtle 0) links
-  output-show nw:mean-path-length ;=> 1
-  nw:set-snapshot (turtle-set turtle 0 turtle 2) links
-  output-show nw:mean-path-length ;=> false
-  nw:set-snapshot (turtle-set turtle 2 turtle 0) links
-  output-show nw:mean-path-length ;=> false
 end
 
 to mean-path-length-directed-two-half-connected-turtles
   clear-all
   crt 2
   ask turtle 0 [ create-links-to other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> false
 end
 
 to mean-path-length-directed-two-connected-turtles
   clear-all
   crt 2 [ create-links-to other turtles ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show nw:mean-path-length ;=> 1
 end
 
 to closeness-centrality-empty
   clear-all
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:closeness-centrality ] of turtles ;=> []
 end
 
 to closeness-centrality-single-isolate
   clear-all
   crt 1
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:closeness-centrality ] of turtle 0 ;=> 0
 end
 
@@ -365,7 +362,7 @@ to closeness-centrality-simple-undirected
   crt 3
   ask turtle 0 [ create-link-with turtle 1 ]
   ask turtle 1 [ create-link-with turtle 2 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles ;=> [0.67 1 0.67]
 end
 
@@ -376,7 +373,7 @@ to closeness-centrality-simple-directed
   ask turtle 1 [ create-directed-link-to turtle 0 ]
   ask turtle 1 [ create-directed-link-to turtle 2 ]
   ask turtle 2 [ create-directed-link-to turtle 1 ]
-  nw:set-snapshot turtles directed-links
+  nw:set-context turtles directed-links
   output-show map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles ;=> [0.67 1 0.67]
 end
 
@@ -391,7 +388,7 @@ to closeness-centrality-bigger-directed
   ask turtle 4 [ create-directed-link-to turtle 3 ]
   ask turtle 5 [ create-directed-link-to turtle 0 ]
   ask turtle 5 [ create-directed-link-to turtle 4 ]
-  nw:set-snapshot turtles directed-links
+  nw:set-context turtles directed-links
   output-show map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles ;=> [0.4 0.5 0.625 0 1 0.667] 
 end
 
@@ -402,20 +399,20 @@ to closeness-centrality-disconnected-pentagon-triangle
   ask turtle 5 [ create-link-with turtle 6 ]
   ask turtle 6 [ create-link-with turtle 7 ]
   ask turtle 7 [ create-link-with turtle 5 ]  
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles ;=> [0.67 0.67 0.67 0.67 0.67 1 1 1]
 end
 
 to betweenness-centrality-empty
   clear-all
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:betweenness-centrality ] of turtles ;=> []
 end
 
 to betweenness-centrality-single-isolate
   clear-all
   crt 1
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:betweenness-centrality ] of turtle 0 ;=> 0
 end
 
@@ -424,7 +421,7 @@ to betweenness-centrality-simple-undirected
   crt 3
   ask turtle 0 [ create-link-with turtle 1 ]
   ask turtle 1 [ create-link-with turtle 2 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ nw:betweenness-centrality ] of ? ] sort turtles ;=> [0 1 0]
 end
 
@@ -435,14 +432,14 @@ to betweenness-centrality-disconnected-undirected
   ask turtle 1 [ create-link-with turtle 2 ]
   ask turtle 3 [ create-link-with turtle 4 ]
   ask turtle 4 [ create-link-with turtle 5 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ nw:betweenness-centrality ] of ? ] sort turtles ;=> [0 1 0 0 1 0]
 end
 
 to betweenness-centrality-directed-triangle
   clear-all
   crt 3 [ create-link-to turtle ((who + 1) mod 3) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ nw:betweenness-centrality ] of ? ] sort turtles ;=> [1 1 1]
 end
 
@@ -450,7 +447,7 @@ to betweenness-centrality-disconnected-directed-triangles
   clear-all
   crt 3 [ create-link-to turtle ((who + 1) mod 3) ]
   crt 3 [ create-link-to turtle (((who - 2) mod 3) + 3) ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ nw:betweenness-centrality ] of ? ] sort turtles ;=> [1 1 1 1 1 1]
 end
 
@@ -459,7 +456,7 @@ to betweenness-centrality-connected-directed-triangles
   crt 3 [ create-link-to turtle ((who + 1) mod 3) ]
   crt 3 [ create-link-to turtle (((who - 2) mod 3) + 3) ]
   ask turtle 0 [ create-link-to turtle 3 ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ nw:betweenness-centrality ] of ? ] sort turtles ;=> [7 1 4 7 4 1]
 end
 
@@ -474,20 +471,20 @@ to betweenness-centrality-bigger-connected-directed-graph
   ask turtle 4 [ create-link-to turtle 3 ]
   ask turtle 4 [ create-link-to turtle 0 ]
   ask turtle 4 [ create-link-to turtle 5 ]    
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show map [ [ nw:betweenness-centrality ] of ? ] sort turtles ;=> [0 0 0 0 7 0]
 end
 
 to eigenvector-centrality-empty
   clear-all
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:eigenvector-centrality ] of turtles ;=> []
 end
 
 to eigenvector-centrality-single-isolate
   clear-all
   crt 1
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:eigenvector-centrality ] of turtle 0 ;=> 1
 end
 
@@ -495,7 +492,7 @@ to weighted-distance-to-between-two-turtles
   clear-all
   crt 2
   ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
-  nw:set-snapshot turtles undirected-links
+  nw:set-context turtles undirected-links
   output-show [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 ;=> 0.5
 end
 
@@ -503,21 +500,21 @@ to weighted-distance-to-variable-name-case-should-not-matter
   clear-all
   crt 2
   ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
-  nw:set-snapshot turtles undirected-links
+  nw:set-context turtles undirected-links
   output-show [ nw:weighted-distance-to turtle 1 "WEIGHT" ] of turtle 0 ;=> 0.5
 end
 
 to weighted-distance-to-self
   clear-all
   crt 1
-  nw:set-snapshot turtles undirected-links
+  nw:set-context turtles undirected-links
   output-show [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 0 ;=> 0
 end
 
 to weighted-distance-two-turtles-no-links
   clear-all
   crt 2
-  nw:set-snapshot turtles undirected-links
+  nw:set-context turtles undirected-links
   output-show [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 1 ;=> false
   output-show [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 ;=> false
 end
@@ -525,7 +522,7 @@ end
 to weighted-distance-one-unbreeded-undirected-link-using-thickness
   clear-all
   crt 2 [ create-links-with other turtles [ set thickness 0.5 ]]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 ;=> 0.5
   output-show [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 ;=> 0.5
 end
@@ -534,7 +531,7 @@ to weighted-distance-one-unbreeded-directed-link-using-thickness
   clear-all
   crt 2 
   ask turtle 0 [ create-link-to turtle 1 [ set thickness 0.5 ]]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 ;=> false
   output-show [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 ;=> 0.5
 end
@@ -542,14 +539,14 @@ end
 to weighted-path-to-self
   clear-all
   crt 1
-  nw:set-snapshot turtles undirected-links
+  nw:set-context turtles undirected-links
   output-show [ nw:weighted-path-to turtle 0 "weight" ] of turtle 0 ;=> []
 end
 
 to weighted-path-to-no-path
   clear-all
   crt 2
-  nw:set-snapshot turtles undirected-links
+  nw:set-context turtles undirected-links
   output-show [ nw:weighted-path-to turtle 1 "weight" ] of turtle 0 ;=> []
   output-show [ nw:weighted-path-to turtle 0 "weight" ] of turtle 1 ;=> []
 end
@@ -557,7 +554,7 @@ end
 to weighted-path-to-undirected-pair
   clear-all
   crt 2 [ create-links-with other turtles [ set thickness 1 ]]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   output-show (word [ nw:weighted-path-to turtle 1 "thickness" ] of turtle 0) ;=> "[(link 0 1)]"
   output-show (word [ nw:weighted-path-to turtle 0 "thickness" ] of turtle 1) ;=> "[(link 0 1)]"
 end
@@ -956,7 +953,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.5
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

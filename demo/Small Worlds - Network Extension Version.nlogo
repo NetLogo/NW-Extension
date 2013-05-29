@@ -193,8 +193,6 @@ end
 ;; (In the disconnected case, the average path length does not make sense)
 to-report do-calculations
   
-  nw:set-snapshot turtles links
-  
   ;; find the path lengths in the network
   ask turtles [
     let distances remove false [ nw:distance-to myself ] of other turtles
@@ -385,12 +383,12 @@ SLIDER
 84
 281
 261
-315
+314
 rewiring-probability
 rewiring-probability
 0
 1
-0.94
+0.3
 0.01
 1
 NIL
@@ -504,7 +502,7 @@ false
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:betweenness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
+"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nlet ys sort [ nw:betweenness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
 
 PLOT
 810
@@ -522,7 +520,7 @@ true
 false
 "" ""
 PENS
-"default" 0.05 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:closeness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
+"default" 0.05 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nlet ys sort [ nw:closeness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
 
 PLOT
 810
@@ -540,7 +538,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:eigenvector-centrality ] of turtles\nifelse not empty? ys [\n  let y-min first ys\n  let y-max last ys\n  if y-max > y-min [\n    set-plot-pen-interval (y-max - y-min) / 10\n    set-plot-x-range y-min y-max\n    histogram ys\n  ]\n]\n[\n  clear-plot\n]"
+"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nlet ys sort [ nw:eigenvector-centrality ] of turtles\nifelse not empty? ys [\n  let y-min first ys\n  let y-max last ys\n  if y-max > y-min [\n    set-plot-pen-interval (y-max - y-min) / 10\n    set-plot-x-range y-min y-max\n    histogram ys\n  ]\n]\n[\n  clear-plot\n]"
 
 MONITOR
 940
@@ -971,7 +969,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.5
 @#$#@#$#@
 setup
 repeat 5 [rewire-one]
