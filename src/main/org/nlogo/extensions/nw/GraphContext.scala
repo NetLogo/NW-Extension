@@ -61,7 +61,7 @@ class GraphContext(
    */
   def isDirected = linkSet.isDirected
 
-  private val linkManager = world.linkManager
+  val linkManager = world.linkManager
 
   def isValidTurtle(turtle: Turtle) =
     turtle.getBreed eq turtleSet

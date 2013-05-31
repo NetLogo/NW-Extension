@@ -23,46 +23,6 @@ object Distance {
       }
 }
 
-class PathTo(getGraphContext: api.World => GraphContext)
-  extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(
-    Array(TurtleType),
-    ListType,
-    "-T--")
-  override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    val source = context.getAgent.asInstanceOf[agent.Turtle]
-    val target = args(0).getAgent.asInstanceOf[agent.Turtle]
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
-    api.LogoList.fromJava(
-      graph
-        .unweightedDijkstraShortestPath
-        .getPath(source, target))
-  }
-}
-
-class TurtlesOnPathTo(getGraphContext: api.World => GraphContext)
-  extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(
-    Array(TurtleType),
-    ListType,
-    "-T--")
-  override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    val source = context.getAgent.asInstanceOf[agent.Turtle]
-    val target = args(0).getAgent.asInstanceOf[agent.Turtle]
-    val path =
-      if (source == target)
-        Vector(source)
-      else {
-        val graph = getGraphContext(context.getAgent.world).asJungGraph
-        val linkPath = graph
-          .unweightedDijkstraShortestPath
-          .getPath(source, target)
-        Distance.linkPathToTurtlePath(source, linkPath)
-      }
-    api.LogoList.fromVector(path)
-  }
-}
-
 class TurtlesOnWeightedPathTo(getGraphContext: api.World => GraphContext)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(

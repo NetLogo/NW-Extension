@@ -8,21 +8,6 @@ import org.nlogo.api.ScalaConversions.toLogoObject
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 
-class DistanceTo(getGraphContext: api.World => GraphContext)
-  extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(
-    Array(TurtleType),
-    NumberType | BooleanType,
-    "-T--")
-  override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    val source = context.getAgent.asInstanceOf[agent.Turtle]
-    val target = args(0).getAgent.asInstanceOf[agent.Turtle]
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
-    val distance = Option(graph.unweightedDijkstraShortestPath.getDistance(source, target))
-    toLogoObject(distance.getOrElse(false))
-  }
-}
-
 class WeightedDistanceTo(getGraphContext: api.World => GraphContext)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(

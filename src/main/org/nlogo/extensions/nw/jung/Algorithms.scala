@@ -3,17 +3,15 @@
 package org.nlogo.extensions.nw.jung
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
-import scala.util.control.Breaks.break
-import scala.util.control.Breaks.breakable
+
 import org.nlogo.agent.Agent
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
 import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
-import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
+
 import edu.uci.ics.jung.{ algorithms => jungalg }
 
 trait Ranker {
@@ -40,8 +38,6 @@ trait Ranker {
 trait Algorithms {
   self: Graph =>
 
-  val unweightedDijkstraShortestPath = new jungalg.shortestpath.DijkstraShortestPath(self, true)
-
   def weightedDijkstraShortestPath(variable: String) = {
     val weightFunction = (link: Link) => {
       val value = link.getBreedOrLinkVariable(variable)
@@ -51,28 +47,6 @@ trait Algorithms {
       }
     }
     new jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true)
-  }
-
-  def meanLinkPathLength(dijkstra: jungalg.shortestpath.DijkstraShortestPath[Turtle, Link]): Option[Double] = {
-    import scala.util.control.Breaks._
-    var sum = 0.0
-    var n = 0
-    breakable {
-      for {
-        source <- gc.turtles
-        target <- gc.turtles
-        if target != source
-        distance = dijkstra.getDistance(source, target)
-      } {
-        if (distance == null) {
-          sum = Double.NaN
-          break
-        }
-        n += 1
-        sum += distance.doubleValue
-      }
-    }
-    Option(sum / n).filterNot(_.isNaN)
   }
 
   object BetweennessCentrality
