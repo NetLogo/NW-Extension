@@ -210,6 +210,13 @@ turtles-on-path-to-undirected-pair
   map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
   map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => [1 0]
 
+turtles-on-path-to-directed-pair
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
+  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => []
+
 turtles-on-path-to-fully-connected
   extensions [ nw ]
   O> crt 6 [ create-links-with other turtles ]
