@@ -35,6 +35,27 @@ closeness-after-changes
   O> ask turtle 1 [ create-link-with turtle 2 ]
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
 
+default-context-with-undir-links-betweenness
+  extensions [nw]
+  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  [ nw:betweenness-centrality ] of turtles => [0 0]
+
+undir-context-with-undir-links-betweenness
+  extensions [nw]
+  O> nw:set-context turtles undirected-links
+  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  [ nw:betweenness-centrality ] of turtles => [0 0]
+
+default-context-with-undir-links-closeness
+  extensions [nw]
+  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  [ nw:closeness-centrality ] of turtles => [1 1]
+
+default-context-with-undir-links-distance
+  extensions [nw]
+  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  [ nw:distance-to turtle 1 ] of turtle 0 => 1
+
 after-world-resize
   extensions [ nw ]
   O> crt 2
