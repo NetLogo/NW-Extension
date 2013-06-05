@@ -32,6 +32,9 @@ class NetworkExtension extends api.DefaultClassManager {
       gc
     }
 
+  override def clearAll() { _graphContext = None }
+  override def unload(em: api.ExtensionManager) { _graphContext = None }
+
   override def load(primManager: api.PrimitiveManager) {
 
     val add = primManager.addPrimitive _
