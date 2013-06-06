@@ -18,12 +18,16 @@ class GraphContext(
 
   def turtleSet: AgentSet = turtleBreedName match {
     case "TURTLES" => world.turtles
-    case name      => Option(world.getBreed(name)).getOrElse(world.noTurtles())
+    case name => Option(world.getBreed(name)).getOrElse {
+      throw new IllegalArgumentException("Invalid turtle breed name: " + name)
+    }
   }
 
   def linkSet: AgentSet = linkBreedName match {
     case "LINKS" => world.links
-    case name    => Option(world.getLinkBreed(name)).getOrElse(world.noLinks())
+    case name => Option(world.getLinkBreed(name)).getOrElse {
+      throw new IllegalArgumentException("Invalid link breed name: " + name)
+    }
   }
 
   override def toString() =
