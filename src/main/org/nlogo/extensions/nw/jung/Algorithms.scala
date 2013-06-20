@@ -14,27 +14,6 @@ import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
 
 import edu.uci.ics.jung.{ algorithms => jungalg }
 
-trait Ranker {
-  self: jungalg.importance.AbstractRanker[Turtle, Link] =>
-
-  private def toScoreMap[A <: Agent](m: java.util.Map[A, Number]) =
-    m.asScala.map(x => x._1 -> x._2.doubleValue).toMap
-  lazy val turtleScores = toScoreMap(getVertexRankScores(getRankScoreKey))
-  lazy val linkScores = toScoreMap(getEdgeRankScores(getRankScoreKey))
-
-  setRemoveRankScoresOnFinalize(false)
-  evaluate
-
-  private def getFrom(agent: Agent, tScores: Map[Turtle, Double], lScores: Map[Link, Double]) =
-    (agent match {
-      case t: Turtle => tScores.get(t)
-      case l: Link   => lScores.get(l)
-      case _         => None
-    }).getOrElse(throw new ExtensionException(agent + " is not a member of this result set"))
-
-  def get(agent: Agent) = getFrom(agent, turtleScores, linkScores)
-}
-
 trait Algorithms {
   self: Graph =>
 
@@ -49,9 +28,25 @@ trait Algorithms {
     new jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true)
   }
 
-  object BetweennessCentrality
-    extends jungalg.importance.BetweennessCentrality(this)
-    with Ranker
+  object BetweennessCentrality extends jungalg.importance.BetweennessCentrality(self) {
+
+    private def toScoreMap[A <: Agent](m: java.util.Map[A, Number]) =
+      m.asScala.map(x => x._1 -> x._2.doubleValue).toMap
+    lazy val turtleScores = toScoreMap(getVertexRankScores(getRankScoreKey))
+    lazy val linkScores = toScoreMap(getEdgeRankScores(getRankScoreKey))
+
+    setRemoveRankScoresOnFinalize(false)
+    evaluate()
+
+    private def getFrom(agent: Agent, tScores: Map[Turtle, Double], lScores: Map[Link, Double]) =
+      (agent match {
+        case t: Turtle => tScores.get(t)
+        case l: Link   => lScores.get(l)
+        case _         => None
+      }).getOrElse(throw new ExtensionException(agent + " is not a member of this result set"))
+
+    def get(agent: Agent) = getFrom(agent, turtleScores, linkScores)
+  }
 
   object EigenvectorCentrality extends jungalg.scoring.PageRank(this, 0.0) {
     evaluate()
