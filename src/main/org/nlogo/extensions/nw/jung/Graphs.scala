@@ -11,12 +11,10 @@ import org.nlogo.extensions.nw.GraphContext
 import edu.uci.ics
 import edu.uci.ics.jung.graph.util.EdgeType
 import edu.uci.ics.jung.graph.util.Pair
-import org.nlogo.extensions.nw.InvalidatableGraph
 
 trait Graph
   extends ics.jung.graph.AbstractGraph[Turtle, Link]
-  with Algorithms
-  with InvalidatableGraph {
+  with Algorithms {
 
   val gc: GraphContext
 

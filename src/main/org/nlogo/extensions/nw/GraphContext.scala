@@ -16,18 +16,48 @@ class GraphContext(
   val turtleBreedName: String,
   val linkBreedName: String) {
 
-  def turtleSet: AgentSet = turtleBreedName match {
-    case "TURTLES" => world.turtles
-    case name => Option(world.getBreed(name)).getOrElse {
-      throw new IllegalArgumentException("Invalid turtle breed name: " + name)
+  private var _turtleSet: Option[AgentSet] = None
+  private var turtleSetChangeSubscriber: Option[AgentSetChangeSubscriber] = None
+  private var _linkSet: Option[AgentSet] = None
+  private var linkSetChangeSubscriber: Option[AgentSetChangeSubscriber] = None
+
+  class AgentSetChangeSubscriber(agentSet: TreeAgentSet)
+    extends SimpleChangeEventPublisher#Sub {
+    agentSet.simpleChangeEventPublisher.subscribe(this)
+    override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent) {
+      _turtleSet = None
+      _linkSet = None
+      turtleSetChangeSubscriber = None
+      linkSetChangeSubscriber = None
+      directedJungGraph = None
+      undirectedJungGraph = None
     }
   }
 
-  def linkSet: AgentSet = linkBreedName match {
-    case "LINKS" => world.links
-    case name => Option(world.getLinkBreed(name)).getOrElse {
-      throw new IllegalArgumentException("Invalid link breed name: " + name)
+  def turtleSet: AgentSet = _turtleSet.getOrElse {
+    val agentSet = turtleBreedName match {
+      case "TURTLES" => world.turtles
+      case name => Option(world.getBreed(name)).getOrElse {
+        throw new IllegalArgumentException("Invalid turtle breed name: " + name)
+      }
     }
+    turtleSetChangeSubscriber =
+      Some(new AgentSetChangeSubscriber(agentSet.asInstanceOf[TreeAgentSet]))
+    _turtleSet = Some(agentSet)
+    agentSet
+  }
+
+  def linkSet: AgentSet = _linkSet.getOrElse {
+    val agentSet = linkBreedName match {
+      case "LINKS" => world.links
+      case name => Option(world.getLinkBreed(name)).getOrElse {
+        throw new IllegalArgumentException("Invalid link breed name: " + name)
+      }
+    }
+    linkSetChangeSubscriber =
+      Some(new AgentSetChangeSubscriber(agentSet.asInstanceOf[TreeAgentSet]))
+    _linkSet = Some(agentSet)
+    agentSet
   }
 
   override def toString() =
@@ -38,7 +68,6 @@ class GraphContext(
   private var directedJungGraph: Option[jung.DirectedGraph] = None
   def asDirectedJungGraph: jung.DirectedGraph =
     directedJungGraph
-      .filter(_.valid)
       .getOrElse {
         val g = new jung.DirectedGraph(this)
         directedJungGraph = Some(g)
@@ -47,7 +76,6 @@ class GraphContext(
   private var undirectedJungGraph: Option[jung.UndirectedGraph] = None
   def asUndirectedJungGraph: jung.UndirectedGraph =
     undirectedJungGraph
-      .filter(_.valid)
       .getOrElse {
         val g = new jung.UndirectedGraph(this)
         undirectedJungGraph = Some(g)
@@ -68,12 +96,13 @@ class GraphContext(
   val linkManager = world.linkManager
 
   def isValidTurtle(turtle: Turtle) =
-    turtle.getBreed eq turtleSet
+    (turtleSet eq world.turtles) || (turtleSet eq turtle.getBreed)
   def validTurtle(turtle: Turtle): Option[Turtle] =
     if (isValidTurtle(turtle)) Some(turtle) else None
 
   def isValidLink(link: Link) =
-    (link.getBreed eq linkSet) && isValidTurtle(link.end1) && isValidTurtle(link.end2)
+    ((linkSet eq world.links) || (linkSet eq link.getBreed)) &&
+      isValidTurtle(link.end1) && isValidTurtle(link.end2)
   def validLink(link: Link): Option[Link] =
     if (isValidLink(link)) Some(link) else None
 
