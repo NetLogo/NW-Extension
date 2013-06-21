@@ -545,3 +545,34 @@ weak-components-connected-undirected-pair
 weak-components-connected-directed-pair
 weak-components-two-connected-undirected-pairs
 weak-components-two-connected-directed-pairs
+
+# graphml tests
+
+graphml-export-import-with-turtle-color-var
+  extensions [ nw ]
+  O> cro 2
+  O> nw:save-graphml "tmp/graphml-export-import-with-turtle-color-var.xml"
+  O> ca
+  O> nw:load-graphml "tmp/graphml-export-import-with-turtle-color-var.xml" mice links
+  sort [ color ] of turtles => [5 15]
+
+graphml-export-import-with-turtle-string-var
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ set tvar "a" ]
+  O> ask turtle 1 [ set tvar "b" ]
+  O> nw:save-graphml "tmp/graphml-export-import-with-turtle-string-var.xml"
+  O> ca
+  O> nw:load-graphml "tmp/graphml-export-import-with-turtle-string-var.xml" mice links
+  sort [ tvar ] of turtles => ["a" "b"]
+
+graphml-export-import-with-breed-string-var
+  extensions [ nw ]
+  O> nw:set-context mice links
+  O> create-mice 2
+  O> ask mouse 0 [ set fur "a" ]
+  O> ask mouse 1 [ set fur "b" ]
+  O> nw:save-graphml "tmp/graphml-export-import-with-breed-string-var.xml"
+  O> ca
+  O> nw:load-graphml "tmp/graphml-export-import-with-breed-string-var.xml" mice links
+  sort [ fur ] of mice => ["a" "b"]

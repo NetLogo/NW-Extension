@@ -4,11 +4,14 @@ import java.io.BufferedReader
 import java.io.FileReader
 
 import scala.Option.option2Iterable
+import scala.annotation.implicitNotFound
 import scala.collection.JavaConverters._
 
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
+import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
+import org.nlogo.api.AgentException
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.extensions.nw.jung.createLink
@@ -42,7 +45,7 @@ object GraphMLImport {
 
   object Attribute {
     def apply(name: String, attributeType: String, value: String) =
-      new Attribute(name.toUpperCase, attributeType.toUpperCase, value)
+      new Attribute(name.toUpperCase, attributeType.toUpperCase, Option(value).getOrElse(""))
   }
   class Attribute private (
     val name: String,
@@ -67,11 +70,24 @@ object GraphMLImport {
 
   def attributes(e: GraphElement, keys: Seq[Key]): Seq[Attribute] = {
     val properties = e.metadata.getProperties.asScala
-    Attribute("ID", "STRING", e.id) +:
+    val as = Attribute("ID", "STRING", e.id) +:
       (for {
         key <- keys
         value <- properties.get(key.getAttributeName).orElse(Option(key.defaultValue))
       } yield Attribute(key.getAttributeName, key.getAttributeType, value))
+    as.sortBy(_.name != "BREED") // BREED first
+  }
+
+  private def setBreed(agent: Agent, breed: String) {
+    val program = agent.world.program
+    agent match {
+      case t: Turtle =>
+        for (breedAgentSet <- program.breeds.asScala.get(breed))
+          t.setTurtleOrLinkVariable("BREED", breedAgentSet)
+      case l: Link =>
+        for (breedAgentSet <- program.linkBreeds.asScala.get(breed))
+          l.setTurtleOrLinkVariable("BREED", breedAgentSet)
+    }
   }
 
   private def createAgents[E <: GraphElement, A <: Agent](
@@ -80,9 +96,18 @@ object GraphMLImport {
       val agent = create(elem)
       attributes(elem, keys).foreach { a =>
         try {
-          agent.setTurtleOrLinkVariable(a.name, a.valueObject)
+          a.name match {
+            case "BREED" => agent.world.program.breeds
+            case "WHO"   => // don't try to set WHO
+            case v if agent.world.program.linksOwn.indexOf(v) != -1 =>
+              agent.setTurtleOrLinkVariable(a.name, a.valueObject)
+            case v if agent.world.program.turtlesOwn.indexOf(v) != -1 =>
+              agent.setTurtleOrLinkVariable(a.name, a.valueObject)
+            case _ =>
+              agent.setBreedVariable(a.name, a.valueObject)
+          }
         } catch {
-          case e: IllegalStateException => // Variable does not exist - move on
+          case e: AgentException => // Variable just does not exist - move on
           case e: Exception             => throw new ExtensionException(e)
         }
       }
