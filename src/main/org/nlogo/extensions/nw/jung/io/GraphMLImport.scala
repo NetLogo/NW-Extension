@@ -4,7 +4,6 @@ import java.io.BufferedReader
 import java.io.FileReader
 
 import scala.Option.option2Iterable
-import scala.annotation.implicitNotFound
 import scala.collection.JavaConverters._
 
 import org.nlogo.agent.Agent
@@ -90,27 +89,47 @@ object GraphMLImport {
     }
   }
 
+  private def setAgentVariable(agent: Agent, attribute: Attribute) {
+    if (attribute.name != "WHO") // don' try to set WHO
+      try {
+        val program = agent.world.program
+        agent match {
+          case l: Link =>
+            attribute.name match {
+              case "BREED" =>
+                val breed = attribute.valueObject.toString.toUpperCase
+                program.linkBreeds.asScala.get(breed).collect {
+                  case b: AgentSet => l.setBreed(b)
+                }
+              case v if program.linksOwn.indexOf(v) != -1 =>
+                agent.setTurtleOrLinkVariable(v, attribute.valueObject)
+              case v =>
+                agent.setLinkBreedVariable(v, attribute.valueObject)
+            }
+          case t: Turtle =>
+            attribute.name match {
+              case "BREED" =>
+                val breed = attribute.valueObject.toString.toUpperCase
+                program.breeds.asScala.get(breed).collect {
+                  case b: AgentSet => t.setBreed(b)
+                }
+              case v if program.turtlesOwn.indexOf(v) != -1 =>
+                agent.setTurtleOrLinkVariable(v, attribute.valueObject)
+              case v =>
+                agent.setBreedVariable(v, attribute.valueObject)
+            }
+        }
+      } catch {
+        case e: AgentException => // Variable just does not exist - move on
+        case e: Exception      => throw new ExtensionException(e)
+      }
+  }
+
   private def createAgents[E <: GraphElement, A <: Agent](
     elements: Iterable[E], keys: Seq[Key])(create: E => A): Map[E, A] =
     elements.map { elem =>
       val agent = create(elem)
-      attributes(elem, keys).foreach { a =>
-        try {
-          a.name match {
-            case "BREED" => agent.world.program.breeds
-            case "WHO"   => // don't try to set WHO
-            case v if agent.world.program.linksOwn.indexOf(v) != -1 =>
-              agent.setTurtleOrLinkVariable(a.name, a.valueObject)
-            case v if agent.world.program.turtlesOwn.indexOf(v) != -1 =>
-              agent.setTurtleOrLinkVariable(a.name, a.valueObject)
-            case _ =>
-              agent.setBreedVariable(a.name, a.valueObject)
-          }
-        } catch {
-          case e: AgentException => // Variable just does not exist - move on
-          case e: Exception             => throw new ExtensionException(e)
-        }
-      }
+      attributes(elem, keys).foreach { setAgentVariable(agent, _) }
       elem -> agent
     }(scala.collection.breakOut)
 
