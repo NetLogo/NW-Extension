@@ -2,6 +2,8 @@
 
 package org.nlogo.extensions.nw.prim.jung
 
+import java.util.Locale
+
 import scala.collection.JavaConverters._
 
 import org.nlogo.agent
@@ -38,7 +40,7 @@ class TurtlesOnWeightedPathTo(getGraphContext: api.World => GraphContext)
         Vector(source)
       else {
         val graph = getGraphContext(context.getAgent.world).asJungGraph
-        val weightVariable = args(1).getString.toUpperCase
+        val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
         val linkPath = graph
           .weightedDijkstraShortestPath(weightVariable)
           .getPath(source, target)
@@ -57,7 +59,7 @@ class WeightedPathTo(getGraphContext: api.World => GraphContext)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
-    val weightVariable = args(1).getString.toUpperCase
+    val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
     val graph = getGraphContext(context.getAgent.world).asJungGraph
     api.LogoList.fromJava(
       graph

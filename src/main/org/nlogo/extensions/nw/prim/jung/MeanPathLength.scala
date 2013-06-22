@@ -2,6 +2,8 @@
 
 package org.nlogo.extensions.nw.prim.jung
 
+import java.util.Locale
+
 import org.nlogo.agent.Turtle
 import org.nlogo.api
 import org.nlogo.api.Syntax._
@@ -14,7 +16,7 @@ class MeanWeightedPathLength(getGraphContext: api.World => GraphContext)
     Array(StringType),
     NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    val weightVariable = args(0).getString.toUpperCase
+    val weightVariable = args(0).getString.toUpperCase(Locale.ENGLISH)
     val gc = getGraphContext(context.getAgent.world)
     val dist = (source: Turtle, target: Turtle) =>
       Option(gc.asJungGraph.weightedDijkstraShortestPath(weightVariable)

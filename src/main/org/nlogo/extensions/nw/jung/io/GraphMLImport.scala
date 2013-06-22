@@ -2,6 +2,7 @@ package org.nlogo.extensions.nw.jung.io
 
 import java.io.BufferedReader
 import java.io.FileReader
+import java.util.Locale
 
 import scala.Option.option2Iterable
 import scala.collection.JavaConverters._
@@ -44,7 +45,10 @@ object GraphMLImport {
 
   object Attribute {
     def apply(name: String, attributeType: String, value: String) =
-      new Attribute(name.toUpperCase, attributeType.toUpperCase, Option(value).getOrElse(""))
+      new Attribute(
+        name.toUpperCase(Locale.ENGLISH),
+        attributeType.toUpperCase(Locale.ENGLISH),
+        Option(value).getOrElse(""))
   }
   class Attribute private (
     val name: String,
@@ -97,7 +101,7 @@ object GraphMLImport {
           case l: Link =>
             attribute.name match {
               case "BREED" =>
-                val breed = attribute.valueObject.toString.toUpperCase
+                val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
                 program.linkBreeds.asScala.get(breed).collect {
                   case b: AgentSet => l.setBreed(b)
                 }
@@ -109,7 +113,7 @@ object GraphMLImport {
           case t: Turtle =>
             attribute.name match {
               case "BREED" =>
-                val breed = attribute.valueObject.toString.toUpperCase
+                val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
                 program.breeds.asScala.get(breed).collect {
                   case b: AgentSet => t.setBreed(b)
                 }
