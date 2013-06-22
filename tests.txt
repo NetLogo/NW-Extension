@@ -548,31 +548,31 @@ weak-components-two-connected-directed-pairs
 
 # graphml tests
 
-graphml-export-import-with-turtle-color-var
+graphml-export-import-turtles
   extensions [ nw ]
   O> cro 2
-  O> nw:save-graphml "tmp/graphml-export-import-with-turtle-color-var.xml"
-  O> ca
-  O> nw:load-graphml "tmp/graphml-export-import-with-turtle-color-var.xml" mice links
-  sort [ color ] of turtles => [5 15]
-
-graphml-export-import-with-turtle-string-var
-  extensions [ nw ]
-  O> crt 2
   O> ask turtle 0 [ set tvar "a" ]
+  O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ set tvar "b" ]
-  O> nw:save-graphml "tmp/graphml-export-import-with-turtle-string-var.xml"
+  O> ask link 0 1 [ set thickness 0.5 ]
+  O> nw:save-graphml "tmp/graphml-export-import-turtles.xml"
   O> ca
-  O> nw:load-graphml "tmp/graphml-export-import-with-turtle-string-var.xml" mice links
+  O> nw:load-graphml "tmp/graphml-export-import-turtles.xml" turtles links
+  sort [ color ] of turtles => [5 15]
   sort [ tvar ] of turtles => ["a" "b"]
+  [ thickness ] of link 0 1 => 0.5
 
-graphml-export-import-with-breed-string-var
+graphml-export-import-breeds
   extensions [ nw ]
   O> nw:set-context mice links
-  O> create-mice 2
+  O> create-ordered-mice 2
   O> ask mouse 0 [ set fur "a" ]
+  O> ask mouse 0 [ create-undirected-link-with mouse 1 ]
   O> ask mouse 1 [ set fur "b" ]
-  O> nw:save-graphml "tmp/graphml-export-import-with-breed-string-var.xml"
+  O> ask undirected-link 0 1 [ set weight 0.5 ]
+  O> nw:save-graphml "tmp/graphml-export-import-breeds.xml"
   O> ca
-  O> nw:load-graphml "tmp/graphml-export-import-with-breed-string-var.xml" mice links
+  O> nw:load-graphml "tmp/graphml-export-import-breeds.xml" turtles links
+  sort [ color ] of mice => [5 15]
   sort [ fur ] of mice => ["a" "b"]
+  [ weight ] of undirected-link 0 1 => 0.5
