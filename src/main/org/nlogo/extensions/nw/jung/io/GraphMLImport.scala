@@ -3,10 +3,8 @@ package org.nlogo.extensions.nw.jung.io
 import java.io.BufferedReader
 import java.io.FileReader
 import java.util.Locale
-
 import scala.Option.option2Iterable
 import scala.collection.JavaConverters._
-
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
@@ -18,7 +16,6 @@ import org.nlogo.extensions.nw.jung.createLink
 import org.nlogo.extensions.nw.jung.factoryFor
 import org.nlogo.extensions.nw.jung.transformer
 import org.nlogo.util.MersenneTwisterFast
-
 import edu.uci.ics.jung
 import edu.uci.ics.jung.io.graphml.AbstractMetadata
 import edu.uci.ics.jung.io.graphml.EdgeMetadata
@@ -27,6 +24,7 @@ import edu.uci.ics.jung.io.graphml.GraphMetadata
 import edu.uci.ics.jung.io.graphml.Key
 import edu.uci.ics.jung.io.graphml.Metadata.MetadataType
 import edu.uci.ics.jung.io.graphml.NodeMetadata
+import org.nlogo.agent.World
 
 object GraphMLImport {
 
@@ -137,12 +135,12 @@ object GraphMLImport {
       elem -> agent
     }(scala.collection.breakOut)
 
-  def load(fileName: String, turtleBreed: AgentSet, linkBreed: AgentSet, rng: MersenneTwisterFast): Iterator[Turtle] = {
+  def load(fileName: String, world: World, rng: MersenneTwisterFast): Iterator[Turtle] = {
     if (org.nlogo.workspace.AbstractWorkspace.isApplet)
       throw new ExtensionException("Cannot load GraphML file when in applet mode.")
     try {
       val fileReader = new BufferedReader(new FileReader(fileName))
-      val graphFactory = factoryFor[Vertex, Edge](linkBreed)
+      val graphFactory = factoryFor[Vertex, Edge](world.links)
       val graphTransformer = transformer { _: GraphMetadata => graphFactory.create }
 
       val graphReader =
@@ -162,11 +160,11 @@ object GraphMLImport {
 
       val turtles: Map[Vertex, Turtle] =
         createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE)) {
-          _ => createTurtle(turtleBreed, rng)
+          _ => createTurtle(world.turtles, rng)
         }
 
       createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE)) {
-        e: Edge => createLink(turtles, graph.getEndpoints(e), linkBreed)
+        e: Edge => createLink(turtles, graph.getEndpoints(e), world.links)
       }
 
       turtles.valuesIterator

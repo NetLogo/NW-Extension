@@ -6,6 +6,7 @@ import scala.annotation.implicitNotFound
 
 import org.nlogo.api
 import org.nlogo.api.Syntax._
+import org.nlogo.agent
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
@@ -21,11 +22,10 @@ class SaveGraphML(getGraphContext: api.World => GraphContext)
 }
 
 class LoadGraphML extends turtleCreatingCommand {
-  override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
+  override def getSyntax = commandSyntax(Array(StringType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
     GraphMLImport.load(
       fileName = args(0).getString,
-      turtleBreed = args(1).getAgentSet.requireTurtleBreed,
-      linkBreed = args(2).getAgentSet.requireLinkBreed,
+      world = context.getAgent.world.asInstanceOf[agent.World],
       rng = context.getRNG)
 }

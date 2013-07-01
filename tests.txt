@@ -557,7 +557,7 @@ graphml-export-import-turtles
   O> ask link 0 1 [ set thickness 0.5 ]
   O> nw:save-graphml "tmp/graphml-export-import-turtles.xml"
   O> ca
-  O> nw:load-graphml "tmp/graphml-export-import-turtles.xml" turtles links
+  O> nw:load-graphml "tmp/graphml-export-import-turtles.xml"
   sort [ color ] of turtles => [5 15]
   sort [ tvar ] of turtles => ["a" "b"]
   [ thickness ] of link 0 1 => 0.5
@@ -572,7 +572,7 @@ graphml-export-import-breeds
   O> ask undirected-link 0 1 [ set weight 0.5 ]
   O> nw:save-graphml "tmp/graphml-export-import-breeds.xml"
   O> ca
-  O> nw:load-graphml "tmp/graphml-export-import-breeds.xml" turtles links
+  O> nw:load-graphml "tmp/graphml-export-import-breeds.xml"
   sort [ color ] of mice => [5 15]
   sort [ fur ] of mice => ["a" "b"]
   [ weight ] of undirected-link 0 1 => 0.5
