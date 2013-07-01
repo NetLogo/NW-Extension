@@ -100,7 +100,7 @@ The reason we did not do it like this right away is that there currently is no e
 
 [Clusterers](https://github.com/NetLogo/NW-Extension#clusterers)
 
-- [k-means-clusters](https://github.com/NetLogo/NW-Extension#k-means-clusters), [bicomponent-clusters](https://github.com/NetLogo/NW-Extension#bicomponent-clusters), [weak-component-clusters](https://github.com/NetLogo/NW-Extension#weak-component-clusters)
+- [bicomponent-clusters](https://github.com/NetLogo/NW-Extension#bicomponent-clusters), [weak-component-clusters](https://github.com/NetLogo/NW-Extension#weak-component-clusters)
 
 [Cliques](https://github.com/NetLogo/NW-Extension#cliques)
 
@@ -295,28 +295,6 @@ Note that this primitive reports the _intra-component_ closeness of a turtle, th
 Also note that, as of now, link weights are not taken into account.
 
 ### Clusterers
-
-#### k-means-clusters
-`nw:k-means-clusters` _nb-clusters_ _max-iterations_ _convergence-threshold_
-
-Partitions the turtles in the current snapshot into _nb-clusters_ different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings that get better and better until some _convergence-threshold_ or some maximum number of iterations (_max-iterations_) is reached.
-
-Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, ***not*** their distance in the network. This is coming in a future version of the extension.
-
-The primitive reports a list of agentsets, in random order, representing the different clusters. Each turtle can only be part of one cluster.
-
-Note that k-means include a part of randomness, and may give different results everytime it runs.
-
-##### Example:
-
-    nw:set-snapshot turtles links
-    let nb-clusters 10
-    let clusters nw:k-means-clusters nb-clusters 500 0.01
-    let colors n-of nb-clusters remove gray base-colors
-    (foreach clusters colors [
-      let c ?2
-      foreach ?1 [ ask ? [ set color c ] ]
-    ])
 
 #### bicomponent-clusters
 `nw:bicomponent-clusters`
