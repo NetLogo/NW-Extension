@@ -299,7 +299,6 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to-report mean-path-length
-  nw:set-context turtles links
   report nw:mean-path-length
 end
 
