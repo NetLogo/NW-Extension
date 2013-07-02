@@ -24,10 +24,13 @@ class GraphContext(
   class AgentSetChangeSubscriber(agentSet: TreeAgentSet)
     extends SimpleChangeEventPublisher#Sub {
     agentSet.simpleChangeEventPublisher.subscribe(this)
+    def unsubscribe() { agentSet.simpleChangeEventPublisher.removeSubscription(this) }
     override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent) {
       _turtleSet = None
       _linkSet = None
+      turtleSetChangeSubscriber.foreach(_.unsubscribe)
       turtleSetChangeSubscriber = None
+      linkSetChangeSubscriber.foreach(_.unsubscribe)
       linkSetChangeSubscriber = None
       directedJungGraph = None
       undirectedJungGraph = None
