@@ -43,7 +43,7 @@ trait Algorithms {
         case t: Turtle => tScores.get(t)
         case l: Link   => lScores.get(l)
         case _         => None
-      }).getOrElse(throw new ExtensionException(agent + " is not a member of this result set"))
+      }).getOrElse(throw new ExtensionException(agent + " is not a member of the current graph context."))
 
     def get(agent: Agent) = getFrom(agent, turtleScores, linkScores)
   }
@@ -52,7 +52,7 @@ trait Algorithms {
     evaluate()
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
-        throw new ExtensionException(turtle + " is not a member of the current graph")
+        throw new ExtensionException(turtle + " is not a member of the current graph context.")
       getVertexScore(turtle)
     }
   }
@@ -60,7 +60,7 @@ trait Algorithms {
   object ClosenessCentrality extends jungalg.scoring.ClosenessCentrality(this) {
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
-        throw new ExtensionException(turtle + " is not a member of the current graph")
+        throw new ExtensionException(turtle + " is not a member of the current graph context.")
       val res = getVertexScore(turtle)
       if (res.isNaN)
         Double.box(0.0) // for isolates
