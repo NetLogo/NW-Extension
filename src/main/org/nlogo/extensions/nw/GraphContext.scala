@@ -2,70 +2,45 @@
 
 package org.nlogo.extensions.nw
 
+import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
-import org.nlogo.api.SimpleChangeEvent
-import org.nlogo.api.SimpleChangeEventPublisher
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.agent.World
-import org.nlogo.agent.AgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 
 class GraphContext(
   val world: World,
-  val turtleBreedName: String,
-  val linkBreedName: String) {
+  private var initialTurtleSet: AgentSet,
+  private var initialLinkSet: AgentSet) {
 
-  private var _turtleSet: Option[AgentSet] = None
-  private var turtleSetChangeSubscriber: Option[AgentSetChangeSubscriber] = None
-  private var _linkSet: Option[AgentSet] = None
-  private var linkSetChangeSubscriber: Option[AgentSetChangeSubscriber] = None
-
-  class AgentSetChangeSubscriber(agentSet: TreeAgentSet)
-    extends SimpleChangeEventPublisher#Sub {
-    agentSet.simpleChangeEventPublisher.subscribe(this)
-    def unsubscribe() { agentSet.simpleChangeEventPublisher.removeSubscription(this) }
-    override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent) {
-      _turtleSet = None
-      _linkSet = None
-      turtleSetChangeSubscriber.foreach(_.unsubscribe)
-      turtleSetChangeSubscriber = None
-      linkSetChangeSubscriber.foreach(_.unsubscribe)
-      linkSetChangeSubscriber = None
-      directedJungGraph = None
-      undirectedJungGraph = None
+  private var monitoredTurtleSet: MonitoredAgentSet[Turtle] = {
+    val result = initialTurtleSet match {
+      case tas: TreeAgentSet => new MonitoredTurtleTreeAgentSet(tas, invalidate)
+      case _                 => throw new IllegalArgumentException // TODO: handle ArrayAgentSet
     }
+    initialTurtleSet = null
+    result
   }
 
-  def turtleSet: AgentSet = _turtleSet.getOrElse {
-    val agentSet = turtleBreedName match {
-      case "TURTLES" => world.turtles
-      case name => Option(world.getBreed(name)).getOrElse {
-        throw new IllegalArgumentException("Invalid turtle breed name: " + name)
-      }
+  private var monitoredLinkSet: MonitoredAgentSet[Link] = {
+    val result = initialLinkSet match {
+      case tas: TreeAgentSet => new MonitoredLinkTreeAgentSet(tas, invalidate)
+      case _                 => throw new IllegalArgumentException // TODO: handle ArrayAgentSet
     }
-    turtleSetChangeSubscriber =
-      Some(new AgentSetChangeSubscriber(agentSet.asInstanceOf[TreeAgentSet]))
-    _turtleSet = Some(agentSet)
-    agentSet
+    initialLinkSet = null
+    result
   }
 
-  def linkSet: AgentSet = _linkSet.getOrElse {
-    val agentSet = linkBreedName match {
-      case "LINKS" => world.links
-      case name => Option(world.getLinkBreed(name)).getOrElse {
-        throw new IllegalArgumentException("Invalid link breed name: " + name)
-      }
-    }
-    linkSetChangeSubscriber =
-      Some(new AgentSetChangeSubscriber(agentSet.asInstanceOf[TreeAgentSet]))
-    _linkSet = Some(agentSet)
-    agentSet
-  }
+  def turtleSet = monitoredTurtleSet.agentSet
+  def linkSet = monitoredLinkSet.agentSet
 
-  override def toString() =
-    "Turtle breed: " + turtleBreedName + "\n" + turtleSet + "\n" +
-      "Link breed: " + linkBreedName + "\n" + linkSet
+  def invalidate(): Unit = {
+    monitoredTurtleSet.invalidate()
+    monitoredLinkSet.invalidate()
+    directedJungGraph = None
+    undirectedJungGraph = None
+  }
 
   def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   private var directedJungGraph: Option[jung.DirectedGraph] = None
@@ -98,14 +73,12 @@ class GraphContext(
 
   val linkManager = world.linkManager
 
-  def isValidTurtle(turtle: Turtle) =
-    (turtleSet eq world.turtles) || (turtleSet eq turtle.getBreed)
+  def isValidTurtle(turtle: Turtle) = monitoredTurtleSet.isValid(turtle)
   def validTurtle(turtle: Turtle): Option[Turtle] =
     if (isValidTurtle(turtle)) Some(turtle) else None
 
-  def isValidLink(link: Link) =
-    ((linkSet eq world.links) || (linkSet eq link.getBreed)) &&
-      isValidTurtle(link.end1) && isValidTurtle(link.end2)
+  def isValidLink(link: Link) = monitoredLinkSet.isValid(link) &&
+    isValidTurtle(link.end1) && isValidTurtle(link.end2)
   def validLink(link: Link): Option[Link] =
     if (isValidLink(link)) Some(link) else None
 

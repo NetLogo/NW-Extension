@@ -14,10 +14,10 @@ class SetContext(setContext: GraphContext => Unit)
   override def getSyntax = commandSyntax(
     Array(AgentsetType, AgentsetType))
   override def perform(args: Array[api.Argument], context: api.Context) {
-    val turtleSet = args(0).getAgentSet.requireTurtleBreed
-    val linkSet = args(1).getAgentSet.requireLinkBreed
+    val turtleSet = args(0).getAgentSet.requireTurtleSet
+    val linkSet = args(1).getAgentSet.requireLinkSet
     val world = linkSet.world
-    val gc = new GraphContext(world, turtleSet.printName, linkSet.printName)
+    val gc = new GraphContext(world, turtleSet, linkSet)
     setContext(gc)
   }
 }

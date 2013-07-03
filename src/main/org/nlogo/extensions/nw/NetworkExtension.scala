@@ -25,9 +25,8 @@ class NetworkExtension extends api.DefaultClassManager {
   val setGraphContext: GraphContext => Unit = { gc => _graphContext = Some(gc) }
   def getGraphContext(world: api.World) =
     _graphContext.getOrElse {
-      val gc = new GraphContext(
-        world.asInstanceOf[agent.World],
-        "TURTLES", "LINKS")
+      val w = world.asInstanceOf[agent.World]
+      val gc = new GraphContext(w, w.turtles, w.links)
       _graphContext = Some(gc)
       gc
     }

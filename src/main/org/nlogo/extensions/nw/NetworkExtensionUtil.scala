@@ -48,6 +48,16 @@ object NetworkExtensionUtil {
     lazy val world = agentSet.world.asInstanceOf[org.nlogo.agent.World]
     def isLinkBreed = (agentSet eq world.links) || world.isLinkBreed(agentSet)
     def isTurtleBreed = (agentSet eq world.turtles) || world.isBreed(agentSet)
+
+    def isLinkSet = classOf[api.Link].isAssignableFrom(agentSet.`type`)
+    def isTurtleSet = classOf[api.Turtle].isAssignableFrom(agentSet.`type`)
+    def requireTurtleSet =
+      if (isTurtleSet) agentSet
+      else throw new ExtensionException("Expected input to be a turtleset")
+    def requireLinkSet =
+      if (isLinkSet) agentSet
+      else throw new ExtensionException("Expected input to be a linkset")
+
     def requireTurtleBreed =
       if (isTurtleBreed) agentSet.asInstanceOf[TreeAgentSet]
       else throw new ExtensionException("Expected input to be a turtle breed")
