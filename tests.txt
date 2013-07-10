@@ -66,6 +66,20 @@ after-world-resize
   O> ask turtle 2 [ create-link-with turtle 3 ]
   [ nw:distance-to turtle 2 ] of turtle 3 => 1
 
+## set-context with non-breed agentsets
+
+path-through-different-breeds
+  extensions [ nw ]
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-links-with frogs ]
+  O> ask undirected-links [ set weight 2 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  [ nw:distance-to mouse 2 ] of mouse 1 => 2
+  [ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => 4
+  O> ask frogs [ die ]
+  [ nw:distance-to mouse 2 ] of mouse 1 => false
+  #[ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => false
+
 ### turtles-in-radius
 
 turtles-in-radius-negative-radius
