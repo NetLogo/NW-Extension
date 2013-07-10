@@ -9,6 +9,7 @@ import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
 import org.nlogo.api.SimpleChangeEvent
 import org.nlogo.api.SimpleChangeEventPublisher
+import org.nlogo.agent.ArrayAgentSet
 
 class AgentSetChangeSubscriber(agentSet: TreeAgentSet, onNotify: () => Unit)
   extends SimpleChangeEventPublisher#Sub {
@@ -81,4 +82,25 @@ class MonitoredLinkTreeAgentSet(
   override def getBreed(name: String): AgentSet = world.getLinkBreed(name)
   override def isValid(agent: Link): Boolean =
     (agentSet eq unbreededAgentSet) || (agentSet eq agent.getBreed)
+}
+
+trait MonitoredArrayAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
+  def agentSet: ArrayAgentSet
+  def invalidate(): Unit = {} // ArrayAgentSets don't get invalidated
+  override def isValid(agent: A): Boolean = agentSet.contains(agent)
+}
+
+class MonitoredTurtleArrayAgentSet(
+  val agentSet: ArrayAgentSet,
+  override val onNotify: () => Unit)
+  extends MonitoredArrayAgentSet[Turtle] {
+}
+
+class MonitoredLinkArrayAgentSet(
+  private val _agentSet: ArrayAgentSet,
+  override val onNotify: () => Unit)
+  extends MonitoredArrayAgentSet[Link] {
+  def agentSet = {
+    _agentSet
+  }
 }

@@ -8,6 +8,7 @@ import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
 import org.nlogo.agent.World
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+import org.nlogo.agent.ArrayAgentSet
 
 class GraphContext(
   val world: World,
@@ -16,8 +17,8 @@ class GraphContext(
 
   private var monitoredTurtleSet: MonitoredAgentSet[Turtle] = {
     val result = initialTurtleSet match {
-      case tas: TreeAgentSet => new MonitoredTurtleTreeAgentSet(tas, invalidate)
-      case _                 => throw new IllegalArgumentException // TODO: handle ArrayAgentSet
+      case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, invalidate)
+      case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas, () => Unit)
     }
     initialTurtleSet = null
     result
@@ -25,8 +26,8 @@ class GraphContext(
 
   private var monitoredLinkSet: MonitoredAgentSet[Link] = {
     val result = initialLinkSet match {
-      case tas: TreeAgentSet => new MonitoredLinkTreeAgentSet(tas, invalidate)
-      case _                 => throw new IllegalArgumentException // TODO: handle ArrayAgentSet
+      case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, invalidate)
+      case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas, () => Unit)
     }
     initialLinkSet = null
     result
