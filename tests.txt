@@ -78,7 +78,23 @@ path-through-different-breeds
   [ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => 4
   O> ask frogs [ die ]
   [ nw:distance-to mouse 2 ] of mouse 1 => false
-  #[ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => false
+  [ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => false
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-link-with frog 3 ]
+  # new agents not added to non-breed context:
+  [ nw:distance-to mouse 4 ] of mouse 5 => false
+
+after-world-resize-non-breed
+  extensions [ nw ]
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-link-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  [ nw:distance-to mouse 2 ] of mouse 1 => 2
+  O> resize-world -1 1 -1 1
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-link-with frog 3 ]
+  # new agents should not be added to context:
+  [ nw:distance-to mouse 4 ] of mouse 5 => false
 
 ### turtles-in-radius
 
