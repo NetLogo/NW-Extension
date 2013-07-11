@@ -74,16 +74,18 @@ object NetworkExtensionUtil {
       else throw new ExtensionException(
         "Expected input to be an undirected link breed")
 
-    private class AgentSetIterable[T <: Agent] extends Iterable[T] {
+    private class AgentSetIterable[T <: Agent](rng: MersenneTwisterFast)
+      extends Iterable[T] {
       override def iterator: Iterator[T] = {
-        val it = agentSet.iterator()
+        val it = agentSet.shufflerator(rng)
         new Iterator[T] {
           def hasNext = it.hasNext
           def next() = it.next().asInstanceOf[T]
         }
       }
     }
-    def asIterable[T <: Agent]: Iterable[T] = new AgentSetIterable
+    def asIterable[T <: Agent](rng: MersenneTwisterFast): Iterable[T] =
+      new AgentSetIterable(rng)
   }
 
   trait turtleCreatingCommand extends api.DefaultCommand with nvm.CustomAssembled {

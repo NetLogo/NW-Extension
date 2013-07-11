@@ -9,11 +9,14 @@ import org.nlogo.agent.Turtle
 import org.nlogo.agent.World
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.agent.ArrayAgentSet
+import org.nlogo.util.MersenneTwisterFast
 
 class GraphContext(
   val world: World,
   private var initialTurtleSet: AgentSet,
   private var initialLinkSet: AgentSet) {
+
+  val rng: MersenneTwisterFast = world.mainRNG
 
   private var monitoredTurtleSet: MonitoredAgentSet[Turtle] = {
     val result = initialTurtleSet match {
@@ -86,23 +89,23 @@ class GraphContext(
   def turtleCount: Int = turtleSet.count
   def linkCount: Int = linkSet.count
 
-  def links: Iterable[Link] = linkSet.asIterable[Link]
-  def turtles: Iterable[Turtle] = turtleSet.asIterable[Turtle]
+  def links: Iterable[Link] = linkSet.asIterable[Link](rng)
+  def turtles: Iterable[Turtle] = turtleSet.asIterable[Turtle](rng)
 
   def allEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksWith(turtle, linkSet).asIterable[Link].filter(isValidLink)
+    linkManager.findLinksWith(turtle, linkSet).asIterable[Link](rng).filter(isValidLink)
   def allNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedWith(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
+    linkManager.findLinkedWith(turtle, linkSet).asIterable[Turtle](rng).filter(isValidTurtle)
 
   def directedInEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksTo(turtle, linkSet).asIterable[Link].filter(isValidLink)
+    linkManager.findLinksTo(turtle, linkSet).asIterable[Link](rng).filter(isValidLink)
   def inNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedTo(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
+    linkManager.findLinkedTo(turtle, linkSet).asIterable[Turtle](rng).filter(isValidTurtle)
 
   def directedOutEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksFrom(turtle, linkSet).asIterable[Link].filter(isValidLink)
+    linkManager.findLinksFrom(turtle, linkSet).asIterable[Link](rng).filter(isValidLink)
   def outNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedFrom(turtle, linkSet).asIterable[Turtle].filter(isValidTurtle)
+    linkManager.findLinkedFrom(turtle, linkSet).asIterable[Turtle](rng).filter(isValidTurtle)
 
   // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
   def inEdges(turtle: Turtle): Iterable[Link] =
