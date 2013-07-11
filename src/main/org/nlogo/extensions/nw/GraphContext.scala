@@ -118,4 +118,6 @@ class GraphContext(
     if (isDirected) directedInEdges(turtle) else allEdges(turtle)
   def outEdges(turtle: Turtle): Iterable[Link] =
     if (isDirected) directedOutEdges(turtle) else allEdges(turtle)
+
+  override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
 }
