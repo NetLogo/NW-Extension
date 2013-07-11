@@ -225,6 +225,11 @@ path-to-on-a-circle
   O> crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
   sort [ length nw:path-to turtle 0 ] of turtles => [0 1 1 2 2 3]
 
+path-to-random-equal-paths
+  extensions [ nw ]
+  O> cro 4 [ create-link-with turtle ((who + 1) mod 4) ]
+  length remove-duplicates n-values 100 [ [ nw:path-to turtle 2 ] of turtle 0 ] => 2
+
 ### turtles-on-path-to
 
 turtles-on-path-to-self
@@ -260,6 +265,11 @@ turtles-on-path-to-on-a-circle
   extensions [ nw ]
   O> crt 6 [ create-link-with turtle ((who + 1) mod 6) ]
   sort [length nw:turtles-on-path-to turtle 0 ] of turtles => [1 2 2 3 3 4]
+
+turtles-on-path-to-random-equal-paths
+  extensions [ nw ]
+  O> cro 4 [ create-link-with turtle ((who + 1) mod 4) ]
+  length remove-duplicates n-values 100 [ [ nw:turtles-on-path-to turtle 2 ] of turtle 0 ] => 2
 
 ### mean-path-length
 
@@ -513,7 +523,17 @@ weighted-path-to-undirected-pair
   (word [ nw:weighted-path-to turtle 1 "thickness" ] of turtle 0) => "[(link 0 1)]"
   (word [ nw:weighted-path-to turtle 0 "thickness" ] of turtle 1) => "[(link 0 1)]"
 
+weighted-path-to-random-equal-paths
+  extensions [ nw ]
+  O> cro 4 [ create-link-with turtle ((who + 1) mod 4) [ set thickness 1 ] ]
+  length remove-duplicates n-values 100 [ [ nw:weighted-path-to turtle 2 "thickness" ] of turtle 0 ] => 2
+
 ### turtles-on-weighted-path-to
+
+turtles-on-weighted-path-to-random-equal-paths
+  extensions [ nw ]
+  O> cro 4 [ create-link-with turtle ((who + 1) mod 4) [ set thickness 1 ] ]
+  length remove-duplicates n-values 100 [ [ nw:turtles-on-weighted-path-to turtle 2 "thickness" ] of turtle 0 ] => 2
 
 ### mean-weighted-path-length
 
