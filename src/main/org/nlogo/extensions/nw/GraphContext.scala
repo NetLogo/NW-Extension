@@ -92,20 +92,26 @@ class GraphContext(
   def links: Iterable[Link] = linkSet.asIterable[Link](rng)
   def turtles: Iterable[Turtle] = turtleSet.asIterable[Turtle](rng)
 
+  // LinkManager.findLink* methods require "breed" agentsets and, as such,
+  // does not play well with linkSet in the case it's an ArrayAgentSet.
+  // This is why we pass world.links to the methods and do the filtering
+  // ourselves afterwards. Making MonitoredArrayAgentSet.isValid more efficient
+  // (it's currently O(n)) would go a long way towards making this sensible.
+  // NP 2013-07-11.
   def allEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksWith(turtle, linkSet).asIterable[Link](rng).filter(isValidLink)
+    linkManager.findLinksWith(turtle, world.links).asIterable[Link](rng).filter(isValidLink)
   def allNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedWith(turtle, linkSet).asIterable[Turtle](rng).filter(isValidTurtle)
+    linkManager.findLinkedWith(turtle, world.links).asIterable[Turtle](rng).filter(isValidTurtle)
 
   def directedInEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksTo(turtle, linkSet).asIterable[Link](rng).filter(isValidLink)
+    linkManager.findLinksTo(turtle, world.links).asIterable[Link](rng).filter(isValidLink)
   def inNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedTo(turtle, linkSet).asIterable[Turtle](rng).filter(isValidTurtle)
+    linkManager.findLinkedTo(turtle, world.links).asIterable[Turtle](rng).filter(isValidTurtle)
 
   def directedOutEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksFrom(turtle, linkSet).asIterable[Link](rng).filter(isValidLink)
+    linkManager.findLinksFrom(turtle, world.links).asIterable[Link](rng).filter(isValidLink)
   def outNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedFrom(turtle, linkSet).asIterable[Turtle](rng).filter(isValidTurtle)
+    linkManager.findLinkedFrom(turtle, world.links).asIterable[Turtle](rng).filter(isValidTurtle)
 
   // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
   def inEdges(turtle: Turtle): Iterable[Link] =
