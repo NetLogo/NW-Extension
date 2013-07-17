@@ -21,9 +21,9 @@ class AgentSetChangeSubscriber(agentSet: TreeAgentSet, onNotify: () => Unit)
 }
 
 trait MonitoredAgentSet[A <: Agent] {
-  val onNotify: () => Unit
+  val graphContext: GraphContext
   def isValid(agent: A): Boolean
-  def invalidate(): Unit
+  def reset(): Unit
   def agentSet: AgentSet
 }
 
@@ -37,7 +37,7 @@ trait MonitoredTreeAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
   private def newChangeSubscriber: Option[AgentSetChangeSubscriber] =
     _agentSet.collect {
       case tas: TreeAgentSet =>
-        new AgentSetChangeSubscriber(tas, onNotify)
+        new AgentSetChangeSubscriber(tas, graphContext.invalidate)
     }
   protected var changeSubscriber = newChangeSubscriber
 
@@ -55,7 +55,7 @@ trait MonitoredTreeAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
     changeSubscriber = newChangeSubscriber
     agentSet
   }
-  override def invalidate(): Unit = {
+  override def reset(): Unit = {
     changeSubscriber.foreach(_.unsubscribe())
     changeSubscriber = None
     _agentSet = None
@@ -64,7 +64,7 @@ trait MonitoredTreeAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
 
 class MonitoredTurtleTreeAgentSet(
   override var initialAgentSet: TreeAgentSet,
-  override val onNotify: () => Unit)
+  override val graphContext: GraphContext)
   extends MonitoredTreeAgentSet[Turtle] {
   override val UNBREEDED_NAME: String = "TURTLES"
   override def unbreededAgentSet: AgentSet = world.turtles
@@ -75,7 +75,7 @@ class MonitoredTurtleTreeAgentSet(
 
 class MonitoredLinkTreeAgentSet(
   override var initialAgentSet: TreeAgentSet,
-  override val onNotify: () => Unit)
+  override val graphContext: GraphContext)
   extends MonitoredTreeAgentSet[Link] {
   override val UNBREEDED_NAME: String = "LINKS"
   override def unbreededAgentSet: AgentSet = world.links
@@ -86,19 +86,27 @@ class MonitoredLinkTreeAgentSet(
 
 trait MonitoredArrayAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
   def agentSet: ArrayAgentSet
-  def invalidate(): Unit = {} // ArrayAgentSets don't get invalidated
+  var count = agentSet.count
+  def verify(): Unit = {
+    if (agentSet.count != count) {
+      graphContext.invalidate()
+    }
+  }
+  override def reset(): Unit = {
+    count = agentSet.count
+  }
   override def isValid(agent: A): Boolean = agentSet.contains(agent)
 }
 
 class MonitoredTurtleArrayAgentSet(
   val agentSet: ArrayAgentSet,
-  override val onNotify: () => Unit)
+  override val graphContext: GraphContext)
   extends MonitoredArrayAgentSet[Turtle] {
 }
 
 class MonitoredLinkArrayAgentSet(
   private val _agentSet: ArrayAgentSet,
-  override val onNotify: () => Unit)
+  override val graphContext: GraphContext)
   extends MonitoredArrayAgentSet[Link] {
   def agentSet = {
     _agentSet

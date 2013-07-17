@@ -20,8 +20,8 @@ class GraphContext(
 
   private var monitoredTurtleSet: MonitoredAgentSet[Turtle] = {
     val result = initialTurtleSet match {
-      case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, invalidate)
-      case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas, () => Unit)
+      case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, this)
+      case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas, this)
     }
     initialTurtleSet = null
     result
@@ -29,8 +29,8 @@ class GraphContext(
 
   private var monitoredLinkSet: MonitoredAgentSet[Link] = {
     val result = initialLinkSet match {
-      case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, invalidate)
-      case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas, () => Unit)
+      case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, this)
+      case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas, this)
     }
     initialLinkSet = null
     result
@@ -39,30 +39,40 @@ class GraphContext(
   def turtleSet = monitoredTurtleSet.agentSet
   def linkSet = monitoredLinkSet.agentSet
 
+  def verify(): Unit = {
+    Seq(monitoredTurtleSet, monitoredLinkSet).collect {
+      case maas: MonitoredArrayAgentSet[_] => maas.verify()
+    }
+  }
+
   def invalidate(): Unit = {
-    monitoredTurtleSet.invalidate()
-    monitoredLinkSet.invalidate()
+    monitoredTurtleSet.reset()
+    monitoredLinkSet.reset()
     directedJungGraph = None
     undirectedJungGraph = None
   }
 
   def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   private var directedJungGraph: Option[jung.DirectedGraph] = None
-  def asDirectedJungGraph: jung.DirectedGraph =
+  def asDirectedJungGraph: jung.DirectedGraph = {
+    verify()
     directedJungGraph
       .getOrElse {
         val g = new jung.DirectedGraph(this)
         directedJungGraph = Some(g)
         g
       }
+  }
   private var undirectedJungGraph: Option[jung.UndirectedGraph] = None
-  def asUndirectedJungGraph: jung.UndirectedGraph =
+  def asUndirectedJungGraph: jung.UndirectedGraph = {
+    verify()
     undirectedJungGraph
       .getOrElse {
         val g = new jung.UndirectedGraph(this)
         undirectedJungGraph = Some(g)
         g
       }
+  }
 
   def asJGraphTGraph: jgrapht.Graph = if (isDirected) asDirectedJGraphTGraph else asUndirectedJGraphTGraph
   lazy val asDirectedJGraphTGraph = new jgrapht.DirectedGraph(this)
