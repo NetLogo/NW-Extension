@@ -88,7 +88,7 @@ The reason we did not do it like this right away is that there currently is no e
 
 [General](https://github.com/NetLogo/NW-Extension#general)
 
-- [set-snapshot](https://github.com/NetLogo/NW-Extension#set-snapshot)
+- [set-snapshot](https://github.com/NetLogo/NW-Extension#set-snapshot), [get-context](https://github.com/NetLogo/NW-Extension#get-context)
 
 [Path and Distance](https://github.com/NetLogo/NW-Extension#path-and-distance)
 
@@ -125,6 +125,28 @@ Builds a static internal representation of the network formed by all the turtles
 (At the moment, only the [generator primitives](https://github.com/NetLogo/NW-Extension#generators) and [`nw:load-matrix`](https://github.com/NetLogo/NW-Extension#load-matrix) are exceptions to this rule.)
 
 Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
+
+#### get-context
+
+`nw:get-context`
+
+Reports the content of the current graph context as a list containing two sublists: the list of turtles that are part of the context and the list of links that are part of the context.
+
+Let's say with start with a blank slate and the default context consisting of `turtles` and `links`, `nw:get-context` will report a list with two empty sublists:
+
+```
+observer> clear-all
+observer> show nw:get-context
+observer: [[] []]
+```
+
+If we then add some turtles and links to our context, we'll get something like this:
+
+```
+observer> crt 2 [ create-links-with other turtles ]
+observer> show nw:get-context
+observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
+```
 
 ### Path and Distance
 
