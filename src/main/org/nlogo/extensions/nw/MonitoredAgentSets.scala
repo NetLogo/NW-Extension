@@ -2,14 +2,17 @@
 
 package org.nlogo.extensions.nw
 
+import scala.collection.immutable.HashSet
+
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
+import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
 import org.nlogo.api.SimpleChangeEvent
 import org.nlogo.api.SimpleChangeEventPublisher
-import org.nlogo.agent.ArrayAgentSet
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 
 class AgentSetChangeSubscriber(agentSet: TreeAgentSet, onNotify: () => Unit)
   extends SimpleChangeEventPublisher#Sub {
@@ -86,16 +89,21 @@ class MonitoredLinkTreeAgentSet(
 
 trait MonitoredArrayAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
   def agentSet: ArrayAgentSet
-  var count = agentSet.count
+  private var idSet: Set[Long] = _
+  private var count: Int = _
+
+  override def reset(): Unit = {
+    idSet = HashSet.empty ++ agentSet.asIterable[A].map(_.id)
+    count = idSet.size
+  }
+  reset()
+
   def verify(): Unit = {
     if (agentSet.count != count) {
       graphContext.invalidate()
     }
   }
-  override def reset(): Unit = {
-    count = agentSet.count
-  }
-  override def isValid(agent: A): Boolean = agentSet.contains(agent)
+  override def isValid(agent: A): Boolean = idSet.contains(agent.id)
 }
 
 class MonitoredTurtleArrayAgentSet(
