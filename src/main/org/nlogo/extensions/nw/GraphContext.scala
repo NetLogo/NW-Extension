@@ -99,8 +99,8 @@ class GraphContext(
   def turtleCount: Int = turtleSet.count
   def linkCount: Int = linkSet.count
 
-  def links: Iterable[Link] = linkSet.asIterable[Link](rng)
-  def turtles: Iterable[Turtle] = turtleSet.asIterable[Turtle](rng)
+  def links: Iterable[Link] = linkSet.asShufflerable[Link](rng)
+  def turtles: Iterable[Turtle] = turtleSet.asShufflerable[Turtle](rng)
 
   // LinkManager.findLink* methods require "breed" agentsets and, as such,
   // does not play well with linkSet in the case it's an ArrayAgentSet.
@@ -109,19 +109,19 @@ class GraphContext(
   // (it's currently O(n)) would go a long way towards making this sensible.
   // NP 2013-07-11.
   def allEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksWith(turtle, world.links).asIterable[Link](rng).filter(isValidLink)
+    linkManager.findLinksWith(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
   def allNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedWith(turtle, world.links).asIterable[Turtle](rng).filter(isValidTurtle)
+    linkManager.findLinkedWith(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
 
   def directedInEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksTo(turtle, world.links).asIterable[Link](rng).filter(isValidLink)
+    linkManager.findLinksTo(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
   def inNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedTo(turtle, world.links).asIterable[Turtle](rng).filter(isValidTurtle)
+    linkManager.findLinkedTo(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
 
   def directedOutEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksFrom(turtle, world.links).asIterable[Link](rng).filter(isValidLink)
+    linkManager.findLinksFrom(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
   def outNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedFrom(turtle, world.links).asIterable[Turtle](rng).filter(isValidTurtle)
+    linkManager.findLinkedFrom(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
 
   // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
   def inEdges(turtle: Turtle): Iterable[Link] =
