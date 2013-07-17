@@ -26,7 +26,7 @@ distance-after-changes
   O> ask turtle 2 [ create-link-with turtle 1 ]
   [ nw:distance-to turtle 1 ] of turtle 0 => 2
 
-closeness-after-changes
+closeness-after-births
   extensions [ nw ]
   O> crt 1
   [ nw:closeness-centrality ] of turtle 0 => 0
@@ -34,6 +34,16 @@ closeness-after-changes
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+
+closeness-after-deaths
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  O> ask turtle 1 [ create-link-with turtle 2 ]
+  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+  O> ask turtle 1 [ die ]
+  O> ask turtle 0 [ create-link-with turtle 2 ]
+  [ nw:closeness-centrality ] of turtles => [1 1]
 
 default-context-with-undir-links-betweenness
   extensions [nw]
@@ -95,6 +105,26 @@ after-world-resize-non-breed
   O> create-mice 2 [ create-undirected-link-with frog 3 ]
   # new agents should not be added to context:
   [ nw:distance-to mouse 4 ] of mouse 5 => false
+
+closeness-after-births-non-breed
+  extensions [ nw ]
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-link-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [1 0.67 0.67]
+  O> crt 1
+  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => ERROR Extension exception: turtle 3 is not a member of the current graph context.
+  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles with [ who < 3 ] => [1 0.67 0.67]
+
+closeness-after-deaths-non-breed
+  extensions [ nw ]
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-link-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [1 0.67 0.67]
+  O> ask frogs [ die ]
+  O> ask mouse 1 [ create-link-with mouse 2 ]
+  [ nw:closeness-centrality ] of turtles => [1 1]
 
 ### turtles-in-radius
 
