@@ -39,7 +39,7 @@ class NetworkExtension extends api.DefaultClassManager {
     val add = primManager.addPrimitive _
 
     add("set-context", new prim.SetContext(setGraphContext))
-    add("__show-context", new prim.ShowContext(getGraphContext))
+    add("get-context", new prim.GetContext(getGraphContext))
 
     add("turtles-in-radius", new org.nlogo.extensions.nw.prim.TurtlesInRadius(getGraphContext))
     add("turtles-in-out-radius", new org.nlogo.extensions.nw.prim.TurtlesInOutRadius(getGraphContext))

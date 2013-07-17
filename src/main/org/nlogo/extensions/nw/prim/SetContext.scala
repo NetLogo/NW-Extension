@@ -3,11 +3,12 @@
 package org.nlogo.extensions.nw.prim
 
 import org.nlogo.api
+import org.nlogo.api.ExtensionException
+import org.nlogo.api.LogoException
 import org.nlogo.api.Syntax._
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.GraphContext
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.nvm.ExtensionContext
-import org.nlogo.nvm.Workspace
 
 class SetContext(setContext: GraphContext => Unit)
   extends api.DefaultCommand {
@@ -22,14 +23,12 @@ class SetContext(setContext: GraphContext => Unit)
   }
 }
 
-class ShowContext(getGraphContext: api.World => GraphContext)
-  extends api.DefaultCommand {
-  override def getSyntax = commandSyntax()
-  override def perform(args: Array[api.Argument], context: api.Context) {
+class GetContext(getGraphContext: api.World => GraphContext)
+  extends api.DefaultReporter {
+  override def getSyntax = reporterSyntax(ListType)
+  override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = getGraphContext(context.getAgent.world.asInstanceOf[org.nlogo.agent.World])
     val workspace = context.asInstanceOf[ExtensionContext].workspace()
-    workspace.outputObject(
-      gc.toString, null, true, false,
-      Workspace.OutputDestination.NORMAL)
+    api.LogoList(gc.turtleSet.toLogoList, gc.linkSet.toLogoList)
   }
 }
