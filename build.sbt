@@ -38,19 +38,12 @@ packageOptions +=
 packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime, baseDirectory, streams) map {
   (jar, classpath, base, s) =>
     IO.copyFile(jar, base / "nw.jar")
-    def pack200(name: String) {
-      Process("pack200 --modification-time=latest --effort=9 --strip-debug " +
-              "--no-keep-file-order --unknown-attribute=strip " +
-              name + ".pack.gz " + name).!!
-    }
-    pack200("nw.jar")
     val libraryJarPaths =
       classpath.files.filter{path =>
         path.getName.endsWith(".jar") &&
         path.getName != "scala-library.jar"}
     for(path <- libraryJarPaths) {
       IO.copyFile(path, base / path.getName)
-      pack200(path.getName)
     }
     if(Process("git diff --quiet --exit-code HEAD").! == 0) {
       // copy everything thing we need for distribution in
