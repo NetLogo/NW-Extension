@@ -19,7 +19,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 Compared to the current extension, this new version offers:
 
-- **Improved performance and functionality of existing features**: pathfinding primitives are now faster and allow taking edge weights into account.
+- **Improved functionality of existing features**: pathfinding primitives now allow taking edge weights into account.
 - **Centrality measures**: calculate the betweenness centrality, closeness centrality and eigenvector centrality of the nodes in your network.
 - **Clusterers**: find bicomponent and weak component clusters in your network.
 - **Clique finder**: find all maximal cliques or the biggest maximal clique in your network.
