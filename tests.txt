@@ -74,12 +74,22 @@ default-context-with-undir-links-distance
   O> crt 2 [ create-undirected-link-with one-of other turtles ]
   [ nw:distance-to turtle 1 ] of turtle 0 => 1
 
-after-world-resize
+after-world-resize_2D
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-link-with turtle 1 ]
   [ nw:distance-to turtle 1 ] of turtle 0 => 1
   O> resize-world -1 1 -1 1
+  O> crt 2
+  O> ask turtle 2 [ create-link-with turtle 3 ]
+  [ nw:distance-to turtle 2 ] of turtle 3 => 1
+
+after-world-resize_3D
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  [ nw:distance-to turtle 1 ] of turtle 0 => 1
+  O> resize-world -1 1 -1 1 -1 1
   O> crt 2
   O> ask turtle 2 [ create-link-with turtle 3 ]
   [ nw:distance-to turtle 2 ] of turtle 3 => 1
@@ -102,13 +112,25 @@ path-through-different-breeds
   # new agents not added to non-breed context:
   [ nw:distance-to mouse 4 ] of mouse 5 => false
 
-after-world-resize-non-breed
+after-world-resize-non-breed_2D
   extensions [ nw ]
   O> create-frogs 1
   O> create-mice 2 [ create-undirected-link-with frog 0 ]
   O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
   [ nw:distance-to mouse 2 ] of mouse 1 => 2
   O> resize-world -1 1 -1 1
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-link-with frog 3 ]
+  # new agents should not be added to context:
+  [ nw:distance-to mouse 4 ] of mouse 5 => false
+
+after-world-resize-non-breed_3D
+  extensions [ nw ]
+  O> create-frogs 1
+  O> create-mice 2 [ create-undirected-link-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  [ nw:distance-to mouse 2 ] of mouse 1 => 2
+  O> resize-world -1 1 -1 1 -1 1
   O> create-frogs 1
   O> create-mice 2 [ create-undirected-link-with frog 3 ]
   # new agents should not be added to context:
