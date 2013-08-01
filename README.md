@@ -517,7 +517,7 @@ to go
     ]
   ]
   nw:set-snapshot turtles links
-  nw:save-graphml "graph.xml"
+  nw:save-graphml "example.graphml"
 end
 ```
 
