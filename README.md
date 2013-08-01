@@ -4,13 +4,15 @@ This is a future replacement for the Network Extension that is currently bundled
 
 This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
 
+Also note that the current version of the extension requires at least NetLogo 5.0.5.
+
 (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
 This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new). A look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of development.
 
 Also, be aware that the syntax of some primitives could change in future versions of the extension. You will have to modify your code accordingly.
 
-The source code for the extension is currently hosted online at
+The source code for the extension is hosted online at
 https://github.com/NetLogo/NW-Extension.
 
 A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
@@ -40,47 +42,25 @@ The first thing that one needs to understand in order to work with the network e
 
 Basically, you have bankers and clients. Clients can have accounts with bankers. Bankers can probably have account with other bankers, and anyone can be friends with anyone.
 
-Now it is possible that you want to consider this whole thing as one big network, but it seems more likely that you will only be interested in a subset of it. Maybe you want to consider all friendships, but you might also want to consider only the friendships between bankers. After all, something having a very high centrality in the network of banker friendships is very different from having a high centrality in a network of client frienships.
+Now we might want to consider this whole thing as one big network. If that is the case, there is nothing special to do: by default, the NW extension primitives consider all turtles and all links to be part of the current network.
 
-To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-snapshot` primitive, which you must call _prior_ to doing any operations on a network.
+We could also, however, be only interested in a subset of the network. Maybe we want to consider only friendship relations. Furthermore, maybe we want to consider only the friendships _between bankers_. After all, having a very high centrality in a network of banker friendships is very different from having a high centrality in a network of client frienships.
+
+To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-context` primitive, which you must call _prior_ to doing any operations on a network.
 
 Some examples:
 
-- `nw:set-snapshot turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
-- `nw:set-snapshot turtles friendships` will give you all the bankers and clients and friendships between any of them.
-- `nw:set-snapshot bankers friendships` will give you all the bankers, and only friendships between bankers.
-- `nw:set-snapshot bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
-- `nw:set-snapshot clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
+- `nw:set-context turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
+- `nw:set-context turtles friendships` will give you all the bankers and clients and friendships between any of them.
+- `nw:set-context bankers friendships` will give you all the bankers, and only friendships between bankers.
+- `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
+- `nw:set-context clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
 
-Now one very important thing that you need to understand about `set-snapshot` is that, as its name suggests, it takes a static picture of the network at the time you call it. All subsequent network operations will use this static picture, _even if turtles or links have been created or died in the meantime_, until you call `set-snapshot` again.
+(Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agents (births and deaths, namely) are automatically reflected in your network. You only need to call `nw:set-context` again if you want to work with different agents.)
 
-In pratice, this means that you will write code like:
+### Breeds versus other agent sets
 
-    nw:set-snapshot bankers friendships
-    ask bankers [
-      set size nw:closeness-centrality
-    ]
 
-This also means that you need to be careful:
-
-    nw:set-snapshot bankers friendships
-    create-bankers 1                    ; creates a new banker after taking the snapshot
-    show nw:mean-path-length            ; this is OK, it just won't take the new banker into account
-    ask bankers [
-      set size nw:closeness-centrality  ; THIS WILL FAIL FOR THE NEWLY CREATED BANKER
-    ]
-
-In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-path-length` in the example above, but if you try to ask the newly created banker for, e.g., its closeness centrality, the extension will give you a runtime error.
-
-One reason why things work the way they do is that it allows the extension to _cache_ the result of some computations. Many network algorithms are designed to operate on the whole network at once. In the example above, the closeness centrality is actually calculated for every banker the first time you ask for it and then stored in the snapshot so that other bankers just have to access the result.
-
-This makes a big difference, in particular, for primitives like `nw:distance-to`, which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). Without getting into the details of the algorithm, let's just say that a big part of the calculations that are made in finding the shortest path from `turtle 0` to `turtle 10` can be reused when finding the shortest path from `turtle 0` to `turtle 20`, and that these calculations are stored in the snapshot.
-
-### Future Usage
-
-Now wouldn't it be better if you _didn't_ have to call `nw:set-snapshot` everytime you want to do something with a network? Yes, indeed, it would. And eventually, it will be the case. What we have in mind for the moment is something like a `nw:set-context` primitive, which you would use to tell the extension that "in general, these are the turtles and links I want to work with." Once you set the context, the extension will be wise enough to decide by itself if it needs to take a new snapshot or not.
-
-The reason we did not do it like this right away is that there currently is no efficient way to ask NetLogo if turtles and links have been created or deleted since a previous function call. If we can include this functionality in a future version of NetLogo, we will probably deprecate `nw:set-snapshot` and provide the much more convenient `nw:set-context` instead.
 
 ## Primitives
 
