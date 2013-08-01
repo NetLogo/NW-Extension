@@ -1,19 +1,19 @@
-# The "New" NetLogo Network Extension
+# The NetLogo NW Extension for Network Analysis
 
-This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the previous version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
+This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.4. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
+This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
 
 (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
 
-This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues?state=open), but it should not be used for production code. As matter of fact, a look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of developement.
+This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new). A look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of development.
 
-Also, be aware that the syntax of some primitives **will** change in future versions of the extension.  You will have to modify your code accordingly.
+Also, be aware that the syntax of some primitives could change in future versions of the extension. You will have to modify your code accordingly.
 
 The source code for the extension is currently hosted online at
 https://github.com/NetLogo/NW-Extension.
 
-A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](https://github.com/NetLogo/NW-Extension/blob/master/doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
+A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
 
 ## Changes
 
@@ -26,9 +26,7 @@ Compared to the current extension, this new version offers:
 - **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
 - **Import/Export**: save and load your networks using plain text matrix files, or export them to [GraphML](http://graphml.graphdrawing.org/).
 
-There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import from [GraphML](http://graphml.graphdrawing.org/), some new network layouts, and more algorithms and measures.
-
-To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network libraries: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
+To provide some of this functionality, the Network Extension is relying on two external, popular and well-tested network libraries: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
 
 ## Usage
 
