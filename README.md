@@ -612,7 +612,7 @@ If the build succeeds, `nw.jar` will be created. To use the extension, this file
 
 ## Terms of Use
 
-Copyright 1999-2012 by Uri Wilensky.
+Copyright 1999-2013 by Uri Wilensky.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the [GNU General Public License](http://www.gnu.org/copyleft/gpl.html) as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
