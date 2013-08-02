@@ -182,22 +182,6 @@ show nw:mean-weighted-path-length "weight"
 \cat{Clusterers and Clique Finder Primitives}
 
 \begin{prim}
-nw:k-means-clusters \param{nb-clusters max-iterations
-convergence-threshold}
-\end{prim}
-
-\begin{doc}
-Partitions the turtles in the current snapshot into \param{nb-clusters}
-different groups. It uses the \emph{x y} coordinates of the turtles to group them together, not
-their distance in the network. Example:
-
-\begin{Verbatim}
-nw:set-snapshot turtles links
-let clusters nw:k-means-clusters 10 500 0.01
-\end{Verbatim}
-\end{doc}
-
-\begin{prim}
 nw:bicomponent-clusters
 \end{prim}
 
