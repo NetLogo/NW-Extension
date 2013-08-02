@@ -6,7 +6,7 @@ This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use 
 
 Also note that the current version of the extension requires at least NetLogo 5.0.5.
 
-(For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
+(For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/extensions.html).)
 
 This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new). A look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of development.
 
