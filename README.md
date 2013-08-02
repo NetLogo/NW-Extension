@@ -19,7 +19,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 ## Changes
 
-Compared to the current extension, this new version offers:
+Compared to the previous extension, this new version offers:
 
 - **Improved functionality of existing features**: pathfinding primitives now allow taking edge weights into account.
 - **Centrality measures**: calculate the betweenness centrality, closeness centrality and eigenvector centrality of the nodes in your network.
@@ -66,7 +66,7 @@ Some examples:
 
 [General](https://github.com/NetLogo/NW-Extension#general)
 
-- [set-snapshot](https://github.com/NetLogo/NW-Extension#set-snapshot), [get-context](https://github.com/NetLogo/NW-Extension#get-context)
+- [set-context](https://github.com/NetLogo/NW-Extension#set-snapshot), [get-context](https://github.com/NetLogo/NW-Extension#get-context)
 
 [Path and Distance](https://github.com/NetLogo/NW-Extension#path-and-distance)
 
@@ -96,11 +96,11 @@ Some examples:
 
 #### set-snapshot
 
-`nw:set-snapshot` _turtleset_ _linkset_
+`nw:set-context` _turtleset_ _linkset_
 
 Builds a static internal representation of the network formed by all the turtles in _turtleset_ and all the links in _linkset_ that connect two turtles from _turtleset_. This network snapshot is the one that will be used by all other primitives (unless specified otherwise) until a new snapshot is created.
 
-(At the moment, only the [generator primitives](https://github.com/NetLogo/NW-Extension#generators) and [`nw:load-matrix`](https://github.com/NetLogo/NW-Extension#load-matrix) are exceptions to this rule.)
+(At the moment, only the [generator primitives](https://github.com/NetLogo/NW-Extension#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
 
 Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
 
