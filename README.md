@@ -347,7 +347,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### generate-random
 `nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection_probability_ _optional-command-block_
 
-Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G_(_n_, _p_) variant of the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G(n, p)_ variant of the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
 The algorithm is O(n²) for directed networks and O(n²/2) for undirected networks, so generating more than a couple thousand nodes will likely take a very long time.
 
