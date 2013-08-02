@@ -174,6 +174,8 @@ Specifies the set of turtles and the set of links that the extension will consid
 
 This context is used by all other primitives (unless specified otherwise) until a new context is specified. (At the moment, only the [generator primitives](#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
 
+See [the usage section](#usage) for a much more detailed explanation of `nw:set-context`.
+
 #### get-context
 
 `nw:get-context`
