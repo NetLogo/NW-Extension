@@ -58,10 +58,6 @@ Some examples:
 
 (Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agents (births and deaths, namely) are automatically reflected in your network. You only need to call `nw:set-context` again if you want to work with different agents.)
 
-### Breeds versus other agent sets
-
-
-
 ## Primitives
 
 [General](#general)
@@ -98,11 +94,91 @@ Some examples:
 
 `nw:set-context` _turtleset_ _linkset_
 
-Builds a static internal representation of the network formed by all the turtles in _turtleset_ and all the links in _linkset_ that connect two turtles from _turtleset_. This network snapshot is the one that will be used by all other primitives (unless specified otherwise) until a new snapshot is created.
+Specifies the set of turtles and the set of links that the extension will consider to be the current graph. All the turtles from _turtleset_ and all the links from _linkset_ that connect two turtles from _turtleset_ will be included.
 
-(At the moment, only the [generator primitives](#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
+This context is used by all other primitives (unless specified otherwise) until a new context is specified. (At the moment, only the [generator primitives](#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
 
-Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
+##### Special agentsets vs. normal agentsets
+
+It must be noted that NetLogo has two types of agentsets that behave slightly differently, and that this has an impact on the way `nw:set-context` works. We will say a few words about these concepts here but, for a thorough understanding, it is highly recommended that you read (the section on agentsets in the NetLogo programming guide)[http://ccl.northwestern.edu/netlogo/docs/programming.html#agentsets].
+
+The "special" agentsets in NetLogo are `turtles`, `links` and the different "breed" agentsets. What is special about them is that they can grow: if you create a new turtle, it will be added to the `turtles` agentset. If you have a `bankers` breed and you create a new banker, it will be added to the `bankers` agentset and to the `turtles` agentset. Same goes for links. Other agentsets, such as those created with the `with` primitive (e.g., `turtles with [ color = red ]`) or the `turtle-set` and `link-set` primitives) are never added to. The content of normal agentsets will only change if the agents that they contain die.
+
+To show how different types of agentsets interact with `nw:set-context`, let's create a very simple network:
+
+    clear-all
+    create-turtles 3 [ create-links-with other turtles ]
+
+Let's set the context to `turtles` and `links` (which is the default anyway) and use (`nw:show-context`)[#show-context] to see what we have:
+
+    nw:set-context turtles links
+    show nw:get-context
+
+ We get all three turtles and all three links:
+
+    [[(turtle 0) (turtle 1) (turtle 2)] [(link 0 1) (link 0 2) (link 1 2)]]
+
+Now let's kill one turtle:
+
+    ask one-of turtles [ die ]
+    show nw:get-context
+
+As expected, the context is updated to reflect the death of the turtle and of the two links that died with it:
+
+    [[(turtle 0) (turtle 1)] [(link 0 1)]]
+
+What if we now create a new turtle?
+
+  create-turtles 1
+  show nw:get-context
+
+Since our context is using the special `turtles` agentset, the new turtle is automatically added:
+
+   [[(turtle 0) (turtle 1) (turtle 3)] [(link 0 1)]]
+
+Now let's demonstrate how it works with normal agentsets. We start over with a new network of red turtles:
+
+    clear-all
+    create-turtles 3 [
+      create-links-with other turtles
+      set color red
+    ]
+
+And we set the context to `turtles with [ color = red ])` and `links`
+
+    nw:set-context (turtles with [ color = red ]) links
+    show nw:get-context
+
+Since all turtles are red, we get everything in our context:
+
+    [[(turtle 0) (turtle 1) (turtle 2)] [(link 0 1) (link 0 2) (link 1 2)]]
+
+But what if we ask one of them to turn blue?
+
+    ask one-of turtles [ set color blue ]
+    show nw:get-context
+
+No change. The agentset used in our context remains unaffected:
+
+    [[(turtle 0) (turtle 1) (turtle 2)] [(link 0 1) (link 0 2) (link 1 2)]]
+
+If we kill one of them, however...
+
+    ask one-of turtles [ die ]
+    show nw:get-context
+
+It gets removed from the set:
+
+    [[(turtle 0) (turtle 2)] [(link 0 2)]]
+
+What if we add a new red turtle?
+
+    create-turtles 1 [ set color red ]
+    show nw:get-context
+
+Nope:
+
+    [[(turtle 0) (turtle 2)] [(link 0 2)]]
 
 #### get-context
 
