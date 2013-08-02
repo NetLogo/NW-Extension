@@ -17,48 +17,7 @@ https://github.com/NetLogo/NW-Extension.
 
 A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
 
-## Changes
-
-Compared to the previous extension, this new version offers:
-
-- **Improved functionality of existing features**: pathfinding primitives now allow taking edge weights into account.
-- **Centrality measures**: calculate the betweenness centrality, closeness centrality and eigenvector centrality of the nodes in your network.
-- **Clusterers**: find bicomponent and weak component clusters in your network.
-- **Clique finder**: find all maximal cliques or the biggest maximal clique in your network.
-- **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
-- **Import/Export**: save and load your networks using plain text matrix files, or export them to [GraphML](http://graphml.graphdrawing.org/).
-
-To provide some of this functionality, the Network Extension is relying on two external, popular and well-tested network libraries: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
-
-## Usage
-
-The first thing that one needs to understand in order to work with the network extension is how to tell the extension _which_ network to work with. Consider the following example situation:
-
-    breed [ bankers banker ]
-    breed [ clients client ]
-
-    undirected-link-breed [ friendships friendship ]
-    directed-link-breed [ accounts account ]
-
-Basically, you have bankers and clients. Clients can have accounts with bankers. Bankers can probably have account with other bankers, and anyone can be friends with anyone.
-
-Now we might want to consider this whole thing as one big network. If that is the case, there is nothing special to do: by default, the NW extension primitives consider all turtles and all links to be part of the current network.
-
-We could also, however, be only interested in a subset of the network. Maybe we want to consider only friendship relations. Furthermore, maybe we want to consider only the friendships _between bankers_. After all, having a very high centrality in a network of banker friendships is very different from having a high centrality in a network of client frienships.
-
-To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-context` primitive, which you must call _prior_ to doing any operations on a network.
-
-Some examples:
-
-- `nw:set-context turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
-- `nw:set-context turtles friendships` will give you all the bankers and clients and friendships between any of them.
-- `nw:set-context bankers friendships` will give you all the bankers, and only friendships between bankers.
-- `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
-- `nw:set-context clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
-
-(Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agents (births and deaths, namely) are automatically reflected in your network. You only need to call `nw:set-context` again if you want to work with different agents.)
-
-## Primitives
+## Index of Primitives
 
 [General](#general)
 
@@ -88,19 +47,50 @@ Some examples:
 
 - [save-matrix](#save-matrix), [load-matrix](#load-matrix), [save-graphml](#save-graphml), [load-graphml](#load-graphml)
 
-### General
+## Changes
 
-#### set-context
+Compared to the previous extension, this new version offers:
 
-`nw:set-context` _turtleset_ _linkset_
+- **Improved functionality of existing features**: pathfinding primitives now allow taking edge weights into account.
+- **Centrality measures**: calculate the betweenness centrality, closeness centrality and eigenvector centrality of the nodes in your network.
+- **Clusterers**: find bicomponent and weak component clusters in your network.
+- **Clique finder**: find all maximal cliques or the biggest maximal clique in your network.
+- **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
+- **Import/Export**: save and load your networks using plain text matrix files, or export them to [GraphML](http://graphml.graphdrawing.org/).
 
-Specifies the set of turtles and the set of links that the extension will consider to be the current graph. All the turtles from _turtleset_ and all the links from _linkset_ that connect two turtles from _turtleset_ will be included.
+To provide some of this functionality, the Network Extension is relying on two external, popular and well-tested network libraries: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
 
-This context is used by all other primitives (unless specified otherwise) until a new context is specified. (At the moment, only the [generator primitives](#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
+## Usage
 
-##### Special agentsets vs. normal agentsets
+The first thing that one needs to understand in order to work with the network extension is how to tell the extension _which_ network to work with. Consider the following example situation:
 
-It must be noted that NetLogo has two types of agentsets that behave slightly differently, and that this has an impact on the way `nw:set-context` works. We will say a few words about these concepts here but, for a thorough understanding, it is highly recommended that you read (the section on agentsets in the NetLogo programming guide)[http://ccl.northwestern.edu/netlogo/docs/programming.html#agentsets].
+    breed [ bankers banker ]
+    breed [ clients client ]
+
+    undirected-link-breed [ friendships friendship ]
+    directed-link-breed [ accounts account ]
+
+Basically, you have bankers and clients. Clients can have accounts with bankers. Bankers can probably have account with other bankers, and anyone can be friends with anyone.
+
+Now we might want to consider this whole thing as one big network. If that is the case, there is nothing special to do: by default, the NW extension primitives consider all turtles and all links to be part of the current network.
+
+We could also, however, be only interested in a subset of the network. Maybe we want to consider only friendship relations. Furthermore, maybe we want to consider only the friendships _between bankers_. After all, having a very high centrality in a network of banker friendships is very different from having a high centrality in a network of client frienships.
+
+To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The way to tell the extension about this is with the [`nw:set-context`](#set-context) primitive, which you must call _prior_ to doing any operations on a network.
+
+Some examples:
+
+- `nw:set-context turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
+- `nw:set-context turtles friendships` will give you all the bankers and clients and friendships between any of them.
+- `nw:set-context bankers friendships` will give you all the bankers, and only friendships between bankers.
+- `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
+- `nw:set-context clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
+
+(Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agents (births and deaths, namely) are automatically reflected in your network. You only need to call `nw:set-context` again if you want to work with different agents.)
+
+### Special agentsets vs. normal agentsets
+
+It must be noted that NetLogo has two types of agentsets that behave slightly differently, and that this has an impact on the way `nw:set-context` works. We will say a few words about these concepts here but, for a thorough understanding, it is highly recommended that you read [the section on agentsets in the NetLogo programming guide](http://ccl.northwestern.edu/netlogo/docs/programming.html#agentsets).
 
 The "special" agentsets in NetLogo are `turtles`, `links` and the different "breed" agentsets. What is special about them is that they can grow: if you create a new turtle, it will be added to the `turtles` agentset. If you have a `bankers` breed and you create a new banker, it will be added to the `bankers` agentset and to the `turtles` agentset. Same goes for links. Other agentsets, such as those created with the `with` primitive (e.g., `turtles with [ color = red ]`) or the `turtle-set` and `link-set` primitives) are never added to. The content of normal agentsets will only change if the agents that they contain die.
 
@@ -109,7 +99,7 @@ To show how different types of agentsets interact with `nw:set-context`, let's c
     clear-all
     create-turtles 3 [ create-links-with other turtles ]
 
-Let's set the context to `turtles` and `links` (which is the default anyway) and use (`nw:show-context`)[#show-context] to see what we have:
+Let's set the context to `turtles` and `links` (which is the default anyway) and use [`nw:show-context`](#show-context) to see what we have:
 
     nw:set-context turtles links
     show nw:get-context
@@ -179,6 +169,18 @@ What if we add a new red turtle?
 Nope:
 
     [[(turtle 0) (turtle 2)] [(link 0 2)]]
+
+## Primitives
+
+### General
+
+#### set-context
+
+`nw:set-context` _turtleset_ _linkset_
+
+Specifies the set of turtles and the set of links that the extension will consider to be the current graph. All the turtles from _turtleset_ and all the links from _linkset_ that connect two turtles from _turtleset_ will be included.
+
+This context is used by all other primitives (unless specified otherwise) until a new context is specified. (At the moment, only the [generator primitives](#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
 
 #### get-context
 
