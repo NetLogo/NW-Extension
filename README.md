@@ -82,7 +82,7 @@ Some examples:
 
 [Cliques](#cliques)
 
-- [maximal-cliques](#maximal-cliques), [biggest-maximal-clique](#biggest-maximal-clique)
+- [maximal-cliques](#maximal-cliques), [biggest-maximal-cliques](#biggest-maximal-cliques)
 
 [Generators](#generators)
 
