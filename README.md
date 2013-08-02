@@ -2,7 +2,7 @@
 
 This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
+This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
 
 Also note that the current version of the extension requires at least NetLogo 5.0.5.
 
@@ -64,43 +64,43 @@ Some examples:
 
 ## Primitives
 
-[General](https://github.com/NetLogo/NW-Extension#general)
+[General](#general)
 
-- [set-context](https://github.com/NetLogo/NW-Extension#set-snapshot), [get-context](https://github.com/NetLogo/NW-Extension#get-context)
+- [set-context](#set-context), [get-context](#get-context)
 
-[Path and Distance](https://github.com/NetLogo/NW-Extension#path-and-distance)
+[Path and Distance](#path-and-distance)
 
-- [turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius](https://github.com/NetLogo/NW-Extension#turtles-in-radius-turtles-in-out-radius-turtles-in-in-radius), [distance-to, weighted-distance-to](https://github.com/NetLogo/NW-Extension/#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](https://github.com/NetLogo/NW-Extension#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](https://github.com/NetLogo/NW-Extension#mean-path-length-mean-weighted-path-length)
+- [turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius](#turtles-in-radius-turtles-in-out-radius-turtles-in-in-radius), [distance-to, weighted-distance-to](#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](#mean-path-length-mean-weighted-path-length)
 
-[Centrality](https://github.com/NetLogo/NW-Extension#centrality)
+[Centrality](#centrality)
 
-- [betweenness-centrality](https://github.com/NetLogo/NW-Extension#betweenness-centrality), [eigenvector-centrality](https://github.com/NetLogo/NW-Extension#eigenvector-centrality), [closeness-centrality](https://github.com/NetLogo/NW-Extension#closeness-centrality)
+- [betweenness-centrality](#betweenness-centrality), [eigenvector-centrality](#eigenvector-centrality), [closeness-centrality](#closeness-centrality)
 
-[Clusterers](https://github.com/NetLogo/NW-Extension#clusterers)
+[Clusterers](#clusterers)
 
-- [bicomponent-clusters](https://github.com/NetLogo/NW-Extension#bicomponent-clusters), [weak-component-clusters](https://github.com/NetLogo/NW-Extension#weak-component-clusters)
+- [bicomponent-clusters](#bicomponent-clusters), [weak-component-clusters](#weak-component-clusters)
 
-[Cliques](https://github.com/NetLogo/NW-Extension#cliques)
+[Cliques](#cliques)
 
-- [maximal-cliques](https://github.com/NetLogo/NW-Extension#maximal-cliques), [biggest-maximal-clique](https://github.com/NetLogo/NW-Extension#biggest-maximal-clique)
+- [maximal-cliques](#maximal-cliques), [biggest-maximal-clique](#biggest-maximal-clique)
 
-[Generators](https://github.com/NetLogo/NW-Extension#generators)
+[Generators](#generators)
 
-- [generate-preferential-attachment](https://github.com/NetLogo/NW-Extension#generate-preferential-attachment), [generate-random](https://github.com/NetLogo/NW-Extension#generate-random), [generate-small-world](https://github.com/NetLogo/NW-Extension#generate-small-world), [generate-lattice-2d](https://github.com/NetLogo/NW-Extension#generate-lattice-2d), [generate-ring](https://github.com/NetLogo/NW-Extension#generate-ring), [generate-star](https://github.com/NetLogo/NW-Extension#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](https://github.com/NetLogo/NW-Extension#generate-wheel-generate-wheel-inward-generate-wheel-outward)
+- [generate-preferential-attachment](#generate-preferential-attachment), [generate-random](#generate-random), [generate-small-world](#generate-small-world), [generate-lattice-2d](#generate-lattice-2d), [generate-ring](#generate-ring), [generate-star](#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](#generate-wheel-generate-wheel-inward-generate-wheel-outward)
 
-[Import / Export](https://github.com/NetLogo/NW-Extension#import--export)
+[Import / Export](#import--export)
 
-- [save-matrix](https://github.com/NetLogo/NW-Extension#save-matrix), [load-matrix](https://github.com/NetLogo/NW-Extension#load-matrix), [save-graphml](https://github.com/NetLogo/NW-Extension#save-graphml)
+- [save-matrix](#save-matrix), [load-matrix](#load-matrix), [save-graphml](#save-graphml), [load-graphml](#load-graphml)
 
 ### General
 
-#### set-snapshot
+#### set-context
 
 `nw:set-context` _turtleset_ _linkset_
 
 Builds a static internal representation of the network formed by all the turtles in _turtleset_ and all the links in _linkset_ that connect two turtles from _turtleset_. This network snapshot is the one that will be used by all other primitives (unless specified otherwise) until a new snapshot is created.
 
-(At the moment, only the [generator primitives](https://github.com/NetLogo/NW-Extension#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
+(At the moment, only the [generator primitives](#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
 
 Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
 
@@ -157,7 +157,7 @@ Will output:
 
     (turtle 0): [(turtle 0) (turtle 1) (turtle 2)]
 
-As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#in-radius) primitive.
+As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](#in-radius) primitive.
 
 #### distance-to, weighted-distance-to
 
