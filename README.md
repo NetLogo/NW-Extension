@@ -1,16 +1,8 @@
 # The NetLogo NW Extension for Network Analysis
 
-This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).)
+This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**. Also note that the current version of the extension requires at least NetLogo 5.0.5. (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/extensions.html).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
-
-Also note that the current version of the extension requires at least NetLogo 5.0.5.
-
-(For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/extensions.html).)
-
-This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new). A look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of development.
-
-Also, be aware that the syntax of some primitives could change in future versions of the extension. You will have to modify your code accordingly.
+This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new). A look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of development. Also, be aware that the syntax of some primitives could change in future versions of the extension. You will have to modify your code accordingly.
 
 The source code for the extension is hosted online at
 https://github.com/NetLogo/NW-Extension.
