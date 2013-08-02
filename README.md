@@ -111,12 +111,12 @@ As expected, the context is updated to reflect the death of the turtle and of th
 
 What if we now create a new turtle?
 
-  create-turtles 1
-  show nw:get-context
+    create-turtles 1
+    show nw:get-context
 
 Since our context is using the special `turtles` agentset, the new turtle is automatically added:
 
-   [[(turtle 0) (turtle 1) (turtle 3)] [(link 0 1)]]
+    [[(turtle 0) (turtle 1) (turtle 3)] [(link 0 1)]]
 
 Now let's demonstrate how it works with normal agentsets. We start over with a new network of red turtles:
 
