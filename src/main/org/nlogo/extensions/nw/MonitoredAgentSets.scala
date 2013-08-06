@@ -18,7 +18,7 @@ class AgentSetChangeSubscriber(agentSet: TreeAgentSet, onNotify: () => Unit)
   extends SimpleChangeEventPublisher#Sub {
   agentSet.simpleChangeEventPublisher.subscribe(this)
   def unsubscribe(): Unit = agentSet.simpleChangeEventPublisher.removeSubscription(this)
-  override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent) {
+  override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent.type) {
     onNotify.apply()
   }
 }
