@@ -162,7 +162,7 @@ Nope:
 
     [[(turtle 0) (turtle 2)] [(link 0 2)]]
 
-A final note regarding the different types of agentsets: because of how they are implemented in NetLogo and handled in the NW extension, it is likely that special agentsets will perform better for some of the extension's primitives. So, if you can, prefer a context refering to `turtles` and `links` or to simple breeds instead of agentsets built with `with`, `turtle-set`, etc.
+**A final note regarding the different types of agentsets**: because of how they are implemented in NetLogo and handled in the NW extension, it is likely that special agentsets will perform better for some of the extension's primitives. So, if you can, prefer a context refering to `turtles` and `links` or to simple breeds instead of agentsets built with `with`, `turtle-set`, etc.
 
 ## Primitives
 
