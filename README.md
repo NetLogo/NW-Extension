@@ -541,7 +541,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### save-graphml
 `save-graphml` _file-name_
 
-You can save the current snapshot to GraphML. The following NetLogo code:
+You can save the current graph to GraphML. The following NetLogo code:
 
 ```
 extensions [ nw ]
@@ -568,7 +568,7 @@ to go
       set amount 9999.99
     ]
   ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   nw:save-graphml "example.graphml"
 end
 ```
@@ -662,7 +662,12 @@ A few things to notice:
 - The breed is stored as data field, both for nodes and edges.
 - The data includes both NetLogo's internal variables and the variables that were defined as either `breeds-own`, `turtles-own`, `linkbreeds-own` or `links-own`.
 - This example only has a directed link, and you will notice the `<graph edgedefault="directed">` element. If we had only undirected links, we would have `<graph edgedefault="undirected">`. What if we try to mix both kinds of link? At the moment, the extension will save such a "mixed" graph as if it were an undirected graph (see [this issue](https://github.com/NetLogo/NW-Extension/issues/58) for more details). The order of the `source` and `target` will be respected, however, so if you know which breeds represent directed links, you can figure it out _a posteriori_.
-- At the moment, all data is written as if it was the output of a NetLogo `print` command and the GraphML `attr.type` is not set for the keys. It will be [added eventually](https://github.com/NetLogo/NW-Extension/issues/60).
+
+#### load-graphml
+
+`nw:load-graphml` _file-name_
+
+
 
 ## A note regarding floating point calculations
 
