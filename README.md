@@ -667,7 +667,27 @@ A few things to notice:
 
 `nw:load-graphml` _file-name_
 
+Loading a GraphML file into NetLogo with the network extension should be as simple as calling `nw:load-graphml my-file.graphml`, but there is a bit of preparation involved.
 
+The key idea is that `nw:load-graphml` will try to assign the attribute values defined in the GraphML file to NetLogo agent variables of the same names (this is *not* case sensitive). The first one it tries to set is `breed` if it is there, so the turtle or link will get the right breed and, hence, the right breed variables.
+
+One special case is the `who` number, which is ignored by the importer if it is present as a GraphML attribute: NetLogo does not allow you to modify this number once a turtle is created and, besides, there could already be an existing turtle with that number.
+
+The simplest case to handle is when the original GraphML file has been saved from NetLogo by using `nw:save-graphml`. In this case, all you should have to do is to make sure that you have the same breed and variables definition as when you saved the file and you should get back your original graph. For example, if you want to load the file from the `nw:save-graphml` example above, you should have the following definitions:
+
+    breed [ bankers banker ]
+    bankers-own [ bank-name ]
+    breed [ clients client ]
+    clients-own [ hometown ]
+    
+    undirected-link-breed [ friendships friendship ]
+    
+    directed-link-breed [ accounts account ]
+    accounts-own [ amount ]
+
+Loading a graph that was saved from a different program than NetLogo is quite possible as well, but it may take a bit of tinkering to get all the attribute-variable match up right. If you encounter major problems, please do not hesitate to [open an issue](https://github.com/NetLogo/NW-Extension/issues/new).
+
+Please note that, at the present time, the importer does not deal well with "mixed" types: if you try to import a graph where one node has the value `1` for the attribute `x` and the other has the value `"hello"` for the same attribute, the `x` variables of your turtles (provided it is defined in `turtles-own`) will all end up being strings (i.e., `"1"` and `"hello"`).
 
 ## A note regarding floating point calculations
 
