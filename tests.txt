@@ -686,3 +686,23 @@ graphml-export-import-breeds
   sort [ color ] of mice => [5 15]
   sort [ fur ] of mice => ["a" "b"]
   [ weight ] of undirected-link 0 1 => 0.5
+
+save-graphml-first-turtle-double
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ set tvar 1 ]
+  O> ask turtle 1 [ set tvar "a" ]
+  O> nw:save-graphml "tmp/save-graphml-first-turtle-double.graphml"
+  O> ca
+  O> nw:load-graphml "tmp/save-graphml-first-turtle-double.graphml"
+  sort-by is-number? [ tvar ] of turtles => [1 "a"]
+
+save-graphml-first-turtle-string
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ set tvar "a" ]
+  O> ask turtle 1 [ set tvar 1 ]
+  O> nw:save-graphml "tmp/save-graphml-first-turtle-string.graphml"
+  O> ca
+  O> nw:load-graphml "tmp/save-graphml-first-turtle-string.graphml"
+  sort [ tvar ] of turtles => ["1" "a"]
