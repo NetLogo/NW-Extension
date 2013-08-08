@@ -50,9 +50,9 @@ packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime
       // a temporary "nw" directory, which we will then zip
       // before deleting it.
       IO.createDirectory(base / "nw")
-      val zipExtras = 
+      val zipExtras =
         (libraryJarPaths.map(_.getName) :+ "nw.jar")
-          .filterNot(_ == "NetLogoLite-5.0.3.jar")
+          .filterNot(_ contains "NetLogo")
           .flatMap{ jar => Seq(jar, jar + ".pack.gz") }
       for(extra <- zipExtras)
         IO.copyFile(base / extra, base / "nw" / extra)
