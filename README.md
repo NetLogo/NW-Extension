@@ -667,7 +667,7 @@ A few things to notice:
 
 `nw:load-graphml` _file-name_
 
-Loading a GraphML file into NetLogo with the network extension should be as simple as calling `nw:load-graphml my-file.graphml`, but there is a bit of preparation involved.
+Loading a GraphML file into NetLogo with the network extension should be as simple as calling `nw:load-graphml "example.graphml"`, but there is a bit of preparation involved.
 
 The key idea is that `nw:load-graphml` will try to assign the attribute values defined in the GraphML file to NetLogo agent variables of the same names (this is *not* case sensitive). The first one it tries to set is `breed` if it is there, so the turtle or link will get the right breed and, hence, the right breed variables.
 
