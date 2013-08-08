@@ -200,6 +200,8 @@ observer> show nw:get-context
 observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 ```
 
+Note that the order of turtles and links reported by `nw:get-context` is not randomized. If you are using special agentsets (i.e., `turtles`, `links` or breed agentsets), this means they will be ordered by `who` number. If you are using a normal agentset, it will depend on how the agentset was constructed.
+
 ### Path and Distance
 
 #### turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius
