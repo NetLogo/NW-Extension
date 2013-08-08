@@ -580,49 +580,33 @@ Will produce the following GraphML file:
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
-<key id="PEN-MODE" for="node"/>
-<key id="YCOR" for="node"/>
-<key id="PEN-SIZE" for="node"/>
-<key id="LABEL" for="node"/>
-<key id="SHAPE" for="node"/>
-<key id="BREED" for="node"/>
-<key id="WHO" for="node"/>
-<key id="HIDDEN?" for="node"/>
-<key id="LABEL-COLOR" for="node"/>
-<key id="HEADING" for="node"/>
-<key id="BANK-NAME" for="node"/>
-<key id="HOMETOWN" for="node"/>
-<key id="COLOR" for="node"/>
-<key id="XCOR" for="node"/>
-<key id="SIZE" for="node"/>
-<key id="END1" for="edge"/>
-<key id="TIE-MODE" for="edge"/>
-<key id="END2" for="edge"/>
-<key id="LABEL-COLOR" for="edge"/>
-<key id="THICKNESS" for="edge"/>
-<key id="LABEL" for="edge"/>
-<key id="SHAPE" for="edge"/>
-<key id="BREED" for="edge"/>
-<key id="COLOR" for="edge"/>
-<key id="AMOUNT" for="edge"/>
-<key id="HIDDEN?" for="edge"/>
-<graph edgedefault="directed">
-<node id="banker 0">
-<data key="PEN-MODE">up</data>
-<data key="YCOR">0</data>
-<data key="PEN-SIZE">1</data>
-<data key="LABEL"></data>
-<data key="SHAPE">default</data>
-<data key="BREED">bankers</data>
-<data key="WHO">0</data>
-<data key="HIDDEN?">false</data>
-<data key="LABEL-COLOR">9.9</data>
-<data key="HEADING">346</data>
-<data key="BANK-NAME">The Bank</data>
-<data key="COLOR">85</data>
-<data key="XCOR">0</data>
-<data key="SIZE">1</data>
-</node>
+<key id="PEN-MODE" for="node" attr.name="PEN-MODE" attr.type="string"/>
+<key id="YCOR" for="node" attr.name="YCOR" attr.type="double"/>
+<key id="PEN-SIZE" for="node" attr.name="PEN-SIZE" attr.type="double"/>
+<key id="LABEL" for="node" attr.name="LABEL" attr.type="string"/>
+<key id="SHAPE" for="node" attr.name="SHAPE" attr.type="string"/>
+<key id="BREED" for="node" attr.name="BREED" attr.type="string"/>
+<key id="WHO" for="node" attr.name="WHO" attr.type="double"/>
+<key id="HIDDEN?" for="node" attr.name="HIDDEN?" attr.type="boolean"/>
+<key id="LABEL-COLOR" for="node" attr.name="LABEL-COLOR" attr.type="double"/>
+<key id="HEADING" for="node" attr.name="HEADING" attr.type="double"/>
+<key id="BANK-NAME" for="node" attr.name="BANK-NAME" attr.type="string"/>
+<key id="HOMETOWN" for="node" attr.name="HOMETOWN" attr.type="string"/>
+<key id="COLOR" for="node" attr.name="COLOR" attr.type="double"/>
+<key id="XCOR" for="node" attr.name="XCOR" attr.type="double"/>
+<key id="SIZE" for="node" attr.name="SIZE" attr.type="double"/>
+<key id="END1" for="edge" attr.name="END1" attr.type="string"/>
+<key id="TIE-MODE" for="edge" attr.name="TIE-MODE" attr.type="string"/>
+<key id="END2" for="edge" attr.name="END2" attr.type="string"/>
+<key id="LABEL-COLOR" for="edge" attr.name="LABEL-COLOR" attr.type="double"/>
+<key id="THICKNESS" for="edge" attr.name="THICKNESS" attr.type="double"/>
+<key id="LABEL" for="edge" attr.name="LABEL" attr.type="string"/>
+<key id="SHAPE" for="edge" attr.name="SHAPE" attr.type="string"/>
+<key id="BREED" for="edge" attr.name="BREED" attr.type="string"/>
+<key id="COLOR" for="edge" attr.name="COLOR" attr.type="double"/>
+<key id="AMOUNT" for="edge" attr.name="AMOUNT" attr.type="double"/>
+<key id="HIDDEN?" for="edge" attr.name="HIDDEN?" attr.type="boolean"/>
+<graph edgedefault="undirected">
 <node id="client 1">
 <data key="PEN-MODE">up</data>
 <data key="YCOR">0</data>
@@ -633,9 +617,25 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="WHO">1</data>
 <data key="HIDDEN?">false</data>
 <data key="LABEL-COLOR">9.9</data>
-<data key="HEADING">244</data>
+<data key="HEADING">356</data>
 <data key="HOMETOWN">Turtle City</data>
-<data key="COLOR">105</data>
+<data key="COLOR">115</data>
+<data key="XCOR">0</data>
+<data key="SIZE">1</data>
+</node>
+<node id="banker 0">
+<data key="PEN-MODE">up</data>
+<data key="YCOR">0</data>
+<data key="PEN-SIZE">1</data>
+<data key="LABEL"></data>
+<data key="SHAPE">default</data>
+<data key="BREED">bankers</data>
+<data key="WHO">0</data>
+<data key="HIDDEN?">false</data>
+<data key="LABEL-COLOR">9.9</data>
+<data key="HEADING">32</data>
+<data key="BANK-NAME">The Bank</data>
+<data key="COLOR">85</data>
 <data key="XCOR">0</data>
 <data key="SIZE">1</data>
 </node>
@@ -652,6 +652,18 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="AMOUNT">9999.99</data>
 <data key="HIDDEN?">false</data>
 </edge>
+<edge source="banker 0" target="client 1">
+<data key="END1">(banker 0)</data>
+<data key="TIE-MODE">none</data>
+<data key="END2">(client 1)</data>
+<data key="LABEL-COLOR">9.9</data>
+<data key="THICKNESS">0</data>
+<data key="LABEL"></data>
+<data key="SHAPE">default</data>
+<data key="BREED">friendships</data>
+<data key="COLOR">5</data>
+<data key="HIDDEN?">false</data>
+</edge>
 </graph>
 </graphml>
 
@@ -661,6 +673,7 @@ A few things to notice:
 
 - The breed is stored as data field, both for nodes and edges.
 - The data includes both NetLogo's internal variables and the variables that were defined as either `breeds-own`, `turtles-own`, `linkbreeds-own` or `links-own`.
+- Each key gets an `attr.type` based on the actual types of the values contained in the agent variables. The three possible types are `"string"`, `"double"` and `"boolean"`. Any variable that has "mixed" types (i.e., `double` for one agent and `boolean` for another) will result in `attr.type="string"`.
 - This example only has a directed link, and you will notice the `<graph edgedefault="directed">` element. If we had only undirected links, we would have `<graph edgedefault="undirected">`. What if we try to mix both kinds of link? At the moment, the extension will save such a "mixed" graph as if it were an undirected graph (see [this issue](https://github.com/NetLogo/NW-Extension/issues/58) for more details). The order of the `source` and `target` will be respected, however, so if you know which breeds represent directed links, you can figure it out _a posteriori_.
 
 #### load-graphml
@@ -679,9 +692,9 @@ The simplest case to handle is when the original GraphML file has been saved fro
     bankers-own [ bank-name ]
     breed [ clients client ]
     clients-own [ hometown ]
-    
+
     undirected-link-breed [ friendships friendship ]
-    
+
     directed-link-breed [ accounts account ]
     accounts-own [ amount ]
 
