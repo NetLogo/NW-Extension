@@ -57,20 +57,26 @@
   \vspace{1 em}
 }
 
-\cat{General Primitive}
+\cat{General Primitives}
 
 \begin{prim}
-nw:set-snapshot \param{turtleset linkset}
+nw:set-context \param{turtleset} \param{linkset}
 \end{prim}
+
 \begin{doc}
-Builds a static internal representation of the network formed by all the turtles
-in \param{turtleset} and all the links in \param{linkset} that connect two
-turtles from \param{turtleset}. This network snapshot is the one that will be used by
-other primitives until a new snapshot is created. Example:
-\begin{Verbatim}
-nw:set-snapshot turtles links
-\end{Verbatim}
+Specifies the set of turtles and the set of links that the extension will consider 
+to be the current graph. All the turtles from \param{turtleset} and all the
+links from \param{linkset} that connect two turtles from turtleset will be
+included.
 \end{doc}
+
+\begin{prim}
+nw:get-context
+\end{prim}
+
+Reports the content of the current graph context as a list containing two
+sublists: the list of turtles that are part of the context and the list of links
+that are part of the context.
 
 \cat{Centrality Primitives}
 
@@ -82,7 +88,6 @@ nw:closeness-centrality
 \begin{doc}
 These primitives calculate different centrality measures for a turtle. Example:
 \begin{Verbatim}
-nw:set-snapshot turtles links
 ask turtles [ set size nw:betweenness-centrality ]
 \end{Verbatim}
 \end{doc}
@@ -104,7 +109,6 @@ variable to use as the weight of each link in distance calculations. The weights
 be negative numbers.\\Example:
 
 \begin{Verbatim}
-nw:set-snapshot turtles links
 ask turtle 0 [ show nw:distance-to turtle 2 ]
 ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
 \end{Verbatim}
@@ -132,7 +136,6 @@ If no path exist between the source and the target turtles, all primitives will
 report an empty list. Examples:
 
 \begin{Verbatim}
-nw:set-snapshot turtles links
 ask turtle 0 [ show nw:path-to turtle 2 ]
 ask turtle 0 [ show nw:turtles-on-path-to turtle 2 ]
 ask turtle 0 [ show nw:weighted-path-to turtle 2 "weight" ]
@@ -154,7 +157,6 @@ forms work with directed links; out or in specifies whether links are followed
 in the normal direction (\texttt{out}), or in reverse (\texttt{in}). Example:
 
 \begin{Verbatim}
-nw:set-snapshot turtles links
 ask turtle 0 [ show sort nw:turtles-in-radius 1 ]
 \end{Verbatim}
 \end{doc}
@@ -173,7 +175,6 @@ cannot be negative numbers. Reports false unless paths exist between all pairs.
 Examples:
 
 \begin{Verbatim}
-nw:set-snapshot turtles links
 show nw:mean-path-length
 show nw:mean-weighted-path-length "weight"
 \end{Verbatim}
@@ -190,7 +191,6 @@ Reports the list of bicomponent clusters in the current network snapshot. The
 result is reported as a list of agentsets of turtles. One turtle can be a member
 of more than one bicomponent at once. Example:
 \begin{Verbatim}
-nw:set-snapshot turtles links
 let clusters nw:bicomponent-clusters
 \end{Verbatim}
 \end{doc}
@@ -205,7 +205,6 @@ snapshot. The result is reported as a list of agentsets of turtles. One turtle
 cannot be a member of more than one weakly connected component at once.
 Example:
 \begin{Verbatim}
-nw:set-snapshot turtles links
 let clusters nw:weak-component-clusters
 \end{Verbatim}
 \end{doc}
@@ -222,7 +221,6 @@ turtle can be a member of more than one maximal clique at once. The primitive
 uses the Bron–Kerbosch algorithm and only works with undirected links.
 Example:
 \begin{Verbatim}
-nw:set-snapshot turtles links
 let cliques nw:maximal-cliques
 \end{Verbatim}
 \end{doc}
@@ -238,7 +236,6 @@ The biggest maximal cliques are, as the name implies, the biggest cliques in the
 current snapshot. Often, more than one clique are tied for the title of biggest
 clique, so the result if reported as a list of agentsets. Example:
 \begin{Verbatim}
-nw:set-snapshot turtles links
 let biggest-clique one-of nw:biggest-maximal-cliques
 \end{Verbatim}
 \end{doc}
@@ -293,7 +290,6 @@ support link weights. Every link is represented as a "1.00" in the connection
 matrix. Example:
 
 \begin{Verbatim}
-nw:set-snapshot turtles links
 nw:save-matrix "matrix.txt"
 \end{Verbatim}
 \end{doc}
@@ -321,7 +317,21 @@ nw:save-graphml \param{file-name}
 Saves the current snapshot in the GraphML format, including every attribute of
 the turtles and links included in the snapshot. Example:
 \begin{Verbatim}
-nw:set-snapshot turtles links
+nw:save-graphml "graph.xml"
+\end{Verbatim}
+\end{doc}
+
+\begin{prim}
+nw:load-graphml \param{file-name}
+\end{prim}
+\begin{doc}
+
+Loads a GraphML file into NetLogo. Tries to assign the attribute values
+defined in the GraphML file to NetLogo agent variables of the same names (this
+is not case sensitive). The first one it tries to set is \texttt{breed} if it is
+there, so the turtle or link will get the right breed and, hence, the right
+breed variables.
+\begin{Verbatim}
 nw:save-graphml "graph.xml"
 \end{Verbatim}
 \end{doc}
