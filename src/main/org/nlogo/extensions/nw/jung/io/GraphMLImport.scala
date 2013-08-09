@@ -75,7 +75,9 @@ object GraphMLImport {
       (for {
         key <- keys
         value <- properties.get(key.getAttributeName).orElse(Option(key.defaultValue))
-      } yield Attribute(key.getAttributeName, key.getAttributeType, value))
+        attributeName = Option(key.getAttributeName).getOrElse(key.getId)
+        attributeType = Option(key.getAttributeType).getOrElse("")
+      } yield Attribute(attributeName, attributeType, value))
     as.sortBy(_.name != "BREED") // BREED first
   }
 
