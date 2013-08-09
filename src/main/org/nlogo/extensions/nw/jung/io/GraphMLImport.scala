@@ -82,7 +82,7 @@ object GraphMLImport {
     val as = Attribute("ID", "STRING", e.id) +:
       (for {
         key <- keys
-        value <- properties.get(key.getAttributeName).orElse(Option(key.defaultValue))
+        value <- properties.get(key.getId).orElse(Option(key.defaultValue))
         attributeName = Option(key.getAttributeName).getOrElse(key.getId)
         attributeType = Option(key.getAttributeType).getOrElse("")
       } yield Attribute(attributeName, attributeType, value))
