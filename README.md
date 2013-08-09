@@ -702,7 +702,7 @@ The simplest case to handle is when the original GraphML file has been saved fro
 
 Loading a graph that was saved from a different program than NetLogo is quite possible as well, but it may take a bit of tinkering to get all the attribute-variable match up right. If you encounter major problems, please do not hesitate to [open an issue](https://github.com/NetLogo/NW-Extension/issues/new).
 
-The extension will try to assign the type defined by `attr.type` to each variable that it loads. If it's unable to convert it to that type, it will load it as a string.
+The extension will try to assign the type defined by `attr.type` to each variable that it loads. If it's unable to convert it to that type, it will load it as a string. If `attr.type` is not defined, or is set to an unknown value, the extension will first try to load the value as a double, then try it as a boolean, and finally fall back on a string.
 
 ## A note regarding floating point calculations
 
