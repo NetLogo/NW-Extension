@@ -706,3 +706,15 @@ save-graphml-first-turtle-string
   O> ca
   O> nw:load-graphml "tmp/save-graphml-first-turtle-string.graphml"
   sort [ tvar ] of turtles => ["1" "a"]
+
+load-graphml-missing-attr
+  extensions [ nw ]
+  O> nw:load-graphml "extensions/nw/test/missing-attr.graphml"
+
+load-graphml-missing-attr-name
+  extensions [ nw ]
+  O> nw:load-graphml "extensions/nw/test/missing-attr-name.graphml"
+
+load-graphml-missing-attr-type
+  extensions [ nw ]
+  O> nw:load-graphml "extensions/nw/test/missing-attr-type.graphml"
