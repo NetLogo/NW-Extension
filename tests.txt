@@ -710,11 +710,17 @@ save-graphml-first-turtle-string
 load-graphml-missing-attr
   extensions [ nw ]
   O> nw:load-graphml "extensions/nw/test/missing-attr.graphml"
+  [ heading ] of turtle 0 => 0
+  [ color ] of turtle 0 => 5
 
 load-graphml-missing-attr-name
   extensions [ nw ]
   O> nw:load-graphml "extensions/nw/test/missing-attr-name.graphml"
+  [ heading ] of turtle 0 => 0
+  [ color ] of turtle 0 => 5
 
 load-graphml-missing-attr-type
   extensions [ nw ]
   O> nw:load-graphml "extensions/nw/test/missing-attr-type.graphml"
+  [ heading ] of turtle 0 => 0
+  [ color ] of turtle 0 => 5
