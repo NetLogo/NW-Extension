@@ -290,9 +290,13 @@ end
 
 to save-graphml
   nw:set-context turtles get-links-to-use
-  nw:save-graphml "graph.xml"
+  nw:save-graphml "demo.graphml"
 end
 
+to load-graphml
+  nw:set-context turtles get-links-to-use
+  nw:load-graphml "demo.graphml"
+end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reporters for monitors
@@ -587,9 +591,9 @@ NIL
 
 BUTTON
 245
-135
+90
 425
-168
+123
 weak component clusters
 weak-component
 NIL
@@ -631,10 +635,10 @@ PENS
 "default" 1.0 1 -16777216 true "" "histogram [ count my-links ] of turtles"
 
 BUTTON
-450
-225
-560
-258
+245
+275
+355
+308
 save matrix
 save-matrix
 NIL
@@ -648,10 +652,10 @@ NIL
 1
 
 BUTTON
-450
-260
-560
-293
+245
+310
+355
+343
 load matrix
 load-matrix
 NIL
@@ -688,9 +692,9 @@ count links
 
 BUTTON
 245
-255
+210
 425
-288
+243
 biggest maximal cliques
 find-biggest-cliques
 NIL
@@ -811,9 +815,9 @@ NIL
 
 BUTTON
 245
-175
+130
 425
-208
+163
 highlight bicomponents
 highlight-bicomponents
 T
@@ -828,9 +832,9 @@ NIL
 
 BUTTON
 245
-215
+170
 425
-248
+203
 highlight maximal cliques
 highlight-maximal-cliques
 T
@@ -854,22 +858,39 @@ spokes-direction
 1
 
 TEXTBOX
-455
-205
-605
-223
+250
+255
+400
+273
 Files
 12
 0.0
 1
 
 BUTTON
-450
-305
-560
-338
+360
+275
+470
+308
 save GraphML
 save-graphml
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+360
+310
+470
+343
+load GraphML
+load-graphml
 NIL
 1
 T
