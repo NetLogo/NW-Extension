@@ -60,7 +60,15 @@ object GraphMLImport {
           case "LONG"    => value.toDouble
           case "FLOAT"   => value.toDouble
           case "DOUBLE"  => value.toDouble
-          case _         => value // anything else stays a string
+          case "STRING"  => value
+          case _ =>
+            // trial and errors for unknown types
+            try value.toDouble
+            catch {
+              case _ =>
+                try value.toBoolean
+                catch { case _ => value } // string as a final resort
+            }
         }
       } catch {
         // If anything fails, we return the value as a string.
