@@ -14,7 +14,7 @@ class NetworkExtension extends api.DefaultClassManager {
     "colt-1.2.0.jar",
     "concurrent-1.3.4.jar",
     "jgrapht-jdk1.6-0.8.3.jar",
-    "jung-algorithms-2.0.1",
+    "jung-algorithms-2.0.1.jar",
     "jung-api-2.0.1.jar",
     "jung-graph-impl-2.0.1.jar",
     "jung-io-2.0.1.jar",
