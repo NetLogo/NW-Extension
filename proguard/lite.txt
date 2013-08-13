@@ -117,6 +117,10 @@
 -keep class scala.collection.IterableLike { *; }
 -keep class scala.collection.TraversableLike { *; }
 -keep class scala.package$ { *; }
+-keep class scala.collection.mutable.Publisher { *; }
+-keep class scala.collection.mutable.Subscriber { *; }
+-keep class scala.collection.immutable.Stream$ { *; }
+-keep class scala.runtime.AbstractFunction1** { *; }
 
 # remove those after testing:
 #-dontobfuscate
