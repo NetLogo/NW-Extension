@@ -366,8 +366,8 @@ BUTTON
 10
 50
 156
-84
-Rewire one
+81
+rewire one
 rewire-one
 NIL
 1
@@ -398,8 +398,8 @@ BUTTON
 10
 280
 80
-314
-Rewire all
+313
+rewire all
 rewire-all
 NIL
 1
@@ -416,7 +416,7 @@ BUTTON
 450
 935
 495
-Highlight node
+highlight node
 highlight
 T
 1
@@ -473,8 +473,8 @@ BUTTON
 10
 10
 85
-44
-Setup
+41
+NIL
 setup
 NIL
 1
@@ -566,8 +566,8 @@ BUTTON
 169
 50
 320
-84
-Rewire one
+81
+rewire one
 rewire-one
 T
 1
@@ -582,9 +582,9 @@ NIL
 BUTTON
 264
 281
-320
-315
-Sweep
+319
+314
+NIL
 sweep
 T
 1
