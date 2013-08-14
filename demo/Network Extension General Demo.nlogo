@@ -966,10 +966,6 @@ The generator uses the same sliders and switch as the lattice 2D generator, name
 
 Now that you have generated one or more networks, there are things that you might want to know about them.
 
-#### k-means
-
-Partitions the turtles in the current network into **nb-clusters** different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings based on the _x y coordinates_ of the turtles. If this does not seem very network related, it is because it isn't. But in a future version of the extension, we will support clustering based on the distance in the network.
-
 #### weak component clusters
 
 This button will assign a different color to all the "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
@@ -986,9 +982,9 @@ The general usage for this is the same as for the **highlight bicomponents** mod
 
 A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
 
-#### biggest maximal clique
+#### biggest maximal cliques
 
-This simply highlights the biggest of all the maximal cliques in the networks. If there are multiple cliques that are equally big (as is often the case), it simply highlights one at random.
+This simply highlights the biggests of all the maximal cliques in the networks. If there are multiple cliques that are equally big (as is often the case), it will highlight them with different colors.
 
 ### Centrality measures
 
@@ -1011,11 +1007,18 @@ The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_cen
 Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
 
 
-### Import / Export
+### Files
 
-Finally, you can save and load your networks. This is done through the use of simple text files containing an [adjacency matrix](http://en.wikipedia.org/wiki/Adjacency_matrix).
+#### Load / Save Matrix
+
+Finally, you can save and load your networks. This can be done through the use of simple text files containing an [adjacency matrix](http://en.wikipedia.org/wiki/Adjacency_matrix).
 
 The model currently always save the network to your NetLogo directory in a file called `matrix.txt` when you click the **save** button. When you click the **load** button, it reads from the same location and creates a new network from the file.
+
+#### Load / Save GraphML
+
+You can also save and load GraphML files. Please see the [extension's documentation](https://github.com/NetLogo/NW-Extension#save-graphml) for more detail on handling GraphML files. The demo simply saves the current network to (and can load from) the file `demo.graphml` in your default directory.
+
 
 ## THINGS TO NOTICE
 
@@ -1358,7 +1361,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.5
+NetLogo 5.0.5-RC1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
