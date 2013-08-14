@@ -146,8 +146,8 @@ to adjust-sizes
     ]
     [ ;; remap the size to a range of sizes from the base size to quadruple the base size
       let size-range base-size * 3
-      ; note that we call runresult measure a second time, but since the results are 
-      ; all cached in the network snapshot, there is no significant cost to that
+      ; note that we call runresult measure a second time, but since the centrality results
+      ; are stored behind the scene by the nw extension, the cost of doing that is acceptable
       ask turtles [ set size base-size + (((runresult measure - first results) / delta) * size-range) ]
     ]    
   ]
@@ -696,7 +696,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.5
+NetLogo 5.0.5-RC1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
