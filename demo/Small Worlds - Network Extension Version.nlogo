@@ -647,7 +647,9 @@ In a precursor to this model, Watts and Strogatz created an "alpha" model where 
 
 ## NETLOGO FEATURES
 
-In this model we need to find the shortest paths between all pairs of nodes. The version of this model that is in the NetLogo model library uses the [Floyd Warshall algorithm](http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm). This version directly use the network extension's mean-path-length primitive (which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) internally instead.
+In this model we need to find the shortest paths between all pairs of nodes. The version of this model that is in the NetLogo model library uses the [Floyd Warshall algorithm](http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm). This version directly use the network extension's `mean-path-length` primitive instead. (`nw:mean-path-length` internally uses either [Breadth-First Search](http://en.wikipedia.org/wiki/Breath_first_search) or [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) depending on whether the graph is weighted or not. In this case, the graph is not weighted.)
+
+This version of the model also shows plots of the distribution of the different centrality measures that the network extension makes available to you, namely: `nw:betweenness-centrality`, `nw:closeness-centrality` and `nw:eigenvector-centrality`.
 
 ## RELATED MODELS
 
@@ -969,7 +971,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.5
+NetLogo 5.0.5-RC1
 @#$#@#$#@
 setup
 repeat 5 [rewire-one]
