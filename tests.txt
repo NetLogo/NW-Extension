@@ -665,9 +665,9 @@ graphml-export-import-turtles
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ set tvar "b" ]
   O> ask link 0 1 [ set thickness 0.5 ]
-  O> nw:save-graphml "tmp/graphml-export-import-turtles.xml"
+  O> nw:save-graphml "extensions/nw/test/tmp/graphml-export-import-turtles.xml"
   O> ca
-  O> nw:load-graphml "tmp/graphml-export-import-turtles.xml"
+  O> nw:load-graphml "extensions/nw/test/tmp/graphml-export-import-turtles.xml"
   sort [ color ] of turtles => [5 15]
   sort [ tvar ] of turtles => ["a" "b"]
   [ thickness ] of link 0 1 => 0.5
@@ -680,9 +680,9 @@ graphml-export-import-breeds
   O> ask mouse 0 [ create-undirected-link-with mouse 1 ]
   O> ask mouse 1 [ set fur "b" ]
   O> ask undirected-link 0 1 [ set weight 0.5 ]
-  O> nw:save-graphml "tmp/graphml-export-import-breeds.xml"
+  O> nw:save-graphml "extensions/nw/test/tmp/graphml-export-import-breeds.xml"
   O> ca
-  O> nw:load-graphml "tmp/graphml-export-import-breeds.xml"
+  O> nw:load-graphml "extensions/nw/test/tmp/graphml-export-import-breeds.xml"
   sort [ color ] of mice => [5 15]
   sort [ fur ] of mice => ["a" "b"]
   [ weight ] of undirected-link 0 1 => 0.5
@@ -692,9 +692,9 @@ save-graphml-first-turtle-double
   O> crt 2
   O> ask turtle 0 [ set tvar 1 ]
   O> ask turtle 1 [ set tvar "a" ]
-  O> nw:save-graphml "tmp/save-graphml-first-turtle-double.graphml"
+  O> nw:save-graphml "extensions/nw/test/tmp/save-graphml-first-turtle-double.graphml"
   O> ca
-  O> nw:load-graphml "tmp/save-graphml-first-turtle-double.graphml"
+  O> nw:load-graphml "extensions/nw/test/tmp/save-graphml-first-turtle-double.graphml"
   sort-by is-number? [ tvar ] of turtles => [1 "a"]
 
 save-graphml-first-turtle-string
@@ -702,9 +702,9 @@ save-graphml-first-turtle-string
   O> crt 2
   O> ask turtle 0 [ set tvar "a" ]
   O> ask turtle 1 [ set tvar 1 ]
-  O> nw:save-graphml "tmp/save-graphml-first-turtle-string.graphml"
+  O> nw:save-graphml "extensions/nw/test/tmp/save-graphml-first-turtle-string.graphml"
   O> ca
-  O> nw:load-graphml "tmp/save-graphml-first-turtle-string.graphml"
+  O> nw:load-graphml "extensions/nw/test/tmp/save-graphml-first-turtle-string.graphml"
   sort [ tvar ] of turtles => ["1" "a"]
 
 load-graphml-missing-attr
