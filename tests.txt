@@ -651,10 +651,52 @@ weak-components-two-isolates
   O> crt 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0] [1]]"
 
-weak-components-connected-undirected-pair
-weak-components-connected-directed-pair
+weak-components-connected-undirected-pair-and-isolate
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
+  O> nw:set-context turtles undirected-links
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+  O> nw:set-context turtles (link-set undirected-links)
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+
+weak-components-connected-directed-pair-and-isolate
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> nw:set-context turtles directed-links
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+  O> nw:set-context turtles (link-set directed-links)
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+
 weak-components-two-connected-undirected-pairs
+  extensions [ nw ]
+  O> crt 4
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
+  O> ask turtle 2 [ create-undirected-link-with turtle 3 ]
+  O> nw:set-context turtles undirected-links
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+  O> nw:set-context turtles (link-set undirected-links)
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+
 weak-components-two-connected-directed-pairs
+  extensions [ nw ]
+  O> crt 4
+  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> ask turtle 2 [ create-directed-link-to turtle 3 ]
+  O> nw:set-context turtles directed-links
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+  O> nw:set-context turtles (link-set directed-links)
+  length nw:weak-component-clusters => 2
+  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+
 
 # graphml tests
 
