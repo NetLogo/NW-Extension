@@ -19,7 +19,7 @@ class BreadthFirstSearch(graphContext: GraphContext) {
     }
     val neighborFinder: Turtle => Iterable[Turtle] = {
       (directed, reverse) match {
-        case (false, _)    => graphContext.allNeighbors
+        case (false, _)    => graphContext.undirectedNeighbors
         case (true, false) => graphContext.outNeighbors
         case (true, true)  => graphContext.inNeighbors
       }
