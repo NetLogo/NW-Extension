@@ -10,6 +10,7 @@ import org.nlogo.agent.World
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.util.MersenneTwisterFast
+import scala.util.Random
 
 class GraphContext(
   val world: World,
@@ -108,9 +109,9 @@ class GraphContext(
   // ourselves afterwards. Making MonitoredArrayAgentSet.isValid more efficient
   // (it's currently O(n)) would go a long way towards making this sensible.
   // NP 2013-07-11.
-  def allEdges(turtle: Turtle): Iterable[Link] =
+  def undirectedEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksWith(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
-  def allNeighbors(turtle: Turtle): Iterable[Turtle] =
+  def undirectedNeighbors(turtle: Turtle): Iterable[Turtle] =
     linkManager.findLinkedWith(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
 
   def directedInEdges(turtle: Turtle): Iterable[Link] =
@@ -122,6 +123,11 @@ class GraphContext(
     linkManager.findLinksFrom(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
   def outNeighbors(turtle: Turtle): Iterable[Turtle] =
     linkManager.findLinkedFrom(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
+
+  def allEdges(turtle: Turtle): Iterable[Link] = new Random(rng).shuffle(
+    undirectedEdges(turtle) ++ directedInEdges(turtle) ++ directedOutEdges(turtle))
+  def allNeighbors(turtle: Turtle): Iterable[Turtle] = new Random(rng).shuffle(
+    undirectedNeighbors(turtle) ++ inNeighbors(turtle) ++ outNeighbors(turtle))
 
   // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
   def inEdges(turtle: Turtle): Iterable[Link] =
