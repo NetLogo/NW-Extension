@@ -92,8 +92,11 @@ class GraphContext(
   def validTurtle(turtle: Turtle): Option[Turtle] =
     if (isValidTurtle(turtle)) Some(turtle) else None
 
-  def isValidLink(link: Link) = monitoredLinkSet.isValid(link) &&
-    isValidTurtle(link.end1) && isValidTurtle(link.end2)
+  def isValidLink(link: Link) =
+    monitoredLinkSet.isValid(link) &&
+      isValidTurtle(link.end1) &&
+      isValidTurtle(link.end2)
+
   def validLink(link: Link): Option[Link] =
     if (isValidLink(link)) Some(link) else None
 
@@ -108,20 +111,30 @@ class GraphContext(
   // This is why we pass world.links to the methods and do the filtering
   // ourselves afterwards.
   // NP 2013-07-11.
+
+  private def neighborsFromLinkSet(linkSet: AgentSet, sourceTurtle: Turtle): Iterable[Turtle] =
+    new Random(rng).shuffle(
+      linkSet.asIterable[Link]
+        .view
+        .filter(isValidLink)
+        .map(l => if (l.end1 != sourceTurtle) l.end1 else l.end2)
+        .filter(isValidTurtle)
+        .force)
+
   def undirectedEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksWith(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
   def undirectedNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedWith(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
+    neighborsFromLinkSet(linkManager.findLinksWith(turtle, world.links), turtle)
 
   def directedInEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksTo(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
   def inNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedTo(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
+    neighborsFromLinkSet(linkManager.findLinksTo(turtle, world.links), turtle)
 
   def directedOutEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksFrom(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
   def outNeighbors(turtle: Turtle): Iterable[Turtle] =
-    linkManager.findLinkedFrom(turtle, world.links).asShufflerable[Turtle](rng).filter(isValidTurtle)
+    neighborsFromLinkSet(linkManager.findLinksFrom(turtle, world.links), turtle)
 
   def allEdges(turtle: Turtle): Iterable[Link] = new Random(rng).shuffle(
     undirectedEdges(turtle) ++ directedInEdges(turtle) ++ directedOutEdges(turtle))
