@@ -106,8 +106,7 @@ class GraphContext(
   // LinkManager.findLink* methods require "breed" agentsets and, as such,
   // does not play well with linkSet in the case it's an ArrayAgentSet.
   // This is why we pass world.links to the methods and do the filtering
-  // ourselves afterwards. Making MonitoredArrayAgentSet.isValid more efficient
-  // (it's currently O(n)) would go a long way towards making this sensible.
+  // ourselves afterwards.
   // NP 2013-07-11.
   def undirectedEdges(turtle: Turtle): Iterable[Link] =
     linkManager.findLinksWith(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
