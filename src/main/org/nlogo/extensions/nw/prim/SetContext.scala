@@ -29,6 +29,6 @@ class GetContext(getGraphContext: api.World => GraphContext)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = getGraphContext(context.getAgent.world.asInstanceOf[org.nlogo.agent.World])
     val workspace = context.asInstanceOf[ExtensionContext].workspace()
-    api.LogoList(gc.turtleSet.toLogoList, gc.linkSet.toLogoList)
+    api.LogoList(gc.turtleSet, gc.linkSet)
   }
 }

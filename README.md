@@ -86,15 +86,15 @@ It must be noted that NetLogo has two types of agentsets that behave slightly di
 
 The "special" agentsets in NetLogo are `turtles`, `links` and the different "breed" agentsets. What is special about them is that they can grow: if you create a new turtle, it will be added to the `turtles` agentset. If you have a `bankers` breed and you create a new banker, it will be added to the `bankers` agentset and to the `turtles` agentset. Same goes for links. Other agentsets, such as those created with the `with` primitive (e.g., `turtles with [ color = red ]`) or the `turtle-set` and `link-set` primitives) are never added to. The content of normal agentsets will only change if the agents that they contain die.
 
-To show how different types of agentsets interact with `nw:set-context`, let's create a very simple network:
+To show how different types of agentsets interact with [`nw:set-context`](#set-context), let's create a very simple network:
 
     clear-all
     create-turtles 3 [ create-links-with other turtles ]
 
-Let's set the context to `turtles` and `links` (which is the default anyway) and use [`nw:show-context`](#show-context) to see what we have:
+Let's set the context to `turtles` and `links` (which is the default anyway) and use [`nw:get-context`](#get-context) to see what we have:
 
     nw:set-context turtles links
-    show nw:get-context
+    show map sort nw:get-context
 
  We get all three turtles and all three links:
 
@@ -103,7 +103,7 @@ Let's set the context to `turtles` and `links` (which is the default anyway) and
 Now let's kill one turtle:
 
     ask one-of turtles [ die ]
-    show nw:get-context
+    show map sort nw:get-context
 
 As expected, the context is updated to reflect the death of the turtle and of the two links that died with it:
 
@@ -112,7 +112,7 @@ As expected, the context is updated to reflect the death of the turtle and of th
 What if we now create a new turtle?
 
     create-turtles 1
-    show nw:get-context
+    show map sort nw:get-context
 
 Since our context is using the special `turtles` agentset, the new turtle is automatically added:
 
@@ -129,7 +129,7 @@ Now let's demonstrate how it works with normal agentsets. We start over with a n
 And we set the context to `turtles with [ color = red ])` and `links`
 
     nw:set-context (turtles with [ color = red ]) links
-    show nw:get-context
+    show map sort nw:get-context
 
 Since all turtles are red, we get everything in our context:
 
@@ -138,7 +138,7 @@ Since all turtles are red, we get everything in our context:
 But what if we ask one of them to turn blue?
 
     ask one-of turtles [ set color blue ]
-    show nw:get-context
+    show map sort nw:get-context
 
 No change. The agentset used in our context remains unaffected:
 
@@ -147,7 +147,7 @@ No change. The agentset used in our context remains unaffected:
 If we kill one of them, however...
 
     ask one-of turtles [ die ]
-    show nw:get-context
+    show map sort nw:get-context
 
 It gets removed from the set:
 
@@ -156,13 +156,13 @@ It gets removed from the set:
 What if we add a new red turtle?
 
     create-turtles 1 [ set color red ]
-    show nw:get-context
+    show map sort nw:get-context
 
 Nope:
 
     [[(turtle 0) (turtle 2)] [(link 0 2)]]
 
-**A final note regarding the different types of agentsets**: because of how they are implemented in NetLogo and handled in the NW extension, it is likely that special agentsets will perform better for some of the extension's primitives. So, if you can, prefer a context refering to `turtles` and `links` or to simple breeds instead of agentsets built with `with`, `turtle-set`, etc.
+**A final note regarding the different types of agentsets**: because of how they are implemented in NetLogo and handled in the NW extension, it is likely that special agentsets will perform better for some of the extension's primitives. So, if you can, prefer a context refering to `turtles` and `links` or simple breeds, instead of agentsets built with `with`, `turtle-set`, etc.
 
 ## Primitives
 
@@ -182,25 +182,93 @@ See [the usage section](#usage) for a much more detailed explanation of `nw:set-
 
 `nw:get-context`
 
-Reports the content of the current graph context as a list containing two sublists: the list of turtles that are part of the context and the list of links that are part of the context.
+Reports the content of the current graph context as a list containing two agentssets: the agentset of turtles that are part of the context and the agentset of links that are part of the context.
 
-Let's say with start with a blank slate and the default context consisting of `turtles` and `links`, `nw:get-context` will report a list with two empty sublists:
+Let's say with start with a blank slate and the default context consisting of `turtles` and `links`, `nw:get-context` will report a list the special `turtles` and `links` breed agentsets:
 
 ```
 observer> clear-all
 observer> show nw:get-context
-observer: [[] []]
+observer: [turtles links]
 ```
 
-If we then add some turtles and links to our context, we'll get something like this:
+If we add some turtles and links to our context, we'll still see the same thing, even though `turtles` and `links` have internally grown:
 
 ```
 observer> crt 2 [ create-links-with other turtles ]
 observer> show nw:get-context
+observer: [turtles links]
+```
+
+If you had set your context to normal agentsets instead (built with `turtle-set`, `link-set` or `with`) here is what you would see:
+
+```
+observer> clear-all
+observer> nw:set-context turtle-set turtles link-set links
+observer> show nw:get-context
+observer: [(agentset, 0 turtles) (agentset, 0 links)]
+```
+
+If you then create new turtles and links, they are not added to the context because normal agentsets don't grow (see [Special agentsets vs. normal agentsets](#special-agentsets-vs-normal-agentsets)):
+
+```
+observer> crt 2 [ create-links-with other turtles ]
+observer> show nw:get-context
+observer: [(agentset, 0 turtles) (agentset, 0 links)]
+```
+
+But if you set construct new agentsets and set the context to them, your new agents will be there:
+
+```
+observer> nw:set-context turtle-set turtles link-set links
+observer> show nw:get-context
+observer: [(agentset, 2 turtles) (agentset, 1 link)]
+```
+
+If you want to see the actual content of your context, it is easy to turn your agentsets into lists that can be nicely displayed. Just use a combination of [`map`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#map) and [`sort`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#sort):
+
+```
+observer> show map sort nw:get-context
 observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 ```
 
-Note that the order of turtles and links reported by `nw:get-context` is not randomized. If you are using special agentsets (i.e., `turtles`, `links` or breed agentsets), this means they will be ordered by `who` number. If you are using a normal agentset, it will depend on how the agentset was constructed.
+Finally, you can use `nw:get-context` to store a context that you eventually want to restore:
+
+```
+extensions [ nw ]
+to store-and-restore-context
+  clear-all
+  crt 2 [
+    set color red
+    create-links-with other turtles with [ color = red ] [
+      set color yellow
+    ]
+  ]
+  crt 2 [
+    set color blue
+    create-links-with other turtles with [ color = blue ] [
+      set color green
+    ]
+  ]
+  nw:set-context turtles with [ color = red ] links with [ color = yellow ]
+  show map sort nw:get-context
+  let old-turtles item 0 nw:get-context
+  let old-links item 1 nw:get-context
+  nw:set-context turtles with [ color = blue ] links with [ color = green ]
+  show map sort nw:get-context
+  nw:set-context old-turtles old-links
+  show map sort nw:get-context
+end
+```
+
+Here is the result:
+
+```
+observer> store-and-restore-context
+observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
+observer: [[(turtle 2) (turtle 3)] [(link 2 3)]]
+observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
+```
 
 ### Path and Distance
 
