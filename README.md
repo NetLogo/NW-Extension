@@ -217,7 +217,7 @@ observer> show nw:get-context
 observer: [(agentset, 0 turtles) (agentset, 0 links)]
 ```
 
-But if you set construct new agentsets and set the context to them, your new agents will be there:
+But if you construct new agentsets and set the context to them, your new agents will be there:
 
 ```
 observer> nw:set-context turtle-set turtles link-set links
