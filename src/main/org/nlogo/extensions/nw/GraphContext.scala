@@ -141,11 +141,5 @@ class GraphContext(
   def allEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, true, true)
   def allNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, true, true)
 
-  // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
-  def inEdges(turtle: Turtle): Iterable[Link] =
-    if (isDirected) directedInEdges(turtle) else allEdges(turtle)
-  def outEdges(turtle: Turtle): Iterable[Link] =
-    if (isDirected) directedOutEdges(turtle) else allEdges(turtle)
-
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
 }

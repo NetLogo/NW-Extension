@@ -66,15 +66,21 @@ class DirectedGraph(
   if (!gc.isDirected)
     throw new ExtensionException("link set must be directed")
 
+  // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
+  private def inEdges(turtle: Turtle): Iterable[Link] =
+    if (gc.isDirected) gc.directedInEdges(turtle) else gc.allEdges(turtle)
+  private def outEdges(turtle: Turtle): Iterable[Link] =
+    if (gc.isDirected) gc.directedOutEdges(turtle) else gc.allEdges(turtle)
+  
   override def getInEdges(turtle: Turtle): Collection[Link] =
-    gc.validTurtle(turtle).map(gc.inEdges(_).asJavaCollection).orNull
+    gc.validTurtle(turtle).map(inEdges(_).asJavaCollection).orNull
   override def getPredecessors(turtle: Turtle): Collection[Turtle] =
-    gc.validTurtle(turtle).map(gc.inEdges(_).map(_.end1).asJavaCollection).orNull
+    gc.validTurtle(turtle).map(inEdges(_).map(_.end1).asJavaCollection).orNull
 
   override def getOutEdges(turtle: Turtle): Collection[Link] =
-    gc.validTurtle(turtle).map(gc.outEdges(_).asJavaCollection).orNull
+    gc.validTurtle(turtle).map(outEdges(_).asJavaCollection).orNull
   override def getSuccessors(turtle: Turtle): Collection[Turtle] =
-    gc.validTurtle(turtle).map(gc.outEdges(_).map(_.end2).asJavaCollection).orNull
+    gc.validTurtle(turtle).map(outEdges(_).map(_.end2).asJavaCollection).orNull
 
   def isDest(turtle: Turtle, link: Link): Boolean =
     gc.validLink(link).filter(_.end2 == turtle).isDefined
