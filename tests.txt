@@ -18,9 +18,9 @@ clear-all-clears-context
   extensions [nw]
   O> crt 2 [ create-links-with other turtles ]
   O> nw:set-context (turtle-set turtles) (link-set links)
-  (word nw:get-context) => "[[(turtle 0) (turtle 1)] [(link 0 1)]]"
+  (word map sort nw:get-context) => "[[(turtle 0) (turtle 1)] [(link 0 1)]]"
   O> clear-all
-  nw:get-context => [[] []]
+  (map sort nw:get-context) => [[] []]
 
 distance-after-changes
   extensions [nw]
