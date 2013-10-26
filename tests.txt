@@ -153,8 +153,9 @@ closeness-after-deaths-non-breed
   O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [1 0.67 0.67]
   O> ask frogs [ die ]
+  # create new link that should not be part of context:
   O> ask mouse 1 [ create-link-with mouse 2 ]
-  [ nw:closeness-centrality ] of turtles => [1 1]
+  [ nw:closeness-centrality ] of turtles => [0 0]
 
 ### turtles-in-radius
 
