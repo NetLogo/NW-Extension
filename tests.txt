@@ -314,8 +314,11 @@ path-to-mixed-directed-undirected
   O> ask turtle 1 [ create-directed-link-to turtle 2 ]
   O> ask turtle 3 [ create-directed-link-to turtle 1 ]
   (word [ nw:path-to turtle 2 ] of turtle 0) => "[(undirected-link 0 1) (directed-link 1 2)]"
-  (word [ nw:path-to turtle 3 ] of turtle 0) => "false"
+  (word [ nw:turtles-on-path-to turtle 2 ] of turtle 0) => "[(turtle 0) (turtle 1) (turtle 2)]"
+  (word [ nw:path-to turtle 3 ] of turtle 0) => "[]"
+  (word [ nw:turtles-on-path-to turtle 3 ] of turtle 0) => "[]"
   (word [ nw:path-to turtle 0 ] of turtle 3) => "[(directed-link 3 1) (undirected-link 0 1)]"
+  (word [ nw:turtles-on-path-to turtle 0 ] of turtle 3) => "[(turtle 3) (turtle 1) (turtle 0)]"
 
 ### turtles-on-path-to
 

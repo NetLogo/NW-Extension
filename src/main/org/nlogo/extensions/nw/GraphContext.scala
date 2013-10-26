@@ -10,14 +10,13 @@ import org.nlogo.agent.World
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.util.MersenneTwisterFast
-import scala.util.Random
 
 class GraphContext(
   val world: World,
   private var initialTurtleSet: AgentSet,
   private var initialLinkSet: AgentSet) {
 
-  val rng: MersenneTwisterFast = world.mainRNG
+  val rng = new scala.util.Random(world.mainRNG)
 
   private var monitoredTurtleSet: MonitoredAgentSet[Turtle] = {
     val result = initialTurtleSet match {
@@ -103,43 +102,44 @@ class GraphContext(
   def turtleCount: Int = turtleSet.count
   def linkCount: Int = linkSet.count
 
-  def links: Iterable[Link] = linkSet.asShufflerable[Link](rng)
-  def turtles: Iterable[Turtle] = turtleSet.asShufflerable[Turtle](rng)
+  def links: Iterable[Link] = linkSet.asShufflerable[Link](world.mainRNG)
+  def turtles: Iterable[Turtle] = turtleSet.asShufflerable[Turtle](world.mainRNG)
 
   // LinkManager.findLink* methods require "breed" agentsets and, as such,
   // does not play well with linkSet in the case it's an ArrayAgentSet.
   // This is why we pass world.links to the methods and do the filtering
   // ourselves afterwards.
   // NP 2013-07-11.
+  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Link] =
+    rng.shuffle(
+      linkManager
+        .findLinksWith(turtle, world.links)
+        .asIterable[Link]
+        .collect {
+          case l if includeUn && !l.isDirectedLink && isValidLink(l)                     => l
+          case l if includeOut && l.isDirectedLink && l.end1 == turtle && isValidLink(l) => l
+          case l if includeIn && l.isDirectedLink && l.end2 == turtle && isValidLink(l)  => l
+        })
 
-  private def neighborsFromLinkSet(linkSet: AgentSet, sourceTurtle: Turtle): Iterable[Turtle] =
-    new Random(rng).shuffle(
-      linkSet.asIterable[Link]
-        .view
-        .filter(isValidLink)
-        .map(l => if (l.end1 != sourceTurtle) l.end1 else l.end2)
-        .filter(isValidTurtle)
-        .force)
+  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Turtle] = {
+    def ok(t: Turtle) = t != turtle && isValidTurtle(t)
+    edges(turtle, includeUn, includeIn, includeOut).collect {
+      case l if ok(l.end1) => l.end1
+      case l if ok(l.end2) => l.end2
+    }
+  }
 
-  def undirectedEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksWith(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
-  def undirectedNeighbors(turtle: Turtle): Iterable[Turtle] =
-    neighborsFromLinkSet(linkManager.findLinksWith(turtle, world.links), turtle)
+  def undirectedEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, false, false)
+  def undirectedNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, false, false)
 
-  def directedInEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksTo(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
-  def inNeighbors(turtle: Turtle): Iterable[Turtle] =
-    neighborsFromLinkSet(linkManager.findLinksTo(turtle, world.links), turtle)
+  def directedInEdges(turtle: Turtle): Iterable[Link] = edges(turtle, false, true, false)
+  def inNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, true, false)
 
-  def directedOutEdges(turtle: Turtle): Iterable[Link] =
-    linkManager.findLinksFrom(turtle, world.links).asShufflerable[Link](rng).filter(isValidLink)
-  def outNeighbors(turtle: Turtle): Iterable[Turtle] =
-    neighborsFromLinkSet(linkManager.findLinksFrom(turtle, world.links), turtle)
+  def directedOutEdges(turtle: Turtle): Iterable[Link] = edges(turtle, false, false, true)
+  def outNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, false, true)
 
-  def allEdges(turtle: Turtle): Iterable[Link] = new Random(rng).shuffle(
-    undirectedEdges(turtle) ++ directedInEdges(turtle) ++ directedOutEdges(turtle))
-  def allNeighbors(turtle: Turtle): Iterable[Turtle] = new Random(rng).shuffle(
-    undirectedNeighbors(turtle) ++ inNeighbors(turtle) ++ outNeighbors(turtle))
+  def allEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, true, true)
+  def allNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, true, true)
 
   // Jung, weirdly, sometimes uses in/outedges with undirected graphs, actually expecting all edges
   def inEdges(turtle: Turtle): Iterable[Link] =
