@@ -45,7 +45,7 @@ class PathTo(getGraphContext: api.World => GraphContext)
           .head
       } yield l
     new BreadthFirstSearch(graphContext)
-      .from(source, true, true, false)
+      .from(source, true, false, true)
       .find(_.head eq target)
       .map(path => LogoList.fromIterator(turtlesToLinks(path.reverse)))
       .getOrElse(LogoList.Empty)
@@ -63,7 +63,7 @@ class TurtlesOnPathTo(getGraphContext: api.World => GraphContext)
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
     val graphContext = getGraphContext(context.getAgent.world)
     new BreadthFirstSearch(graphContext)
-      .from(source, true, true, false)
+      .from(source, true, false, true)
       .find(_.head eq target)
       .map(path => LogoList.fromIterator(path.reverseIterator))
       .getOrElse(LogoList.Empty)

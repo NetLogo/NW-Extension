@@ -11,7 +11,7 @@ object Distance {
     source: agent.Turtle,
     target: agent.Turtle): Option[Int] =
     new BreadthFirstSearch(graphContext)
-      .from(source, true, true, false)
+      .from(source, true, false, true)
       .find(_.head eq target)
       .map(_.size - 1)
 }

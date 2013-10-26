@@ -14,16 +14,16 @@ class BreadthFirstSearch(graphContext: GraphContext) {
    */
   def from(
     start: Turtle,
-    followUndirected: Boolean,
-    followDirected: Boolean,
-    reverse: Boolean): Stream[List[Turtle]] = {
+    followUnLinks: Boolean,
+    followInLinks: Boolean,
+    followOutLinks: Boolean): Stream[List[Turtle]] = {
     val seen: Turtle => Boolean = {
       val memory = collection.mutable.HashSet[Turtle](start)
       t => memory(t) || { memory += t; false }
     }
     def neighbors(turtle: Turtle): Iterable[Turtle] =
       graphContext
-        .neighbors(turtle, followUndirected, followDirected && reverse, followDirected && !reverse)
+        .neighbors(turtle, followUnLinks, followInLinks, followOutLinks)
         .filterNot(seen)
     def nextLayer(layer: Stream[List[Turtle]]) =
       for {

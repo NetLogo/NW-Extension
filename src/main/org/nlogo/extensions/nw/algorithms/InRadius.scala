@@ -16,7 +16,7 @@ object InRadius {
     reverse: Boolean = false): api.AgentSet = {
     val result: Stream[Turtle] =
       new BreadthFirstSearch(graphContext)
-        .from(start, !directed, directed, reverse)
+        .from(start, !directed, directed && reverse, directed && !reverse)
         .takeWhile(_.tail.size <= radius)
         .map(_.head)
     toTurtleSet(result, graphContext.world)
