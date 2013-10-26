@@ -36,10 +36,14 @@ class PathTo(getGraphContext: api.World => GraphContext)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
     val graphContext = getGraphContext(context.getAgent.world)
-    val linkManager = graphContext.linkManager
     def turtlesToLinks(turtles: List[agent.Turtle]): Iterator[agent.Link] =
-      for ((end1, end2) <- turtles.iterator zip turtles.tail.iterator)
-        yield linkManager.findLink(end1, end2, graphContext.linkSet, true)
+      for {
+        (source, target) <- turtles.iterator zip turtles.tail.iterator
+        l = graphContext
+          .edges(source, true, false, true)
+          .filter(l => l.end1 == target || l.end2 == target)
+          .head
+      } yield l
     new BreadthFirstSearch(graphContext)
       .from(source, true, true, false)
       .find(_.head eq target)

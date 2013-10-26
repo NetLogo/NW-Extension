@@ -307,6 +307,14 @@ path-to-random-equal-paths
   O> cro 4 [ create-link-with turtle ((who + 1) mod 4) ]
   length remove-duplicates n-values 100 [ [ nw:path-to turtle 2 ] of turtle 0 ] => 2
 
+path-to-random-equal-paths-parallel-links
+  extensions [ nw ]
+  O> cro 3
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
+  O> ask turtle 1 [ create-undirected-link-with turtle 2 ]
+  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  length remove-duplicates n-values 100 [ [ nw:path-to turtle 2 ] of turtle 0 ] => 2
+
 path-to-mixed-directed-undirected
   extensions [ nw ]
   O> crt 4
