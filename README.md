@@ -282,7 +282,7 @@ observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 
 ![turtle][turtle] `nw:turtles-in-in-radius` _radius_
 
-Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
+Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current current.
 
 The `turtles-in-radius` form will follow both undirected links and directed out links. The `turtles-in-undirected-radius` form works only with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
 
@@ -310,7 +310,7 @@ As you may have noticed, the result includes the calling turtle. This mimics the
 
 ![turtle][turtle] `nw:weighted-distance-to` _target-turtle_ _weight-variable-name_
 
-Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current snapshot.
+Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current context.
 
 The `nw:distance-to` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-distance-to` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
 
@@ -325,7 +325,6 @@ The `nw:distance-to` version of the primitive assumes that each link counts for 
       ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
       ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
-      nw:set-snapshot turtles links
       ask turtle 0 [ show nw:distance-to turtle 2 ]
       ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
     end
@@ -362,7 +361,6 @@ If no path exist between the source and the target turtles, all primitives will 
       ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
       ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
-      nw:set-snapshot turtles links
       ask turtle 0 [ show nw:path-to turtle 2 ]
       ask turtle 0 [ show nw:turtles-on-path-to turtle 2 ]
       ask turtle 0 [ show nw:weighted-path-to turtle 2 "weight" ]
@@ -382,7 +380,7 @@ Will output:
 
 `nw:mean-weighted-path-length` _weight-variable-name_
 
-Reports the average shortest-path length between all distinct pairs of nodes in the current snapshot. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
+Reports the average shortest-path length between all distinct pairs of nodes in the current context. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
 
 Reports false unless paths exist between all pairs.
 
@@ -394,11 +392,9 @@ Reports false unless paths exist between all pairs.
       create-turtles 3
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
       ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
-      nw:set-snapshot turtles links
       show nw:mean-path-length
       show nw:mean-weighted-path-length "weight"
       create-turtles 1 ; create a new, disconnected turtle
-      nw:set-snapshot turtles links
       show nw:mean-path-length
       show nw:mean-weighted-path-length "weight"
     end
@@ -446,12 +442,12 @@ Also note that, as of now, link weights are not taken into account.
 #### bicomponent-clusters
 `nw:bicomponent-clusters`
 
-Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network snapshot. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one bicomponent at once.
+Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network context. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one bicomponent at once.
 
 #### weak-component-clusters
 `nw:weak-component-clusters`
 
-Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network snapshot. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
+Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network context. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
 
 The result is reported as a list of agentsets, in random order. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
 
@@ -469,13 +465,13 @@ The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/
 #### biggest-maximal-cliques
 `nw:biggest-maximal-cliques`
 
-The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. Often, more than one clique are tied for the title of biggest clique, so the result if reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
+The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current context. Often, more than one clique are tied for the title of biggest clique, so the result if reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
 ### Generators
 
-The generators are amongst the only primitives that do not operate on the current network snapshot. Instead, all of them take a turtle breed and a link breed as inputs and generate a new network using the given breeds.
+The generators are amongst the only primitives that do not operate on the current network context. Instead, all of them take a turtle breed and a link breed as inputs and generate a new network using the given breeds.
 
 #### generate-preferential-attachment
 
@@ -562,7 +558,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### save-matrix
 `nw:save-matrix` _file-name_
 
-Saves the current network snapshot to _file-name_, as a text file, in the form of a simple connection matrix.
+Saves the current network, as defined by `nw:set-context`, to _file-name_, as a text file, in the form of a simple connection matrix.
 
 Here is, for example, a undirected ring network with four nodes:
 
@@ -596,7 +592,7 @@ For example:
     to go
       clear-all
       crt 5 [ create-dirlinks-to other turtles ]
-      nw:set-snapshot turtles dirlinks
+      nw:set-context turtles dirlinks
       nw:save-matrix "matrix.txt"
       clear-all
       nw:load-matrix "matrix.txt" turtles links
