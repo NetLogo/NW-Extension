@@ -13,7 +13,7 @@ import org.nlogo.api.AgentException
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.extensions.nw.jung.createLink
-import org.nlogo.extensions.nw.jung.factoryFor
+import org.nlogo.extensions.nw.jung.sparseGraphFactory
 import org.nlogo.extensions.nw.jung.transformer
 import org.nlogo.util.MersenneTwisterFast
 import edu.uci.ics.jung
@@ -150,7 +150,7 @@ object GraphMLImport {
       throw new ExtensionException("Cannot load GraphML file when in applet mode.")
     try {
       val fileReader = new BufferedReader(new FileReader(fileName))
-      val graphFactory = factoryFor[Vertex, Edge](world.links)
+      val graphFactory = sparseGraphFactory[Vertex, Edge]
       val graphTransformer = transformer { _: GraphMetadata => graphFactory.create }
 
       val graphReader =

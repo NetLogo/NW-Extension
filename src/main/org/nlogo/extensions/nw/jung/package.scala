@@ -28,6 +28,7 @@ package object jung {
 
   def directedFactory[V, E] = jg.DirectedSparseGraph.getFactory[V, E]
   def undirectedFactory[V, E] = jg.UndirectedSparseGraph.getFactory[V, E]
+  def sparseGraphFactory[V, E] = jg.SparseGraph.getFactory[V, E]
 
   def createLink[V](turtles: Map[V, Turtle], endPoints: Pair[V], linkBreed: AgentSet) =
     linkBreed.world.linkManager.createLink(
