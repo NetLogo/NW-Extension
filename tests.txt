@@ -188,6 +188,30 @@ in-link-radius-source-set-filtering
   O> nw:set-context mice links
   sort [who] of [nw:turtles-in-radius 10] of turtle 0 => [0 2 4 6]
 
+mixed-turtles-in-radius
+  extensions [nw]
+  O> cro 13
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
+  O> ask turtle 0 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 0 [ create-directed-link-from turtle 3 ]
+  O> ask turtle 1 [ create-undirected-link-with turtle 4 ]
+  O> ask turtle 1 [ create-directed-link-to turtle 5 ]
+  O> ask turtle 1 [ create-directed-link-from turtle 6 ]
+  O> ask turtle 2 [ create-undirected-link-with turtle 7 ]
+  O> ask turtle 2 [ create-directed-link-to turtle 8 ]
+  O> ask turtle 2 [ create-directed-link-from turtle 9 ]
+  O> ask turtle 3 [ create-undirected-link-with turtle 10 ]
+  O> ask turtle 3 [ create-directed-link-to turtle 11 ]
+  O> ask turtle 3 [ create-directed-link-from turtle 12 ]
+  sort [who] of [nw:turtles-in-radius 1] of turtle 0 => [0 1 2]
+  sort [who] of [nw:turtles-in-undirected-radius 1] of turtle 0 => [0 1]
+  sort [who] of [nw:turtles-in-out-radius 1] of turtle 0 => [0 2]
+  sort [who] of [nw:turtles-in-in-radius 1] of turtle 0 => [0 3]
+  sort [who] of [nw:turtles-in-radius 2] of turtle 0 => [0 1 2 4 5 7 8]
+  sort [who] of [nw:turtles-in-undirected-radius 2] of turtle 0 => [0 1 4]
+  sort [who] of [nw:turtles-in-out-radius 2] of turtle 0 => [0 2 8]
+  sort [who] of [nw:turtles-in-in-radius 2] of turtle 0 => [0 3 12]
+
 ### turtles-in-out-radius, turtles-in-in-radius
 
 turtles-in-out-radius

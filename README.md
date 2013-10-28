@@ -17,7 +17,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 [Path and Distance](#path-and-distance)
 
-- [turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius](#turtles-in-radius-turtles-in-out-radius-turtles-in-in-radius), [distance-to, weighted-distance-to](#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](#mean-path-length-mean-weighted-path-length)
+- [turtles-in-radius, turtles-in-undirected-radius, turtles-in-out-radius, turtles-in-in-radius](#turtles-in-radius-turtles-in-undirected-radius-turtles-in-out-radius-turtles-in-in-radius), [distance-to, weighted-distance-to](#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](#mean-path-length-mean-weighted-path-length)
 
 [Centrality](#centrality)
 
@@ -272,9 +272,11 @@ observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 
 ### Path and Distance
 
-#### turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius
+#### turtles-in-radius, turtles-in-undirected-radius, turtles-in-out-radius, turtles-in-in-radius
 
 ![turtle][turtle] `nw:turtles-in-radius` _radius_
+
+![turtle][turtle] `nw:turtles-in-undirected-radius` _radius_
 
 ![turtle][turtle] `nw:turtles-in-out-radius` _radius_
 
@@ -282,7 +284,7 @@ observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 
 Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
 
-The `turtles-in-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
+The `turtles-in-radius` form will follow both undirected links and directed out links. The `turtles-in-undirected-radius` form works only with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
 
 ##### Example:
 
@@ -292,7 +294,6 @@ The `turtles-in-radius` form works with undirected links.  The other two forms w
     ask turtle 0 [ create-link-with turtle 2 ]
     ask turtle 1 [ create-link-with turtle 3 ]
     ask turtle 2 [ create-link-with turtle 4 ]
-    nw:set-snapshot turtles links
     ask turtle 0 [
       show sort nw:turtles-in-radius 1
     ]

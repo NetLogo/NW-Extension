@@ -13,8 +13,9 @@ import org.nlogo.agent.AgentSet
 
 trait InRadiusPrim extends api.DefaultReporter {
   val getGraphContext: api.World => GraphContext
-  val directed:Boolean
-  val reverse:Boolean
+  val followUnLinks: Boolean
+  val followInLinks: Boolean
+  val followOutLinks: Boolean
   override def getSyntax = reporterSyntax(
     Array(NumberType),
     TurtlesetType,
@@ -25,27 +26,38 @@ trait InRadiusPrim extends api.DefaultReporter {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val radius = args(0).getIntValue
     if (radius < 0) throw new api.ExtensionException("radius cannot be negative")
-    inRadius(graphContext, source, radius, directed, reverse)
+    inRadius(graphContext, source, radius, followUnLinks, followInLinks, followOutLinks)
   }
 }
 
 class TurtlesInRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val directed = false
-  override val reverse = false
+  override val followUnLinks = true
+  override val followInLinks = false
+  override val followOutLinks = true
+}
+
+class TurtlesInUndirectedRadius(
+  override val getGraphContext: api.World => GraphContext)
+  extends InRadiusPrim {
+  override val followUnLinks = true
+  override val followInLinks = false
+  override val followOutLinks = false
 }
 
 class TurtlesInInRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val directed = true
-  override val reverse = true
+  override val followUnLinks = false
+  override val followInLinks = true
+  override val followOutLinks = false
 }
 
 class TurtlesInOutRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val directed = true
-  override val reverse = false
+  override val followUnLinks = false
+  override val followInLinks = false
+  override val followOutLinks = true
 }

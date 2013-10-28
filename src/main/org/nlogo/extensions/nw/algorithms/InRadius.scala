@@ -12,11 +12,12 @@ object InRadius {
     graphContext: GraphContext,
     start: Turtle,
     radius: Int,
-    directed: Boolean = false,
-    reverse: Boolean = false): api.AgentSet = {
+    followUnLinks: Boolean,
+    followInLinks: Boolean,
+    followOutLinks: Boolean): api.AgentSet = {
     val result: Stream[Turtle] =
       new BreadthFirstSearch(graphContext)
-        .from(start, !directed, directed && reverse, directed && !reverse)
+        .from(start, followUnLinks, followInLinks, followOutLinks)
         .takeWhile(_.tail.size <= radius)
         .map(_.head)
     toTurtleSet(result, graphContext.world)
