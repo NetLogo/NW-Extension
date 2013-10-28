@@ -13,7 +13,7 @@ import org.nlogo.agent.AgentSet
 
 trait InRadiusPrim extends api.DefaultReporter {
   val getGraphContext: api.World => GraphContext
-  val followUnLinks: Boolean
+  val followUnLinks: Boolean = true
   val followInLinks: Boolean
   val followOutLinks: Boolean
   override def getSyntax = reporterSyntax(
@@ -33,31 +33,13 @@ trait InRadiusPrim extends api.DefaultReporter {
 class TurtlesInRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val followUnLinks = true
   override val followInLinks = false
   override val followOutLinks = true
 }
 
-class TurtlesInUndirectedRadius(
+class TurtlesInReverseRadius(
   override val getGraphContext: api.World => GraphContext)
   extends InRadiusPrim {
-  override val followUnLinks = true
-  override val followInLinks = false
-  override val followOutLinks = false
-}
-
-class TurtlesInInRadius(
-  override val getGraphContext: api.World => GraphContext)
-  extends InRadiusPrim {
-  override val followUnLinks = false
   override val followInLinks = true
   override val followOutLinks = false
-}
-
-class TurtlesInOutRadius(
-  override val getGraphContext: api.World => GraphContext)
-  extends InRadiusPrim {
-  override val followUnLinks = false
-  override val followInLinks = false
-  override val followOutLinks = true
 }

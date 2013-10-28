@@ -204,13 +204,17 @@ mixed-turtles-in-radius
   O> ask turtle 3 [ create-directed-link-to turtle 11 ]
   O> ask turtle 3 [ create-directed-link-from turtle 12 ]
   sort [who] of [nw:turtles-in-radius 1] of turtle 0 => [0 1 2]
-  sort [who] of [nw:turtles-in-undirected-radius 1] of turtle 0 => [0 1]
-  sort [who] of [nw:turtles-in-out-radius 1] of turtle 0 => [0 2]
-  sort [who] of [nw:turtles-in-in-radius 1] of turtle 0 => [0 3]
+  sort [who] of [nw:turtles-in-reverse-radius 1] of turtle 0 => [0 1 3]
   sort [who] of [nw:turtles-in-radius 2] of turtle 0 => [0 1 2 4 5 7 8]
-  sort [who] of [nw:turtles-in-undirected-radius 2] of turtle 0 => [0 1 4]
-  sort [who] of [nw:turtles-in-out-radius 2] of turtle 0 => [0 2 8]
-  sort [who] of [nw:turtles-in-in-radius 2] of turtle 0 => [0 3 12]
+  sort [who] of [nw:turtles-in-reverse-radius 2] of turtle 0 => [0 1 3 4 6 10 12]
+  O> nw:set-context turtles undirected-links
+  sort [who] of [nw:turtles-in-radius 1] of turtle 0 => [0 1]
+  sort [who] of [nw:turtles-in-radius 2] of turtle 0 => [0 1 4]
+  O> nw:set-context turtles directed-links
+  sort [who] of [nw:turtles-in-radius 1] of turtle 0 => [0 2]
+  sort [who] of [nw:turtles-in-radius 2] of turtle 0 => [0 2 8]
+  sort [who] of [nw:turtles-in-reverse-radius 1] of turtle 0 => [0 3]
+  sort [who] of [nw:turtles-in-reverse-radius 2] of turtle 0 => [0 3 12]
 
 ### turtles-in-out-radius, turtles-in-in-radius
 
@@ -218,15 +222,15 @@ turtles-in-out-radius
   extensions [nw]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 0 => [0 1]
-  sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 1 => [1]
+  sort [ who ] of [ nw:turtles-in-radius 1 ] of turtle 0 => [0 1]
+  sort [ who ] of [ nw:turtles-in-radius 1 ] of turtle 1 => [1]
 
 turtles-in-in-radius
   extensions [nw]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 0 => [0]
-  sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 1 => [0 1]
+  sort [who] of [ nw:turtles-in-reverse-radius 1 ] of turtle 0 => [0]
+  sort [who] of [ nw:turtles-in-reverse-radius 1 ] of turtle 1 => [0 1]
 
 ### distance-to
 

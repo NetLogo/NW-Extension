@@ -17,7 +17,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 [Path and Distance](#path-and-distance)
 
-- [turtles-in-radius, turtles-in-undirected-radius, turtles-in-out-radius, turtles-in-in-radius](#turtles-in-radius-turtles-in-undirected-radius-turtles-in-out-radius-turtles-in-in-radius), [distance-to, weighted-distance-to](#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](#mean-path-length-mean-weighted-path-length)
+- [turtles-in-radius, turtles-in-reverse-radius](#turtles-in-radius-turtles-in-reverse-radius), [distance-to, weighted-distance-to](#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](#mean-path-length-mean-weighted-path-length)
 
 [Centrality](#centrality)
 
@@ -272,19 +272,17 @@ observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 
 ### Path and Distance
 
-#### turtles-in-radius, turtles-in-undirected-radius, turtles-in-out-radius, turtles-in-in-radius
+#### turtles-in-radius, turtles-in-reverse-radius
 
 ![turtle][turtle] `nw:turtles-in-radius` _radius_
 
-![turtle][turtle] `nw:turtles-in-undirected-radius` _radius_
+![turtle][turtle] `nw:turtles-in-reverse-radius` _radius_
 
-![turtle][turtle] `nw:turtles-in-out-radius` _radius_
+Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current context. Both forms include the calling turtle, whom you can exclude with `other` if need be.
 
-![turtle][turtle] `nw:turtles-in-in-radius` _radius_
+The `turtles-in-radius` form will follow both undirected links and directed **out** links. The `turtles-in-reverse-radius` form will follow both undirected links and directed **in** links. You can think of `turtles-in-radius` as "turtles **who I can get to** in _radius_ steps" and of `turtles-in-reverse-radius` as "turtles **who can get to me** in _radius_ steps".
 
-Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current current.
-
-The `turtles-in-radius` form will follow both undirected links and directed out links. The `turtles-in-undirected-radius` form works only with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
+If you want the primitive to follow only undirected links or only directed links, you can do it by setting the context appropriately. For example: `nw:set-context turtles undir-links` (assuming `undir-links` is an undirected link breed) or `nw:set-context turtles dir-links` (assuming `dir-links` is a directed link breed).
 
 ##### Example:
 
