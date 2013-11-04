@@ -3,13 +3,21 @@
 package org.nlogo.extensions.nw
 
 import scala.collection.JavaConverters._
-
 import org.nlogo.agent
 import org.nlogo.api
 
 class NetworkExtension extends api.DefaultClassManager {
 
   val version = "1.0.0-RC3"
+
+  def checkNetLogoVersion(): Unit = {
+    try {
+      Class.forName("org.nlogo.api.SimpleChangeEventPublisher")
+    } catch {
+      case e: ClassNotFoundException => throw new api.ExtensionException(
+        "Version " + version + " of the NW extension requires NetLogo version 5.0.5 or greater.", e)
+    }
+  }
 
   override def additionalJars = Seq(
     "collections-generic-4.01.jar",
@@ -37,6 +45,8 @@ class NetworkExtension extends api.DefaultClassManager {
   override def unload(em: api.ExtensionManager) { _graphContext = None }
 
   override def load(primManager: api.PrimitiveManager) {
+
+    checkNetLogoVersion()
 
     val add = primManager.addPrimitive _
 
