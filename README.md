@@ -767,6 +767,14 @@ Loading a graph that was saved from a different program than NetLogo is quite po
 
 The extension will try to assign the type defined by `attr.type` to each variable that it loads. If it's unable to convert it to that type, it will load it as a string. If `attr.type` is not defined, or is set to an unknown value, the extension will first try to load the value as a double, then try it as a boolean, and finally fall back on a string.
 
+### Other
+
+#### version
+
+`nw:version`
+
+Reports the current version number of the extension.
+
 ## A note regarding floating point calculations
 
 Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge.net/), the two network librairies that we use internally, use [`strictfp` floating point calculations](http://en.wikipedia.org/wiki/Strictfp). This does mean that exact reproducibility of results involving floating point calculations _between different hardware architectures_ is not fully guaranteed. (NetLogo itself [always uses strict math](http://ccl.northwestern.edu/netlogo/docs/faq.html#reproduce) so this only applies to some primitives of the NW extension.)

@@ -9,6 +9,8 @@ import org.nlogo.api
 
 class NetworkExtension extends api.DefaultClassManager {
 
+  val version = "1.0.0-RC3"
+
   override def additionalJars = Seq(
     "collections-generic-4.01.jar",
     "colt-1.2.0.jar",
@@ -37,6 +39,8 @@ class NetworkExtension extends api.DefaultClassManager {
   override def load(primManager: api.PrimitiveManager) {
 
     val add = primManager.addPrimitive _
+
+    add("version", new prim.Version(this))
 
     add("set-context", new prim.SetContext(setGraphContext))
     add("get-context", new prim.GetContext(getGraphContext))
