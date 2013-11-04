@@ -604,7 +604,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
       nw:load-matrix "matrix.txt" turtles links [ set color red ]
 
 #### save-graphml
-`save-graphml` _file-name_
+`nw:save-graphml` _file-name_
 
 You can save the current graph to GraphML. The following NetLogo code:
 
