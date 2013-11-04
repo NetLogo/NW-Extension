@@ -1,12 +1,12 @@
 scalaVersion := "2.9.2"
 
-scalaSource in Compile <<= baseDirectory(_ / "src" / "main")
+scalaSource in Compile := baseDirectory.value / "src" / "main"
 
-scalaSource in Test <<= baseDirectory(_ / "src" / "test")
+scalaSource in Test := baseDirectory.value / "src" / "test"
 
-javaSource in Compile <<= baseDirectory(_ / "src" / "main")
+javaSource in Compile := baseDirectory.value / "src" / "main"
 
-javaSource in Test <<= baseDirectory(_ / "src" / "test")
+javaSource in Test := baseDirectory.value / "src" / "test"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
                       "-encoding", "us-ascii")
@@ -34,48 +34,52 @@ packageOptions +=
     ("Class-Manager", "org.nlogo.extensions.nw.NetworkExtension"),
     ("NetLogo-Extension-API-Version", "5.0"))
 
-
-packageBin in Compile <<= (packageBin in Compile, dependencyClasspath in Runtime, baseDirectory, streams) map {
-  (jar, classpath, base, s) =>
-    IO.copyFile(jar, base / "nw.jar")
-    def pack200(name: String) {
-      Process("pack200 --modification-time=latest --effort=9 --strip-debug " +
-              "--no-keep-file-order --unknown-attribute=strip " +
-              name + ".pack.gz " + name).!!
-    }
-    pack200("nw.jar")
-    val libraryJarPaths =
-      classpath.files.filter{path =>
-        path.getName.endsWith(".jar") &&
-        path.getName != "scala-library.jar"}
-    for(path <- libraryJarPaths) {
-      IO.copyFile(path, base / path.getName)
-      pack200(path.getName)
-    }
-    if(Process("git diff --quiet --exit-code HEAD").! == 0) {
-      // copy everything thing we need for distribution in
-      // a temporary "nw" directory, which we will then zip
-      // before deleting it.
-      IO.createDirectory(base / "nw")
-      val zipExtras =
-        (libraryJarPaths.map(_.getName) :+ "nw.jar")
-          .filterNot(_ contains "NetLogo")
-          .flatMap{ jar => Seq(jar, jar + ".pack.gz") }
-      for(extra <- zipExtras)
-        IO.copyFile(base / extra, base / "nw" / extra)
-      for (dir <- Seq("alternate-netlogolite", "demo"))
-        IO.copyDirectory(base / dir, base / "nw" / dir)
-      Process("zip -r nw.zip nw").!!
-      IO.delete(base / "nw")
-    }
-    else {
-      s.log.warn("working tree not clean; no zip archive made")
-      IO.delete(base / "nw.zip")
-    }
-    jar
+packageBin in Compile := {
+  val jar = (packageBin in Compile).value
+  val classpath = (dependencyClasspath in Runtime).value
+  val base = baseDirectory.value
+  val s = streams.value
+  IO.copyFile(jar, base / "nw.jar")
+  def pack200(name: String) {
+    Process("pack200 --modification-time=latest --effort=9 --strip-debug " +
+            "--no-keep-file-order --unknown-attribute=strip " +
+            name + ".pack.gz " + name).!!
   }
+  pack200("nw.jar")
+  val libraryJarPaths =
+    classpath.files.filter{path =>
+      path.getName.endsWith(".jar") &&
+      path.getName != "scala-library.jar"}
+  for(path <- libraryJarPaths) {
+    IO.copyFile(path, base / path.getName)
+    pack200(path.getName)
+  }
+  if(Process("git diff --quiet --exit-code HEAD").! == 0) {
+    // copy everything thing we need for distribution in
+    // a temporary "nw" directory, which we will then zip
+    // before deleting it.
+    IO.createDirectory(base / "nw")
+    val zipExtras =
+      (libraryJarPaths.map(_.getName) :+ "nw.jar")
+        .filterNot(_ contains "NetLogo")
+        .flatMap{ jar => Seq(jar, jar + ".pack.gz") }
+    for(extra <- zipExtras)
+      IO.copyFile(base / extra, base / "nw" / extra)
+    for (dir <- Seq("alternate-netlogolite", "demo"))
+      IO.copyDirectory(base / dir, base / "nw" / dir)
+    Process("zip -r nw.zip nw").!!
+    IO.delete(base / "nw")
+  }
+  else {
+    s.log.warn("working tree not clean; no zip archive made")
+    IO.delete(base / "nw.zip")
+  }
+  jar
+}
 
-cleanFiles <++= baseDirectory { base =>
+cleanFiles ++= {
+  val base = baseDirectory.value
   Seq(base / "nw.jar",
       base / "nw.jar.pack.gz",
-      base / "nw.zip") }
+      base / "nw.zip")
+}
