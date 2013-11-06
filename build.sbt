@@ -41,7 +41,8 @@ packageBin in Compile := {
   val s = streams.value
   IO.copyFile(jar, base / "nw.jar")
   def pack200(name: String) {
-    Process("pack200 --modification-time=latest --effort=9 --strip-debug " +
+    Process(sys.env("JAVA_HOME") + "/bin/pack200 " +
+            "--modification-time=latest --effort=9 --strip-debug " +
             "--no-keep-file-order --unknown-attribute=strip " +
             name + ".pack.gz " + name).!!
   }
