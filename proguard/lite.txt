@@ -1,7 +1,7 @@
 # THIS IS A SPECIAL VERSION OF LITE.TXT
 # It keeps more stuff in NetLogoLite.jar, in order for the network extension to work.
 # It can be used to produce a special version of the jar by overwriting the equivalent
-# file in the NetLogo 5.0.2 distribution (in the project/proguard) directory.
+# file in the NetLogo 5.0.x distribution (in the project/proguard) directory.
 
 -include common.txt
 
