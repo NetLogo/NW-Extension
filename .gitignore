@@ -2,7 +2,7 @@
 *.orig
 /jung-src/
 /jgrapht-src/
-/project/
+/project/target/
 /target/
 classes/
 *.jar

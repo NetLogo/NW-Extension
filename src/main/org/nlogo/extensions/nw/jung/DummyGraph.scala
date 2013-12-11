@@ -2,12 +2,13 @@
 
 package org.nlogo.extensions.nw.jung
 
-import java.util.Random
-
-import scala.collection.JavaConverters.collectionAsScalaIterableConverter
+import scala.collection.JavaConverters._
 
 import org.apache.commons.collections15.Factory
-import org.nlogo.agent.{ AgentSet, Turtle }
+import org.nlogo.agent.AgentSet
+import org.nlogo.agent.Turtle
+import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
+import org.nlogo.util.MersenneTwisterFast
 
 import edu.uci.ics.jung
 
@@ -32,7 +33,7 @@ object DummyGraph {
     graph: jung.graph.Graph[Vertex, Edge],
     turtleBreed: AgentSet,
     linkBreed: AgentSet,
-    rng: Random,
+    rng: MersenneTwisterFast,
     sorted: Boolean = false) = {
     val w = turtleBreed.world
 

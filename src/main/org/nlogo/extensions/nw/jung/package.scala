@@ -1,10 +1,11 @@
 package org.nlogo.extensions.nw
 
-import org.apache.commons.collections15.Transformer
-import edu.uci.ics.jung.{ graph => jg }
-import org.nlogo.agent.AgentSet
 import org.apache.commons.collections15.Factory
+import org.apache.commons.collections15.Transformer
+import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
+
+import edu.uci.ics.jung.{graph => jg}
 import edu.uci.ics.jung.graph.util.Pair
 
 package object jung {
@@ -27,12 +28,7 @@ package object jung {
 
   def directedFactory[V, E] = jg.DirectedSparseGraph.getFactory[V, E]
   def undirectedFactory[V, E] = jg.UndirectedSparseGraph.getFactory[V, E]
-
-  def createTurtle(turtleBreed: AgentSet, rng: java.util.Random) =
-    turtleBreed.world.createTurtle(
-      turtleBreed,
-      rng.nextInt(14), // color
-      rng.nextInt(360)) // heading
+  def sparseGraphFactory[V, E] = jg.SparseGraph.getFactory[V, E]
 
   def createLink[V](turtles: Map[V, Turtle], endPoints: Pair[V], linkBreed: AgentSet) =
     linkBreed.world.linkManager.createLink(

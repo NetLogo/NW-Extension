@@ -193,8 +193,6 @@ end
 ;; (In the disconnected case, the average path length does not make sense)
 to-report do-calculations
   
-  nw:set-snapshot turtles links
-  
   ;; find the path lengths in the network
   ask turtles [
     let distances remove false [ nw:distance-to myself ] of other turtles
@@ -368,8 +366,8 @@ BUTTON
 10
 50
 156
-84
-Rewire one
+81
+rewire one
 rewire-one
 NIL
 1
@@ -385,12 +383,12 @@ SLIDER
 84
 281
 261
-315
+314
 rewiring-probability
 rewiring-probability
 0
 1
-0.94
+0.3
 0.01
 1
 NIL
@@ -400,8 +398,8 @@ BUTTON
 10
 280
 80
-314
-Rewire all
+313
+rewire all
 rewire-all
 NIL
 1
@@ -418,7 +416,7 @@ BUTTON
 450
 935
 495
-Highlight node
+highlight node
 highlight
 T
 1
@@ -475,8 +473,8 @@ BUTTON
 10
 10
 85
-44
-Setup
+41
+NIL
 setup
 NIL
 1
@@ -504,7 +502,7 @@ false
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:betweenness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
+"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nlet ys sort [ nw:betweenness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
 
 PLOT
 810
@@ -522,7 +520,7 @@ true
 false
 "" ""
 PENS
-"default" 0.05 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:closeness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
+"default" 0.05 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nlet ys sort [ nw:closeness-centrality ] of turtles\nlet y-min precision first ys 3\nlet y-max precision last ys 3\nif y-max > y-min [\n  set-plot-pen-interval (y-max - y-min) / 10\n  set-plot-x-range y-min y-max\n  histogram ys\n]"
 
 PLOT
 810
@@ -540,7 +538,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nnw:set-snapshot turtles links\nlet ys sort [ nw:eigenvector-centrality ] of turtles\nifelse not empty? ys [\n  let y-min first ys\n  let y-max last ys\n  if y-max > y-min [\n    set-plot-pen-interval (y-max - y-min) / 10\n    set-plot-x-range y-min y-max\n    histogram ys\n  ]\n]\n[\n  clear-plot\n]"
+"default" 1.0 1 -16777216 true "" "set-plot-y-range 0 num-nodes / 2\nlet ys sort [ nw:eigenvector-centrality ] of turtles\nifelse not empty? ys [\n  let y-min first ys\n  let y-max last ys\n  if y-max > y-min [\n    set-plot-pen-interval (y-max - y-min) / 10\n    set-plot-x-range y-min y-max\n    histogram ys\n  ]\n]\n[\n  clear-plot\n]"
 
 MONITOR
 940
@@ -568,8 +566,8 @@ BUTTON
 169
 50
 320
-84
-Rewire one
+81
+rewire one
 rewire-one
 T
 1
@@ -584,9 +582,9 @@ NIL
 BUTTON
 264
 281
-320
-315
-Sweep
+319
+314
+NIL
 sweep
 T
 1
@@ -649,7 +647,9 @@ In a precursor to this model, Watts and Strogatz created an "alpha" model where 
 
 ## NETLOGO FEATURES
 
-In this model we need to find the shortest paths between all pairs of nodes. The version of this model that is in the NetLogo model library uses the [Floyd Warshall algorithm](http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm). This version directly use the network extension's mean-path-length primitive (which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) internally instead.
+In this model we need to find the shortest paths between all pairs of nodes. The version of this model that is in the NetLogo model library uses the [Floyd Warshall algorithm](http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm). This version directly use the network extension's `mean-path-length` primitive instead. (`nw:mean-path-length` internally uses either [Breadth-First Search](http://en.wikipedia.org/wiki/Breath_first_search) or [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) depending on whether the graph is weighted or not. In this case, the graph is not weighted.)
+
+This version of the model also shows plots of the distribution of the different centrality measures that the network extension makes available to you, namely: `nw:betweenness-centrality`, `nw:closeness-centrality` and `nw:eigenvector-centrality`.
 
 ## RELATED MODELS
 
@@ -971,7 +971,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.5-RC1
 @#$#@#$#@
 setup
 repeat 5 [rewire-one]

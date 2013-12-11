@@ -2,111 +2,98 @@
 
 package org.nlogo.extensions.nw
 
-import scala.collection.JavaConverters.seqAsJavaListConverter
+import scala.collection.JavaConverters._
+import org.nlogo.agent
+import org.nlogo.api
 
-import org.nlogo.api.Syntax.AgentsetType
-import org.nlogo.api.Syntax.commandSyntax
-import org.nlogo.api.Argument
-import org.nlogo.api.Context
-import org.nlogo.api.DefaultClassManager
-import org.nlogo.api.DefaultCommand
-import org.nlogo.api.PrimitiveManager
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToNetLogoAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+class NetworkExtension extends api.DefaultClassManager {
 
-// TODO: program everything against the API, if possible
+  val version = "1.0.0-RC3"
 
-class NetworkExtension extends DefaultClassManager
-  with HasGraph
-  with jung.Primitives
-  with jgrapht.Primitives {
+  def checkNetLogoVersion(): Unit = {
+    try {
+      Class.forName("org.nlogo.api.SimpleChangeEventPublisher")
+    } catch {
+      case e: ClassNotFoundException => throw new api.ExtensionException(
+        "Version " + version + " of the NW extension requires NetLogo version 5.0.5 or greater.", e)
+    }
+  }
 
   override def additionalJars = Seq(
     "collections-generic-4.01.jar",
     "colt-1.2.0.jar",
     "concurrent-1.3.4.jar",
     "jgrapht-jdk1.6-0.8.3.jar",
-    "jung-algorithms-2.0.1",
+    "jung-algorithms-2.0.1.jar",
     "jung-api-2.0.1.jar",
     "jung-graph-impl-2.0.1.jar",
     "jung-io-2.0.1.jar",
     "stax-api-1.0.1.jar",
     "wstx-asl-3.2.6.jar").asJava
 
-  override def load(primManager: PrimitiveManager) {
+  private var _graphContext: Option[GraphContext] = None
+  val setGraphContext: GraphContext => Unit = { gc => _graphContext = Some(gc) }
+  def getGraphContext(world: api.World) =
+    _graphContext.getOrElse {
+      val w = world.asInstanceOf[agent.World]
+      val gc = new GraphContext(w, w.turtles, w.links)
+      _graphContext = Some(gc)
+      gc
+    }
+
+  override def clearAll() { _graphContext = None }
+  override def unload(em: api.ExtensionManager) { _graphContext = None }
+
+  override def load(primManager: api.PrimitiveManager) {
+
+    checkNetLogoVersion()
 
     val add = primManager.addPrimitive _
 
-    add("set-snapshot", SnapshotPrim)
+    add("version", new prim.Version(this))
 
-    add("turtles-in-radius", TurtlesInRadiusPrim)
-    add("turtles-in-out-radius", TurtlesInOutRadiusPrim)
-    add("turtles-in-in-radius", TurtlesInInRadiusPrim)
+    add("set-context", new prim.SetContext(setGraphContext))
+    add("get-context", new prim.GetContext(getGraphContext))
 
-    add("mean-path-length", MeanPathLengthPrim)
-    add("mean-weighted-path-length", MeanWeightedPathLengthPrim)
+    add("turtles-in-radius", new org.nlogo.extensions.nw.prim.TurtlesInRadius(getGraphContext))
+    add("turtles-in-reverse-radius", new org.nlogo.extensions.nw.prim.TurtlesInReverseRadius(getGraphContext))
 
-    add("distance-to", DistanceToPrim)
-    add("weighted-distance-to", WeightedDistanceToPrim)
-    add("path-to", PathToPrim)
-    add("weighted-path-to", WeightedPathToPrim)
-    add("turtles-on-path-to", TurtlesOnPathToPrim)
-    add("turtles-on-weighted-path-to", TurtlesOnWeightedPathToPrim)
+    add("mean-path-length", new prim.MeanPathLength(getGraphContext))
+    add("mean-weighted-path-length", new prim.jung.MeanWeightedPathLength(getGraphContext))
 
-    add("betweenness-centrality", BetweennessCentralityPrim)
-    add("eigenvector-centrality", EigenvectorCentralityPrim)
-    add("closeness-centrality", ClosenessCentralityPrim)
+    add("distance-to", new prim.DistanceTo(getGraphContext))
+    add("weighted-distance-to", new prim.jung.WeightedDistanceTo(getGraphContext))
+    add("path-to", new prim.PathTo(getGraphContext))
+    add("weighted-path-to", new prim.jung.WeightedPathTo(getGraphContext))
+    add("turtles-on-path-to", new prim.TurtlesOnPathTo(getGraphContext))
+    add("turtles-on-weighted-path-to", new prim.jung.TurtlesOnWeightedPathTo(getGraphContext))
 
-    add("k-means-clusters", KMeansClusters)
-    add("bicomponent-clusters", BicomponentClusters)
-    add("weak-component-clusters", WeakComponentClusters)
+    add("betweenness-centrality", new prim.jung.BetweennessCentrality(getGraphContext))
+    add("eigenvector-centrality", new prim.jung.EigenvectorCentrality(getGraphContext))
+    add("closeness-centrality", new prim.jung.ClosenessCentrality(getGraphContext))
 
-    add("maximal-cliques", MaximalCliques)
-    add("biggest-maximal-clique", BiggestMaximalClique)
+    add("bicomponent-clusters", new prim.jung.BicomponentClusters(getGraphContext))
+    add("weak-component-clusters", new prim.jung.WeakComponentClusters(getGraphContext))
 
-    add("generate-preferential-attachment", BarabasiAlbertGeneratorPrim)
-    add("generate-random", ErdosRenyiGeneratorPrim)
-    add("generate-small-world", KleinbergSmallWorldGeneratorPrim)
-    add("generate-lattice-2d", Lattice2DGeneratorPrim)
-    add("generate-ring", RingGeneratorPrim)
-    add("generate-star", StarGeneratorPrim)
-    add("generate-wheel", WheelGeneratorPrim)
-    add("generate-wheel-inward", WheelGeneratorInwardPrim)
-    add("generate-wheel-outward", WheelGeneratorOutwardPrim)
+    add("maximal-cliques", new prim.jgrapht.MaximalCliques(getGraphContext))
+    add("biggest-maximal-cliques", new prim.jgrapht.BiggestMaximalCliques(getGraphContext))
 
-    add("save-matrix", SaveMatrix)
-    add("load-matrix", LoadMatrix)
+    add("generate-preferential-attachment", new prim.jung.BarabasiAlbertGenerator)
+    add("generate-random", new prim.ErdosRenyiGenerator)
+    add("generate-small-world", new prim.jung.KleinbergSmallWorldGenerator)
+    add("generate-lattice-2d", new prim.jung.Lattice2DGenerator)
 
-    add("save-graphml", SaveGraphML)
-    add("load-graphml", LoadGraphML)
+    add("generate-ring", new prim.jgrapht.RingGenerator)
+    add("generate-star", new prim.jgrapht.StarGenerator)
+    add("generate-wheel", new prim.jgrapht.WheelGenerator)
+    add("generate-wheel-inward", new prim.jgrapht.WheelGeneratorInward)
+    add("generate-wheel-outward", new prim.jgrapht.WheelGeneratorOutward)
 
-  }
-}
+    add("save-matrix", new prim.jung.SaveMatrix(getGraphContext))
+    add("load-matrix", new prim.jung.LoadMatrix)
 
-trait HasGraph {
-  // TODO: this is a temporary hack. When we modify
-  // the core netlogo, we are going to have
-  // set-context and with-context primitives,
-  // and the static graph is going to be recomputed
-  // only if it is dirty
-  private var _graph: Option[NetLogoGraph] = None
-  def setGraph(g: NetLogoGraph) { _graph = Some(g) }
-  def getGraph(context: Context) = _graph match {
-    case Some(g: NetLogoGraph) => g
-    case _ =>
-      val w = context.getAgent.world
-      val g = new StaticNetLogoGraph(w.links, w.turtles)
-      _graph = Some(g)
-      g
-  }
+    add("save-graphml", new prim.jung.SaveGraphML(getGraphContext))
+    add("load-graphml", new prim.jung.LoadGraphML)
 
-  object SnapshotPrim extends DefaultCommand {
-    override def getSyntax = commandSyntax(
-      Array(AgentsetType, AgentsetType))
-    override def perform(args: Array[Argument], context: Context) {
-      val turtleSet = args(0).getAgentSet.requireTurtleSet
-      val linkSet = args(1).getAgentSet.requireLinkSet
-      setGraph(new StaticNetLogoGraph(linkSet, turtleSet))
-    }
   }
 }

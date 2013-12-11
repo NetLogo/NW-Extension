@@ -21,7 +21,6 @@ end
 
 to make-turtles
   crt num-nodes
-  nw:set-snapshot turtles links ;; build a first snapshot of the network
   layout-circle turtles max-pxcor - 1
 end
 
@@ -55,13 +54,12 @@ to-report measure
 end
 
 to highlight-giant-component
-  nw:set-snapshot turtles links
   ; nw:weak-component-clusters gives you a list of all the components in the network,
-  ; each component being itself represented as a list. The get the biggest component
+  ; each component being represented as an agentset. The get the biggest component
   ; (this "giant" one), we sort them in reverse size order and take the first one.
-  let giant-component first sort-by [length ?1 > length ?2] nw:weak-component-clusters
-  if length giant-component > giant-component-size [
-    set giant-component-size length giant-component
+  let giant-component first sort-by [ count ?1 > count ?2 ] nw:weak-component-clusters
+  if count giant-component > giant-component-size [
+    set giant-component-size count giant-component
     ask turtles [ set color gray + 2 ]
     ask turtle-set giant-component [ set color red ]
   ]
@@ -84,8 +82,6 @@ to add-edge
     ]
   ]
   ask node1 [ create-link-with node2 ]
-  nw:set-snapshot turtles links ;; always update the snapshot after an edge is created
-
 end
 
 to-report choose-node [ candidates ]
@@ -150,8 +146,8 @@ to adjust-sizes
     ]
     [ ;; remap the size to a range of sizes from the base size to quadruple the base size
       let size-range base-size * 3
-      ; note that we call runresult measure a second time, but since the results are 
-      ; all cached in the network snapshot, there is no significant cost to that
+      ; note that we call runresult measure a second time, but since the centrality results
+      ; are stored behind the scene by the nw extension, the cost of doing that is acceptable
       ask turtles [ set size base-size + (((runresult measure - first results) / delta) * size-range) ]
     ]    
   ]
@@ -345,7 +341,7 @@ The REDO LAYOUT button runs the layout-step procedure continuously to improve th
 
 A monitor shows the current size of the giant component, and the plot shows how the giant component's size changes over time.
 
-The "network extension version" of this model follows the advice that was given in the "EXTENDING THE MODEL" section of the info tab, and adds a preferential attachment mecanism that allows you to change how the nodes that get the new edge at each turn are selected. The default is mode is "none", and this is exactly like in the original model. You can, however, select either "degree", "betweenness centrality" or "closeness centrality". In these cases, nodes that have a high value for the selected measure have a better chance of getting a new edge. See the [documentation of the extension](https://github.com/nicolaspayette/netlogo-network#centrality) for explanation of the two centrality measures and the actual code of the model for the random selection mecanism.
+The "network extension version" of this model follows the advice that was given in the "EXTENDING THE MODEL" section of the info tab, and adds a preferential attachment mecanism that allows you to change how the nodes that get the new edge at each turn are selected. The default is mode is "none", and this is exactly like in the original model. You can, however, select either "degree", "betweenness centrality" or "closeness centrality". In these cases, nodes that have a high value for the selected measure have a better chance of getting a new edge. See the [documentation of the extension](https://github.com/NetLogo/NW-Extension/blob/master/README.md#centrality) for explanation of the two centrality measures and the actual code of the model for the random selection mecanism.
 
 ## THINGS TO NOTICE
 
@@ -700,7 +696,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.1
+NetLogo 5.0.5-RC1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

@@ -1,34 +1,56 @@
-# The "New" NetLogo Network Extension
+# The NetLogo NW Extension for Network Analysis
 
-This is a new, experimental, version of the Network Extension that is currently bundled with NetLogo (the previous version of the extension is [here](https://github.com/NetLogo/Network-Extension).)
+This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](#building)) or **[download it from here](https://github.com/NetLogo/NW-Extension/releases)**. Also note that the current version of the extension requires at least NetLogo 5.0.5. (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/extensions.html).)
 
-This version of the extension is **not** pre-installed in NetLogo 5.0.4. To use it, you will need to either build it yourself ([see below](https://github.com/nicolaspayette/netlogo-network#building)) or **[download it from here](https://github.com/downloads/NetLogo/NW-Extension/nw-ext-beta-0.02.zip)**.
+This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new). A look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of development. Also, be aware that the syntax of some primitives could change in future versions of the extension. You will have to modify your code accordingly.
 
-(For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/).)
-
-This extension is at a very early stage of development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues?state=open), but it should not be used for production code. As matter of fact, a look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of developement.
-
-Also, be aware that the syntax of some primitives **will** change in future versions of the extension.  You will have to modify your code accordingly. 
-
-The source code for the extension is currently hosted online at
+The source code for the extension is hosted online at
 https://github.com/NetLogo/NW-Extension.
 
-A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](https://github.com/NetLogo/NW-Extension/blob/master/doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
+A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
+
+## Index of Primitives
+
+[General](#general)
+
+- [set-context](#set-context), [get-context](#get-context)
+
+[Path and Distance](#path-and-distance)
+
+- [turtles-in-radius, turtles-in-reverse-radius](#turtles-in-radius-turtles-in-reverse-radius), [distance-to, weighted-distance-to](#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](#mean-path-length-mean-weighted-path-length)
+
+[Centrality](#centrality)
+
+- [betweenness-centrality](#betweenness-centrality), [eigenvector-centrality](#eigenvector-centrality), [closeness-centrality](#closeness-centrality)
+
+[Clusterers](#clusterers)
+
+- [bicomponent-clusters](#bicomponent-clusters), [weak-component-clusters](#weak-component-clusters)
+
+[Cliques](#cliques)
+
+- [maximal-cliques](#maximal-cliques), [biggest-maximal-cliques](#biggest-maximal-cliques)
+
+[Generators](#generators)
+
+- [generate-preferential-attachment](#generate-preferential-attachment), [generate-random](#generate-random), [generate-small-world](#generate-small-world), [generate-lattice-2d](#generate-lattice-2d), [generate-ring](#generate-ring), [generate-star](#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](#generate-wheel-generate-wheel-inward-generate-wheel-outward)
+
+[Import / Export](#import--export)
+
+- [save-matrix](#save-matrix), [load-matrix](#load-matrix), [save-graphml](#save-graphml), [load-graphml](#load-graphml)
 
 ## Changes
 
-Compared to the current extension, this new version offers:
+Compared to the previous extension, this new version offers:
 
-- **Improved performance and functionality of existing features**: pathfinding primitives are now faster and allow taking edge weights into account.
+- **Improved functionality of existing features**: pathfinding primitives now allow taking edge weights into account.
 - **Centrality measures**: calculate the betweenness centrality, closeness centrality and eigenvector centrality of the nodes in your network.
 - **Clusterers**: find bicomponent and weak component clusters in your network.
 - **Clique finder**: find all maximal cliques or the biggest maximal clique in your network.
 - **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
 - **Import/Export**: save and load your networks using plain text matrix files, or export them to [GraphML](http://graphml.graphdrawing.org/).
 
-There is also more to come in the future. This is just a very preliminary version of what we have in mind. Future versions will include import from [GraphML](http://graphml.graphdrawing.org/), some new network layouts, and more algorithms and measures.
-
-To provide all this functionality, the Network Extension is relying on two external, popular and well-tested network libraries: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
+To provide some of this functionality, the Network Extension is relying on two external, popular and well-tested network libraries: [Jung](http://jung.sourceforge.net/) and [JGraphT](https://github.com/jgrapht/jgrapht).
 
 ## Usage
 
@@ -36,111 +58,233 @@ The first thing that one needs to understand in order to work with the network e
 
     breed [ bankers banker ]
     breed [ clients client ]
-    
+
     undirected-link-breed [ friendships friendship ]
     directed-link-breed [ accounts account ]
 
 Basically, you have bankers and clients. Clients can have accounts with bankers. Bankers can probably have account with other bankers, and anyone can be friends with anyone.
 
-Now it is possible that you want to consider this whole thing as one big network, but it seems more likely that you will only be interested in a subset of it. Maybe you want to consider all friendships, but you might also want to consider only the friendships between bankers. After all, something having a very high centrality in the network of banker friendships is very different from having a high centrality in a network of client frienships.
+Now we might want to consider this whole thing as one big network. If that is the case, there is nothing special to do: by default, the NW extension primitives consider all turtles and all links to be part of the current network.
 
-To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The current way to tell the extension about this is with the `nw:set-snapshot` primitive, which you must call _prior_ to doing any operations on a network.
+We could also, however, be only interested in a subset of the network. Maybe we want to consider only friendship relations. Furthermore, maybe we want to consider only the friendships _between bankers_. After all, having a very high centrality in a network of banker friendships is very different from having a high centrality in a network of client frienships.
+
+To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The way to tell the extension about this is with the [`nw:set-context`](#set-context) primitive, which you must call _prior_ to doing any operations on a network.
 
 Some examples:
 
-- `nw:set-snapshot turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
-- `nw:set-snapshot turtles friendships` will give you all the bankers and clients and friendships between any of them.
-- `nw:set-snapshot bankers friendships` will give you all the bankers, and only friendships between bankers.
-- `nw:set-snapshot bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
-- `nw:set-snapshot clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
+- `nw:set-context turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
+- `nw:set-context turtles friendships` will give you all the bankers and clients and friendships between any of them.
+- `nw:set-context bankers friendships` will give you all the bankers, and only friendships between bankers.
+- `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
+- `nw:set-context clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
 
-Now one very important thing that you need to understand about `set-snapshot` is that, as its name suggests, it takes a static picture of the network at the time you call it. All subsequent network operations will use this static picture, _even if turtles or links have been created or died in the meantime_, until you call `set-snapshot` again.
+(Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agents (births and deaths, namely) are automatically reflected in your network. You only need to call `nw:set-context` again if you want to work with different agents.)
 
-In pratice, this means that you will write code like:
+### Special agentsets vs. normal agentsets
 
-    nw:set-snapshot bankers friendships
-    ask bankers [
-      set size nw:closeness-centrality
+It must be noted that NetLogo has two types of agentsets that behave slightly differently, and that this has an impact on the way `nw:set-context` works. We will say a few words about these concepts here but, for a thorough understanding, it is highly recommended that you read [the section on agentsets in the NetLogo programming guide](http://ccl.northwestern.edu/netlogo/docs/programming.html#agentsets).
+
+The "special" agentsets in NetLogo are `turtles`, `links` and the different "breed" agentsets. What is special about them is that they can grow: if you create a new turtle, it will be added to the `turtles` agentset. If you have a `bankers` breed and you create a new banker, it will be added to the `bankers` agentset and to the `turtles` agentset. Same goes for links. Other agentsets, such as those created with the `with` primitive (e.g., `turtles with [ color = red ]`) or the `turtle-set` and `link-set` primitives) are never added to. The content of normal agentsets will only change if the agents that they contain die.
+
+To show how different types of agentsets interact with [`nw:set-context`](#set-context), let's create a very simple network:
+
+    clear-all
+    create-turtles 3 [ create-links-with other turtles ]
+
+Let's set the context to `turtles` and `links` (which is the default anyway) and use [`nw:get-context`](#get-context) to see what we have:
+
+    nw:set-context turtles links
+    show map sort nw:get-context
+
+ We get all three turtles and all three links:
+
+    [[(turtle 0) (turtle 1) (turtle 2)] [(link 0 1) (link 0 2) (link 1 2)]]
+
+Now let's kill one turtle:
+
+    ask one-of turtles [ die ]
+    show map sort nw:get-context
+
+As expected, the context is updated to reflect the death of the turtle and of the two links that died with it:
+
+    [[(turtle 0) (turtle 1)] [(link 0 1)]]
+
+What if we now create a new turtle?
+
+    create-turtles 1
+    show map sort nw:get-context
+
+Since our context is using the special `turtles` agentset, the new turtle is automatically added:
+
+    [[(turtle 0) (turtle 1) (turtle 3)] [(link 0 1)]]
+
+Now let's demonstrate how it works with normal agentsets. We start over with a new network of red turtles:
+
+    clear-all
+    create-turtles 3 [
+      create-links-with other turtles
+      set color red
     ]
 
-This also means that you need to be careful:
+And we set the context to `turtles with [ color = red ])` and `links`
 
-    nw:set-snapshot bankers friendships
-    create-bankers 1                    ; creates a new banker after taking the snapshot
-    show nw:mean-path-length            ; this is OK, it just won't take the new banker into account
-    ask bankers [
-      set size nw:closeness-centrality  ; THIS WILL FAIL FOR THE NEWLY CREATED BANKER
-    ]
+    nw:set-context (turtles with [ color = red ]) links
+    show map sort nw:get-context
 
-In the example above, a banker is created _after_ the snapshot is taken. This is not a problem in itself: you can still run some measures on the network, such as `nw:mean-path-length` in the example above, but if you try to ask the newly created banker for, e.g., its closeness centrality, the extension will give you a runtime error.
+Since all turtles are red, we get everything in our context:
 
-One reason why things work the way they do is that it allows the extension to _cache_ the result of some computations. Many network algorithms are designed to operate on the whole network at once. In the example above, the closeness centrality is actually calculated for every banker the first time you ask for it and then stored in the snapshot so that other bankers just have to access the result.
+    [[(turtle 0) (turtle 1) (turtle 2)] [(link 0 1) (link 0 2) (link 1 2)]]
 
-This makes a big difference, in particular, for primitives like `nw:distance-to`, which uses [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). Without getting into the details of the algorithm, let's just say that a big part of the calculations that are made in finding the shortest path from `turtle 0` to `turtle 10` can be reused when finding the shortest path from `turtle 0` to `turtle 20`, and that these calculations are stored in the snapshot.
+But what if we ask one of them to turn blue?
 
-### Future Usage
+    ask one-of turtles [ set color blue ]
+    show map sort nw:get-context
 
-Now wouldn't it be better if you _didn't_ have to call `nw:set-snapshot` everytime you want to do something with a network? Yes, indeed, it would. And eventually, it will be the case. What we have in mind for the moment is something like a `nw:set-context` primitive, which you would use to tell the extension that "in general, these are the turtles and links I want to work with." Once you set the context, the extension will be wise enough to decide by itself if it needs to take a new snapshot or not.
+No change. The agentset used in our context remains unaffected:
 
-The reason we did not do it like this right away is that there currently is no efficient way to ask NetLogo if turtles and links have been created or deleted since a previous function call. If we can include this functionality in a future version of NetLogo, we will probably deprecate `nw:set-snapshot` and provide the much more convenient `nw:set-context` instead.
+    [[(turtle 0) (turtle 1) (turtle 2)] [(link 0 1) (link 0 2) (link 1 2)]]
+
+If we kill one of them, however...
+
+    ask one-of turtles [ die ]
+    show map sort nw:get-context
+
+It gets removed from the set:
+
+    [[(turtle 0) (turtle 2)] [(link 0 2)]]
+
+What if we add a new red turtle?
+
+    create-turtles 1 [ set color red ]
+    show map sort nw:get-context
+
+Nope:
+
+    [[(turtle 0) (turtle 2)] [(link 0 2)]]
+
+**A final note regarding the different types of agentsets**: because of how they are implemented in NetLogo and handled in the NW extension, it is likely that special agentsets will perform better for some of the extension's primitives. So, if you can, prefer a context refering to `turtles` and `links` or simple breeds, instead of agentsets built with `with`, `turtle-set`, etc.
 
 ## Primitives
 
-[General](https://github.com/NetLogo/NW-Extension#general)
-
-- [set-snapshot](https://github.com/NetLogo/NW-Extension#set-snapshot)
-
-[Path and Distance](https://github.com/NetLogo/NW-Extension#path-and-distance)
-
-- [turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius](https://github.com/NetLogo/NW-Extension#turtles-in-radius-turtles-in-out-radius-turtles-in-in-radius), [distance-to, weighted-distance-to](https://github.com/NetLogo/NW-Extension/#distance-to-weighted-distance-to), [path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to](https://github.com/NetLogo/NW-Extension#path-to-turtles-on-path-to-weighted-path-to-turtles-on-weighted-path-to), [mean-path-length, mean-weighted-path-length](https://github.com/NetLogo/NW-Extension#mean-path-length-mean-weighted-path-length)
-
-[Centrality](https://github.com/NetLogo/NW-Extension#centrality)
-
-- [betweenness-centrality](https://github.com/NetLogo/NW-Extension#betweenness-centrality), [eigenvector-centrality](https://github.com/NetLogo/NW-Extension#eigenvector-centrality), [closeness-centrality](https://github.com/NetLogo/NW-Extension#closeness-centrality)
-
-[Clusterers](https://github.com/NetLogo/NW-Extension#clusterers)
-
-- [k-means-clusters](https://github.com/NetLogo/NW-Extension#k-means-clusters), [bicomponent-clusters](https://github.com/NetLogo/NW-Extension#bicomponent-clusters), [weak-component-clusters](https://github.com/NetLogo/NW-Extension#weak-component-clusters)
-
-[Cliques](https://github.com/NetLogo/NW-Extension#cliques)
-
-- [maximal-cliques](https://github.com/NetLogo/NW-Extension#maximal-cliques), [biggest-maximal-clique](https://github.com/NetLogo/NW-Extension#biggest-maximal-clique)
-
-[Generators](https://github.com/NetLogo/NW-Extension#generators)
-
-- [generate-preferential-attachment](https://github.com/NetLogo/NW-Extension#generate-preferential-attachment), [generate-random](https://github.com/NetLogo/NW-Extension#generate-random), [generate-small-world](https://github.com/NetLogo/NW-Extension#generate-small-world), [generate-lattice-2d](https://github.com/NetLogo/NW-Extension#generate-lattice-2d), [generate-ring](https://github.com/NetLogo/NW-Extension#generate-ring), [generate-star](https://github.com/NetLogo/NW-Extension#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](https://github.com/NetLogo/NW-Extension#generate-wheel-generate-wheel-inward-generate-wheel-outward)
-
-[Import / Export](https://github.com/NetLogo/NW-Extension#import--export)
-
-- [save-matrix](https://github.com/NetLogo/NW-Extension#save-matrix), [load-matrix](https://github.com/NetLogo/NW-Extension#load-matrix), [save-graphml](https://github.com/NetLogo/NW-Extension#save-graphml)
-
 ### General
 
-#### set-snapshot
+#### set-context
 
-`nw:set-snapshot` _turtleset_ _linkset_
+`nw:set-context` _turtleset_ _linkset_
 
-Builds a static internal representation of the network formed by all the turtles in _turtleset_ and all the links in _linkset_ that connect two turtles from _turtleset_. This network snapshot is the one that will be used by all other primitives (unless specified otherwise) until a new snapshot is created.
+Specifies the set of turtles and the set of links that the extension will consider to be the current graph. All the turtles from _turtleset_ and all the links from _linkset_ that connect two turtles from _turtleset_ will be included.
 
-(At the moment, only the [generator primitives](https://github.com/NetLogo/NW-Extension#generators) and [`nw:load-matrix`](https://github.com/NetLogo/NW-Extension#load-matrix) are exceptions to this rule.)
+This context is used by all other primitives (unless specified otherwise) until a new context is specified. (At the moment, only the [generator primitives](#generators) and the file input primitives ([`nw:load-matrix`](#load-matrix) and [`nw:load-graphml`](#load-graphml)) are exceptions to this rule.)
 
-Note that if turtles and links are created or die, changes will **not** be reflected in the snapshot until you call `nw:set-snapshot` again.
+See [the usage section](#usage) for a much more detailed explanation of `nw:set-context`.
+
+#### get-context
+
+`nw:get-context`
+
+Reports the content of the current graph context as a list containing two agentssets: the agentset of turtles that are part of the context and the agentset of links that are part of the context.
+
+Let's say with start with a blank slate and the default context consisting of `turtles` and `links`, `nw:get-context` will report a list the special `turtles` and `links` breed agentsets:
+
+```
+observer> clear-all
+observer> show nw:get-context
+observer: [turtles links]
+```
+
+If we add some turtles and links to our context, we'll still see the same thing, even though `turtles` and `links` have internally grown:
+
+```
+observer> crt 2 [ create-links-with other turtles ]
+observer> show nw:get-context
+observer: [turtles links]
+```
+
+If you had set your context to normal agentsets instead (built with `turtle-set`, `link-set` or `with`) here is what you would see:
+
+```
+observer> clear-all
+observer> nw:set-context turtle-set turtles link-set links
+observer> show nw:get-context
+observer: [(agentset, 0 turtles) (agentset, 0 links)]
+```
+
+If you then create new turtles and links, they are not added to the context because normal agentsets don't grow (see [Special agentsets vs. normal agentsets](#special-agentsets-vs-normal-agentsets)):
+
+```
+observer> crt 2 [ create-links-with other turtles ]
+observer> show nw:get-context
+observer: [(agentset, 0 turtles) (agentset, 0 links)]
+```
+
+But if you construct new agentsets and set the context to them, your new agents will be there:
+
+```
+observer> nw:set-context turtle-set turtles link-set links
+observer> show nw:get-context
+observer: [(agentset, 2 turtles) (agentset, 1 link)]
+```
+
+If you want to see the actual content of your context, it is easy to turn your agentsets into lists that can be nicely displayed. Just use a combination of [`map`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#map) and [`sort`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#sort):
+
+```
+observer> show map sort nw:get-context
+observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
+```
+
+Finally, you can use `nw:get-context` to store a context that you eventually want to restore:
+
+```
+extensions [ nw ]
+to store-and-restore-context
+  clear-all
+  crt 2 [
+    set color red
+    create-links-with other turtles with [ color = red ] [
+      set color yellow
+    ]
+  ]
+  crt 2 [
+    set color blue
+    create-links-with other turtles with [ color = blue ] [
+      set color green
+    ]
+  ]
+  nw:set-context turtles with [ color = red ] links with [ color = yellow ]
+  show map sort nw:get-context
+  let old-turtles item 0 nw:get-context
+  let old-links item 1 nw:get-context
+  nw:set-context turtles with [ color = blue ] links with [ color = green ]
+  show map sort nw:get-context
+  nw:set-context old-turtles old-links
+  show map sort nw:get-context
+end
+```
+
+Here is the result:
+
+```
+observer> store-and-restore-context
+observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
+observer: [[(turtle 2) (turtle 3)] [(link 2 3)]]
+observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
+```
 
 ### Path and Distance
 
-#### turtles-in-radius, turtles-in-out-radius, turtles-in-in-radius
+#### turtles-in-radius, turtles-in-reverse-radius
 
-![turtle][turtle] `nw:turtles-in-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-radius` _radius_
 
-![turtle][turtle] `nw:turtles-in-out-radius` _radius_ 
+![turtle][turtle] `nw:turtles-in-reverse-radius` _radius_
 
-![turtle][turtle] `nw:turtles-in-in-radius` _radius_ 
+Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current context. Both forms include the calling turtle, whom you can exclude with `other` if need be.
 
-Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current snapshot.
+The `turtles-in-radius` form will follow both undirected links and directed **out** links. The `turtles-in-reverse-radius` form will follow both undirected links and directed **in** links. You can think of `turtles-in-radius` as "turtles **who I can get to** in _radius_ steps" and of `turtles-in-reverse-radius` as "turtles **who can get to me** in _radius_ steps".
 
-The `turtles-in-radius` form works with undirected links.  The other two forms work with directed links; `out` or `in` specifies whether links are followed in the normal direction (`out`), or in reverse (`in`).
+If you want the primitive to follow only undirected links or only directed links, you can do it by setting the context appropriately. For example: `nw:set-context turtles undir-links` (assuming `undir-links` is an undirected link breed) or `nw:set-context turtles dir-links` (assuming `dir-links` is a directed link breed).
 
-##### Example: 
+##### Example:
 
     clear-all
     create-turtles 5
@@ -148,7 +292,6 @@ The `turtles-in-radius` form works with undirected links.  The other two forms w
     ask turtle 0 [ create-link-with turtle 2 ]
     ask turtle 1 [ create-link-with turtle 3 ]
     ask turtle 2 [ create-link-with turtle 4 ]
-    nw:set-snapshot turtles links
     ask turtle 0 [
       show sort nw:turtles-in-radius 1
     ]
@@ -157,7 +300,7 @@ Will output:
 
     (turtle 0): [(turtle 0) (turtle 1) (turtle 2)]
 
-As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#in-radius) primitive.
+As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](#in-radius) primitive.
 
 #### distance-to, weighted-distance-to
 
@@ -165,7 +308,7 @@ As you may have noticed, the result includes the calling turtle. This mimics the
 
 ![turtle][turtle] `nw:weighted-distance-to` _target-turtle_ _weight-variable-name_
 
-Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current snapshot.
+Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current context.
 
 The `nw:distance-to` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-distance-to` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
 
@@ -180,7 +323,6 @@ The `nw:distance-to` version of the primitive assumes that each link counts for 
       ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
       ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
-      nw:set-snapshot turtles links
       ask turtle 0 [ show nw:distance-to turtle 2 ]
       ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
     end
@@ -217,7 +359,6 @@ If no path exist between the source and the target turtles, all primitives will 
       ask turtle 0 [ create-link-with turtle 3 [ set weight 0.5 ] ]
       ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
-      nw:set-snapshot turtles links
       ask turtle 0 [ show nw:path-to turtle 2 ]
       ask turtle 0 [ show nw:turtles-on-path-to turtle 2 ]
       ask turtle 0 [ show nw:weighted-path-to turtle 2 "weight" ]
@@ -237,7 +378,7 @@ Will output:
 
 `nw:mean-weighted-path-length` _weight-variable-name_
 
-Reports the average shortest-path length between all distinct pairs of nodes in the current snapshot. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
+Reports the average shortest-path length between all distinct pairs of nodes in the current context. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
 
 Reports false unless paths exist between all pairs.
 
@@ -249,11 +390,9 @@ Reports false unless paths exist between all pairs.
       create-turtles 3
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
       ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
-      nw:set-snapshot turtles links
       show nw:mean-path-length
       show nw:mean-weighted-path-length "weight"
       create-turtles 1 ; create a new, disconnected turtle
-      nw:set-snapshot turtles links
       show nw:mean-path-length
       show nw:mean-weighted-path-length "weight"
     end
@@ -298,39 +437,17 @@ Also note that, as of now, link weights are not taken into account.
 
 ### Clusterers
 
-#### k-means-clusters
-`nw:k-means-clusters` _nb-clusters_ _max-iterations_ _convergence-threshold_
-
-Partitions the turtles in the current snapshot into _nb-clusters_ different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings that get better and better until some _convergence-threshold_ or some maximum number of iterations (_max-iterations_) is reached.
-
-Currently, `nw:k-means-clusters` uses the _x y coordinates_ of the turtles to group them together, ***not*** their distance in the network. This is coming in a future version of the extension.
-
-The primitive reports a list of lists of turtles representing the different clusters. Each turtle can only be part of one cluster.
-
-Note that k-means include a part of randomness, and may give different results everytime it runs.
-
-##### Example:
-
-    nw:set-snapshot turtles links
-    let nb-clusters 10
-    let clusters nw:k-means-clusters nb-clusters 500 0.01
-    let colors n-of nb-clusters remove gray base-colors
-    (foreach clusters colors [
-      let c ?2
-      foreach ?1 [ ask ? [ set color c ] ]
-    ])
-
 #### bicomponent-clusters
 `nw:bicomponent-clusters`
 
-Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network snapshot. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of lists of turtles. Note that one turtle can be a member of more than one bicomponent at once.
+Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network context. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one bicomponent at once.
 
 #### weak-component-clusters
 `nw:weak-component-clusters`
 
-Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network snapshot. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
+Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network context. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
 
-The result is reported as a list of lists of turtles. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
+The result is reported as a list of agentsets, in random order. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
 
 ### Cliques
 
@@ -339,20 +456,20 @@ The result is reported as a list of lists of turtles. Note that one turtle _cann
 
 A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
 
-The result is reported as a list of lists of turtles. Note that one turtle can be a member of more than one maximal clique at once.
+The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one maximal clique at once.
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
-#### biggest-maximal-clique
-`nw:biggest-maximal-clique`
+#### biggest-maximal-cliques
+`nw:biggest-maximal-cliques`
 
-The biggest maximal clique is, as its name implies, the biggest [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current snapshot. The result is reported a list of turtles in the clique. If more than one cliques are tied for the title of biggest clique, only one of them is reported at random.
+The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current context. Often, more than one clique are tied for the title of biggest clique, so the result if reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
 ### Generators
 
-The generators are amongst the only primitives that do not operate on the current network snapshot. Instead, all of them take a turtle breed and a link breed as inputs and generate a new network using the given breeds.
+The generators are amongst the only primitives that do not operate on the current network context. Instead, all of them take a turtle breed and a link breed as inputs and generate a new network using the given breeds.
 
 #### generate-preferential-attachment
 
@@ -369,7 +486,9 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### generate-random
 `nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection_probability_ _optional-command-block_
 
-Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G(n, p)_ variant of the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+
+The algorithm is O(n²) for directed networks and O(n²/2) for undirected networks, so generating more than a couple thousand nodes will likely take a very long time.
 
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
@@ -378,7 +497,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### generate-small-world
 `nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _clustering-exponent_ _is-toroidal_ _optional-command-block_
 
-Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). 
+Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model).
 
 The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
@@ -437,21 +556,21 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### save-matrix
 `nw:save-matrix` _file-name_
 
-Saves the current network snapshot to _file-name_, as a text file, in the form of a simple connection matrix.
+Saves the current network, as defined by `nw:set-context`, to _file-name_, as a text file, in the form of a simple connection matrix.
 
 Here is, for example, a undirected ring network with four nodes:
 
-    0.00 1.00 0.00 1.00 
-    1.00 0.00 1.00 0.00 
-    0.00 1.00 0.00 1.00 
-    1.00 0.00 1.00 0.00 
+    0.00 1.00 0.00 1.00
+    1.00 0.00 1.00 0.00
+    0.00 1.00 0.00 1.00
+    1.00 0.00 1.00 0.00
 
 And here is the directed version:
 
-    0.00 1.00 0.00 0.00 
-    0.00 0.00 1.00 0.00 
-    0.00 0.00 0.00 1.00 
-    1.00 0.00 0.00 0.00 
+    0.00 1.00 0.00 0.00
+    0.00 0.00 1.00 0.00
+    0.00 0.00 0.00 1.00
+    1.00 0.00 0.00 0.00
 
 At the moment, `nw:save-matrix` does not support link weights. Every link is represented as a "1.00" in the connection matrix. This will change in a future version of the extension.
 
@@ -471,7 +590,7 @@ For example:
     to go
       clear-all
       crt 5 [ create-dirlinks-to other turtles ]
-      nw:set-snapshot turtles dirlinks
+      nw:set-context turtles dirlinks
       nw:save-matrix "matrix.txt"
       clear-all
       nw:load-matrix "matrix.txt" turtles links
@@ -485,9 +604,9 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
       nw:load-matrix "matrix.txt" turtles links [ set color red ]
 
 #### save-graphml
-`save-graphml` _file-name_
+`nw:save-graphml` _file-name_
 
-You can save the current snapshot to GraphML. The following NetLogo code:
+You can save the current graph to GraphML. The following NetLogo code:
 
 ```
 extensions [ nw ]
@@ -504,8 +623,8 @@ accounts-own [ amount ]
 
 to go
   clear-all
-  create-bankers 1 [ 
-    set bank-name "The Bank" 
+  create-bankers 1 [
+    set bank-name "The Bank"
   ]
   create-clients 1 [
     set hometown "Turtle City"
@@ -514,7 +633,7 @@ to go
       set amount 9999.99
     ]
   ]
-  nw:set-snapshot turtles links
+  nw:set-context turtles links
   nw:save-graphml "example.graphml"
 end
 ```
@@ -524,51 +643,35 @@ Will produce the following GraphML file:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
-<key id="PEN-MODE" for="node"/>
-<key id="YCOR" for="node"/>
-<key id="PEN-SIZE" for="node"/>
-<key id="LABEL" for="node"/>
-<key id="SHAPE" for="node"/>
-<key id="BREED" for="node"/>
-<key id="WHO" for="node"/>
-<key id="HIDDEN?" for="node"/>
-<key id="LABEL-COLOR" for="node"/>
-<key id="HEADING" for="node"/>
-<key id="BANK-NAME" for="node"/>
-<key id="HOMETOWN" for="node"/>
-<key id="COLOR" for="node"/>
-<key id="XCOR" for="node"/>
-<key id="SIZE" for="node"/>
-<key id="END1" for="edge"/>
-<key id="TIE-MODE" for="edge"/>
-<key id="END2" for="edge"/>
-<key id="LABEL-COLOR" for="edge"/>
-<key id="THICKNESS" for="edge"/>
-<key id="LABEL" for="edge"/>
-<key id="SHAPE" for="edge"/>
-<key id="BREED" for="edge"/>
-<key id="COLOR" for="edge"/>
-<key id="AMOUNT" for="edge"/>
-<key id="HIDDEN?" for="edge"/>
-<graph edgedefault="directed">
-<node id="banker 0">
-<data key="PEN-MODE">up</data>
-<data key="YCOR">0</data>
-<data key="PEN-SIZE">1</data>
-<data key="LABEL"></data>
-<data key="SHAPE">default</data>
-<data key="BREED">bankers</data>
-<data key="WHO">0</data>
-<data key="HIDDEN?">false</data>
-<data key="LABEL-COLOR">9.9</data>
-<data key="HEADING">346</data>
-<data key="BANK-NAME">The Bank</data>
-<data key="COLOR">85</data>
-<data key="XCOR">0</data>
-<data key="SIZE">1</data>
-</node>
+<key id="PEN-MODE" for="node" attr.name="PEN-MODE" attr.type="string"/>
+<key id="YCOR" for="node" attr.name="YCOR" attr.type="double"/>
+<key id="PEN-SIZE" for="node" attr.name="PEN-SIZE" attr.type="double"/>
+<key id="LABEL" for="node" attr.name="LABEL" attr.type="string"/>
+<key id="SHAPE" for="node" attr.name="SHAPE" attr.type="string"/>
+<key id="BREED" for="node" attr.name="BREED" attr.type="string"/>
+<key id="WHO" for="node" attr.name="WHO" attr.type="double"/>
+<key id="HIDDEN?" for="node" attr.name="HIDDEN?" attr.type="boolean"/>
+<key id="LABEL-COLOR" for="node" attr.name="LABEL-COLOR" attr.type="double"/>
+<key id="HEADING" for="node" attr.name="HEADING" attr.type="double"/>
+<key id="BANK-NAME" for="node" attr.name="BANK-NAME" attr.type="string"/>
+<key id="HOMETOWN" for="node" attr.name="HOMETOWN" attr.type="string"/>
+<key id="COLOR" for="node" attr.name="COLOR" attr.type="double"/>
+<key id="XCOR" for="node" attr.name="XCOR" attr.type="double"/>
+<key id="SIZE" for="node" attr.name="SIZE" attr.type="double"/>
+<key id="END1" for="edge" attr.name="END1" attr.type="string"/>
+<key id="TIE-MODE" for="edge" attr.name="TIE-MODE" attr.type="string"/>
+<key id="END2" for="edge" attr.name="END2" attr.type="string"/>
+<key id="LABEL-COLOR" for="edge" attr.name="LABEL-COLOR" attr.type="double"/>
+<key id="THICKNESS" for="edge" attr.name="THICKNESS" attr.type="double"/>
+<key id="LABEL" for="edge" attr.name="LABEL" attr.type="string"/>
+<key id="SHAPE" for="edge" attr.name="SHAPE" attr.type="string"/>
+<key id="BREED" for="edge" attr.name="BREED" attr.type="string"/>
+<key id="COLOR" for="edge" attr.name="COLOR" attr.type="double"/>
+<key id="AMOUNT" for="edge" attr.name="AMOUNT" attr.type="double"/>
+<key id="HIDDEN?" for="edge" attr.name="HIDDEN?" attr.type="boolean"/>
+<graph edgedefault="undirected">
 <node id="client 1">
 <data key="PEN-MODE">up</data>
 <data key="YCOR">0</data>
@@ -579,9 +682,25 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="WHO">1</data>
 <data key="HIDDEN?">false</data>
 <data key="LABEL-COLOR">9.9</data>
-<data key="HEADING">244</data>
+<data key="HEADING">356</data>
 <data key="HOMETOWN">Turtle City</data>
-<data key="COLOR">105</data>
+<data key="COLOR">115</data>
+<data key="XCOR">0</data>
+<data key="SIZE">1</data>
+</node>
+<node id="banker 0">
+<data key="PEN-MODE">up</data>
+<data key="YCOR">0</data>
+<data key="PEN-SIZE">1</data>
+<data key="LABEL"></data>
+<data key="SHAPE">default</data>
+<data key="BREED">bankers</data>
+<data key="WHO">0</data>
+<data key="HIDDEN?">false</data>
+<data key="LABEL-COLOR">9.9</data>
+<data key="HEADING">32</data>
+<data key="BANK-NAME">The Bank</data>
+<data key="COLOR">85</data>
 <data key="XCOR">0</data>
 <data key="SIZE">1</data>
 </node>
@@ -598,6 +717,18 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="AMOUNT">9999.99</data>
 <data key="HIDDEN?">false</data>
 </edge>
+<edge source="banker 0" target="client 1">
+<data key="END1">(banker 0)</data>
+<data key="TIE-MODE">none</data>
+<data key="END2">(client 1)</data>
+<data key="LABEL-COLOR">9.9</data>
+<data key="THICKNESS">0</data>
+<data key="LABEL"></data>
+<data key="SHAPE">default</data>
+<data key="BREED">friendships</data>
+<data key="COLOR">5</data>
+<data key="HIDDEN?">false</data>
+</edge>
 </graph>
 </graphml>
 
@@ -607,8 +738,42 @@ A few things to notice:
 
 - The breed is stored as data field, both for nodes and edges.
 - The data includes both NetLogo's internal variables and the variables that were defined as either `breeds-own`, `turtles-own`, `linkbreeds-own` or `links-own`.
+- Each key gets an `attr.type` based on the actual types of the values contained in the agent variables. The three possible types are `"string"`, `"double"` and `"boolean"`. To determine the attribute type of a particular agent variable, the extension will look at the first agent in the graph. To see which agent is first, you can look at the result of `nw:get-context`.
 - This example only has a directed link, and you will notice the `<graph edgedefault="directed">` element. If we had only undirected links, we would have `<graph edgedefault="undirected">`. What if we try to mix both kinds of link? At the moment, the extension will save such a "mixed" graph as if it were an undirected graph (see [this issue](https://github.com/NetLogo/NW-Extension/issues/58) for more details). The order of the `source` and `target` will be respected, however, so if you know which breeds represent directed links, you can figure it out _a posteriori_.
-- At the moment, all data is written as if it was the output of a NetLogo `print` command and the GraphML `attr.type` is not set for the keys. It will be [added eventually](https://github.com/NetLogo/NW-Extension/issues/60).
+
+#### load-graphml
+
+`nw:load-graphml` _file-name_
+
+Loading a GraphML file into NetLogo with the network extension should be as simple as calling `nw:load-graphml "example.graphml"`, but there is a bit of preparation involved.
+
+The key idea is that `nw:load-graphml` will try to assign the attribute values defined in the GraphML file to NetLogo agent variables of the same names (this is *not* case sensitive). The first one it tries to set is `breed` if it is there, so the turtle or link will get the right breed and, hence, the right breed variables.
+
+One special case is the `who` number, which is ignored by the importer if it is present as a GraphML attribute: NetLogo does not allow you to modify this number once a turtle is created and, besides, there could already be an existing turtle with that number.
+
+The simplest case to handle is when the original GraphML file has been saved from NetLogo by using `nw:save-graphml`. In this case, all you should have to do is to make sure that you have the same breed and variables definition as when you saved the file and you should get back your original graph. For example, if you want to load the file from the `nw:save-graphml` example above, you should have the following definitions:
+
+    breed [ bankers banker ]
+    bankers-own [ bank-name ]
+    breed [ clients client ]
+    clients-own [ hometown ]
+
+    undirected-link-breed [ friendships friendship ]
+
+    directed-link-breed [ accounts account ]
+    accounts-own [ amount ]
+
+Loading a graph that was saved from a different program than NetLogo is quite possible as well, but it may take a bit of tinkering to get all the attribute-variable match up right. If you encounter major problems, please do not hesitate to [open an issue](https://github.com/NetLogo/NW-Extension/issues/new).
+
+The extension will try to assign the type defined by `attr.type` to each variable that it loads. If it's unable to convert it to that type, it will load it as a string. If `attr.type` is not defined, or is set to an unknown value, the extension will first try to load the value as a double, then try it as a boolean, and finally fall back on a string.
+
+### Other
+
+#### version
+
+`nw:version`
+
+Reports the current version number of the extension.
 
 ## A note regarding floating point calculations
 
@@ -616,7 +781,7 @@ Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge
 
 ## Using the extension with applets
 
-If you want to use the extension with applets, you will find that the distributed `nw-ext-beta-0.0x.zip` contains a folder named `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo 5.0.2 distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental, and might not be supported in the final release of the extension. Nonetheless, please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
+If you want to use the extension with applets, you will find that the distributed `nw.zip` contains a folder named `alternate-netlogolite` with `NetLogoLite.jar` and `NetLogoLite.jar.pack.gz`. You should use these _instead_ of the `jar` files that come with the regular NetLogo distribution. (Reasons for this are explained [here](https://github.com/NetLogo/NW-Extension/issues/54).) Applet support is, however, brittle and experimental, and might not be supported in the final release of the extension. Nonetheless, please [report issues](https://github.com/NetLogo/NW-Extension/issues) if you find some.
 
 General information on applets is available in the [NetLogo documentation](http://ccl.northwestern.edu/netlogo/docs/applet.html).
 
@@ -624,15 +789,15 @@ General information on applets is available in the [NetLogo documentation](http:
 
 The extension is written in Scala (version 2.9.2).
 
-Run the `bin/sbt` script to build the extension.
+Run `./sbt package` to build the extension.
 
-Unless they are already present, sbt will download the needed Jung and JGraphT jar files from the Internet. Note that the extension requires a modified version of `jung-algorithms-2.0.2` (namely, `jung-algorithms-2.0.2-nlfork-0.1.jar`) which will be downloaded from the CCL server.
+Unless they are already present, sbt will download the needed Jung and JGraphT jar files from the Internet.
 
 If the build succeeds, `nw.jar` will be created. To use the extension, this file and all the other jars will need to be in the `extensions/nw` folder under your NetLogo installation.
 
 ## Terms of Use
 
-Copyright 1999-2012 by Uri Wilensky.
+Copyright 1999-2013 by Uri Wilensky.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the [GNU General Public License](http://www.gnu.org/copyleft/gpl.html) as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 

@@ -67,16 +67,9 @@ end
 ;; Clusterers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Clusters the graph according to turtle position
-to k-means
-  nw:set-snapshot turtles get-links-to-use
-  let clusters nw:k-means-clusters nb-clusters 1000 0.001
-  if length clusters > 0 [ color-clusters clusters ]
-end   
-
 ;; Colorizes each node according to which component it is part of
 to weak-component
-  nw:set-snapshot turtles get-links-to-use
+  nw:set-context turtles get-links-to-use
   color-clusters nw:weak-component-clusters
 end
 
@@ -96,7 +89,7 @@ to highlight-bicomponents
   ]
   
   if mouse-inside? [ 
-    nw:set-snapshot turtles get-links-to-use
+    nw:set-context turtles get-links-to-use
     highlight-clusters nw:bicomponent-clusters
   ]
   display
@@ -121,22 +114,20 @@ to highlight-maximal-cliques
   ]
 
   if mouse-inside? [ 
-    nw:set-snapshot turtles unlinks
+    nw:set-context turtles unlinks
     highlight-clusters nw:maximal-cliques
   ]
   display
 end
 
 ;; Colorizes the biggest maximal clique in the graph, or a random one if there is more than one
-to find-biggest-clique
+to find-biggest-cliques
   if (links-to-use != "undirected") [
     user-message "Maximal cliques only work with undirected links."
     stop
   ]
-  nw:set-snapshot turtles unlinks
-  ;; color-clusters takes a list of lists (clusters) 
-  ;; but we only have one, so we package it in a list
-  color-clusters (list nw:biggest-maximal-clique)
+  nw:set-context turtles unlinks
+  color-clusters nw:biggest-maximal-cliques
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -170,16 +161,14 @@ to color-clusters [ clusters ]
     (foreach clusters colors [      
       let cluster ?1
       let cluster-color ?2
-      foreach cluster [ ;; for each node in the cluster
-        ask ? [
-          ;; give the node the color of its cluster
-          set color cluster-color
-          ;; colorize the links from the node to other nodes in the same cluster
-          ;; link color is slightly darker...
-          ask my-unlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
-          ask my-in-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
-          ask my-out-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
-        ] 
+      ask cluster [ ;; for each node in the cluster
+        ;; give the node the color of its cluster
+        set color cluster-color
+        ;; colorize the links from the node to other nodes in the same cluster
+        ;; link color is slightly darker...
+        ask my-unlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
+        ask my-in-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
+        ask my-out-dirlinks [ if member? other-end cluster [ set color cluster-color - 1 ] ]
       ]
     ])
 end
@@ -203,7 +192,7 @@ end
 ;; Takes a centrality measure as a reporter task, runs it for all nodes
 ;; and set labels, sizes and colors of turtles to illustrate result
 to centrality [ measure ]
-  nw:set-snapshot turtles get-links-to-use
+  nw:set-context turtles get-links-to-use
   ask turtles [
     let res (runresult measure) ;; run the task for the turtle
     ifelse is-number? res [
@@ -291,7 +280,7 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to save-matrix
-  nw:set-snapshot turtles get-links-to-use
+  nw:set-context turtles get-links-to-use
   nw:save-matrix "matrix.txt"
 end
 
@@ -300,17 +289,20 @@ to load-matrix
 end
 
 to save-graphml
-  nw:set-snapshot turtles get-links-to-use
-  nw:save-graphml "graph.xml"
+  nw:set-context turtles get-links-to-use
+  nw:save-graphml "demo.graphml"
 end
 
+to load-graphml
+  nw:set-context turtles get-links-to-use
+  nw:load-graphml "demo.graphml"
+end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reporters for monitors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to-report mean-path-length
-  nw:set-snapshot turtles links
   report nw:mean-path-length
 end
 
@@ -372,23 +364,6 @@ Clusterers & Cliques
 0.0
 1
 
-BUTTON
-245
-90
-315
-123
-NIL
-k-means
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 SLIDER
 10
 85
@@ -398,22 +373,7 @@ nb-nodes
 nb-nodes
 0
 1000
-50
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-315
-90
-425
-123
-nb-clusters
-nb-clusters
-2
-14
-11
+60
 1
 1
 NIL
@@ -489,7 +449,7 @@ nb-rows
 nb-rows
 0
 20
-8
+10
 1
 1
 NIL
@@ -504,7 +464,7 @@ nb-cols
 nb-cols
 0
 20
-8
+10
 1
 1
 NIL
@@ -631,9 +591,9 @@ NIL
 
 BUTTON
 245
-135
+90
 425
-168
+123
 weak component clusters
 weak-component
 NIL
@@ -675,10 +635,10 @@ PENS
 "default" 1.0 1 -16777216 true "" "histogram [ count my-links ] of turtles"
 
 BUTTON
-450
-225
-560
-258
+245
+275
+355
+308
 save matrix
 save-matrix
 NIL
@@ -692,10 +652,10 @@ NIL
 1
 
 BUTTON
-450
-260
-560
-293
+245
+310
+355
+343
 load matrix
 load-matrix
 NIL
@@ -732,11 +692,11 @@ count links
 
 BUTTON
 245
-255
+210
 425
-288
-biggest maximal clique
-find-biggest-clique
+243
+biggest maximal cliques
+find-biggest-cliques
 NIL
 1
 T
@@ -817,7 +777,7 @@ CHOOSER
 layout
 layout
 "spring" "circle" "radial" "tutte"
-1
+0
 
 BUTTON
 245
@@ -855,9 +815,9 @@ NIL
 
 BUTTON
 245
-175
+130
 425
-208
+163
 highlight bicomponents
 highlight-bicomponents
 T
@@ -872,9 +832,9 @@ NIL
 
 BUTTON
 245
-215
+170
 425
-248
+203
 highlight maximal cliques
 highlight-maximal-cliques
 T
@@ -898,22 +858,39 @@ spokes-direction
 1
 
 TEXTBOX
-455
-205
-605
-223
+250
+255
+400
+273
 Files
 12
 0.0
 1
 
 BUTTON
-450
-305
-560
-338
+360
+275
+470
+308
 save GraphML
 save-graphml
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+360
+310
+470
+343
+load GraphML
+load-graphml
 NIL
 1
 T
@@ -989,10 +966,6 @@ The generator uses the same sliders and switch as the lattice 2D generator, name
 
 Now that you have generated one or more networks, there are things that you might want to know about them.
 
-#### k-means
-
-Partitions the turtles in the current network into **nb-clusters** different groups. The [k-means](http://en.wikipedia.org/wiki/K-means_clustering#Standard_algorithm) algorithm is an iterative process that will produce groupings based on the _x y coordinates_ of the turtles. If this does not seem very network related, it is because it isn't. But in a future version of the extension, we will support clustering based on the distance in the network.
-
 #### weak component clusters
 
 This button will assign a different color to all the "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
@@ -1009,9 +982,9 @@ The general usage for this is the same as for the **highlight bicomponents** mod
 
 A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
 
-#### biggest maximal clique
+#### biggest maximal cliques
 
-This simply highlights the biggest of all the maximal cliques in the networks. If there are multiple cliques that are equally big (as is often the case), it simply highlights one at random.
+This simply highlights the biggests of all the maximal cliques in the networks. If there are multiple cliques that are equally big (as is often the case), it will highlight them with different colors.
 
 ### Centrality measures
 
@@ -1034,11 +1007,18 @@ The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_cen
 Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
 
 
-### Import / Export
+### Files
 
-Finally, you can save and load your networks. This is done through the use of simple text files containing an [adjacency matrix](http://en.wikipedia.org/wiki/Adjacency_matrix).
+#### Load / Save Matrix
+
+Finally, you can save and load your networks. This can be done through the use of simple text files containing an [adjacency matrix](http://en.wikipedia.org/wiki/Adjacency_matrix).
 
 The model currently always save the network to your NetLogo directory in a file called `matrix.txt` when you click the **save** button. When you click the **load** button, it reads from the same location and creates a new network from the file.
+
+#### Load / Save GraphML
+
+You can also save and load GraphML files. Please see the [extension's documentation](https://github.com/NetLogo/NW-Extension#save-graphml) for more detail on handling GraphML files. The demo simply saves the current network to (and can load from) the file `demo.graphml` in your default directory.
+
 
 ## THINGS TO NOTICE
 
@@ -1381,7 +1361,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.2
+NetLogo 5.0.5-RC1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
