@@ -68,13 +68,13 @@ Basically, you have bankers and clients. Clients can have accounts with bankers.
 
 Now we might want to consider this whole thing as one big network. If that is the case, there is nothing special to do: by default, the NW extension primitives consider all turtles and all links to be part of the current network.
 
-We could also, however, be only interested in a subset of the network. Maybe we want to consider only friendship relations. Furthermore, maybe we want to consider only the friendships _between bankers_. After all, having a very high centrality in a network of banker friendships is very different from having a high centrality in a network of client frienships.
+We could also, however, be only interested in a subset of the network. Maybe we want to consider only friendship relations. Furthermore, maybe we want to consider only the friendships _between bankers_. After all, having a very high centrality in a network of banker friendships is very different from having a high centrality in a network of client friendships.
 
 To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The way to tell the extension about this is with the [`nw:set-context`](#set-context) primitive, which you must call _prior_ to doing any operations on a network.
 
 Some examples:
 
-- `nw:set-context turtles links` will give you everything: bankers and clients, frienships and accounts, as one big network.
+- `nw:set-context turtles links` will give you everything: bankers and clients, friendships and accounts, as one big network.
 - `nw:set-context turtles friendships` will give you all the bankers and clients and friendships between any of them.
 - `nw:set-context bankers friendships` will give you all the bankers, and only friendships between bankers.
 - `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
