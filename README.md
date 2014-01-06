@@ -1,6 +1,6 @@
 # The NetLogo NW Extension for Network Analysis
 
-(Note: this is the documentation for the "set-context" branch of the NW extension, which requires NetLogo [5.0.5](http://ccl.northwestern.edu/netlogo/5.0.5/) or greater. If you are still using the "set-snapshot", the old documentation is available [here](https://github.com/NetLogo/NW-Extension/blob/set-snapshot/README.md).)
+(Note: this is the documentation for the "set-context" branch of the NW extension, which requires NetLogo [5.0.5](http://ccl.northwestern.edu/netlogo/5.0.5/) or greater. If you are still using the "set-snapshot" branch, the old documentation is available [here](https://github.com/NetLogo/NW-Extension/blob/set-snapshot/README.md).)
 
 This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](#building)) or **[download it from here](https://github.com/NetLogo/NW-Extension/releases)**. Also note that the current version of the extension requires at least NetLogo 5.0.5. (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/extensions.html).)
 
