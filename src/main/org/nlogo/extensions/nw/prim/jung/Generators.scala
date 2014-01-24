@@ -5,11 +5,11 @@ package org.nlogo.extensions.nw.prim.jung
 import org.nlogo.api
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jung.Generator
 import org.nlogo.agent
 
-class BarabasiAlbertGenerator extends turtleCreatingCommand {
+class BarabasiAlbertGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
@@ -19,7 +19,7 @@ class BarabasiAlbertGenerator extends turtleCreatingCommand {
       .barabasiAlbert(getIntValueWithMinimum(args(2), 1), context.getRNG)
 }
 
-class KleinbergSmallWorldGenerator extends turtleCreatingCommand {
+class KleinbergSmallWorldGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
@@ -34,7 +34,7 @@ class KleinbergSmallWorldGenerator extends turtleCreatingCommand {
         rng = context.getRNG)
 }
 
-class Lattice2DGenerator extends turtleCreatingCommand {
+class Lattice2DGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) =

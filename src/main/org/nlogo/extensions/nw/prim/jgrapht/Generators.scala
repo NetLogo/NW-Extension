@@ -5,11 +5,11 @@ package org.nlogo.extensions.nw.prim.jgrapht
 import org.nlogo.api
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jgrapht.Generator
 
 trait SimpleGeneratorPrim
-  extends turtleCreatingCommand {
+  extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
   def turtleBreed(args: Array[api.Argument]) =

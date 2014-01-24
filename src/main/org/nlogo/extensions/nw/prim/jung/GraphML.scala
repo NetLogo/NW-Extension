@@ -9,7 +9,7 @@ import org.nlogo.api.Syntax._
 import org.nlogo.agent
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jung.io.GraphMLExport
 import org.nlogo.extensions.nw.jung.io.GraphMLImport
 
@@ -21,7 +21,7 @@ class SaveGraphML(getGraphContext: api.World => GraphContext)
   }
 }
 
-class LoadGraphML extends turtleCreatingCommand {
+class LoadGraphML extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(Array(StringType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
     GraphMLImport.load(

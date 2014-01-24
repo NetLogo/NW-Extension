@@ -5,7 +5,7 @@ package org.nlogo.extensions.nw.prim.jung
 import org.nlogo.api
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jung.io.Matrix
 import org.nlogo.extensions.nw.GraphContext
 
@@ -19,7 +19,7 @@ class SaveMatrix(getGraphContext: api.World => GraphContext)
 }
 
 class LoadMatrix
-  extends turtleCreatingCommand {
+  extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
     Matrix.load(

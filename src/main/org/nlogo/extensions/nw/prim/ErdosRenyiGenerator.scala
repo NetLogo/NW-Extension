@@ -6,10 +6,10 @@ import org.nlogo.api
 import org.nlogo.api.ExtensionException
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.turtleCreatingCommand
+import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.algorithms
 
-class ErdosRenyiGenerator extends turtleCreatingCommand {
+class ErdosRenyiGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) = {
