@@ -177,6 +177,15 @@ with-context-changes-context-temporarily
   count glob2 => 2
   [ count nw:turtles-in-radius 1 ] of turtle 0 => 3
 
+with-context-can-be-nested
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtles [ create-links-with other turtles ]
+  O> nw:with-context (turtle-set turtle 0 turtle 1) links [ nw:with-context (turtle-set turtle 0) links [ set glob1 [ nw:turtles-in-radius 1 ] of turtle 0 ] set glob2 [ nw:turtles-in-radius 1 ] of turtle 0 ]
+  count glob1 => 1
+  count glob2 => 2
+  count [ nw:turtles-in-radius 1 ] of turtle 0 => 3
+
 ### turtles-in-radius
 
 turtles-in-radius-negative-radius

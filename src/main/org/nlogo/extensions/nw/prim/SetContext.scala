@@ -48,6 +48,7 @@ class WithContext(pushGraphContext: GraphContext => Unit, popGraphContext: => Gr
     val gc = new GraphContext(world, turtleSet, linkSet)
     val extContext = context.asInstanceOf[ExtensionContext]
     val nvmContext = extContext.nvmContext
+    // Note that this can optimized by hanging onto the array and just mutating it. Shouldn't be necessary though.
     val agentSet = new ArrayAgentSet(nvmContext.agent.getAgentClass, Array(nvmContext.agent), world)
     pushGraphContext(gc)
     nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
