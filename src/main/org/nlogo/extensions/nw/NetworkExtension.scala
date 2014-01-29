@@ -3,8 +3,10 @@
 package org.nlogo.extensions.nw
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.Stack
 import org.nlogo.agent
 import org.nlogo.api
+import scala.collection.mutable
 
 class NetworkExtension extends api.DefaultClassManager {
 
@@ -32,17 +34,31 @@ class NetworkExtension extends api.DefaultClassManager {
     "wstx-asl-3.2.6.jar").asJava
 
   private var _graphContext: Option[GraphContext] = None
-  val setGraphContext: GraphContext => Unit = { gc => _graphContext = Some(gc) }
+  private val _contexts: mutable.Stack[GraphContext] = mutable.Stack()
+
+  def setGraphContext(gc: GraphContext) {
+    if (_contexts.isEmpty) {
+      _contexts.push(gc)
+    } else {
+      _contexts(_contexts.length - 1) = gc
+    }
+  }
   def getGraphContext(world: api.World) =
-    _graphContext.getOrElse {
+    _contexts.headOption.getOrElse {
       val w = world.asInstanceOf[agent.World]
       val gc = new GraphContext(w, w.turtles, w.links)
-      _graphContext = Some(gc)
+      _contexts.push(gc)
       gc
     }
 
-  override def clearAll() { _graphContext = None }
-  override def unload(em: api.ExtensionManager) { _graphContext = None }
+  def pushGraphContext(gc: GraphContext) {
+    _contexts.push(gc)
+  }
+
+  def popGraphContext: GraphContext = _contexts.pop()
+
+  override def clearAll() { _contexts.clear() }
+  override def unload(em: api.ExtensionManager) { _contexts.clear() }
 
   override def load(primManager: api.PrimitiveManager) {
 
@@ -54,6 +70,7 @@ class NetworkExtension extends api.DefaultClassManager {
 
     add("set-context", new prim.SetContext(setGraphContext))
     add("get-context", new prim.GetContext(getGraphContext))
+    add("with-context", new prim.WithContext(pushGraphContext, popGraphContext))
 
     add("turtles-in-radius", new org.nlogo.extensions.nw.prim.TurtlesInRadius(getGraphContext))
     add("turtles-in-reverse-radius", new org.nlogo.extensions.nw.prim.TurtlesInReverseRadius(getGraphContext))

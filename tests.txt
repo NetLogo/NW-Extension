@@ -161,6 +161,22 @@ closeness-after-deaths-non-breed
   O> ask mouse 1 [ create-link-with mouse 2 ]
   [ nw:closeness-centrality ] of turtles => [0 0]
 
+### with-context tests
+with-context-actually-runs-body
+  extensions [ nw ]
+  O> nw:with-context turtles links [ set glob1 5 ]
+  glob1 => 5
+
+with-context-changes-context-temporarily
+  extensions [ nw ]
+  O> create-turtles 2 [ create-links-with other turtles ]
+  O> set glob1 turtle-set turtles
+  O> create-turtles 1 [ create-links-with other turtles ]
+  [ count nw:turtles-in-radius 1 ] of turtle 0 => 3
+  O> nw:with-context glob1 links [ set glob2 [ nw:turtles-in-radius 1 ] of turtle 0 ]
+  count glob2 => 2
+  [ count nw:turtles-in-radius 1 ] of turtle 0 => 3
+
 ### turtles-in-radius
 
 turtles-in-radius-negative-radius
