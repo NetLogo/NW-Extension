@@ -186,6 +186,16 @@ with-context-can-be-nested
   count glob2 => 2
   count [ nw:turtles-in-radius 1 ] of turtle 0 => 3
 
+with-context-changes-get-context
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtles [ create-links-with other turtles ]
+  O> set glob1 (turtle-set turtle 0 turtle 1)
+  O> set glob2 (link-set link 0 1)
+  O> nw:with-context glob1 glob2 [ set glob3 nw:get-context ]
+  glob3 = (list glob1 glob2) => true
+  nw:get-context = (list turtles links) => true
+
 ### turtles-in-radius
 
 turtles-in-radius-negative-radius
