@@ -15,7 +15,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 [General](#general)
 
-- [set-context](#set-context), [get-context](#get-context)
+- [set-context](#set-context), [get-context](#get-context), [with-context](#with-context)
 
 [Path and Distance](#path-and-distance)
 
@@ -270,6 +270,22 @@ observer> store-and-restore-context
 observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 observer: [[(turtle 2) (turtle 3)] [(link 2 3)]]
 observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
+```
+
+#### with-context
+`nw:with-context` _turtleset_ _linkset_ _command-block_
+
+Executes the _command-block_ with the context temporarily set to _turtleset_ and _linkset_.
+After _command-block_ finishes running, the previous context will be restored.
+
+For example:
+
+```
+observer> create-turtles 3 [ create-links-with other turtles ]
+observer> nw:with-context (turtle-set turtle 0 turtle 1) (link-set link 0 1) [ show nw:get-context ]
+observer: [(agentset, 2 turtles) (agentset, 1 link)
+observer> show nw:get-context
+observer: [turtles links]
 ```
 
 ### Path and Distance
