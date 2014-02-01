@@ -3,7 +3,6 @@
 package org.nlogo.extensions.nw
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.Stack
 import org.nlogo.agent
 import org.nlogo.api
 import scala.collection.mutable
