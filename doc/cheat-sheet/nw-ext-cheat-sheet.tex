@@ -75,6 +75,13 @@ Reports the content of the current graph context as a list containing two
 agentsets: the agentset of turtles that are part of the context and the agentset
 of links that are part of the context.
 
+\begin{prim}
+nw:with-context \param{turtleset} \param{linkset} \param{command-block}
+\end{prim}
+
+Executes the \param{command-block} with the context temporarily set to \param{turtleset} and \param{linkset}.
+After \param{command-block} finishes running, the previous context will be restored.
+
 \cat{Centrality Primitives}
 
 \begin{prim}
