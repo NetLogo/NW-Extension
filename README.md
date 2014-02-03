@@ -80,7 +80,7 @@ Some examples:
 - `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
 - `nw:set-context clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
 
-(Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agents (births and deaths, namely) are automatically reflected in your network. You only need to call `nw:set-context` again if you want to work with different agents.)
+(Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agentsets are automatically reflected in your network. (Changes to your agentsets can be births and deaths in the case of special agentsets, and deaths only in the case of normal agentssets—see next section for details.) You only need to call `nw:set-context` again if you want to work with different agents.)
 
 ### Special agentsets vs. normal agentsets
 
