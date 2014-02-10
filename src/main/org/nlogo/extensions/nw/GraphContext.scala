@@ -22,6 +22,16 @@ class GraphContext(
 
   val rng = new scala.util.Random(world.mainRNG)
 
+  val turtleMonitor = turtleSet match {
+    case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas)
+    case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
+  }
+
+  val linkMonitor = linkSet match {
+    case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas)
+    case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas)
+  }
+
   val turtles: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
   val links: Set[Link] = linkSet.asIterable[Link].toSet
   private val inLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
@@ -46,15 +56,11 @@ class GraphContext(
     }
   }
 
-  def verify(): GraphContext = {
-    if (turtles.size == turtleSet.count && links.size == linkSet.count
-        && turtleSet.asIterable[Turtle].forall(turtles.contains)
-        && linkSet.asIterable[Link].forall(links.contains)) {
-      this
-    } else {
+  def verify(): GraphContext =
+    if (turtleMonitor.hasChanged || linkMonitor.hasChanged)
       new GraphContext(world, turtleSet, linkSet)
-    }
-  }
+    else
+      this
 
   def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   private var directedJungGraph: Option[jung.DirectedGraph] = None
@@ -90,11 +96,6 @@ class GraphContext(
   def turtleCount: Int = turtles.size
   def linkCount: Int = links.size
 
-  // LinkManager.findLink* methods require "breed" agentsets and, as such,
-  // does not play well with linkSet in the case it's an ArrayAgentSet.
-  // This is why we pass world.links to the methods and do the filtering
-  // ourselves afterwards.
-  // NP 2013-07-11.
   def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Link] =
     rng.shuffle(
       (if (includeUn) undirLinks.getOrElse(turtle, Seq()) else Seq()) ++
