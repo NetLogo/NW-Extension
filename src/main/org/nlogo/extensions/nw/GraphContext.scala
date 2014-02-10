@@ -97,9 +97,9 @@ class GraphContext(
   // NP 2013-07-11.
   def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Link] =
     rng.shuffle(
-      (if (includeUn) undirLinks(turtle) else Seq()) ++
-      (if (includeIn) inLinks(turtle) else Seq()) ++
-      (if (includeOut) outLinks(turtle) else Seq())
+      (if (includeUn) undirLinks.getOrElse(turtle, Seq()) else Seq()) ++
+      (if (includeIn) inLinks.getOrElse(turtle, Seq()) else Seq()) ++
+      (if (includeOut) outLinks.getOrElse(turtle, Seq()) else Seq())
     )
 
 

@@ -35,7 +35,7 @@ class GetContext(getGraphContext: api.World => GraphContext)
   }
 }
 
-class WithContext(pushGraphContext: GraphContext => Unit, popGraphContext: => GraphContext)
+class WithContext(setGraphContext: GraphContext => Unit, getGraphContext: api.World => GraphContext)
   extends api.DefaultCommand
   with CustomAssembled{
   override def getSyntax = commandSyntax(
@@ -50,9 +50,10 @@ class WithContext(pushGraphContext: GraphContext => Unit, popGraphContext: => Gr
     val nvmContext = extContext.nvmContext
     // Note that this can optimized by hanging onto the array and just mutating it. Shouldn't be necessary though.
     val agentSet = new ArrayAgentSet(nvmContext.agent.getAgentClass, Array(nvmContext.agent), world)
-    pushGraphContext(gc)
+    val currentContext = getGraphContext(world)
+    setGraphContext(gc)
     nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
-    popGraphContext
+    setGraphContext(currentContext)
   }
 
   def assemble(a: AssemblerAssistant) {
