@@ -42,8 +42,8 @@ object GraphMLExport {
 
     val program = world.program
 
-    val turtles = graphContext.turtleSet.asIterable[agent.Turtle]
-    val links = graphContext.linkSet.asIterable[agent.Link]
+    val turtles = graphContext.turtles
+    val links = graphContext.links
 
     val turtlesOwn = program.turtlesOwn.asScala
     val linksOwn = program.linksOwn.asScala

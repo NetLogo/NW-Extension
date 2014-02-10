@@ -44,7 +44,7 @@ BUTTON
 83
 149
 timeit
-setup reset-timer repeat n [ ask one-of turtles [ let foo max-dist ] ] show timer
+setup let foo 0 reset-timer repeat n [ ask one-of turtles [ set foo max-dist ] ] show timer show foo
 NIL
 1
 T
