@@ -7,14 +7,25 @@ to setup
   ;nw:set-snapshot turtles links
 end
 
-to-report max-dist
-  report max map [ nw:distance-to ? ] sort other turtles
+to-report max-single-source-dist
+  report max [ [ nw:distance-to myself ] of myself ] of other turtles
+end
+
+to-report max-single-dest-dist
+  report max [ nw:distance-to myself ] of other turtles
+end
+
+to timeit [ times cmd ]
+  setup
+  reset-timer
+  repeat times [ run cmd ]
+  print timer
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+206
 10
-649
+645
 470
 16
 16
@@ -41,10 +52,10 @@ ticks
 BUTTON
 17
 116
-83
+115
 149
-timeit
-setup let foo 0 reset-timer repeat n [ ask one-of turtles [ set foo max-dist ] ] show timer show foo
+single-source
+timeit n task [ ask one-of turtles [ let foo max-single-source-dist ] ]
 NIL
 1
 T
@@ -69,6 +80,23 @@ n
 1
 NIL
 HORIZONTAL
+
+BUTTON
+12
+161
+108
+194
+single-dest
+timeit n task [ ask one-of turtles [ let foo max-single-dest-dist ] ]
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
