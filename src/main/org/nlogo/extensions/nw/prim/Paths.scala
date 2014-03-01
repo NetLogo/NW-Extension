@@ -10,7 +10,6 @@ import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToRichAgent
 import org.nlogo.extensions.nw.algorithms.BreadthFirstSearch
-import org.nlogo.extensions.nw.algorithms.Distance.distance
 
 class DistanceTo(getGraphContext: api.World => GraphContext)
   extends api.DefaultReporter {
@@ -22,7 +21,7 @@ class DistanceTo(getGraphContext: api.World => GraphContext)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
     val graphContext = getGraphContext(context.getAgent.world)
-    toLogoObject(distance(graphContext, source, target).getOrElse(false))
+    toLogoObject(graphContext.distance(source, target).getOrElse(false))
   }
 }
 
