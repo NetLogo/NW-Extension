@@ -807,6 +807,29 @@ weak-components-three-turtles-connected-by-two-link-breeds
   O> nw:set-context turtles (link-set links)
   length nw:weak-component-clusters => 1
 
+# clique tests
+
+biggest-maximal-clique-undirected
+  extensions [ nw ]
+  O> crt 3 [ create-links-with other turtles ]
+  count first nw:biggest-maximal-cliques => 3
+
+biggest-maximal-clique-directed
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  O> ask turtle 1 [ create-link-to turtle 2 ]
+  O> ask turtle 2 [ create-link-to turtle 0 ]
+  count first nw:biggest-maximal-cliques => ERROR Extension exception: Current graph must be undirected
+
+biggest-maximal-clique-mixed
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 2 [ create-undirected-link-with turtle 0 ]
+  count first nw:biggest-maximal-cliques => ERROR Extension exception: Current graph must be undirected
+
 # graphml tests
 
 graphml-export-import-turtles
