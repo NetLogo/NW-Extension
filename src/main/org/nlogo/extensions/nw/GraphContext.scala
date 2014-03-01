@@ -16,7 +16,7 @@ import org.nlogo.api.ExtensionException
 class GraphContext(
   val world: World,
   val turtleSet: AgentSet,
-  val linkSet: AgentSet) {
+  val linkSet: AgentSet) extends algorithms.Graph {
   def invalidate() {}
 
 

@@ -9,9 +9,11 @@ object Distance {
   def distance(
     graphContext: GraphContext,
     source: agent.Turtle,
-    target: agent.Turtle): Option[Int] =
+    target: agent.Turtle): Option[Int] = graphContext.distance(source, target)
+  /*
     new BreadthFirstSearch(graphContext)
       .from(source, true, false, true)
       .find(_.head eq target)
       .map(_.size - 1)
+      */
 }
