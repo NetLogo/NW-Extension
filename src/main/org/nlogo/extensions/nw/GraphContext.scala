@@ -91,8 +91,8 @@ class GraphContext(
    * return false. Here, we just check for .isDirected because if no links have been 
    * created, treating the graph as undirected will do no harm. NP 2013-05-15
    */
-  // isDirected is only true if all links are directed. BH 2014-03-02
-  def isDirected = !linkSet.isEmpty && !linkSet.isUndirected
+  // This is currently broken for mixed directedness contexts
+  def isDirected = linkSet.isDirected
 
   def turtleCount: Int = turtles.size
   def linkCount: Int = links.size
