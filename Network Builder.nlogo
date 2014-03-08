@@ -1,18 +1,21 @@
+extensions [ nw ]
+
 undirected-link-breed [ undirected-links undirected-link ]
 directed-link-breed [ directed-links directed-link ]
 
 globals [
   mouse-was-down?
+  mouse-is-down?
   new-link-from
   new-link
 ]
 
 to-report mouse-released?
-  report mouse-was-down? = true and not mouse-down?
+  report mouse-was-down? = true and not mouse-is-down?
 end
 
 to-report mouse-pressed?
-  report mouse-was-down? = false and mouse-down?
+  report mouse-was-down? = false and mouse-is-down?
 end
 
 to-report closest-turtle [ x y ]
@@ -20,7 +23,9 @@ to-report closest-turtle [ x y ]
 end
 
 to go
-  let mouse-is-down? mouse-down?
+  ask turtles [ set color gray ]
+  ask links [ set color gray ]
+  set mouse-is-down? mouse-down?
   run mode
   set mouse-was-down? mouse-is-down?
   display
@@ -53,7 +58,7 @@ to add-link [ create-link ]
   if mouse-pressed? [
     set new-link-from closest-turtle mouse-xcor mouse-ycor
   ]
-  if mouse-down? and is-turtle? new-link-from [
+  if mouse-is-down? and is-turtle? new-link-from [
     let target closest-turtle mouse-xcor mouse-ycor
     watch target
     if is-link? new-link and target != ([[other-end] of new-link] of new-link-from) [ ask new-link [ die ] ]
@@ -74,15 +79,50 @@ end
 
 to remove-node
   let target closest-turtle mouse-xcor mouse-ycor
-  if mouse-released? and is-turtle? target and [ distancexy mouse-xcor mouse-ycor ] of target < 1 [
-    ask target [ die ]
+  ask turtle-set target [
+    if distancexy mouse-xcor mouse-ycor < 1 [
+      if mouse-is-down? [
+        set color yellow
+      ]
+      if mouse-released? [
+        die
+      ]
+    ]
   ]
+end
+
+to remove-link
+  let target min-one-of links [ link-distance mouse-xcor mouse-ycor ]
+  ask link-set target [
+    if link-distance mouse-xcor mouse-ycor < 1 [
+      if mouse-is-down? [
+        set color yellow
+      ]
+      if mouse-released? [
+        die
+      ]
+    ]
+  ] 
+end
+
+to-report link-distance [ x y ]
+  let a [ distancexy x y ] of end1
+  let b [ distancexy x y ] of end2
+  let c link-length
+  let d (0 - a ^ 2 + b ^ 2 + c ^ 2) / (2 * c)
+  if d > c [
+    report a
+  ]
+  if d < 0 [
+    report b
+  ]
+  report sqrt (b ^ 2 - d ^ 2)
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+251
 10
-649
+690
 470
 16
 16
@@ -93,8 +133,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-1
-1
+0
+0
 1
 -16
 16
@@ -113,7 +153,7 @@ CHOOSER
 200
 mode
 mode
-"add-node" "add-undirected-link" "add-directed-link" "remove-node"
+"add-node" "add-undirected-link" "add-directed-link" "remove-node" "remove-link"
 1
 
 BUTTON
