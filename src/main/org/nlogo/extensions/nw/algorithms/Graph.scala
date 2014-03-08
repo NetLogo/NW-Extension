@@ -2,11 +2,11 @@ package org.nlogo.extensions.nw.algorithms
 
 import collection.mutable
 import org.nlogo.agent.{Turtle, Link}
+import scala.collection.mutable.ArrayBuffer
 
 trait Graph {
-  private val preds: Map[(Turtle, Turtle), mutable.ArrayBuffer[Turtle]] =
-    Map().withDefault((pair) => mutable.ArrayBuffer())
-  private val dist: mutable.Map[(Turtle, Turtle), Int] = mutable.Map()
+  private val predecessors: mutable.Map[(Turtle, Turtle), mutable.ArrayBuffer[Turtle]] = mutable.Map()
+  private val distances: mutable.Map[(Turtle, Turtle), Int] = mutable.Map()
   private val traversals: mutable.Map[Turtle, Iterator[Turtle]] = mutable.Map()
 
   val rng: scala.util.Random
@@ -15,14 +15,19 @@ trait Graph {
   private def getTraversal(source: Turtle): Iterator[Turtle] = {
     traversals.getOrElseUpdate(source, cachingBFS(source))
   }
+
+  private def getPredecessor(source: Turtle, dest: Turtle): ArrayBuffer[Turtle] = {
+    predecessors.getOrElseUpdate((source, dest), ArrayBuffer[Turtle]())
+  }
+
   private def cachedPath(source: Turtle, dest: Turtle): Option[List[Turtle]] = {
     if (source == dest) {
-      Some(List())
+      Some(List(source))
     } else {
-      val availablePreds = preds((source, dest))
-      if (availablePreds.nonEmpty) {
-        val pred = availablePreds(rng.nextInt(availablePreds.length))
-        cachedPath(source, pred) map {pred :: _ }
+      val availablePredecessors = getPredecessor(source, dest)
+      if (availablePredecessors.nonEmpty) {
+        val pred = availablePredecessors(rng.nextInt(availablePredecessors.length))
+        cachedPath(source, pred) map {dest :: _ }
       } else {
         None
       }
@@ -33,13 +38,13 @@ trait Graph {
     cachedPath(source,dest) orElse {
       getTraversal(source) find { _==dest }
       cachedPath(source, dest)
-    }
+    } map { _.reverse }
   }
 
   def distance(source: Turtle, dest: Turtle): Option[Int] = {
-    dist get (source, dest) orElse {
+    distances get (source, dest) orElse {
       getTraversal(source) find { _==dest }
-      dist get (source, dest)
+      distances get (source, dest)
     }
   }
 
@@ -52,20 +57,20 @@ trait Graph {
   will thinks it's done computing paths for a certain pair when it has not.
    */
   private def cachingBFS(start: Turtle): Iterator[Turtle] = {
-    dist((start, start)) = 0
+    distances((start, start)) = 0
     Iterator.iterate(List(start))((last) => {
       var layer: List[Turtle] = List()
       for {
         node <- last
-        distance = dist((start, node))
+        distance = distances((start, node))
         neighbor <- neighbors(node, true, false, true)
       } {
-        if (!dist.contains((start, neighbor))) {
-          dist((start, neighbor)) = distance + 1
+        if (!distances.contains((start, neighbor))) {
+          distances((start, neighbor)) = distance + 1
           layer = neighbor :: layer
         }
-        if (dist((start, neighbor)) == distance + 1) {
-          preds((start, neighbor)).append(node)
+        if (distances((start, neighbor)) == distance + 1) {
+          getPredecessor(start, neighbor).append(node)
         }
       }
       layer

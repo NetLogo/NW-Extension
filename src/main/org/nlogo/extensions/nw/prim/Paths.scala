@@ -9,7 +9,6 @@ import org.nlogo.api.ScalaConversions.toLogoObject
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToRichAgent
-import org.nlogo.extensions.nw.algorithms.BreadthFirstSearch
 
 class DistanceTo(getGraphContext: api.World => GraphContext)
   extends api.DefaultReporter {
@@ -43,11 +42,16 @@ class PathTo(getGraphContext: api.World => GraphContext)
           .filter(l => l.end1 == target || l.end2 == target)
           .head
       } yield l
+    graphContext.path(source, target)
+      .map { p => LogoList.fromIterator(turtlesToLinks(p.toList)) }
+      .getOrElse(LogoList.Empty)
+    /*
     new BreadthFirstSearch(graphContext)
       .from(source, true, false, true)
       .find(_.head eq target)
       .map(path => LogoList.fromIterator(turtlesToLinks(path.reverse)))
       .getOrElse(LogoList.Empty)
+      */
   }
 }
 
@@ -61,10 +65,16 @@ class TurtlesOnPathTo(getGraphContext: api.World => GraphContext)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
     val graphContext = getGraphContext(context.getAgent.world)
+    graphContext.path(source, target)
+      .map { p => LogoList.fromIterator(p.iterator) }
+      .getOrElse(LogoList.Empty)
+
+    /*
     new BreadthFirstSearch(graphContext)
       .from(source, true, false, true)
       .find(_.head eq target)
       .map(path => LogoList.fromIterator(path.reverseIterator))
       .getOrElse(LogoList.Empty)
+      */
   }
 }
