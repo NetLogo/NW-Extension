@@ -906,38 +906,3 @@ load-graphml-missing-attr-type
   [ heading ] of turtle 0 => 0
   [ color ] of turtle 0 => 5
 
-
-# performance tests
-
-*single-source-performance
-  extensions [ nw ]
-  O> resize-world -16 16 -16 16
-  O> ask patches [ sprout 1 ]
-  O> ask turtles [ create-links-with other turtles in-radius 2 ]
-  O> reset-timer
-  O> repeat 100 [ set glob1 [ max [ [ nw:distance-to myself ] of myself ] of other turtles] of one-of turtles ]
-  O> set glob2 timer
-  O> __stdout (word "single-source time: " glob2)
-  glob1 => 16
-  glob2 < 2 => true
-
-*single-destination-performance
-  extensions [ nw ]
-  O> resize-world -16 16 -16 16
-  O> ask patches [ sprout 1 ]
-  O> ask turtles [ create-links-with other turtles in-radius 2 ]
-  O> reset-timer
-  O> repeat 100 [ set glob1 [max [ nw:distance-to myself ] of other turtles] of one-of turtles ]
-  O> set glob2 timer
-  O> __stdout (word "single-destination time: " glob2)
-  glob1 => 16
-  glob2 < 10 => true
-
-*set-context-performance
-  extensions [ nw ]
-  O> resize-world -16 16 -16 16
-  O> ask patches [ sprout 1 ]
-  O> ask turtles [ create-links-with other turtles in-radius 2 ]
-  O> reset-timer repeat 100 [ nw:set-context turtles links ] set glob1 timer
-  O> __stdout (word "set-context time: " glob1)
-  glob1 < 1 => true
