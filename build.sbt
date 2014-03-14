@@ -26,6 +26,14 @@ libraryDependencies ++= Seq(
   "net.sf.jung" % "jung-io" % "2.0.1"
 )
 
+libraryDependencies ++= Seq(
+  "org.nlogo" % "NetLogo-tests" % "5.0.5" % "test" from
+    "http://ccl.northwestern.edu/netlogo/5.0.5/NetLogo-tests.jar",
+  "org.scalatest" %% "scalatest" % "1.8" % "test",
+  "org.picocontainer" % "picocontainer" % "2.13.6" % "test",
+  "asm" % "asm-all" % "3.3.1" % "test"
+)
+
 artifactName := { (_, _, _) => "nw.jar" }
 
 packageOptions +=
@@ -77,6 +85,9 @@ packageBin in Compile := {
   }
   jar
 }
+
+test in Test <<=
+  (test in Test) dependsOn (packageBin in Compile)
 
 cleanFiles ++= {
   val base = baseDirectory.value
