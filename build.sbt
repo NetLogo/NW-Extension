@@ -14,8 +14,8 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
 retrieveManaged := true
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogo" % "5.0.5-RC1" from
-    "http://ccl.northwestern.edu/netlogo/5.0.5-RC1/NetLogo.jar",
+  "org.nlogo" % "NetLogo" % "5.0.5" from
+    "http://ccl.northwestern.edu/netlogo/5.0.5/NetLogo.jar",
   "jgrapht" % "jgrapht-jdk1.6" % "0.8.3" from
     "http://ccl.northwestern.edu/devel/jgrapht-jdk1.6-0.8.3.jar",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
@@ -24,6 +24,14 @@ libraryDependencies ++= Seq(
   "net.sf.jung" % "jung-api" % "2.0.1",
   "net.sf.jung" % "jung-graph-impl" % "2.0.1",
   "net.sf.jung" % "jung-io" % "2.0.1"
+)
+
+libraryDependencies ++= Seq(
+  "org.nlogo" % "NetLogo-tests" % "5.0.5" % "test" from
+    "http://ccl.northwestern.edu/netlogo/5.0.5/NetLogo-tests.jar",
+  "org.scalatest" %% "scalatest" % "1.8" % "test",
+  "org.picocontainer" % "picocontainer" % "2.13.6" % "test",
+  "asm" % "asm-all" % "3.3.1" % "test"
 )
 
 artifactName := { (_, _, _) => "nw.jar" }
@@ -76,6 +84,11 @@ packageBin in Compile := {
     IO.delete(base / "nw.zip")
   }
   jar
+}
+
+test in Test := {
+  val _ = (packageBin in Compile).value
+  (test in Test).value
 }
 
 cleanFiles ++= {
