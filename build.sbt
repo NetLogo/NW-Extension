@@ -86,8 +86,10 @@ packageBin in Compile := {
   jar
 }
 
-test in Test <<=
-  (test in Test) dependsOn (packageBin in Compile)
+test in Test := {
+  val _ = (packageBin in Compile).value
+  (test in Test).value
+}
 
 cleanFiles ++= {
   val base = baseDirectory.value
