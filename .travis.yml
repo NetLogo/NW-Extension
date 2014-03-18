@@ -1,0 +1,14 @@
+# extensions for 5.0.x are supposed to support Java 5 and 6,
+# but Travis doesn't offer Oracle JDK 5 or 6.  so Travis won't
+# catch it if we do something that only works on Java 7.
+# oh well.  (we could try openjdk6, which Travis does have?
+# it didn't work for the full NetLogo build, but might work
+# for this.)
+
+jdk: oraclejdk7
+language: scala
+scala: 2.9.2
+install:
+  - sbt update
+script:
+  - sbt test
