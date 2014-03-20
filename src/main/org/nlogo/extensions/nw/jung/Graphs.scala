@@ -24,19 +24,17 @@ trait Graph
     else
       ics.jung.graph.util.EdgeType.UNDIRECTED
 
-  override def getIncidentEdges(turtle: Turtle): Collection[Link] =
-    gc.validTurtle(turtle).map(gc.allEdges(_).asJavaCollection).orNull
+  override def getIncidentEdges(turtle: Turtle): Collection[Link] = gc.allEdges(turtle).asJavaCollection
 
-  override def getEdgeCount(): Int = gc.linkCount
+  override def getEdgeCount: Int = gc.linkCount
 
-  override def getNeighbors(turtle: Turtle): Collection[Turtle] =
-    gc.validTurtle(turtle).map(gc.allNeighbors(_).asJavaCollection).orNull
+  override def getNeighbors(turtle: Turtle): Collection[Turtle] = gc.allNeighbors(turtle).asJavaCollection
 
-  override def getVertexCount(): Int = gc.turtleCount
-  override def getVertices(): Collection[Turtle] = gc.turtles.asJavaCollection
-  override def getEdges(): Collection[Link] = gc.links.asJavaCollection
-  override def containsEdge(link: Link): Boolean = gc.isValidLink(link)
-  override def containsVertex(turtle: Turtle): Boolean = gc.isValidTurtle(turtle)
+  override def getVertexCount: Int = gc.turtleCount
+  override def getVertices: Collection[Turtle] = gc.turtles.asJavaCollection
+  override def getEdges: Collection[Link] = gc.links.asJavaCollection
+  override def containsEdge(link: Link): Boolean = gc.links.contains(link)
+  override def containsVertex(turtle: Turtle): Boolean = gc.turtles.contains(turtle)
 
   def getEndpoints(link: Link): Pair[Turtle] =
     new Pair(link.end1, link.end2) // Note: contract says nothing about edge being in graph
@@ -72,26 +70,18 @@ class DirectedGraph(
   private def outEdges(turtle: Turtle): Iterable[Link] =
     if (gc.isDirected) gc.directedOutEdges(turtle) else gc.allEdges(turtle)
   
-  override def getInEdges(turtle: Turtle): Collection[Link] =
-    gc.validTurtle(turtle).map(inEdges(_).asJavaCollection).orNull
-  override def getPredecessors(turtle: Turtle): Collection[Turtle] =
-    gc.validTurtle(turtle).map(inEdges(_).map(_.end1).asJavaCollection).orNull
+  override def getInEdges(turtle: Turtle): Collection[Link] = inEdges(turtle).asJavaCollection
+  override def getPredecessors(turtle: Turtle): Collection[Turtle] = inEdges(turtle).map(_.end1).asJavaCollection
 
-  override def getOutEdges(turtle: Turtle): Collection[Link] =
-    gc.validTurtle(turtle).map(outEdges(_).asJavaCollection).orNull
-  override def getSuccessors(turtle: Turtle): Collection[Turtle] =
-    gc.validTurtle(turtle).map(outEdges(_).map(_.end2).asJavaCollection).orNull
+  override def getOutEdges(turtle: Turtle): Collection[Link] = outEdges(turtle).asJavaCollection
+  override def getSuccessors(turtle: Turtle): Collection[Turtle] = outEdges(turtle).map(_.end2).asJavaCollection
 
-  def isDest(turtle: Turtle, link: Link): Boolean =
-    gc.validLink(link).filter(_.end2 == turtle).isDefined
-  def isSource(turtle: Turtle, link: Link): Boolean =
-    gc.validLink(link).filter(_.end1 == turtle).isDefined
+  def isDest(turtle: Turtle, link: Link): Boolean = link.end2 == turtle
+  def isSource(turtle: Turtle, link: Link): Boolean = link.end1 == turtle
 
-  override def getSource(link: Link): Turtle =
-    gc.validLink(link).map(_.end1).orNull
+  override def getSource(link: Link): Turtle = link.end1
 
-  override def getDest(link: Link): Turtle =
-    gc.validLink(link).map(_.end2).orNull
+  override def getDest(link: Link): Turtle = link.end2
 
 }
 

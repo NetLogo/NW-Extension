@@ -10,52 +10,64 @@ import org.nlogo.agent.World
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.util.MersenneTwisterFast
+import scala.collection.{GenIterable, mutable}
+import org.nlogo.api.ExtensionException
 
 class GraphContext(
   val world: World,
-  private var initialTurtleSet: AgentSet,
-  private var initialLinkSet: AgentSet) {
+  val turtleSet: AgentSet,
+  val linkSet: AgentSet) extends algorithms.Graph {
+  def invalidate() {}
+
 
   val rng = new scala.util.Random(world.mainRNG)
 
-  private var monitoredTurtleSet: MonitoredAgentSet[Turtle] = {
-    val result = initialTurtleSet match {
-      case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, this)
-      case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas, this)
+  val turtleMonitor = turtleSet match {
+    case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas)
+    case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
+  }
+
+  val linkMonitor = linkSet match {
+    case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas)
+    case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas)
+  }
+
+  val turtles: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
+  val links: Set[Link] = linkSet.asIterable[Link].toSet
+  private val inLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
+  private val outLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
+  private val undirLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
+
+  for (turtle: Turtle <- turtles) {
+    inLinks(turtle) = mutable.ArrayBuffer(): mutable.ArrayBuffer[Link]
+    outLinks(turtle) = mutable.ArrayBuffer(): mutable.ArrayBuffer[Link]
+    undirLinks(turtle) = mutable.ArrayBuffer(): mutable.ArrayBuffer[Link]
+  }
+
+  for (link: Link <- links) {
+    if (turtles.contains(link.end1) && turtles.contains(link.end2)) {
+      if (link.isDirectedLink) {
+        outLinks(link.end1) += link
+        inLinks(link.end2) += link
+      } else {
+        undirLinks(link.end1) += link
+        undirLinks(link.end2) += link
+      }
     }
-    initialTurtleSet = null
-    result
   }
 
-  private var monitoredLinkSet: MonitoredAgentSet[Link] = {
-    val result = initialLinkSet match {
-      case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, this)
-      case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas, this)
+  def verify(w: World): GraphContext =
+    if (w != world) {
+      new GraphContext(w, w.turtles(), w.links())
+    } else if (w != world || turtleMonitor.hasChanged || linkMonitor.hasChanged) {
+      new GraphContext(w, turtleSet, linkSet)
+    } else {
+      this
     }
-    initialLinkSet = null
-    result
-  }
-
-  def turtleSet = monitoredTurtleSet.agentSet
-  def linkSet = monitoredLinkSet.agentSet
-
-  def verify(): Unit = {
-    Seq(monitoredTurtleSet, monitoredLinkSet).collect {
-      case maas: MonitoredArrayAgentSet[_] => maas.verify()
-    }
-  }
-
-  def invalidate(): Unit = {
-    monitoredTurtleSet.reset()
-    monitoredLinkSet.reset()
-    directedJungGraph = None
-    undirectedJungGraph = None
-  }
 
   def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   private var directedJungGraph: Option[jung.DirectedGraph] = None
   def asDirectedJungGraph: jung.DirectedGraph = {
-    verify()
     directedJungGraph
       .getOrElse {
         val g = new jung.DirectedGraph(this)
@@ -65,7 +77,6 @@ class GraphContext(
   }
   private var undirectedJungGraph: Option[jung.UndirectedGraph] = None
   def asUndirectedJungGraph: jung.UndirectedGraph = {
-    verify()
     undirectedJungGraph
       .getOrElse {
         val g = new jung.UndirectedGraph(this)
@@ -83,49 +94,24 @@ class GraphContext(
    * return false. Here, we just check for .isDirected because if no links have been 
    * created, treating the graph as undirected will do no harm. NP 2013-05-15
    */
+  // This is currently broken for mixed directedness contexts
   def isDirected = linkSet.isDirected
 
-  val linkManager = world.linkManager
+  def turtleCount: Int = turtles.size
+  def linkCount: Int = links.size
 
-  def isValidTurtle(turtle: Turtle) = monitoredTurtleSet.isValid(turtle)
-  def validTurtle(turtle: Turtle): Option[Turtle] =
-    if (isValidTurtle(turtle)) Some(turtle) else None
-
-  def isValidLink(link: Link) =
-    monitoredLinkSet.isValid(link) &&
-      isValidTurtle(link.end1) &&
-      isValidTurtle(link.end2)
-
-  def validLink(link: Link): Option[Link] =
-    if (isValidLink(link)) Some(link) else None
-
-  def turtleCount: Int = turtleSet.count
-  def linkCount: Int = linkSet.count
-
-  def links: Iterable[Link] = linkSet.asShufflerable[Link](world.mainRNG)
-  def turtles: Iterable[Turtle] = turtleSet.asShufflerable[Turtle](world.mainRNG)
-
-  // LinkManager.findLink* methods require "breed" agentsets and, as such,
-  // does not play well with linkSet in the case it's an ArrayAgentSet.
-  // This is why we pass world.links to the methods and do the filtering
-  // ourselves afterwards.
-  // NP 2013-07-11.
   def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Link] =
     rng.shuffle(
-      linkManager
-        .findLinksWith(turtle, world.links)
-        .asIterable[Link]
-        .collect {
-          case l if includeUn && !l.isDirectedLink && isValidLink(l)                     => l
-          case l if includeOut && l.isDirectedLink && l.end1 == turtle && isValidLink(l) => l
-          case l if includeIn && l.isDirectedLink && l.end2 == turtle && isValidLink(l)  => l
-        })
+      (if (includeUn) undirLinks.getOrElse(turtle, Seq()) else Seq()) ++
+      (if (includeIn) inLinks.getOrElse(turtle, Seq()) else Seq()) ++
+      (if (includeOut) outLinks.getOrElse(turtle, Seq()) else Seq())
+    )
+
+
 
   def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Turtle] = {
-    def ok(t: Turtle) = t != turtle && isValidTurtle(t)
-    edges(turtle, includeUn, includeIn, includeOut).collect {
-      case l if ok(l.end1) => l.end1
-      case l if ok(l.end2) => l.end2
+    edges(turtle, includeUn, includeIn, includeOut) map { l: Link =>
+      if (l.end1 == turtle) l.end2 else l.end1
     }
   }
 

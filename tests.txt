@@ -78,25 +78,41 @@ default-context-with-undir-links-distance
   O> crt 2 [ create-undirected-link-with one-of other turtles ]
   [ nw:distance-to turtle 1 ] of turtle 0 => 1
 
+
+after-clear-turtles
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+  O> clear-turtles
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+
+after-clear-turtles-agentset
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:set-context (turtle-set turtles) links
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+  O> clear-turtles
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => false
+
 after-world-resize_2D
   extensions [ nw ]
-  O> crt 2
-  O> ask turtle 0 [ create-link-with turtle 1 ]
-  [ nw:distance-to turtle 1 ] of turtle 0 => 1
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
   O> resize-world -1 1 -1 1
-  O> crt 2
-  O> ask turtle 2 [ create-link-with turtle 3 ]
-  [ nw:distance-to turtle 2 ] of turtle 3 => 1
+  O> crt 2 [ create-links-with other turtles ]
+[ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
 after-world-resize_3D
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-link-with turtle 1 ]
-  [ nw:distance-to turtle 1 ] of turtle 0 => 1
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
   O> resize-world -1 1 -1 1 -1 1
   O> crt 2
   O> ask turtle 2 [ create-link-with turtle 3 ]
-  [ nw:distance-to turtle 2 ] of turtle 3 => 1
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
 ## set-context with non-breed agentsets
 
@@ -175,6 +191,9 @@ with-context-changes-context-temporarily
   [ count nw:turtles-in-radius 1 ] of turtle 0 => 3
   O> nw:with-context glob1 links [ set glob2 [ nw:turtles-in-radius 1 ] of turtle 0 ]
   count glob2 => 2
+  [ member? turtle 0 nw:turtles-in-radius 1 ] of turtle 0 => true
+  [ member? turtle 1 nw:turtles-in-radius 1 ] of turtle 0 => true
+  [ member? turtle 2 nw:turtles-in-radius 1 ] of turtle 0 => true
   [ count nw:turtles-in-radius 1 ] of turtle 0 => 3
 
 with-context-can-be-nested
@@ -804,6 +823,21 @@ weak-components-three-turtles-connected-by-two-link-breeds
   O> nw:set-context turtles (link-set links)
   length nw:weak-component-clusters => 1
 
+# clique tests
+
+biggest-maximal-clique-undirected
+  extensions [ nw ]
+  O> crt 3 [ create-links-with other turtles ]
+  count first nw:biggest-maximal-cliques => 3
+
+biggest-maximal-clique-directed
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  O> ask turtle 1 [ create-link-to turtle 2 ]
+  O> ask turtle 2 [ create-link-to turtle 0 ]
+  count first nw:biggest-maximal-cliques => ERROR Extension exception: Current graph must be undirected
+
 # graphml tests
 
 graphml-export-import-turtles
@@ -872,3 +906,4 @@ load-graphml-missing-attr-type
   O> nw:load-graphml "extensions/nw/test/missing-attr-type.graphml"
   [ heading ] of turtle 0 => 0
   [ color ] of turtle 0 => 5
+

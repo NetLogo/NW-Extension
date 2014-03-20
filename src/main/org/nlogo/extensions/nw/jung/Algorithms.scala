@@ -28,6 +28,14 @@ trait Algorithms {
     new jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true)
   }
 
+  def dijkstraShortestPath = {
+    new jungalg.shortestpath.DijkstraShortestPath(self)
+  }
+
+  def dijkstraDistance = {
+    new jungalg.shortestpath.DijkstraDistance(self)
+  }
+
   object BetweennessCentrality extends jungalg.importance.BetweennessCentrality(self) {
 
     private def toScoreMap[A <: Agent](m: java.util.Map[A, Number]) =

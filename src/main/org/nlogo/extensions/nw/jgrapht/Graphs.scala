@@ -20,11 +20,7 @@ trait Graph
   val gc: GraphContext
 
   override def getAllEdges(sourceVertex: Turtle, targetVertex: Turtle) =
-    (for {
-      src <- gc.validTurtle(sourceVertex)
-      tgt <- gc.validTurtle(targetVertex)
-      edges = gc.allEdges(src).toSet intersect gc.allEdges(tgt).toSet
-    } yield edges.asJava).orNull
+    gc.allEdges(sourceVertex).toSet.filter(_.end2 == targetVertex).asJava
 
   override def getEdge(sourceVertex: Turtle, targetVertex: Turtle) =
     if (gc.isDirected)
@@ -40,10 +36,7 @@ trait Graph
 
   override def edgeSet() = gc.links.toSet.asJava
 
-  override def edgesOf(vertex: Turtle) =
-    gc.validTurtle(vertex)
-      .map(gc.allEdges(_).toSet.asJava)
-      .getOrElse(throw new IllegalArgumentException("turtle not in graph"))
+  override def edgesOf(vertex: Turtle) = gc.allEdges(vertex).toSet.asJava
 
   override def vertexSet() = gc.turtles.toSet.asJava
 

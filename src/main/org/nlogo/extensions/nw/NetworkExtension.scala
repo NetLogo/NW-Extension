@@ -33,31 +33,21 @@ class NetworkExtension extends api.DefaultClassManager {
     "wstx-asl-3.2.6.jar").asJava
 
   private var _graphContext: Option[GraphContext] = None
-  private val _contexts: mutable.Stack[GraphContext] = mutable.Stack()
 
   def setGraphContext(gc: GraphContext) {
-    if (_contexts.isEmpty) {
-      _contexts.push(gc)
-    } else {
-      _contexts(_contexts.length - 1) = gc
-    }
+    _graphContext = Some(gc)
   }
-  def getGraphContext(world: api.World) =
-    _contexts.headOption.getOrElse {
-      val w = world.asInstanceOf[agent.World]
-      val gc = new GraphContext(w, w.turtles, w.links)
-      _contexts.push(gc)
-      gc
+  def getGraphContext(world: api.World): GraphContext = {
+    val w = world.asInstanceOf[agent.World]
+    _graphContext match {
+      case Some(gc: GraphContext) => setGraphContext(gc.verify(w))
+      case None                   => setGraphContext(new GraphContext(w, w.turtles, w.links))
     }
-
-  def pushGraphContext(gc: GraphContext) {
-    _contexts.push(gc)
+    _graphContext.get
   }
 
-  def popGraphContext: GraphContext = _contexts.pop()
-
-  override def clearAll() { _contexts.clear() }
-  override def unload(em: api.ExtensionManager) { _contexts.clear() }
+  override def clearAll() { _graphContext = None }
+  override def unload(em: api.ExtensionManager) { _graphContext = None }
 
   override def load(primManager: api.PrimitiveManager) {
 
@@ -69,7 +59,7 @@ class NetworkExtension extends api.DefaultClassManager {
 
     add("set-context", new prim.SetContext(setGraphContext))
     add("get-context", new prim.GetContext(getGraphContext))
-    add("with-context", new prim.WithContext(pushGraphContext, popGraphContext))
+    add("with-context", new prim.WithContext(setGraphContext, getGraphContext))
 
     add("turtles-in-radius", new org.nlogo.extensions.nw.prim.TurtlesInRadius(getGraphContext))
     add("turtles-in-reverse-radius", new org.nlogo.extensions.nw.prim.TurtlesInReverseRadius(getGraphContext))
