@@ -4,8 +4,8 @@ globals [ result ]
 
 to benchmark
   random-seed 0
-  reset-timer
   setup
+  reset-timer
   let foo [ max-single-dest-dist ] of n-of 1000 turtles
   set result timer
 end

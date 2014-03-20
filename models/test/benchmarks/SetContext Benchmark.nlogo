@@ -4,38 +4,16 @@ globals [ result ]
 
 to benchmark
   random-seed 0
-  setup
+  ask patches [ sprout 1 [ create-links-with other turtles in-radius 5 ] ]
   reset-timer
-  let foo [ max-single-source-dist ] of n-of 1000 turtles
-  set result timer
-end
-
-to setup
-  ca
-  ask patches [ sprout 1 ]
-  ask turtles [ create-links-with other turtles in-radius 2 ]
-  ;nw:set-snapshot turtles links
-end
-
-to-report max-single-source-dist
-  report max [ [ nw:distance-to myself ] of myself ] of other turtles
-end
-
-to-report max-single-dest-dist
-  report max [ nw:distance-to myself ] of other turtles
-end
-
-to timeit [ times cmd ]
-  setup
-  reset-timer
-  repeat times [ run cmd ]
-  print timer
+  nw:set-context (turtle-set turtles) (link-set links)
+  set result timer  
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-206
+210
 10
-645
+649
 470
 16
 16
@@ -58,72 +36,6 @@ GRAPHICS-WINDOW
 1
 ticks
 30.0
-
-BUTTON
-17
-116
-115
-149
-single-source
-timeit n task [ ask one-of turtles [ let foo max-single-source-dist ] ]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-21
-51
-193
-84
-n
-n
-0
-1000
-1
-1
-1
-NIL
-HORIZONTAL
-
-BUTTON
-12
-161
-108
-194
-single-dest
-timeit n task [ ask one-of turtles [ let foo max-single-dest-dist ] ]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-17
-217
-100
-250
-all-pairs
-timeit n task [ ask turtles [ let foo max-single-dest-dist ] ]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
 
 @#$#@#$#@
 ## WHAT IS IT?
