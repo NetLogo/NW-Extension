@@ -87,13 +87,22 @@ after-clear-turtles
   O> crt 2 [ create-links-with other turtles ]
   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
+after-clear-turtles-agentset
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:set-context (turtle-set turtles) links
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+  O> clear-turtles
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => false
+
 after-world-resize_2D
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
   O> resize-world -1 1 -1 1
   O> crt 2 [ create-links-with other turtles ]
-  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+[ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
 after-world-resize_3D
   extensions [ nw ]

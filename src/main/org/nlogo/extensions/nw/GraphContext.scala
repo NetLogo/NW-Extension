@@ -56,11 +56,14 @@ class GraphContext(
     }
   }
 
-  def verify(): GraphContext =
-    if (turtleMonitor.hasChanged || linkMonitor.hasChanged)
-      new GraphContext(world, turtleSet, linkSet)
-    else
+  def verify(w: World): GraphContext =
+    if (w != world) {
+      new GraphContext(w, w.turtles(), w.links())
+    } else if (w != world || turtleMonitor.hasChanged || linkMonitor.hasChanged) {
+      new GraphContext(w, turtleSet, linkSet)
+    } else {
       this
+    }
 
   def asJungGraph: jung.Graph = if (isDirected) asDirectedJungGraph else asUndirectedJungGraph
   private var directedJungGraph: Option[jung.DirectedGraph] = None

@@ -40,7 +40,7 @@ class NetworkExtension extends api.DefaultClassManager {
   def getGraphContext(world: api.World): GraphContext = {
     val w = world.asInstanceOf[agent.World]
     _graphContext match {
-      case Some(gc: GraphContext) => setGraphContext(gc.verify())
+      case Some(gc: GraphContext) => setGraphContext(gc.verify(w))
       case None                   => setGraphContext(new GraphContext(w, w.turtles, w.links))
     }
     _graphContext.get
