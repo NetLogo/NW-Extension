@@ -78,25 +78,32 @@ default-context-with-undir-links-distance
   O> crt 2 [ create-undirected-link-with one-of other turtles ]
   [ nw:distance-to turtle 1 ] of turtle 0 => 1
 
+
+after-clear-turtles
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+  O> clear-turtles
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+
 after-world-resize_2D
   extensions [ nw ]
-  O> crt 2
-  O> ask turtle 0 [ create-link-with turtle 1 ]
+  O> crt 2 [ create-links-with other turtles ]
   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
   O> resize-world -1 1 -1 1
-  O> crt 2
-  O> ask turtle 2 [ create-link-with turtle 3 ]
+  O> crt 2 [ create-links-with other turtles ]
   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
 after-world-resize_3D
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-link-with turtle 1 ]
-  [ nw:distance-to turtle 1 ] of turtle 0 => 1
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
   O> resize-world -1 1 -1 1 -1 1
   O> crt 2
   O> ask turtle 2 [ create-link-with turtle 3 ]
-  [ nw:distance-to turtle 2 ] of turtle 3 => 1
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
 ## set-context with non-breed agentsets
 
