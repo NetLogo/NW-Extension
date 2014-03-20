@@ -3,23 +3,18 @@ package org.nlogo.extensions.nw.algorithms
 import collection.mutable
 import org.nlogo.agent.{Turtle, Link}
 import scala.collection.mutable.ArrayBuffer
+import org.nlogo.extensions.nw.Memoize
 
 trait Graph {
-  private val predecessors: mutable.Map[(Turtle, Turtle), mutable.ArrayBuffer[Turtle]] = mutable.Map()
-  private val successors: mutable.Map[(Turtle, Turtle), mutable.ArrayBuffer[Turtle]] = mutable.Map()
   private val distances: mutable.Map[(Turtle, Turtle), Int] = mutable.Map()
-  private val singleSourceTraversals: mutable.Map[Turtle, Iterator[Turtle]] = mutable.Map()
-  private val singleDestTraversals: mutable.Map[Turtle, Iterator[Turtle]] = mutable.Map()
+
+  private val getPredecessors = Memoize {(p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle]}
+  private val getSuccessors = Memoize {(p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle]}
+  private val getSingleSourceTraversal = Memoize {(source: Turtle) => cachingBFS(source, false, getPredecessors)}
+  private val getSingleDestTraversal = Memoize {(dest: Turtle) => cachingBFS(dest, true, getSuccessors)}
 
   val rng: scala.util.Random
   def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Turtle]
-
-  private def getSingleSourceTraversal(source: Turtle): Iterator[Turtle] = {
-    singleSourceTraversals.getOrElseUpdate(source, cachingBFS(source, false, getPredecessor))
-  }
-  private def getSingleDestTraversal(dest: Turtle): Iterator[Turtle] = {
-    singleDestTraversals.getOrElseUpdate(dest, cachingBFS(dest, true, getSuccessor))
-  }
 
   private var lastSource: Option[Turtle] = None
   private var lastDest: Option[Turtle] = None
@@ -57,18 +52,12 @@ trait Graph {
     lastDest = Some(dest)
   }
 
-  private def getPredecessor(dest: Turtle, source: Turtle): ArrayBuffer[Turtle] = {
-    predecessors.getOrElseUpdate((source, dest), ArrayBuffer[Turtle]())
-  }
-  private def getSuccessor(source: Turtle, dest: Turtle): ArrayBuffer[Turtle] = {
-    successors.getOrElseUpdate((source, dest), ArrayBuffer[Turtle]())
-  }
-
-  private def cachedPath(cache: (Turtle, Turtle) => Seq[Turtle], source: Turtle, dest: Turtle): Option[List[Turtle]] = {
+  private def cachedPath(cache: ((Turtle, Turtle)) => Seq[Turtle], source: Turtle, dest: Turtle): Option[List[Turtle]]
+    = {
     if (source == dest) {
       Some(List(dest))
     } else {
-      val availableSuccessors = cache(source, dest)
+      val availableSuccessors = cache((source, dest))
       if (availableSuccessors.nonEmpty) {
         val succ = availableSuccessors(rng.nextInt(availableSuccessors.length))
         cachedPath(cache, succ, dest) map {source :: _ }
@@ -79,7 +68,7 @@ trait Graph {
   }
 
   private def cachedPath(source: Turtle, dest: Turtle): Option[List[Turtle]] =
-    cachedPath(getSuccessor, source, dest) orElse cachedPath(getPredecessor, dest, source).map(_.reverse)
+    cachedPath(getSuccessors, source, dest) orElse cachedPath(getPredecessors, dest, source).map(_.reverse)
 
   def path(source: Turtle, dest: Turtle): Option[Iterable[Turtle]] = {
     cachedPath(source, dest) orElse {
@@ -103,8 +92,8 @@ trait Graph {
   information for any turtle appearing there. This is crucial or else this class
   will thinks it's done computing paths for a certain pair when it has not.
    */
-  private def cachingBFS(start: Turtle, reverse: Boolean, predecessorCache: (Turtle,
-    Turtle) => ArrayBuffer[Turtle]): Iterator[Turtle] = {
+  private def cachingBFS(start: Turtle, reverse: Boolean, predecessorCache: ((Turtle,
+    Turtle)) => ArrayBuffer[Turtle]): Iterator[Turtle] = {
     val dists = mutable.Map[(Turtle,Turtle), Int]()
     dists((start, start)) = 0
 
