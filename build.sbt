@@ -15,7 +15,7 @@ retrieveManaged := true
 
 libraryDependencies ++= Seq(
   "org.nlogo" % "NetLogo" % "5.0.5-SNAPSHOT" from
-    "http://ccl.northwestern.edu/devel/NetLogo-cb2e173.jar",
+    "http://ccl.northwestern.edu/devel/NetLogo-d1794f4.jar",
   "jgrapht" % "jgrapht-jdk1.6" % "0.8.3" from
     "http://ccl.northwestern.edu/devel/jgrapht-jdk1.6-0.8.3.jar",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
