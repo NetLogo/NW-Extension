@@ -20,8 +20,9 @@ class WeightedDistanceTo(getGraphContext: api.World => GraphContext)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
     val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
-    val distance = Option(graph.weightedDijkstraShortestPath(weightVariable).getDistance(source, target))
+    //val graph = getGraphContext(context.getAgent.world).asJungGraph
+    //val distance = Option(graph.weightedDijkstraShortestPath(weightVariable).getDistance(source, target))
+    val distance = getGraphContext(context.getAgent.world).distance(source, target, Some(weightVariable))
     toLogoObject(distance.getOrElse(false))
   }
 }
