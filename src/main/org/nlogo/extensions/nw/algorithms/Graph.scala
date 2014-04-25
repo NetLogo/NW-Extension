@@ -92,8 +92,7 @@ trait Graph {
   information for any turtle appearing there. This is crucial or else this class
   will thinks it's done computing paths for a certain pair when it has not.
    */
-  private def cachingBFS(start: Turtle, reverse: Boolean, predecessorCache: ((Turtle,
-    Turtle)) => ArrayBuffer[Turtle]): Iterator[Turtle] = {
+  private def cachingBFS(start: Turtle, reverse: Boolean, predecessorCache: ((Turtle, Turtle)) => ArrayBuffer[Turtle]): Iterator[Turtle] = {
     val dists = mutable.Map[(Turtle,Turtle), Int]()
     dists((start, start)) = 0
 
