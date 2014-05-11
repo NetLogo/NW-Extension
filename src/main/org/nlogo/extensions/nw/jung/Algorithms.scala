@@ -3,37 +3,47 @@
 package org.nlogo.extensions.nw.jung
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
-import org.nlogo.agent.Agent
-import org.nlogo.agent.Link
-import org.nlogo.agent.Turtle
+import org.nlogo.agent.{World, Agent, Link, Turtle}
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
 import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
 
 import edu.uci.ics.jung.{ algorithms => jungalg }
+import org.nlogo.agent.World.VariableWatcher
 
 trait Algorithms {
   self: Graph =>
 
-  def weightedDijkstraShortestPath(variable: String) = {
-    val weightFunction = (link: Link) => {
-      val value = link.getBreedOrLinkVariable(variable)
-      try value.asInstanceOf[java.lang.Number]
-      catch {
-        case e: Exception => throw new ExtensionException("Weight variable must be numeric.")
+  val weightedGraphCaches: mutable.Map[String, jungalg.shortestpath.DijkstraShortestPath[Turtle, Link]] = new mutable.HashMap[String, jungalg.shortestpath.DijkstraShortestPath[Turtle, Link]]()
+
+  val cacheInvalidator: World.VariableWatcher = new VariableWatcher {
+    def update(agent: Agent, variable: String, value: scala.Any) = agent match {
+      case link: Link => if (gc.links contains link) {
+        weightedGraphCaches.remove(variable)
+        gc.world.deleteWatcher(variable, cacheInvalidator)
       }
     }
-    new jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true)
   }
 
-  def dijkstraShortestPath = {
-    new jungalg.shortestpath.DijkstraShortestPath(self)
+  def weightedDijkstraShortestPath(variable: String) = {
+    getOrCreateCache(variable)
   }
 
-  def dijkstraDistance = {
-    new jungalg.shortestpath.DijkstraDistance(self)
+  def getOrCreateCache(variable: String) = {
+    weightedGraphCaches.getOrElseUpdate(variable, {
+      val weightFunction = (link: Link) => {
+        val value = link.getBreedOrLinkVariable(variable)
+        try value.asInstanceOf[java.lang.Number]
+        catch {
+          case e: Exception => throw new ExtensionException("Weight variable must be numeric.")
+        }
+      }
+      gc.world.addWatcher(variable, cacheInvalidator)
+      new jungalg.shortestpath.DijkstraShortestPath(self, weightFunction, true)
+    })
   }
 
   object BetweennessCentrality extends jungalg.importance.BetweennessCentrality(self) {

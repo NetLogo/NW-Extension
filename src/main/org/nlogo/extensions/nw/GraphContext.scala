@@ -2,26 +2,19 @@
 
 package org.nlogo.extensions.nw
 
-import org.nlogo.agent.AgentSet
-import org.nlogo.agent.Link
-import org.nlogo.agent.TreeAgentSet
-import org.nlogo.agent.Turtle
-import org.nlogo.agent.World
+import org.nlogo.agent._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.util.MersenneTwisterFast
 import scala.collection.{GenIterable, mutable}
 import org.nlogo.api.ExtensionException
+import scala.Some
 
 class GraphContext(
   val world: World,
   val turtleSet: AgentSet,
   val linkSet: AgentSet) extends algorithms.Graph {
-  def invalidate() {}
-
 
   val rng = new scala.util.Random(world.mainRNG)
-
   val turtleMonitor = turtleSet match {
     case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas)
     case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
@@ -58,8 +51,10 @@ class GraphContext(
 
   def verify(w: World): GraphContext =
     if (w != world) {
+      clearAllCaches() // Clear watchers in particular
       new GraphContext(w, w.turtles(), w.links())
     } else if (w != world || turtleMonitor.hasChanged || linkMonitor.hasChanged) {
+      clearAllCaches() // Clear watchers in particular
       new GraphContext(w, turtleSet, linkSet)
     } else {
       this

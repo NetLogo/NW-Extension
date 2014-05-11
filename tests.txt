@@ -296,10 +296,13 @@ distance-to-self
   extensions [nw]
   O> crt 1
   [ nw:distance-to turtle 0 ] of turtle 0 => 0
+  [ nw:distance-to turtle 0 ] of turtle 0 => 0
 
 distance-two-turtles-no-links
   extensions [nw]
   O> crt 2
+  [ nw:distance-to turtle 0 ] of turtle 1 => false
+  [ nw:distance-to turtle 1 ] of turtle 0 => false
   [ nw:distance-to turtle 0 ] of turtle 1 => false
   [ nw:distance-to turtle 1 ] of turtle 0 => false
 
@@ -308,6 +311,15 @@ distance-one-undirected-link
   O> crt 2 [ create-links-with other turtles ]
   [ nw:distance-to turtle 0 ] of turtle 1 => 1
   [ nw:distance-to turtle 1 ] of turtle 0 => 1
+
+distance-chain-caching-interference
+  extensions [nw]
+  O> crt 4
+  O> ask turtles [ create-links-with turtles with [ who = [ who + 1 ] of myself ] ]
+  [ nw:distance-to turtle 2 ] of turtle 0 => 2
+  [ nw:distance-to turtle 2 ] of turtle 0 => 2
+  [ nw:distance-to turtle 1 ] of turtle 0 => 1
+  [ nw:distance-to turtle 3 ] of turtle 0 => 3
 
 distance-one-directed-link
   extensions [nw]
@@ -685,6 +697,15 @@ weighted-distance-one-unbreeded-directed-link-using-thickness
   O> ask turtle 0 [ create-link-to turtle 1 [ set thickness 0.5 ]]
   [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 => false
   [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 0.5
+
+weighted-distance-changes
+  extensions [nw]
+  O> crt 2 [ create-links-with other turtles ]
+  O> ask links [ set thickness 2 ]
+  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 2
+  O> ask links [ set thickness 4 ]
+  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 4
+
 
 ### weighted-path-to
 
