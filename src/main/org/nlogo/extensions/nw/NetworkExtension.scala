@@ -68,11 +68,11 @@ class NetworkExtension extends api.DefaultClassManager {
     add("mean-weighted-path-length", new prim.jung.MeanWeightedPathLength(getGraphContext))
 
     add("distance-to", new prim.DistanceTo(getGraphContext))
-    add("weighted-distance-to", new prim.jung.WeightedDistanceTo(getGraphContext))
+    add("weighted-distance-to", new prim.WeightedDistanceTo(getGraphContext))
     add("path-to", new prim.PathTo(getGraphContext))
-    add("weighted-path-to", new prim.jung.WeightedPathTo(getGraphContext))
+    add("weighted-path-to", new prim.WeightedPathTo(getGraphContext))
     add("turtles-on-path-to", new prim.TurtlesOnPathTo(getGraphContext))
-    add("turtles-on-weighted-path-to", new prim.jung.TurtlesOnWeightedPathTo(getGraphContext))
+    add("turtles-on-weighted-path-to", new prim.TurtlesOnWeightedPathTo(getGraphContext))
 
     add("betweenness-centrality", new prim.jung.BetweennessCentrality(getGraphContext))
     add("eigenvector-centrality", new prim.jung.EigenvectorCentrality(getGraphContext))
