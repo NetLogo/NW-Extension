@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/NetLogo/NW-Extension.svg?branch=master)](https://travis-ci.org/NetLogo/NW-Extension)
+
 # The NetLogo NW Extension for Network Analysis
 
 (Note: this is the documentation for the "set-context" branch of the NW extension, which requires NetLogo [5.0.5](http://ccl.northwestern.edu/netlogo/5.0.5/) or greater. If you are still using the "set-snapshot" branch, the old documentation is available [here](https://github.com/NetLogo/NW-Extension/blob/set-snapshot/README.md).)
