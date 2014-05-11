@@ -65,7 +65,7 @@ class NetworkExtension extends api.DefaultClassManager {
     add("turtles-in-reverse-radius", new org.nlogo.extensions.nw.prim.TurtlesInReverseRadius(getGraphContext))
 
     add("mean-path-length", new prim.MeanPathLength(getGraphContext))
-    add("mean-weighted-path-length", new prim.jung.MeanWeightedPathLength(getGraphContext))
+    add("mean-weighted-path-length", new prim.MeanWeightedPathLength(getGraphContext))
 
     add("distance-to", new prim.DistanceTo(getGraphContext))
     add("weighted-distance-to", new prim.WeightedDistanceTo(getGraphContext))
