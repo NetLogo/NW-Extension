@@ -477,6 +477,7 @@ mean-path-length-empty
 
 mean-path-length-one-turtle
   extensions [ nw ]
+  O> crt 1
   nw:mean-path-length => false
 
 mean-path-length-two-unconnected-turtles
@@ -741,6 +742,77 @@ turtles-on-weighted-path-to-random-equal-paths
   length remove-duplicates n-values 100 [ [ nw:turtles-on-weighted-path-to turtle 2 "thickness" ] of turtle 0 ] => 2
 
 ### mean-weighted-path-length
+
+## undirected links
+
+mean-weighted-path-length-empty
+  extensions [ nw ]
+  nw:mean-weighted-path-length "thickness" => false
+
+mean-weighted-path-length-one-turtle
+  extensions [ nw ]
+  O> crt 1
+  nw:mean-weighted-path-length "thickness" => false
+
+mean-weighted-path-length-two-unconnected-turtles
+  extensions [ nw ]
+  O> crt 2
+  nw:mean-weighted-path-length "thickness" => false
+
+mean-weighted-path-length-two-connected-turtles
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles [ set thickness 5 ] ]
+  nw:mean-weighted-path-length "thickness" => 5
+
+mean-weighted-path-length-two-connected-and-one-unconnected-turtles
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles [ set thickness 5 ] ]
+  O> crt 1
+  nw:mean-weighted-path-length "thickness" => false
+
+mean-weighted-path-length-fully-connected
+  extensions [ nw ]
+  O> crt 10 [ create-links-with other turtles [ set thickness sum [ who ] of both-ends ] ]
+  nw:mean-weighted-path-length "thickness" => 9
+
+mean-weighted-path-length-on-a-pentagon
+  extensions [ nw ]
+  O> crt 5 [ create-link-with turtle ((who + 1) mod 5) [ set thickness [ 1 + who ] of end1 ] ]
+  nw:mean-weighted-path-length "thickness" => 3
+
+mean-weighted-path-length-connected-pair-of-turtles-on-a-pentagon
+  extensions [ nw ]
+  O> nw:set-context mice links
+  O> crt 5 [ create-link-with turtle ((who + 1) mod 5) [ set thickness 1 ] ]
+  O> ask (turtle-set turtle 0 turtle 1) [ set breed mice ]
+  nw:mean-weighted-path-length "thickness" => 1
+
+mean-weighted-path-length-disconnected-pair-of-turtles-on-a-pentagon
+  extensions [ nw ]
+  O> nw:set-context mice links
+  O> crt 5 [ create-link-with turtle ((who + 1) mod 5) [ set thickness 1 ] ]
+  O> ask (turtle-set turtle 0 turtle 2) [ set breed mice ]
+  nw:mean-weighted-path-length "thickness" => false
+
+## directed links
+
+mean-weighted-path-length-directed-two-half-connected-turtles
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-links-to other turtles [ set thickness 1 ] ]
+  nw:mean-weighted-path-length "thickness" => false
+
+mean-weighted-path-length-directed-two-connected-turtles
+  extensions [ nw ]
+  O> crt 2 [ create-links-to other turtles [ set thickness 5 ] ]
+  nw:mean-weighted-path-length "thickness" => 5
+
+mean-weighted-path-changes
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles [ set thickness 5 ] ]
+  nw:mean-weighted-path-length "thickness" => 5
+  O> ask links [ set thickness 3 ]
+  nw:mean-weighted-path-length "thickness" => 3
 
 ## generators
 
