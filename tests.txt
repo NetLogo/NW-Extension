@@ -675,20 +675,19 @@ eigenvector-centrality-pair
   O> crt 2 [ create-links-with other turtles ]
   map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [0.5 0.5]
 
-eigenvector-centrality-line
+eigenvector-centrality-4-line
   extensions [ nw ]
-  O> crt 3
-  O> ask turtle 0 [ create-link-with turtle 1 ]
-  O> ask turtle 1 [ create-link-with turtle 2 ]
+  O> crt 4
+  O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
   O> nw:set-context turtles links
-  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [0.29289322 0.41421356 0.29289322]
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.167 0.333 0.333 0.167]
 
 eigenvector-centrality-assymetric
   extensions [ nw ]
   O> crt 4
   O> ask turtle 0 [ create-links-with other turtles ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [0.31544881 0.26959444 0.26959444  0.14536232]
+  map [ [ precision nw:eigenvector-centrality 3] of ? ] sort turtles => [0.375 0.25 0.25 0.125]
 
 
 
