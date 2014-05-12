@@ -118,6 +118,11 @@ to-report link-distance [ x y ]
   ]
   report sqrt (b ^ 2 - d ^ 2)
 end
+
+to show-centrality [ centrality ]
+  let measure (word "nw:" centrality "-centrality")
+  ask turtles [ set label precision runresult measure 3 ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 251
@@ -197,6 +202,33 @@ BUTTON
 116
 NIL
 clear-links
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+35
+262
+177
+307
+centrality-measure
+centrality-measure
+"betweenness" "eigenvector" "closeness"
+1
+
+BUTTON
+41
+320
+176
+353
+show centralities
+show-centrality centrality-measure
 NIL
 1
 T
@@ -550,7 +582,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.5
+NetLogo 5.0.6
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

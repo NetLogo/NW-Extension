@@ -613,6 +613,12 @@ betweenness-centrality-simple-undirected-changes
   O> ask turtle 2 [ create-link-with turtle 0 ]
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 0 0]
 
+betweenness-centrality-central-node-undirected
+  extensions [ nw ]
+  O> crt 11
+  O> ask turtle 0 [ create-links-with other turtles ]
+  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [45 0 0 0 0 0 0 0 0 0 0]
+
 betweenness-centrality-disconnected-undirected
   extensions [ nw ]
   O> crt 6
@@ -663,6 +669,28 @@ eigenvector-centrality-single-isolate
   extensions [ nw ]
   O> crt 1
   [ nw:eigenvector-centrality ] of turtle 0 => 1
+
+eigenvector-centrality-pair
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [0.5 0.5]
+
+eigenvector-centrality-line
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  O> ask turtle 1 [ create-link-with turtle 2 ]
+  O> nw:set-context turtles links
+  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [0.29289322 0.41421356 0.29289322]
+
+eigenvector-centrality-assymetric
+  extensions [ nw ]
+  O> crt 4
+  O> ask turtle 0 [ create-links-with other turtles ]
+  O> ask turtle 1 [ create-link-with turtle 2 ]
+  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [0.31544881 0.26959444 0.26959444  0.14536232]
+
+
 
 ## weighted primitives
 
