@@ -998,6 +998,24 @@ biggest-maximal-clique-undirected
   O> crt 3 [ create-links-with other turtles ]
   count first nw:biggest-maximal-cliques => 3
 
+biggest-maximal-clique-undirected-with-smaller
+  extensions [ nw ]
+  O> crt 3 [ create-links-with other turtles ]
+  O> crt 1 [ create-link-with turtle 0 ]
+  sort map count nw:biggest-maximal-cliques => [3]
+
+biggest-maximal-clique-undirected-multiple
+  extensions [ nw ]
+  O> crt 3 [ create-links-with other turtles ]
+  O> crt 1 [ create-link-with turtle 0 create-link-with turtle 1 ]
+  sort map count nw:biggest-maximal-cliques => [3 3]
+
+maximal-clique-undirected-multiple
+  extensions [ nw ]
+  O> crt 3 [ create-links-with other turtles ]
+  O> crt 1 [ create-link-with turtle 0 ]
+  sort map count nw:maximal-cliques => [2 3]
+
 biggest-maximal-clique-directed
   extensions [ nw ]
   O> crt 3
