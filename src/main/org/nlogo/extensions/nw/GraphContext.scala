@@ -133,14 +133,14 @@ class GraphContext(
   // Initializing with in-degree works well with directed graphs, knocking out obviously non-strongly reachable nodes
   // immediately. Initializing with all ones can make convergence take much longer. -- BCH 5/12/2014
   private lazy val inDegrees = turtles.foldLeft(Map.empty[Turtle, Double])(
-    (m, t) => m + (t -> neighbors(t, includeUn = true, includeIn = true, includeOut = false).size.toDouble))
+    (m, t) => m + (t -> inNeighbors(t).size.toDouble))
 
   lazy val eigenvectorCentrality = Iterator.iterate(inDegrees)((last) => {
     val result = last map {
       // Leaving the last score allows us to handle networks for which power iteration normally fails, e.g. 0--1--2
       // Gephi does this -- BCH 5/12/2014
       case (turtle: Turtle, lastScore: Double) =>
-        turtle -> (lastScore + (neighbors(turtle, includeUn = true, includeIn = true, includeOut = false) map last).sum)
+        turtle -> (lastScore + (inNeighbors(turtle) map last).sum)
     }
     // This is how gephi normalizes -- BCH 5/12/2014
     val normalizer = result.values.max
