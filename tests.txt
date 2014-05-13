@@ -546,6 +546,12 @@ closeness-centrality-single-isolate
   O> crt 1
   [ nw:closeness-centrality ] of turtle 0 => 0
 
+closeness-centrality-directed-pair
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [1 0]
+
 closeness-centrality-simple-undirected
   extensions [ nw ]
   O> crt 3
