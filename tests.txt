@@ -552,6 +552,13 @@ closeness-centrality-directed-pair
   O> ask turtle 0 [ create-link-to turtle 1 ]
   map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [1 0]
 
+closeness-centrality-simple-mixed
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
+  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [0.667 1 0]
+
 closeness-centrality-simple-undirected
   extensions [ nw ]
   O> crt 3
@@ -665,6 +672,29 @@ betweenness-centrality-bigger-connected-directed-graph
   O> ask turtle 4 [ create-link-to turtle 5 ]
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 0 0 0 7 0]
 
+betweennes-centrality-directed-line
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0]
+
+
+betweenness-centrality-center-node
+  extensions [ nw ]
+  O> crt 5
+  O> ask turtle 0 [ create-links-with other turtles ]
+  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [6 0 0 0 0]
+
+betweenness-centrality-mixed
+  extensions [ nw ]
+  O> crt 5
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
+  O> ask turtle 0 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 0 [ create-directed-link-from turtle 3 ]
+  O> ask turtle 0 [ create-directed-link-from turtle 4 ]
+  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [5 0 0 0 0]
+
 ### eigenvector-centrality
 
 eigenvector-centrality-empty
@@ -728,6 +758,13 @@ eigenvector-centrality-changes
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
   map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.445 0.802 1 1 0.802 0.445]
 
+# This is the one test where we disagree with Gephi. Gephi refuses to compute centrality on mixed networks.
+eigenvector-centrality-mixed
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> ask turtle 1 [ create-undirected-link-with turtle 2 ]
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0 1 1]
 
 
 ## weighted primitives
@@ -1022,6 +1059,14 @@ biggest-maximal-clique-directed
   O> ask turtle 0 [ create-link-to turtle 1 ]
   O> ask turtle 1 [ create-link-to turtle 2 ]
   O> ask turtle 2 [ create-link-to turtle 0 ]
+  count first nw:biggest-maximal-cliques => ERROR Extension exception: Current graph must be undirected
+
+biggest-maximal-clique-mixed
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 2 [ create-undirected-link-with turtle 0 ]
   count first nw:biggest-maximal-cliques => ERROR Extension exception: Current graph must be undirected
 
 # graphml tests

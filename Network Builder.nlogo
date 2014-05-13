@@ -23,6 +23,7 @@ to-report closest-turtle [ x y ]
 end
 
 to go
+  set-default-shape directed-links "directed"
   ask turtles [ set color gray ]
   ask links [ set color gray ]
   set mouse-is-down? mouse-down?
@@ -159,7 +160,7 @@ CHOOSER
 mode
 mode
 "add-node" "add-undirected-link" "add-directed-link" "remove-node" "remove-link"
-1
+2
 
 BUTTON
 40
@@ -590,6 +591,17 @@ NetLogo 5.0.6
 @#$#@#$#@
 default
 0.0
+-0.2 0 0.0 1.0
+0.0 1 1.0 0.0
+0.2 0 0.0 1.0
+link direction
+true
+0
+Line -7500403 true 150 150 90 180
+Line -7500403 true 150 150 210 180
+
+directed
+2.0
 -0.2 0 0.0 1.0
 0.0 1 1.0 0.0
 0.2 0 0.0 1.0

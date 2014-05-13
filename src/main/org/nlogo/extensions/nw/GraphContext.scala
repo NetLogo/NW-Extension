@@ -84,13 +84,12 @@ class GraphContext(
   lazy val asDirectedJGraphTGraph = new jgrapht.DirectedGraph(this)
   lazy val asUndirectedJGraphTGraph = new jgrapht.UndirectedGraph(this)
 
-  /* Until an actual link has been created, the directedness of the links agentset
-   * is not defined: i.e., both  linkSet.isDirected and linkSet.isUndirected will
-   * return false. Here, we just check for .isDirected because if no links have been
-   * created, treating the graph as undirected will do no harm. NP 2013-05-15
-   */
-  // This is currently broken for mixed directedness contexts
-  def isDirected = linkSet.isDirected
+  /*
+  linkSet.isDirected fails for empty and mixed directed networks. The only reliable way I've found to detect
+  directedness is by literally checking each link. If any are directed, we consider the whole thing to be directed.
+  -- BCH 5/13/2014
+ */
+  lazy val isDirected = links exists { _.isDirectedLink }
 
   def turtleCount: Int = turtles.size
   def linkCount: Int = links.size
@@ -113,11 +112,17 @@ class GraphContext(
   def undirectedEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, false, false)
   def undirectedNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, false, false)
 
+  def inEdges(turtle: Turtle): Iterable[Link] = edges(turtle, includeUn = true, includeIn = true, includeOut = false)
+  def inNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, includeUn = true, includeIn = true, includeOut = false)
+
   def directedInEdges(turtle: Turtle): Iterable[Link] = edges(turtle, false, true, false)
-  def inNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, true, false)
+  def directedInNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, true, false)
+
+  def outEdges(turtle: Turtle): Iterable[Link] = edges(turtle, includeUn = true, includeIn = false, includeOut = true)
+  def outNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, includeUn = true, includeIn = false, includeOut = true)
 
   def directedOutEdges(turtle: Turtle): Iterable[Link] = edges(turtle, false, false, true)
-  def outNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, false, true)
+  def directedOutNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, false, true)
 
   def allEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, true, true)
   def allNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, true, true)
