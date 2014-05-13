@@ -85,8 +85,8 @@ class GraphContext(
   lazy val asUndirectedJGraphTGraph = new jgrapht.UndirectedGraph(this)
 
   /* Until an actual link has been created, the directedness of the links agentset
-   * is not defined: i.e., both  linkSet.isDirected and linkSet.isUndirected will 
-   * return false. Here, we just check for .isDirected because if no links have been 
+   * is not defined: i.e., both  linkSet.isDirected and linkSet.isUndirected will
+   * return false. Here, we just check for .isDirected because if no links have been
    * created, treating the graph as undirected will do no harm. NP 2013-05-15
    */
   // This is currently broken for mixed directedness contexts
@@ -123,4 +123,32 @@ class GraphContext(
   def allNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, true, true)
 
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
+
+
+  // Initializing with in-degree works well with directed graphs, knocking out obviously non-strongly reachable nodes
+  // immediately. Initializing with all ones can make convergence take much longer. -- BCH 5/12/2014
+  private lazy val inDegrees = turtles.foldLeft(Map.empty[Turtle, Double])(
+    (m, t) => m + (t -> neighbors(t, includeUn = true, includeIn = true, includeOut = false).size.toDouble))
+
+  lazy val eigenvectorCentrality = Iterator.iterate(inDegrees)((last) => {
+    val result = last map {
+      // Leaving the last score allows us to handle networks for which power iteration normally fails, e.g. 0--1--2
+      // Gephi does this -- BCH 5/12/2014
+      case (turtle: Turtle, lastScore: Double) =>
+        turtle -> (lastScore + (neighbors(turtle, includeUn = true, includeIn = true, includeOut = false) map last).sum)
+    }
+    // This is how gephi normalizes -- BCH 5/12/2014
+    val normalizer = result.values.max
+    if (normalizer > 0) {
+      result map {
+        case (turtle: Turtle, score: Double) => turtle -> score / normalizer
+      }
+    } else {
+      // Everything is disconnected... just give everyone 1s -- BCH 5/12/2014
+      result map {
+        case (turtle: Turtle, score: Double) => turtle -> 1.0
+      }
+    }
+  }).drop(100).next()
+
 }

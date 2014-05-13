@@ -673,21 +673,54 @@ eigenvector-centrality-single-isolate
 eigenvector-centrality-pair
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [0.5 0.5]
+  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [1 1]
+
+eigenvector-directed-centrality-pair
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-links-to other turtles ]
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0 1]
+
+# Power iteration fails in this case. Gephi computes it successfully, but I'm using the same technique...
+# Power iteration actually fails for any odd length line...
+eigenvector-centrality-3-line
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
+  O> nw:set-context turtles links
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.707 1 0.707]
 
 eigenvector-centrality-4-line
   extensions [ nw ]
   O> crt 4
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
   O> nw:set-context turtles links
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.167 0.333 0.333 0.167]
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.618 1 1 0.618]
+
+eigenvector-centrality-6-line
+  extensions [ nw ]
+  O> crt 6
+  O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
+  O> nw:set-context turtles links
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.445 0.802 1 1 0.802 0.445]
+  # matches gephi when you run gephi for 10000 iterations
 
 eigenvector-centrality-assymetric
   extensions [ nw ]
   O> crt 4
   O> ask turtle 0 [ create-links-with other turtles ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ precision nw:eigenvector-centrality 3] of ? ] sort turtles => [0.375 0.25 0.25 0.125]
+  map [ [ precision nw:eigenvector-centrality 3] of ? ] sort turtles => [1 0.855 0.855 0.461]
+
+eigenvector-centrality-changes
+  extensions [ nw ]
+  O> crt 4
+  O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
+  O> nw:set-context turtles links
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.618 1 1 0.618]
+  O> crt 2
+  O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
+  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.445 0.802 1 1 0.802 0.445]
 
 
 

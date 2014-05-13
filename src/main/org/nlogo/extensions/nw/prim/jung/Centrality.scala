@@ -22,11 +22,14 @@ class EigenvectorCentrality(getGraphContext: api.World => GraphContext) extends 
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = getGraphContext(context.getAgent.world).asUndirectedJungGraph
     // make sure graph is connected
+    /*
     if (graph.isWeaklyConnected) // TODO: Actually, it should be STRONGLY connected
       graph.EigenvectorCentrality
         .getScore(context.getAgent.asInstanceOf[agent.Turtle])
     else
       java.lang.Boolean.FALSE
+      */
+    graph.gc.eigenvectorCentrality(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
   }
 }
 
