@@ -79,6 +79,13 @@ class NetworkExtension extends api.DefaultClassManager {
     add("closeness-centrality", new prim.jung.ClosenessCentrality(getGraphContext))
 
     add("weighted-closeness-centrality", new prim.jung.WeightedClosenessCentrality(getGraphContext))
+    /*
+    There are some major oddities with Jung's weighted betweenness centrality. For example, in the network 0--1--2--3--0,
+    with 3--0 having weight 10, it gives [0 1.5 1.25 0]. I don't understand what betweenness centrality > 1 is or
+    how it could be asymmetric. So for now, I'm going to leave the plumbing in place, but not expose the functionality
+    till we understand it. -- BCH 5/14/2014
+     */
+    //add("weighted-betweenness-centrality", new prim.jung.WeightedBetweennessCentrality(getGraphContext))
 
     add("bicomponent-clusters", new prim.jung.BicomponentClusters(getGraphContext))
     add("weak-component-clusters", new prim.jung.WeakComponentClusters(getGraphContext))

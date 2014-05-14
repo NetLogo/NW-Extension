@@ -47,24 +47,27 @@ trait Algorithms {
     })
   }
 
-  object BetweennessCentrality extends jungalg.importance.BetweennessCentrality(self) {
+  def betweennessCentrality(agent: Agent) = betweennessCentralityCache()(agent)
+  def betweennessCentrality(agent: Agent, weightVar: String) = betweennessCentralityCache(Some(weightVar))(agent)
 
-    private def toScoreMap[A <: Agent](m: java.util.Map[A, Number]) =
-      m.asScala.map(x => x._1 -> x._2.doubleValue).toMap
-    lazy val turtleScores = toScoreMap(getVertexRankScores(getRankScoreKey))
-    lazy val linkScores = toScoreMap(getEdgeRankScores(getRankScoreKey))
+  val betweennessCentralityCache = CacheManager[Agent, Double](gc.world, {
+    case None => new UnweightedBetweennessCentrality().get
+    case Some(varName: String) => new WeightedBetweennessCentrality(varName).get
+  }: Option[String] => Agent => Double)
 
-    setRemoveRankScoresOnFinalize(false)
-    evaluate()
+  class WeightedBetweennessCentrality(variable: String)
+    extends jungalg.scoring.BetweennessCentrality(self, gc.weightFunction(variable).andThen(_.asInstanceOf[java.lang.Double]))
+    with BetweennessCentrality
 
-    private def getFrom(agent: Agent, tScores: Map[Turtle, Double], lScores: Map[Link, Double]) =
-      (agent match {
-        case t: Turtle => tScores.get(t)
-        case l: Link   => lScores.get(l)
-        case _         => None
-      }).getOrElse(throw new ExtensionException(agent + " is not a member of the current graph context."))
+  class UnweightedBetweennessCentrality
+    extends jungalg.scoring.BetweennessCentrality(self)
+    with BetweennessCentrality
 
-    def get(agent: Agent) = getFrom(agent, turtleScores, linkScores)
+  trait BetweennessCentrality extends jungalg.scoring.BetweennessCentrality[Turtle, Link] {
+    def get(agent: Agent) = agent match {
+      case (t: Turtle) => getVertexScore(t)
+      case (l: Link) => getEdgeScore(l)
+    }
   }
 
   object EigenvectorCentrality extends jungalg.scoring.PageRank(this, 0.0) {

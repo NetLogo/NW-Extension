@@ -7,14 +7,22 @@ import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.agent
 import java.util.Locale
+import org.nlogo.agent.Agent
 
 class BetweennessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType, "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = getGraphContext(context.getAgent.world).asJungGraph
-    Double.box(graph
-      .BetweennessCentrality
-      .get(context.getAgent.asInstanceOf[agent.Turtle]))
+    graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent]): java.lang.Double
+  }
+}
+
+class WeightedBetweennessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+  override def getSyntax = reporterSyntax(Array(StringType), NumberType, "-T-L")
+  override def report(args: Array[api.Argument], context: api.Context) = {
+    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val weightVar = args(0).getString.toUpperCase(Locale.ENGLISH)
+    graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent], weightVar): java.lang.Double
   }
 }
 
