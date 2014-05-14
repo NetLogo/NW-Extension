@@ -815,7 +815,17 @@ Reports the current version number of the extension.
 
 ## A note regarding floating point calculations
 
-Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge.net/), the two network librairies that we use internally, use [`strictfp` floating point calculations](http://en.wikipedia.org/wiki/Strictfp). This does mean that exact reproducibility of results involving floating point calculations _between different hardware architectures_ is not fully guaranteed. (NetLogo itself [always uses strict math](http://ccl.northwestern.edu/netlogo/docs/faq.html#reproduce) so this only applies to some primitives of the NW extension.)
+Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge.net/), the two network libraries that we use internally, use [`strictfp` floating point calculations](http://en.wikipedia.org/wiki/Strictfp). This does mean that exact reproducibility of results involving floating point calculations _between different hardware architectures_ is not fully guaranteed. (NetLogo itself [always uses strict math](http://ccl.northwestern.edu/netlogo/docs/faq.html#reproduce) so this only applies to some primitives of the NW extension.)
+
+## Performance
+
+In order to be fast in as many circumstances as possible, the NW extension tries hard to never calculate things twice. It remembers all paths, distances, and centralities that it calculates. So, while the first time you ask for the distance between `turtle 0` and `turtle 3782` may take some time, after that, it should be almost instantaneous. Furthermore, it keeps track of values it just happened to calculate along the way. For example, if `turtle 297` is closer to `turtle 0` than `turtle 3782` is, it may just happen to figure out the distance between `turtle 0` and `turtle 297` while it figures out the distance between `turtle 0` and `turtle 3782`. It will remember this value, so that if you ask it for the distance between `turtle 0` and `turtle 297`, it doesn't have to do all that work again.
+
+There are a few circumstances where the NW extension has to forget things. If the network changes at all (you add turtles or links, or remove turtles or links), it has to forget everything. For weighted primitives, if the value of the weight variable changes for any of the links in the network, it will forget the values associated with that weight variable.
+
+If you're working on a network that can change regularly, try to do all your network calculations at once, then all your network changes at once. The more your interweave network calculations and network changes, the more the NW extension will have to recalculate things. For example, if you have a traffic model, and cars need to figure out the shortest path to their destination based on the traffic each tick, have all the cars find their shortest paths, then change the network weights to account for how traffic has changed.
+
+There may be rare occasions in which you don't want the NW extension to remember values. For example, if you're working on an extremely large network, remembering all those values may take more memory than you have. In that case, you can just call `nw:set-context (first nw:get-context) (last nw:get-context)` to force the NW extension to immediately forget everything.
 
 ## Using the extension with applets
 
