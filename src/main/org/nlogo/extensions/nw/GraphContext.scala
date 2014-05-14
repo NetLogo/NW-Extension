@@ -8,6 +8,8 @@ import org.nlogo.util.MersenneTwisterFast
 import scala.collection.{GenIterable, mutable}
 import org.nlogo.api.ExtensionException
 import scala.Some
+import org.nlogo.extensions.nw.util.CacheManager
+import scala.collection.mutable.ArrayBuffer
 
 class GraphContext(
   val world: World,
@@ -82,6 +84,8 @@ class GraphContext(
   lazy val asDirectedJGraphTGraph = new jgrapht.DirectedGraph(this)
   lazy val asUndirectedJGraphTGraph = new jgrapht.UndirectedGraph(this)
 
+  // I tried caching this, but it only made SingleSourceWeighted benchmark ~5% faster; not significant
+  // enough to be worth the memory. -- BCH 5/14/2014
   def weightFunction(variable: String): (Link => Double) = {
     (link: Link) =>
       try {
@@ -105,17 +109,18 @@ class GraphContext(
   def turtleCount: Int = turtles.size
   def linkCount: Int = links.size
 
-  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Link] =
-    rng.shuffle(
-      (if (includeUn) undirLinks.getOrElse(turtle, Seq()) else Seq()) ++
-      (if (includeIn) inLinks.getOrElse(turtle, Seq()) else Seq()) ++
-      (if (includeOut) outLinks.getOrElse(turtle, Seq()) else Seq())
-    )
+  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Link] = {
+    // Using mutable stuff here actually made a significant performance different (>10%), but I do
+    // feel bad about it -- BCH 5/14/2014
+    val result = ArrayBuffer.empty[Link]
+    if (includeUn) result ++= undirLinks.getOrElse(turtle, ArrayBuffer.empty)
+    if (includeIn) result ++= inLinks.getOrElse(turtle, ArrayBuffer.empty)
+    if (includeOut) result ++= outLinks.getOrElse(turtle, ArrayBuffer.empty)
+    if (shuffle) rng.shuffle(result) else result
+  }
 
-
-
-  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Turtle] = {
-    edges(turtle, includeUn, includeIn, includeOut) map { l: Link =>
+  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Turtle] = {
+    edges(turtle, includeUn, includeIn, includeOut, shuffle) map { l: Link =>
       if (l.end1 == turtle) l.end2 else l.end1
     }
   }

@@ -38,8 +38,8 @@ trait PathFinder {
   }: (Option[String]) => Turtle => Iterator[Turtle])
 
   val rng: scala.util.Random
-  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Turtle]
-  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Link]
+  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Turtle]
+  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Link]
 
   private var lastSource: Option[Turtle] = None
   private var lastDest: Option[Turtle] = None
@@ -138,7 +138,7 @@ trait PathFinder {
       for {
         node <- last
         distance = dists((start, node))
-        neighbor <- neighbors(node, includeUn = true, includeIn = reverse, includeOut = !reverse)
+        neighbor <- neighbors(node, includeUn = true, includeIn = reverse, includeOut = !reverse, shuffle = false)
       } {
         if (!dists.contains((start, neighbor))) {
           dists((start, neighbor)) = distance + 1
