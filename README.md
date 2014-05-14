@@ -2,9 +2,9 @@
 
 # The NetLogo NW Extension for Network Analysis
 
-(Note: this is the documentation for the "set-context" branch of the NW extension, which requires NetLogo [5.0.5](http://ccl.northwestern.edu/netlogo/5.0.5/) or greater. If you are still using the "set-snapshot" branch, the old documentation is available [here](https://github.com/NetLogo/NW-Extension/blob/set-snapshot/README.md).)
+(Note: this is the documentation for the "set-context" branch of the NW extension, which requires NetLogo [5.0.6](http://ccl.northwestern.edu/netlogo/5.0.6/) or greater. If you are still using the "set-snapshot" branch, the old documentation is available [here](https://github.com/NetLogo/NW-Extension/blob/set-snapshot/README.md).)
 
-This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](#building)) or **[download it from here](https://github.com/NetLogo/NW-Extension/releases)**. Also note that the current version of the extension requires at least NetLogo 5.0.5. (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/extensions.html).)
+This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) This version of the extension is **not** pre-installed in NetLogo 5.0.5. To use it, you will need to either build it yourself ([see below](#building)) or **[download it from here](https://github.com/NetLogo/NW-Extension/releases)**. Also note that the current version of the extension requires at least NetLogo 5.0.6. (For help with extensions in general, see the [NetLogo User Manual](http://ccl.northwestern.edu/netlogo/docs/extensions.html).)
 
 This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new). A look at [the list of open issues](https://github.com/NetLogo/NW-Extension/issues?state=open) will give you a good idea of the current state of development. Also, be aware that the syntax of some primitives could change in future versions of the extension. You will have to modify your code accordingly.
 
@@ -25,7 +25,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 [Centrality](#centrality)
 
-- [betweenness-centrality](#betweenness-centrality), [eigenvector-centrality](#eigenvector-centrality), [closeness-centrality](#closeness-centrality)
+- [betweenness-centrality](#betweenness-centrality), [eigenvector-centrality](#eigenvector-centrality), [page-rank](#page-rank), [closeness-centrality](#closeness-centrality), [weighted-closeness-centrality](#weighted-closeness-centrality)
 
 [Clusterers](#clusterers)
 
@@ -48,7 +48,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 Compared to the previous extension, this new version offers:
 
 - **Improved functionality of existing features**: pathfinding primitives now allow taking edge weights into account.
-- **Centrality measures**: calculate the betweenness centrality, closeness centrality and eigenvector centrality of the nodes in your network.
+- **Centrality measures**: calculate the betweenness centrality, closeness centrality, and eigenvector centrality of the nodes in your network.
 - **Clusterers**: find bicomponent and weak component clusters in your network.
 - **Clique finder**: find all maximal cliques or the biggest maximal clique in your network.
 - **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
@@ -368,6 +368,8 @@ As with the link distance primitives, the `nw:weighted-path-to` and `nw:turtles-
 
 If no path exist between the source and the target turtles, all primitives will report an empty list.
 
+Note that the NW-Extension remembers paths that its calculated previously unless the network changes. Thus, you don't need to store paths to efficiently move across the network; you can just keep re-calling one of the path primitives. If the network changes, however, the stored answers are forgotten.
+
 ##### Example:
 
     links-own [ weight ]
@@ -436,13 +438,24 @@ As of now, link weights are not taken into account.
 #### eigenvector-centrality
 ![turtle][turtle] `nw:eigenvector-centrality`
 
-The [Eigenvector centrality](http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality) of a node can be thought of as the proportion of its time that an agent forever "walking" at random on the network would spend on this node. In practice, turtles that are connected to a lot of other turtles that are themselves well-connected (and so on) get a higher Eigenvector centrality score.
-
-In this implementation, the sum of the eigenvector centralities for a network should be approximately equal to one ([floating point calculations](http://en.wikipedia.org/wiki/Floating_point#Accuracy_problems) can cause slight deviations).
+The [Eigenvector centrality](http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality) of a node can be thought of as the amount of influence a node has on a network. In practice, turtles that are connected to a lot of other turtles that are themselves well-connected (and so on) get a higher Eigenvector centrality score.
 
 Eigenvector centrality is only defined for connected networks, and the primitive will report `false` for disconnected graphs. (Just like `distance-to` does when there is no path to the target turtle.)
 
-As of now, the primitive treats every network as if it were an undirected network (even if the links are directed). Future versions will take the direction of links into account.
+In this implementation, the eigenvector centrality is normalized such that the highest eigenvector centrality a node can have is 1. This implementation is designed to agree with Gephi's implementation out to at least 3 decimal places. If you discover that it disagrees with Gephi on a particular network, please [report it](https://github.com/NetLogo/NW-Extension/issues/new).
+
+The primitive respects link direction, even in mixed-directed networks. This is the one place where it should disagree with Gephi; Gephi refuses to treat directed links as directed in mixed-networks.
+
+As of now, link weights are not taken into account.
+
+#### page-rank
+![turtle][turtle] `nw:page-rank`
+
+The [page rank](https://en.wikipedia.org/wiki/PageRank) of a node can be thought of as the proportion of time that an agent walking forever at random on the network would spend at this node. The agent has an equal chance of taking any of a nodes edges, and will jump around the network completely randomly 15% of the time. In practice, like with eigenvector centrality, turtles that are connected to a lot of other turtles that are themselves well-connected (and so on) get a higher page rank.
+
+Page rank is one of the several algorithms that search engines use to determine the importance of a website.
+
+The sum of all page rank values should be approximately one. Unlike eigenvector centrality, page rank is defined for all networks, no matter the connectivity. Currently, it treats all links as undirected links.
 
 As of now, link weights are not taken into account.
 
@@ -454,6 +467,11 @@ The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_cen
 Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
 
 Also note that, as of now, link weights are not taken into account.
+
+#### weighted-closeness-centrality
+![turtle][turtle] `nw:weighted-closeness-centrality` _weight-variable-name_
+
+This is identical to [closeness-centrality](#closeness-centrality), except that weights provided by the given variable are treated as the distances of links.
 
 ### Clusterers
 
