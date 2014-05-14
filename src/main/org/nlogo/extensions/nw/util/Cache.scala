@@ -5,20 +5,28 @@ import scala.ref.WeakReference
 import org.nlogo.agent.World.VariableWatcher
 import org.nlogo.agent.{World, Agent}
 
-class Cache[A,B](default: A=>B = (x) => throw new java.util.NoSuchElementException("key not found: " + x.toString)) {
+class Cache[A,B](default: A=>B) extends (A=>B) {
   val cachedValues = mutable.Map.empty[A,B]
   def apply(key: A): B = cachedValues.getOrElseUpdate(key, default(key))
+  def get(key: A): Option[B] = cachedValues.get(key)
   def update(key: A, value: B) = cachedValues(key) = value
 }
 
-class CacheManager[A,B](world: World, default: A=>B = (x) => throw new java.util.NoSuchElementException("key not found: " + x.toString)) {
+class CacheManager[A,B](world: World, default: (Option[String])=>A=>B) {
   val caches = mutable.Map.empty[Option[String], Cache[A,B]]
-  def apply(variable: Option[String] = None) = caches.getOrElseUpdate(variable, {
+  def apply(variable: Option[String] = None): Cache[A,B] = caches.getOrElseUpdate(variable, {
     variable map { varName =>
       world.addWatcher(varName, new CacheClearingWatcher(new WeakReference[mutable.Map[Option[String], _]](caches)))
     }
-    new Cache[A,B](default)
+    new Cache[A,B](default(variable))
   })
+}
+
+object CacheManager {
+  def apply[A,B](world: World): CacheManager[A,B] =
+    CacheManager(world, (v: Option[String]) => (x: A) => throw new java.util.NoSuchElementException("key not found: " + x.toString))
+  def apply[A,B](world: World, default: (Option[String])=>(A)=>B): CacheManager[A,B] =
+    new CacheManager[A,B](world, default)
 }
 
 /*

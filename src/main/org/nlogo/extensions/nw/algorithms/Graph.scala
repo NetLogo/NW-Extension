@@ -7,16 +7,32 @@ import org.nlogo.extensions.nw.Memoize
 import org.nlogo.agent.World.VariableWatcher
 import org.nlogo.api.ExtensionException
 import scala.ref.WeakReference
+import org.nlogo.extensions.nw.util.{Cache, CacheManager}
 
 trait Graph {
-  private val distanceCaches = mutable.Map[Option[String], mutable.Map[(Turtle, Turtle), Double]]()
-  private val predecessorCaches = mutable.Map[Option[String], ((Turtle, Turtle)) => ArrayBuffer[Turtle]]()
-  private val successorCaches = mutable.Map[Option[String], ((Turtle, Turtle)) => ArrayBuffer[Turtle]]()
-  private val singleSourceTraversalCaches = mutable.Map[Option[String], Turtle => Iterator[Turtle]]()
-  private val singleDestTraversalCaches = mutable.Map[Option[String], Turtle => Iterator[Turtle]]()
-
-  val cacheMaps = Seq(distanceCaches, predecessorCaches, successorCaches, singleSourceTraversalCaches, singleDestTraversalCaches)
-  var watchers = mutable.Map[String, World.VariableWatcher]()
+  private val distanceCaches = CacheManager[(Turtle, Turtle), Double](world)
+  private val predecessorCaches = CacheManager(world, (_: Option[String]) => (p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle])
+  private val successorCaches = CacheManager(world, (_: Option[String]) => (p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle])
+  private val singleSourceTraversalCaches = CacheManager[Turtle, Iterator[Turtle]](world, {
+    case None => {
+      source: Turtle => cachingBFS(source, reverse = false, predecessorCaches(None))
+    }
+    case Some(varName: String) => {
+      source: Turtle =>
+        cachingDijkstra(source, weightFunction(varName), reverse = false,
+          predecessorCaches(Some(varName)), distanceCaches(Some(varName)))
+    }
+  }: (Option[String]) => Turtle => Iterator[Turtle])
+  private val singleDestTraversalCaches = CacheManager[Turtle, Iterator[Turtle]](world, {
+    case None => {
+      source: Turtle => cachingBFS(source, reverse = true, successorCaches(None))
+    }
+    case Some(varName: String) => {
+      source: Turtle =>
+        cachingDijkstra(source, weightFunction(varName), reverse = true,
+          successorCaches(Some(varName)), distanceCaches(Some(varName)))
+    }
+  }: (Option[String]) => Turtle => Iterator[Turtle])
 
   val rng: scala.util.Random
   def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean): Iterable[Turtle]
@@ -40,47 +56,6 @@ trait Graph {
         case e: ClassCastException => throw new ExtensionException("Weights must be numbers.", e)
         case e: Exception => throw new ExtensionException(e)
       }
-  }
-
-  private def ensureCaches(variable: Option[String]) ={
-    if (!(distanceCaches contains variable)) {
-      distanceCaches(variable) = mutable.Map[(Turtle, Turtle), Double]()
-
-      predecessorCaches(variable) = Memoize {(p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle]}
-
-      successorCaches(variable) = Memoize {(p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle]}
-
-      singleSourceTraversalCaches(variable) = variable match {
-        case None => Memoize {
-          (source: Turtle) => cachingBFS(source, reverse = false, predecessorCaches(variable))
-        }
-        case Some(weightVar: String) => Memoize {
-          (source: Turtle) => cachingDijkstra(source, weightFunction(weightVar), reverse = false, predecessorCaches(variable), distanceCaches(variable))
-        }
-      }
-
-      singleDestTraversalCaches(variable) = variable match {
-        case None => Memoize {
-          (source: Turtle) => cachingBFS(source, reverse = true, successorCaches(variable))
-        }
-        case Some(weightVar: String) => Memoize {
-          (source: Turtle) => cachingDijkstra(source, weightFunction(weightVar), reverse = true, successorCaches(variable), distanceCaches(variable))
-        }
-      }
-
-      variable.foreach { varName: String =>
-        val watcher: VariableWatcher = new CacheClearingWatcher(new WeakReference[Seq[mutable.Map[Option[String], _]]](cacheMaps), varName)
-        world.addWatcher(varName, watcher)
-        watchers(varName) = watcher
-      }
-    }
-  }
-
-  def clearAllCaches() {
-    watchers foreach { case (varName, watcher) =>
-      world.deleteWatcher(varName, watcher)
-    }
-    cacheMaps foreach { _.clear() }
   }
 
   /**
@@ -135,7 +110,6 @@ trait Graph {
     cachedPath(successorCaches(variable), source, dest) orElse cachedPath(predecessorCaches(variable), dest, source).map(_.reverse)
 
   def path(source: Turtle, dest: Turtle, weightVariable: Option[String] = None): Option[Iterable[Turtle]] = {
-    ensureCaches(weightVariable)
     cachedPath(weightVariable, source, dest) orElse {
       expandBestTraversal(weightVariable, source, dest)
       cachedPath(weightVariable, source, dest)
@@ -143,7 +117,6 @@ trait Graph {
   }
 
   def distance(source: Turtle, dest: Turtle, weightVariable: Option[String] = None): Option[Double] = {
-    ensureCaches(weightVariable)
     distanceCaches(weightVariable).get((source, dest)) orElse {
       expandBestTraversal(weightVariable, source, dest)
       distanceCaches(weightVariable).get(source, dest)
@@ -194,7 +167,7 @@ trait Graph {
     }).takeWhile(_.nonEmpty).flatten
   }
 
-  private def cachingDijkstra(start: Turtle, weight: Link => Double, reverse: Boolean, predecessorCache: ((Turtle, Turtle)) => ArrayBuffer[Turtle], distanceCache: mutable.Map[(Turtle, Turtle), Double]): Iterator[Turtle] = {
+  private def cachingDijkstra(start: Turtle, weight: Link => Double, reverse: Boolean, predecessorCache: ((Turtle, Turtle)) => ArrayBuffer[Turtle], distanceCache: Cache[(Turtle, Turtle), Double]): Iterator[Turtle] = {
     val dists = mutable.Map[Turtle, Double]()
     val heap = mutable.PriorityQueue[(Turtle, Double, Turtle)]()(Ordering[Double].on(-_._2))
     distanceCache(start -> start) = 0
@@ -231,16 +204,3 @@ trait Graph {
   }
 }
 
-/*
-The reference to the caches must be weak since the watcher may outlive the graph context (e.g. a clear-all will cause
-this). - BCH 5/2/2014
- */
-class CacheClearingWatcher(caches: WeakReference[Seq[mutable.Map[Option[String], _]]], variable: String) extends VariableWatcher {
-  def update(agent: Agent, variableName: String, value: scala.Any) = {
-    val key = Some(variableName)
-    caches.get.foreach { _.foreach { cacheMap: mutable.Map[Option[String], _] =>
-      cacheMap remove key
-    }}
-    agent.world.deleteWatcher(variableName, this)
-  }
-}

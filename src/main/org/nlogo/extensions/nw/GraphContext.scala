@@ -51,10 +51,8 @@ class GraphContext(
 
   def verify(w: World): GraphContext =
     if (w != world) {
-      clearAllCaches() // Clear watchers in particular
       new GraphContext(w, w.turtles(), w.links())
     } else if (w != world || turtleMonitor.hasChanged || linkMonitor.hasChanged) {
-      clearAllCaches() // Clear watchers in particular
       new GraphContext(w, turtleSet, linkSet)
     } else {
       this
