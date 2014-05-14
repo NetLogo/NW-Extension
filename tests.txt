@@ -798,6 +798,19 @@ eigenvector-centrality-mixed
   O> ask turtle 1 [ create-undirected-link-with turtle 2 ]
   map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0 1 1]
 
+page-rank-3-line
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
+  map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.257 0.486 0.257]
+
+page-rank-changes
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
+  map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.257 0.486 0.257]
+  O> ask turtle 2 [ die ]
+  map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.5 0.5]
 
 ## weighted primitives
 

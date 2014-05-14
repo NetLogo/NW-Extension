@@ -38,6 +38,14 @@ class EigenvectorCentrality(getGraphContext: api.World => GraphContext) extends 
   }
 }
 
+class PageRank(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+  override def getSyntax = reporterSyntax(NumberType, "-T--")
+  override def report(args: Array[api.Argument], context: api.Context) = {
+    val graph = getGraphContext(context.getAgent.world).asUndirectedJungGraph
+    graph.PageRank.getScore(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
+  }
+}
+
 class ClosenessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType, "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {

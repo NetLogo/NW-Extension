@@ -76,6 +76,7 @@ class NetworkExtension extends api.DefaultClassManager {
 
     add("betweenness-centrality", new prim.jung.BetweennessCentrality(getGraphContext))
     add("eigenvector-centrality", new prim.jung.EigenvectorCentrality(getGraphContext))
+    add("page-rank", new prim.jung.PageRank(getGraphContext))
     add("closeness-centrality", new prim.jung.ClosenessCentrality(getGraphContext))
 
     add("weighted-closeness-centrality", new prim.jung.WeightedClosenessCentrality(getGraphContext))

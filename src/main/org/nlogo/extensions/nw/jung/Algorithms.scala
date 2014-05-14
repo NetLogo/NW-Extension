@@ -70,7 +70,7 @@ trait Algorithms {
     }
   }
 
-  object EigenvectorCentrality extends jungalg.scoring.PageRank(this, 0.0) {
+  object PageRank extends jungalg.scoring.PageRank(this, 0.15) {
     evaluate()
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
