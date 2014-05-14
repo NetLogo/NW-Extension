@@ -9,7 +9,7 @@ import org.nlogo.api.ExtensionException
 import scala.ref.WeakReference
 import org.nlogo.extensions.nw.util.{Cache, CacheManager}
 
-trait Graph {
+trait PathFinder {
   private val distanceCaches = CacheManager[(Turtle, Turtle), Double](world)
   private val predecessorCaches = CacheManager(world, (_: Option[String]) => (p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle])
   private val successorCaches = CacheManager(world, (_: Option[String]) => (p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle])
