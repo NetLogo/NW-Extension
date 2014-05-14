@@ -82,6 +82,19 @@ class GraphContext(
   lazy val asDirectedJGraphTGraph = new jgrapht.DirectedGraph(this)
   lazy val asUndirectedJGraphTGraph = new jgrapht.UndirectedGraph(this)
 
+  def weightFunction(variable: String): (Link => Double) = {
+    (link: Link) =>
+      try {
+        link.world.program.linksOwn.indexOf(variable) match {
+          case -1 => link.getLinkBreedVariable(variable).asInstanceOf[Double]
+          case i  => link.getLinkVariable(i).asInstanceOf[Double]
+        }
+      } catch {
+        case e: ClassCastException => throw new ExtensionException("Weights must be numbers.", e)
+        case e: Exception => throw new ExtensionException(e)
+      }
+  }
+
   /*
   linkSet.isDirected fails for empty and mixed directed networks. The only reliable way I've found to detect
   directedness is by literally checking each link. If any are directed, we consider the whole thing to be directed.

@@ -23,6 +23,9 @@ trait PathFinder {
           predecessorCaches(Some(varName)), distanceCaches(Some(varName)))
     }
   }: (Option[String]) => Turtle => Iterator[Turtle])
+
+  def weightFunction(s: String): (Link) => Double
+
   private val singleDestTraversalCaches = CacheManager[Turtle, Iterator[Turtle]](world, {
     case None => {
       source: Turtle => cachingBFS(source, reverse = true, successorCaches(None))
@@ -44,19 +47,6 @@ trait PathFinder {
   def world: World
   def turtles: Set[Turtle]
   def links: Set[Link]
-
-  private def weightFunction(variable: String) = {
-    (link: Link) =>
-      try {
-        link.world.program.linksOwn.indexOf(variable) match {
-          case -1 => link.getLinkBreedVariable(variable).asInstanceOf[Double]
-          case i  => link.getLinkVariable(i).asInstanceOf[Double]
-        }
-      } catch {
-        case e: ClassCastException => throw new ExtensionException("Weights must be numbers.", e)
-        case e: Exception => throw new ExtensionException(e)
-      }
-  }
 
   /**
    * Attempts to expand the cache with the least duplicated amount of work possible. It tries to detect users doing
