@@ -13,6 +13,7 @@ import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
 
 import edu.uci.ics.jung.{ algorithms => jungalg }
 import org.nlogo.agent.World.VariableWatcher
+import org.nlogo.extensions.nw.util.CacheManager
 
 trait Algorithms {
   self: Graph =>
@@ -75,9 +76,25 @@ trait Algorithms {
     }
   }
 
-  object ClosenessCentrality extends jungalg.scoring.ClosenessCentrality(this) {
+  def closenessCentrality(turtle: Turtle) = closenessCentralityCache()(turtle)
+  def closenessCentrality(turtle: Turtle, weightVar: String) = closenessCentralityCache(Some(weightVar))(turtle)
+
+  val closenessCentralityCache = CacheManager[Turtle, Double](gc.world,{
+    case None => new UnweightedClosenessCentrality().getScore
+    case Some(varName: String) => new WeightedClosenessCentrality(varName).getScore
+  }: Option[String] => Turtle => Double)
+
+  class UnweightedClosenessCentrality
+    extends jungalg.scoring.ClosenessCentrality(this)
+    with ClosenessCentrality
+
+  class WeightedClosenessCentrality(variable: String)
+    extends jungalg.scoring.ClosenessCentrality(this, gc.weightFunction(variable).andThen(_.asInstanceOf[java.lang.Double]))
+    with ClosenessCentrality
+
+  trait ClosenessCentrality extends jungalg.scoring.ClosenessCentrality[Turtle, Link] {
     def getScore(turtle: Turtle) = {
-      if (!graph.containsVertex(turtle))
+      if (!self.containsVertex(turtle))
         throw new ExtensionException(turtle + " is not a member of the current graph context.")
       val res = getVertexScore(turtle)
       if (res.isNaN)

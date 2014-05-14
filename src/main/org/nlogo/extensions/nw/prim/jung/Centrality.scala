@@ -6,6 +6,7 @@ import org.nlogo.api
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.agent
+import java.util.Locale
 
 class BetweennessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType, "-T-L")
@@ -22,14 +23,10 @@ class EigenvectorCentrality(getGraphContext: api.World => GraphContext) extends 
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = getGraphContext(context.getAgent.world).asUndirectedJungGraph
     // make sure graph is connected
-    /*
     if (graph.isWeaklyConnected) // TODO: Actually, it should be STRONGLY connected
-      graph.EigenvectorCentrality
-        .getScore(context.getAgent.asInstanceOf[agent.Turtle])
+      graph.gc.eigenvectorCentrality(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
     else
       java.lang.Boolean.FALSE
-      */
-    graph.gc.eigenvectorCentrality(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
   }
 }
 
@@ -37,8 +34,15 @@ class ClosenessCentrality(getGraphContext: api.World => GraphContext) extends ap
   override def getSyntax = reporterSyntax(NumberType, "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = getGraphContext(context.getAgent.world).asJungGraph
-    graph
-      .ClosenessCentrality
-      .getScore(context.getAgent.asInstanceOf[agent.Turtle])
+    graph.closenessCentrality(context.getAgent.asInstanceOf[agent.Turtle]): java.lang.Double
+  }
+}
+
+class WeightedClosenessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+  override def getSyntax = reporterSyntax(Array(StringType), NumberType, "-T--")
+  override def report(args: Array[api.Argument], context: api.Context) = {
+    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val varName = args(0).getString.toUpperCase(Locale.ENGLISH)
+    graph.closenessCentrality(context.getAgent.asInstanceOf[agent.Turtle], varName): java.lang.Double
   }
 }
