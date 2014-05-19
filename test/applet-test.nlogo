@@ -13,8 +13,8 @@ to test
   turtles-in-radius-zero-radius
   turtles-in-radius-two-circles
   in-link-radius-source-set-filtering
-  turtles-in-out-radius
-  turtles-in-in-radius
+  turtles-in-radius
+  turtles-in-reverse-radius
   distance-to-self
   distance-two-turtles-no-links
   distance-one-undirected-link
@@ -101,22 +101,22 @@ to in-link-radius-source-set-filtering
   output-show sort [who] of [nw:turtles-in-radius 10] of turtle 0 ;=> [0 2 4 6]
 end
 
-to turtles-in-out-radius
+to turtles-in-radius
   clear-all
   crt 2
   ask turtle 0 [ create-link-to turtle 1 ]
   nw:set-context turtles links
-  output-show sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 0 ;=> [0 1]
-  output-show sort [ who ] of [ nw:turtles-in-out-radius 1 ] of turtle 1 ;=> [1]
+  output-show sort [ who ] of [ nw:turtles-in-radius 1 ] of turtle 0 ;=> [0 1]
+  output-show sort [ who ] of [ nw:turtles-in-radius 1 ] of turtle 1 ;=> [1]
 end
 
-to turtles-in-in-radius
+to turtles-in-reverse-radius
   clear-all
   crt 2
   ask turtle 0 [ create-link-to turtle 1 ]
   nw:set-context turtles links
-  output-show sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 0 ;=> [0]
-  output-show sort [who] of [ nw:turtles-in-in-radius 1 ] of turtle 1 ;=> [0 1]
+  output-show sort [who] of [ nw:turtles-in-reverse-radius 1 ] of turtle 0 ;=> [0]
+  output-show sort [who] of [ nw:turtles-in-reverse-radius 1 ] of turtle 1 ;=> [0 1]
 end
 
 to distance-to-self
@@ -953,7 +953,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.5
+NetLogo 5.0.6
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -961,9 +961,9 @@ NetLogo 5.0.5
 @#$#@#$#@
 default
 0.0
--0.2 0 1.0 0.0
+-0.2 0 0.0 1.0
 0.0 1 1.0 0.0
-0.2 0 1.0 0.0
+0.2 0 0.0 1.0
 link direction
 true
 0
