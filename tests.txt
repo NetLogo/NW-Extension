@@ -14,7 +14,7 @@
 
 version-number
   extensions [nw]
-  nw:version => "1.0.0-RC3"
+  nw:version => "1.0.0-RC4"
 
 ### set-context tests
 

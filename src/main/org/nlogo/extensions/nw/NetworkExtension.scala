@@ -9,7 +9,7 @@ import scala.collection.mutable
 
 class NetworkExtension extends api.DefaultClassManager {
 
-  val version = "1.0.0-RC3"
+  val version = "1.0.0-RC4"
 
   def checkNetLogoVersion(): Unit = {
     try {
