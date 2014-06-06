@@ -46,7 +46,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 Compared to the previous extension, this new version offers:
 
 - **Improved functionality of existing features**: pathfinding primitives now allow taking edge weights into account.
-- **Centrality measures**: calculate the betweenness centrality, closeness centrality, and eigenvector centrality of the nodes in your network.
+- **Centrality measures**: calculate the betweenness centrality, closeness centrality, PageRank, and eigenvector centrality of the nodes in your network.
 - **Clusterers**: find bicomponent and weak component clusters in your network.
 - **Clique finder**: find all maximal cliques or the biggest maximal clique in your network.
 - **Generators**: generate many different kinds of networks, namely, preferential attachment, random, small world, 2D lattice, ring, star, and wheel networks.
@@ -79,8 +79,6 @@ Some examples:
 - `nw:set-context bankers friendships` will give you all the bankers, and only friendships between bankers.
 - `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
 - `nw:set-context clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
-
-Note: versions of the extension up to beta 0.02 used `nw:set-snapshot` instead of `nw:set-context`. The old `nw:set-snapshot` primitive was static: you had to call it again everytime you made a change to your network. The new `nw:set-context` is dynamic: you call it once to tell the extension which turtles and links you want to work with and the changes to your agentsets are automatically reflected in your network. Changes to your agentsets can be births and deaths in the case of special agentsets, and deaths only in the case of normal agentsets—see next section for details. These changes will be reflected by the context. You only need to call `nw:set-context` again if you want to work with different agentsets. For example, if you set the context to a regular turtle-set, you must call `nw:set-context` again in order to add any new turtles to the context. A common case in which you might want to work with a new agentset is if you originally constructed your agentset using the [`with`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#with) primitive, and you think that the set of agents meeting the criterion for inclusion may now be different.
 
 ### Special agentsets vs. normal agentsets
 
