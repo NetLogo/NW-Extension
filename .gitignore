@@ -25,3 +25,6 @@ classes/
 
 # vim
 *.swp
+
+# ensime
+.ensime*
