@@ -28,3 +28,7 @@ classes/
 
 # ensime
 .ensime*
+
+# emacs
+\#*\#
+\.\#*
