@@ -17,15 +17,19 @@ class SaveGraphML(getGraphContext: api.World => GraphContext)
   extends api.DefaultCommand {
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
-    GraphMLExport.save(getGraphContext(context.getAgent.world), args(0).getString)
+    val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
+    GraphMLExport.save(getGraphContext(context.getAgent.world),
+      fm.attachPrefix(args(0).getString))
   }
 }
 
 class LoadGraphML extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(Array(StringType, CommandBlockType | OptionalType))
-  def createTurtles(args: Array[api.Argument], context: api.Context) =
+  def createTurtles(args: Array[api.Argument], context: api.Context) = {
+    val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
     GraphMLImport.load(
-      fileName = args(0).getString,
+      fileName = fm.attachPrefix(args(0).getString),
       world = context.getAgent.world.asInstanceOf[agent.World],
       rng = context.getRNG)
+  }
 }

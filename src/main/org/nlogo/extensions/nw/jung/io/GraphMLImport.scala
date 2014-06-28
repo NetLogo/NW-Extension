@@ -2,16 +2,19 @@ package org.nlogo.extensions.nw.jung.io
 
 import java.io.BufferedReader
 import java.io.FileReader
+import java.io.File
 import java.util.Locale
 import scala.Option.option2Iterable
 import scala.collection.JavaConverters._
+import org.nlogo.app.App
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.AgentException
 import org.nlogo.api.ExtensionException
-import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
+import org.nlogo.api
+import org.nlogo.extensions.nw.NetworkExtensionUtil.{createTurtle, using}
 import org.nlogo.extensions.nw.jung.createLink
 import org.nlogo.extensions.nw.jung.sparseGraphFactory
 import org.nlogo.extensions.nw.jung.transformer
@@ -149,36 +152,35 @@ object GraphMLImport {
     if (org.nlogo.workspace.AbstractWorkspace.isApplet)
       throw new ExtensionException("Cannot load GraphML file when in applet mode.")
     try {
-      val fileReader = new BufferedReader(new FileReader(fileName))
       val graphFactory = sparseGraphFactory[Vertex, Edge]
       val graphTransformer = transformer { _: GraphMetadata => graphFactory.create }
 
-      val graphReader =
+      using {
         new GraphMLReader2[jung.graph.Graph[Vertex, Edge], Vertex, Edge](
-          fileReader,
+          new BufferedReader(new FileReader(fileName)),
           graphTransformer,
           transformer(Vertex.apply),
           transformer(Edge.apply),
           transformer(_ => Edge(null)))
+      } { graphReader =>
+        val graph = graphReader.readGraph()
 
-      val graph = graphReader.readGraph()
+        val keyMap: Map[MetadataType, Seq[Key]] =
+          graphReader
+            .getGraphMLDocument.getKeyMap.entrySet()
+            .asScala.map(entry => entry.getKey() -> entry.getValue().asScala).toMap
 
-      val keyMap: Map[MetadataType, Seq[Key]] =
-        graphReader
-          .getGraphMLDocument.getKeyMap.entrySet()
-          .asScala.map(entry => entry.getKey() -> entry.getValue().asScala).toMap
+        val turtles: Map[Vertex, Turtle] =
+          createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE)) {
+            _ => createTurtle(world.turtles, rng)
+          }
 
-      val turtles: Map[Vertex, Turtle] =
-        createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE)) {
-          _ => createTurtle(world.turtles, rng)
+        createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE)) {
+          e: Edge => createLink(turtles, graph.getEndpoints(e), world.links)
         }
 
-      createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE)) {
-        e: Edge => createLink(turtles, graph.getEndpoints(e), world.links)
+        turtles.valuesIterator
       }
-
-      turtles.valuesIterator
-
     } catch {
       case e: Exception => throw new ExtensionException(e)
     }

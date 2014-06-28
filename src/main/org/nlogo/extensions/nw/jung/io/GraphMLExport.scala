@@ -15,8 +15,9 @@ import org.nlogo.agent
 import org.nlogo.api
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.GraphContext
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.NetworkExtensionUtil.functionToTransformer
+import org.nlogo.extensions.nw.NetworkExtensionUtil.{
+  AgentSetToRichAgentSet, functionToTransformer, using
+}
 
 object GraphMLExport {
 
@@ -87,8 +88,9 @@ object GraphMLExport {
       }
     }
 
-    val printWriter = new PrintWriter(new BufferedWriter(new FileWriter(filename)))
-    graphMLWriter.save(graphContext.asJungGraph, printWriter)
+    using(new PrintWriter(new BufferedWriter(new FileWriter(filename)))) { printWriter =>
+      graphMLWriter.save(graphContext.asJungGraph, printWriter)
+    }
 
   }
 

@@ -14,17 +14,20 @@ class SaveMatrix(getGraphContext: api.World => GraphContext)
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
     val graph = getGraphContext(context.getAgent.world).asJungGraph
-    Matrix.save(graph, args(0).getString)
+    val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
+    Matrix.save(graph, fm.attachPrefix(args(0).getString))
   }
 }
 
 class LoadMatrix
   extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
-  def createTurtles(args: Array[api.Argument], context: api.Context) =
+  def createTurtles(args: Array[api.Argument], context: api.Context) = {
+    val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
     Matrix.load(
-      filename = args(0).getString,
+      filename = fm.attachPrefix(args(0).getString),
       turtleBreed = args(1).getAgentSet.requireTurtleBreed,
       linkBreed = args(2).getAgentSet.requireLinkBreed,
       rng = context.getRNG)
+  }
 }

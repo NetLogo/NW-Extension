@@ -8,6 +8,7 @@ import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.jung.DummyGraph
 import org.nlogo.extensions.nw.jung.factoryFor
+import org.nlogo.extensions.nw.NetworkExtensionUtil.using
 import org.nlogo.util.MersenneTwisterFast
 
 import edu.uci.ics.jung
@@ -22,16 +23,16 @@ object Matrix {
      * difference being that it explicitly uses the US locale to make sure entries
      * use the dot decimal separator (see issue #69) */
     try {
-      val writer = new java.io.BufferedWriter(new java.io.FileWriter(filename))
-      val matrix = GraphMatrixOperations.graphToSparseMatrix(graph, null) // TODO: provide weights
-      for (i <- 0 until matrix.rows) {
-        for (j <- 0 until matrix.columns) {
-          val w = matrix.getQuick(i, j)
-          writer.write("%4.2f ".formatLocal(java.util.Locale.US, w))
+      using(new java.io.FileWriter(filename)) { writer =>
+        val matrix = GraphMatrixOperations.graphToSparseMatrix(graph, null) // TODO: provide weights
+        for (i <- 0 until matrix.rows) {
+          for (j <- 0 until matrix.columns) {
+            val w = matrix.getQuick(i, j)
+            writer.write("%4.2f ".formatLocal(java.util.Locale.US, w))
+          }
+          writer.write("\n")
         }
-        writer.write("\n")
       }
-      writer.close()
     } catch {
       case e: Exception => throw new ExtensionException("Error saving file: " + filename, e)
     }

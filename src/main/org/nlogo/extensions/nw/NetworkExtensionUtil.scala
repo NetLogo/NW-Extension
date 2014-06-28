@@ -133,5 +133,8 @@ object NetworkExtensionUtil {
       rng.nextInt(14), // color
       rng.nextInt(360)) // heading
 
+  def using[A <: { def close() }, B](closeable: A)(body: A => B): B =
+    try body(closeable) finally closeable.close()
+
 }
 
