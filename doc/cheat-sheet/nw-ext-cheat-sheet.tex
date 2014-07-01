@@ -327,7 +327,7 @@ nw:save-graphml "example.graphml"
 \end{doc}
 
 \begin{prim}
-nw:load-graphml \param{file-name}
+nw:load-graphml \param{file-name [ commands ]}
 \end{prim}
 \begin{doc}
 
@@ -335,9 +335,10 @@ Loads a GraphML file into NetLogo. Tries to assign the attribute values
 defined in the GraphML file to NetLogo agent variables of the same names (this
 is not case sensitive). The first one it tries to set is \texttt{breed} if it is
 there, so the turtle or link will get the right breed and, hence, the right
-breed variables. Undefined variables or breeds are ignored.
+breed variables. Undefined variables or breeds are ignored. An optional command
+block can be executed for each newly created turtle.
 \begin{Verbatim}
-nw:load-graphml "example.graphml"
+nw:load-graphml "example.graphml" [ set color red ]
 \end{Verbatim}
 \end{doc}
 
