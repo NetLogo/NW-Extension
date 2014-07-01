@@ -777,7 +777,7 @@ A few things to notice:
 
 #### load-graphml
 
-`nw:load-graphml` _file-name_
+`nw:load-graphml` _file-name_ _optional-command-block_
 
 Loading a GraphML file into NetLogo with the network extension should be as simple as calling `nw:load-graphml "example.graphml"`, but there is a bit of preparation involved.
 
@@ -800,6 +800,18 @@ The simplest case to handle is when the original GraphML file has been saved fro
 Loading a graph that was saved from a different program than NetLogo is quite possible as well, but it may take a bit of tinkering to get all the attribute-variable match up right. If you encounter major problems, please do not hesitate to [open an issue](https://github.com/NetLogo/NW-Extension/issues/new).
 
 The extension will try to assign the type defined by `attr.type` to each variable that it loads. If it's unable to convert it to that type, it will load it as a string. If `attr.type` is not defined, or is set to an unknown value, the extension will first try to load the value as a double, then try it as a boolean, and finally fall back on a string.
+
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
+
+    nw:load-graphml "example.graphml" [ set color red ]
+
+Note that this command block can be used to build a list or an agentset containing the newly created nodes:
+
+    let node-list []
+    nw:load-graphml "example.graphml" [
+      set node-list lput self node-list
+    ]
+    let node-set turtle-set node-list
 
 ### Other
 
