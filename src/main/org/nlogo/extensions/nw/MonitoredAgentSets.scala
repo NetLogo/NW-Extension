@@ -34,6 +34,7 @@ trait MonitoredTreeAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
   val breedName = agentSet.printName
   var hasChanged = false
   protected val changeSubscriber = new AgentSetChangeSubscriber(agentSet, () => hasChanged = true)
+  def unsubscribe(): Unit = changeSubscriber.unsubscribe()
 }
 
 class MonitoredTurtleTreeAgentSet(override val agentSet: TreeAgentSet)

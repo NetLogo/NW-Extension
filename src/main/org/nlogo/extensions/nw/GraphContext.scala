@@ -145,6 +145,10 @@ class GraphContext(
 
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
 
+  def monitoredTreeAgentSets =
+    Seq(turtleMonitor, linkMonitor).collect {
+      case mtas: MonitoredTreeAgentSet[_] => mtas
+    }
 
-
+  def unsubscribe(): Unit = monitoredTreeAgentSets.foreach(_.unsubscribe())
 }

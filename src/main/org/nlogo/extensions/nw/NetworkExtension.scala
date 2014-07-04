@@ -35,19 +35,37 @@ class NetworkExtension extends api.DefaultClassManager {
   private var _graphContext: Option[GraphContext] = None
 
   def setGraphContext(gc: GraphContext) {
+    _graphContext.foreach(_.unsubscribe())
     _graphContext = Some(gc)
   }
+  
+  def withTempGraphContext(gc: GraphContext)(f: () => Unit) {
+    val currentContext = _graphContext
+    _graphContext = Some(gc)
+    f()
+    gc.unsubscribe()
+    _graphContext = currentContext
+  }
+  
   def getGraphContext(world: api.World): GraphContext = {
     val w = world.asInstanceOf[agent.World]
-    _graphContext match {
-      case Some(gc: GraphContext) => setGraphContext(gc.verify(w))
-      case None                   => setGraphContext(new GraphContext(w, w.turtles, w.links))
-    }
+    val oldGraphContext = _graphContext
+    _graphContext = _graphContext
+      .map(_.verify(w))
+      .orElse(Some(new GraphContext(w, w.turtles, w.links)))
+    for {
+      oldGC <- oldGraphContext
+      newGC <- _graphContext
+      if oldGC != newGC
+    } oldGC.unsubscribe()
     _graphContext.get
   }
 
-  override def clearAll() { _graphContext = None }
-  override def unload(em: api.ExtensionManager) { _graphContext = None }
+  override def clearAll() {
+    _graphContext.foreach(_.unsubscribe())
+    _graphContext = None
+  }
+  override def unload(em: api.ExtensionManager) { clearAll() }
 
   override def load(primManager: api.PrimitiveManager) {
 
@@ -59,7 +77,7 @@ class NetworkExtension extends api.DefaultClassManager {
 
     add("set-context", new prim.SetContext(setGraphContext))
     add("get-context", new prim.GetContext(getGraphContext))
-    add("with-context", new prim.WithContext(setGraphContext, getGraphContext))
+    add("with-context", new prim.WithContext(withTempGraphContext))
 
     add("turtles-in-radius", new org.nlogo.extensions.nw.prim.TurtlesInRadius(getGraphContext))
     add("turtles-in-reverse-radius", new org.nlogo.extensions.nw.prim.TurtlesInReverseRadius(getGraphContext))
