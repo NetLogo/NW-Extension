@@ -4,16 +4,16 @@ package org.nlogo.extensions.nw.prim.jung
 
 import org.nlogo.api
 import org.nlogo.api.Syntax._
+import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jung.io.Matrix
-import org.nlogo.extensions.nw.GraphContext
 
-class SaveMatrix(getGraphContext: api.World => GraphContext)
+class SaveMatrix(gcp: GraphContextProvider)
   extends api.DefaultCommand {
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
     Matrix.save(graph, fm.attachPrefix(args(0).getString))
   }
