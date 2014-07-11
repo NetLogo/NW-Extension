@@ -98,8 +98,9 @@ object NetworkExtensionUtil {
   }
 
   trait TurtleCreatingCommand extends api.DefaultCommand with nvm.CustomAssembled {
-    // the command itself is observer-only. inside the block is turtle code.
-    override def getAgentClassString = "O:-T--"
+    // the command itself is turtle or observer. inside the block is turtle code.
+    // Issue #126 provides a good use case for this to be executed in turtle contexts.
+    override def getAgentClassString = "OT:-T--"
     def createTurtles(args: Array[api.Argument], context: api.Context): TraversableOnce[agent.Turtle]
     override def perform(args: Array[api.Argument], context: api.Context) {
       val world = context.getAgent.world.asInstanceOf[agent.World]
