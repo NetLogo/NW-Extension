@@ -10,8 +10,14 @@ import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToRichAgent
 import java.util.Locale
+import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.GraphContextProvider
 
-class DistanceTo(getGraphContext: api.World => GraphContext)
+class DistanceTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(TurtleType),
@@ -20,12 +26,12 @@ class DistanceTo(getGraphContext: api.World => GraphContext)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
-    val graphContext = getGraphContext(context.getAgent.world)
+    val graphContext = gcp.getGraphContext(context.getAgent.world)
     toLogoObject(graphContext.distance(source, target).getOrElse(false))
   }
 }
 
-class WeightedDistanceTo(getGraphContext: api.World => GraphContext)
+class WeightedDistanceTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(TurtleType, StringType),
@@ -35,12 +41,12 @@ class WeightedDistanceTo(getGraphContext: api.World => GraphContext)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
     val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
-    val distance = getGraphContext(context.getAgent.world).distance(source, target, Some(weightVariable))
+    val distance = gcp.getGraphContext(context.getAgent.world).distance(source, target, Some(weightVariable))
     toLogoObject(distance.getOrElse(false))
   }
 }
 
-class PathTo(getGraphContext: api.World => GraphContext)
+class PathTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(TurtleType),
@@ -49,7 +55,7 @@ class PathTo(getGraphContext: api.World => GraphContext)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
-    val graphContext = getGraphContext(context.getAgent.world)
+    val graphContext = gcp.getGraphContext(context.getAgent.world)
     def turtlesToLinks(turtles: List[agent.Turtle]): Iterator[agent.Link] =
       for {
         (source, target) <- turtles.iterator zip turtles.tail.iterator
@@ -64,7 +70,7 @@ class PathTo(getGraphContext: api.World => GraphContext)
   }
 }
 
-class TurtlesOnPathTo(getGraphContext: api.World => GraphContext)
+class TurtlesOnPathTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(TurtleType),
@@ -73,14 +79,14 @@ class TurtlesOnPathTo(getGraphContext: api.World => GraphContext)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
-    val graphContext = getGraphContext(context.getAgent.world)
+    val graphContext = gcp.getGraphContext(context.getAgent.world)
     graphContext.path(source, target)
       .map { p => LogoList.fromIterator(p.iterator) }
       .getOrElse(LogoList.Empty)
   }
 }
 
-class TurtlesOnWeightedPathTo(getGraphContext: api.World => GraphContext)
+class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(TurtleType, StringType),
@@ -90,14 +96,14 @@ class TurtlesOnWeightedPathTo(getGraphContext: api.World => GraphContext)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
     val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
-    val graphContext = getGraphContext(context.getAgent.world)
+    val graphContext = gcp.getGraphContext(context.getAgent.world)
     graphContext.path(source, target, Some(weightVariable))
       .map { p => LogoList.fromIterator(p.iterator) }
       .getOrElse(LogoList.Empty)
   }
 }
 
-class WeightedPathTo(getGraphContext: api.World => GraphContext)
+class WeightedPathTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(TurtleType, StringType),
@@ -107,7 +113,7 @@ class WeightedPathTo(getGraphContext: api.World => GraphContext)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
     val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
-    val graphContext = getGraphContext(context.getAgent.world)
+    val graphContext = gcp.getGraphContext(context.getAgent.world)
     def turtlesToLinks(turtles: List[agent.Turtle]): Iterator[agent.Link] =
       for {
         (source, target) <- turtles.iterator zip turtles.tail.iterator

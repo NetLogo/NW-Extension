@@ -8,28 +8,29 @@ import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.agent
 import java.util.Locale
 import org.nlogo.agent.Agent
+import org.nlogo.extensions.nw.GraphContextProvider
 
-class BetweennessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+class BetweennessCentrality(gcp:GraphContextProvider) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType, "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent]): java.lang.Double
   }
 }
 
-class WeightedBetweennessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(Array(StringType), NumberType, "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     val weightVar = args(0).getString.toUpperCase(Locale.ENGLISH)
     graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent], weightVar): java.lang.Double
   }
 }
 
-class EigenvectorCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+class EigenvectorCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType, "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = getGraphContext(context.getAgent.world).asUndirectedJungGraph
+    val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
     // make sure graph is connected
     if (graph.isWeaklyConnected) // TODO: Actually, it should be STRONGLY connected
       graph.gc.eigenvectorCentrality(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
@@ -38,26 +39,26 @@ class EigenvectorCentrality(getGraphContext: api.World => GraphContext) extends 
   }
 }
 
-class PageRank(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+class PageRank(gcp: GraphContextProvider) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType, "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = getGraphContext(context.getAgent.world).asUndirectedJungGraph
+    val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
     graph.PageRank.getScore(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
   }
 }
 
-class ClosenessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+class ClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(NumberType, "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     graph.closenessCentrality(context.getAgent.asInstanceOf[agent.Turtle]): java.lang.Double
   }
 }
 
-class WeightedClosenessCentrality(getGraphContext: api.World => GraphContext) extends api.DefaultReporter {
+class WeightedClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(Array(StringType), NumberType, "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = getGraphContext(context.getAgent.world).asJungGraph
+    val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     val varName = args(0).getString.toUpperCase(Locale.ENGLISH)
     graph.closenessCentrality(context.getAgent.asInstanceOf[agent.Turtle], varName): java.lang.Double
   }

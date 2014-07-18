@@ -3,7 +3,6 @@
 package org.nlogo.extensions.nw.prim.jung
 
 import scala.annotation.implicitNotFound
-
 import org.nlogo.api
 import org.nlogo.api.Syntax._
 import org.nlogo.agent
@@ -12,13 +11,14 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jung.io.GraphMLExport
 import org.nlogo.extensions.nw.jung.io.GraphMLImport
+import org.nlogo.extensions.nw.GraphContextProvider
 
-class SaveGraphML(getGraphContext: api.World => GraphContext)
+class SaveGraphML(gcp: GraphContextProvider)
   extends api.DefaultCommand {
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
     val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
-    GraphMLExport.save(getGraphContext(context.getAgent.world),
+    GraphMLExport.save(gcp.getGraphContext(context.getAgent.world),
       fm.attachPrefix(args(0).getString))
   }
 }

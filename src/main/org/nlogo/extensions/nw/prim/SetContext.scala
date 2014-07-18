@@ -2,17 +2,20 @@
 
 package org.nlogo.extensions.nw.prim
 
-import org.nlogo.api
-import org.nlogo.api.{Context, Argument, ExtensionException, LogoException}
-import org.nlogo.api.Syntax._
-import org.nlogo.agent
-import org.nlogo.extensions.nw.GraphContext
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.nvm.{AssemblerAssistant, CustomAssembled, ExtensionContext}
-import org.nlogo.extensions.nw.util.TurtleSetsConverters
 import org.nlogo.agent.ArrayAgentSet
+import org.nlogo.api
+import org.nlogo.api.Argument
+import org.nlogo.api.Context
+import org.nlogo.api.Syntax._
+import org.nlogo.extensions.nw.GraphContext
+import org.nlogo.extensions.nw.GraphContextManager
+import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+import org.nlogo.nvm.AssemblerAssistant
+import org.nlogo.nvm.CustomAssembled
+import org.nlogo.nvm.ExtensionContext
 
-class SetContext(setContext: GraphContext => Unit)
+class SetContext(gcm: GraphContextManager)
   extends api.DefaultCommand {
   override def getSyntax = commandSyntax(
     Array(AgentsetType, AgentsetType))
@@ -21,23 +24,23 @@ class SetContext(setContext: GraphContext => Unit)
     val linkSet = args(1).getAgentSet.requireLinkSet
     val world = linkSet.world
     val gc = new GraphContext(world, turtleSet, linkSet)
-    setContext(gc)
+    gcm.setGraphContext(gc)
   }
 }
 
-class GetContext(getGraphContext: api.World => GraphContext)
+class GetContext(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(ListType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    val gc = getGraphContext(context.getAgent.world.asInstanceOf[org.nlogo.agent.World])
+    val gc = gcp.getGraphContext(context.getAgent.world.asInstanceOf[org.nlogo.agent.World])
     val workspace = context.asInstanceOf[ExtensionContext].workspace()
     api.LogoList(gc.turtleSet, gc.linkSet)
   }
 }
 
-class WithContext(setGraphContext: GraphContext => Unit, getGraphContext: api.World => GraphContext)
+class WithContext(gcp: GraphContextProvider)
   extends api.DefaultCommand
-  with CustomAssembled{
+  with CustomAssembled {
   override def getSyntax = commandSyntax(
     Array(AgentsetType, AgentsetType, CommandBlockType))
 
@@ -50,10 +53,9 @@ class WithContext(setGraphContext: GraphContext => Unit, getGraphContext: api.Wo
     val nvmContext = extContext.nvmContext
     // Note that this can optimized by hanging onto the array and just mutating it. Shouldn't be necessary though.
     val agentSet = new ArrayAgentSet(nvmContext.agent.getAgentClass, Array(nvmContext.agent), world)
-    val currentContext = getGraphContext(world)
-    setGraphContext(gc)
-    nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
-    setGraphContext(currentContext)
+    gcp.withTempGraphContext(gc) { () =>
+      nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
+    }
   }
 
   def assemble(a: AssemblerAssistant) {
@@ -61,4 +63,3 @@ class WithContext(setGraphContext: GraphContext => Unit, getGraphContext: api.Wo
     a.done()
   }
 }
-
