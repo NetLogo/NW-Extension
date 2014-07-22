@@ -286,6 +286,8 @@ observer> show nw:get-context
 observer: [turtles links]
 ```
 
+If you have NW extension code running in two forever buttons or `loop` blocks that each need to use different contexts, you should use `nw:with-context` in each to make sure they are operating in the correct context.
+
 ### Path and Distance
 
 #### turtles-in-radius, turtles-in-reverse-radius
