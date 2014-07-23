@@ -822,6 +822,44 @@ page-rank-changes
   O> ask turtle 2 [ die ]
   map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.5 0.5]
 
+### clustering coefficient
+
+isolated-clustering-coefficient
+  extensions [ nw ]
+  O> crt 1
+  [ nw:clustering-coefficient ] of turtle 0 => 0
+
+pair-clustering-coefficient
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:clustering-coefficient ] of turtles => [0 0]
+
+triangle-clustering-coefficient
+  extensions [ nw ]
+  O> crt 3 [ create-links-with other turtles ]
+  [ nw:clustering-coefficient ] of turtles => [1 1 1]
+
+square-with-diag-clustering-coefficient
+  extensions [ nw ]
+  O> crt 4
+  O> ask turtles [ create-link-with turtle ((who + 1) mod count turtles) ]
+  O> ask turtle 0 [ create-link-with turtle 2 ]
+  map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.667 1 0.667 1]
+
+directed-triangle-clustering-coefficient
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-to turtle 1 create-link-to turtle 2 ]
+  O> ask turtle 1 [ create-link-to turtle 0 create-link-to turtle 2 ]
+  map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.5 0.5 0]
+
+mixed-triangle-clustering-coefficient
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 create-directed-link-to turtle 2 ]
+  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.5 0.5 0]
+
 ## weighted primitives
 
 ### weighted-distance-to

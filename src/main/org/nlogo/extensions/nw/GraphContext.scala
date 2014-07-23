@@ -14,7 +14,10 @@ import scala.collection.mutable.ArrayBuffer
 class GraphContext(
   val world: World,
   val turtleSet: AgentSet,
-  val linkSet: AgentSet) extends algorithms.PathFinder with algorithms.CentralityMeasurer {
+  val linkSet: AgentSet)
+    extends algorithms.PathFinder
+    with algorithms.CentralityMeasurer
+    with algorithms.ClusteringMetrics {
 
   val rng = new scala.util.Random(world.mainRNG)
   val turtleMonitor = turtleSet match {

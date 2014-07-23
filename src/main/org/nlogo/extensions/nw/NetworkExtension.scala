@@ -73,6 +73,8 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
      */
     //add("weighted-betweenness-centrality", new prim.jung.WeightedBetweennessCentrality(this))
 
+    add("clustering-coefficient", new prim.ClusteringCoefficient(this))
+
     add("bicomponent-clusters", new prim.jung.BicomponentClusters(this))
     add("weak-component-clusters", new prim.jung.WeakComponentClusters(this))
 
