@@ -25,6 +25,10 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 - [betweenness-centrality](#betweenness-centrality), [eigenvector-centrality](#eigenvector-centrality), [page-rank](#page-rank), [closeness-centrality](#closeness-centrality), [weighted-closeness-centrality](#weighted-closeness-centrality)
 
+[Clustering Measures](#clustering)
+
+- [clustering-coefficient](#clustering-coefficient)
+
 [Clusterers](#clusterers)
 
 - [bicomponent-clusters](#bicomponent-clusters), [weak-component-clusters](#weak-component-clusters)
@@ -471,7 +475,18 @@ Also note that, as of now, link weights are not taken into account.
 
 This is identical to [closeness-centrality](#closeness-centrality), except that weights provided by the given variable are treated as the distances of links.
 
-### Clusterers
+### Clustering Measures
+
+#### clustering-coefficient
+![turtle][turtle] `nw:clustering-coefficient`
+
+Reports the [local clustering coefficient](http://en.wikipedia.org/wiki/Clustering_coefficient#Local_clustering_coefficient) of the turtle. The clustering coefficient of a node measures how connected its neighbors are. It is defined as the number of links between the node's neighbors divided by the total number of possible links between its neighbors.
+
+`nw:clustering-coefficient` takes the directedness of links into account. A directed link counts as a single link whereas an undirected link counts as two links (one going one-way, one going the other).
+
+The [global clustering coefficient](http://en.wikipedia.org/wiki/Clustering_coefficient#Global_clustering_coefficient) measures how much nodes tend to cluster together in the network in general. It is defined simply as the mean of the local clustering coefficients of all nodes in the network, and thus may be calculated with
+
+    mean [ nw:clustering-coefficient ] of turtles
 
 #### bicomponent-clusters
 `nw:bicomponent-clusters`

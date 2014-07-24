@@ -98,6 +98,18 @@ ask turtles [ set size nw:betweenness-centrality ]
 \end{Verbatim}
 \end{doc}
 
+\cat{Clustering Measures}
+
+\begin{prim}
+nw:clustering-coefficient
+\end{prim}
+\begin{doc}
+This primitive measures how densely connected a turtle's neighbors are. It can be used to measure how much nodes tend to cluster together in a network. Example:
+\begin{Verbatim}
+ask turtles [ set label nw:clustering-coefficient ]
+\end{Verbatim}
+\end{doc}
+
 \cat{Distance and Path-Finding Primitives}
 
 \begin{prim}
