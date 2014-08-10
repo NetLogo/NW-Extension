@@ -1236,3 +1236,16 @@ load-graphml-turtle-context
   extensions [ nw ]
   O> crt 5 [ nw:load-graphml "extensions/nw/test/missing-attr-type.graphml" ]
   count turtles => 10
+
+exclude-dangling-link
+  extensions [ nw ]
+  O> create-ordered-mice 2
+  O> create-ordered-frogs 1
+  O> ask one-of mice [ create-links-with other turtles ]
+  O> nw:set-context mice links
+  O> nw:save-graphml "extensions/nw/test/exclude-dangling-link.graphml"
+  O> ca
+  O> nw:load-graphml "extensions/nw/test/exclude-dangling-link.graphml"
+  count mice => 2
+  count frogs => 0
+  count links => 1
