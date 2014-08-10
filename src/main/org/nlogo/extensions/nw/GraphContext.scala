@@ -31,7 +31,10 @@ class GraphContext(
   }
 
   val turtles: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
-  val links: Set[Link] = linkSet.asIterable[Link].toSet
+  val links: Set[Link] = linkSet.asIterable[Link]
+    .filter(link => turtles.contains(link.end1) && turtles.contains(link.end2))
+    .toSet
+
   private val inLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
   private val outLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
   private val undirLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
@@ -43,14 +46,12 @@ class GraphContext(
   }
 
   for (link: Link <- links) {
-    if (turtles.contains(link.end1) && turtles.contains(link.end2)) {
-      if (link.isDirectedLink) {
-        outLinks(link.end1) += link
-        inLinks(link.end2) += link
-      } else {
-        undirLinks(link.end1) += link
-        undirLinks(link.end2) += link
-      }
+    if (link.isDirectedLink) {
+      outLinks(link.end1) += link
+      inLinks(link.end2) += link
+    } else {
+      undirLinks(link.end1) += link
+      undirLinks(link.end2) += link
     }
   }
 

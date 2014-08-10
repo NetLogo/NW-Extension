@@ -80,17 +80,5 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="COLOR">5</data>
 <data key="HIDDEN?">false</data>
 </edge>
-<edge source="mouse 1" target="frog 2">
-<data key="END1">(mouse 1)</data>
-<data key="TIE-MODE">none</data>
-<data key="END2">(frog 2)</data>
-<data key="LABEL-COLOR">9.9</data>
-<data key="THICKNESS">0</data>
-<data key="LABEL"></data>
-<data key="SHAPE">default</data>
-<data key="BREED">links</data>
-<data key="COLOR">5</data>
-<data key="HIDDEN?">false</data>
-</edge>
 </graph>
 </graphml>
