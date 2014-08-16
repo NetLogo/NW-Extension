@@ -1231,6 +1231,27 @@ load-graphml-missing-attr-type
   [ heading ] of turtle 0 => 0
   [ color ] of turtle 0 => 5
 
+load-graphml-preserves-undirectedness
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-graphml "extensions/nw/test/tmp/undirected.graphml"
+  O> ca
+  O> nw:load-graphml "extensions/nw/test/tmp/undirected.graphml"
+  [ is-link? self ] of one-of links => true
+  [ is-undirected-link? self ] of one-of links => true
+  [ is-directed-link? self ] of one-of links => false
+
+load-graphml-preserves-directedness
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  O> nw:save-graphml "extensions/nw/test/tmp/directed.graphml"
+  O> ca
+  O> nw:load-graphml "extensions/nw/test/tmp/directed.graphml"
+  [ is-link? self ] of one-of links => true
+  [ is-undirected-link? self ] of one-of links => false
+  [ is-directed-link? self ] of one-of links => true
+
 # See issue #126
 load-graphml-turtle-context
   extensions [ nw ]
