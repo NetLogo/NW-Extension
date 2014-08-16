@@ -484,7 +484,17 @@ Reports the [local clustering coefficient](http://en.wikipedia.org/wiki/Clusteri
 
 `nw:clustering-coefficient` takes the directedness of links into account. A directed link counts as a single link whereas an undirected link counts as two links (one going one-way, one going the other).
 
-The [global clustering coefficient](http://en.wikipedia.org/wiki/Clustering_coefficient#Global_clustering_coefficient) measures how much nodes tend to cluster together in the network in general. It is defined simply as the mean of the local clustering coefficients of all nodes in the network, and thus may be calculated with
+The [global clustering coefficient](http://en.wikipedia.org/wiki/Clustering_coefficient#Global_clustering_coefficient) measures how much nodes tend to cluster together in the network in general. It is defined based on the types of triplets in the network. A triplet consists of a central node and two of its neighbors. If its neighbors are also connected, it's a closed triplet. If its neighbors are not connected, it's an open triplet. The global clustering coefficient is simply the number of closed triplets in a network divided by the total number of triplets. It can be calculated from the local clustering coefficient quite easily with the following code
+
+    to-report global-clustering-coefficient
+      let closed-triplets sum [ nw:clustering-coefficient * count my-links * (count my-links - 1) ] of turtles
+      let triplets sum [ count my-links * (count my-links - 1) ] of turtles
+      report closed-triplets / triplets
+    end
+
+Note that the above will only work with the default context, and may need to tweaked if you've set the turtles or links in the network to something other than `turtles` and `links`.
+
+The average local clustering coefficient is another popular method for measuring the amount of clustering in the network as a whole. It may be calculated with
 
     mean [ nw:clustering-coefficient ] of turtles
 
