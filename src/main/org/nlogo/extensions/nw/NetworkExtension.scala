@@ -8,7 +8,7 @@ import org.nlogo.api
 
 class NetworkExtension extends api.DefaultClassManager with GraphContextManager {
 
-  val version = "1.0.0-RC4"
+  val version = "1.0.0"
 
   def checkNetLogoVersion(): Unit = {
     try {
@@ -39,8 +39,6 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     checkNetLogoVersion()
 
     val add = primManager.addPrimitive _
-
-    add("version", new prim.Version(this))
 
     add("set-context", new prim.SetContext(this))
     add("get-context", new prim.GetContext(this))
