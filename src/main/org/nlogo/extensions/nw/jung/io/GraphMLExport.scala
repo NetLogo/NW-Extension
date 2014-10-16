@@ -21,7 +21,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.{
 
 object GraphMLExport {
 
-  def save(graphContext: GraphContext, filename: String) {
+  def save(graphContext: GraphContext, filename: String) = {
     val world = graphContext.world
 
     if (org.nlogo.workspace.AbstractWorkspace.isApplet)
@@ -88,8 +88,12 @@ object GraphMLExport {
       }
     }
 
-    using(new PrintWriter(new BufferedWriter(new FileWriter(filename)))) { printWriter =>
-      graphMLWriter.save(graphContext.asJungGraph, printWriter)
+    try {
+      using(new PrintWriter(new BufferedWriter(new FileWriter(filename)))) { printWriter =>
+        graphMLWriter.save(graphContext.asJungGraph, printWriter)
+      }
+    } catch {
+      case e: Exception => throw new ExtensionException(e)
     }
 
   }
