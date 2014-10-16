@@ -1248,6 +1248,22 @@ load-graphml-preserves-directedness
   [ is-undirected-link? self ] of one-of links => false
   [ is-directed-link? self ] of one-of links => true
 
+load-graphml-non-existent-file
+  extensions [ nw ]
+  O> nw:load-graphml "i/dont/exist.graphml" => ERROR Extension exception: i/dont/exist.graphml (No such file or directory)
+
+save-graphml-non-existent-dir
+  extensions [ nw ]
+  O> nw:save-graphml "i/dont/exist.graphml" => ERROR Extension exception: i/dont/exist.graphml (No such file or directory)
+
+load-matrix-non-existent-file
+  extensions [ nw ]
+  O> nw:load-matrix "i/dont/exist.txt" turtles links => ERROR Extension exception: i/dont/exist.txt (No such file or directory)
+
+save-matrix-non-existent-dir
+  extensions [ nw ]
+  O> nw:save-matrix "i/dont/exist.txt" => ERROR Extension exception: i/dont/exist.txt (No such file or directory)
+
 # See issue #126
 load-graphml-turtle-context
   extensions [ nw ]
