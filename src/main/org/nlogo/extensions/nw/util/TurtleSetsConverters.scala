@@ -18,10 +18,10 @@ object TurtleSetsConverters {
 
   def toTurtleSet(turtles: Iterable[Turtle], world: World): api.AgentSet = {
     val agents = turtles.toArray[Agent]
-    new ArrayAgentSet(classOf[Turtle], agents, world)
+    new ArrayAgentSet(api.AgentKind.Turtle, null, agents)
   }
 
   def emptyTurtleSet(world: World) =
-    new ArrayAgentSet(classOf[Turtle], Array[Agent](), world)
+    new ArrayAgentSet(api.AgentKind.Turtle, null, Array[Agent]())
 
 }

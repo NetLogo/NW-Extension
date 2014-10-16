@@ -46,7 +46,7 @@ object DummyGraph {
       }(collection.breakOut)
 
     graph.getEdges.asScala.foreach { e =>
-      createLink(turtles, graph.getEndpoints(e), linkBreed)
+      createLink(turtles, graph.getEndpoints(e), linkBreed, w)
     }
 
     turtles.valuesIterator

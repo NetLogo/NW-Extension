@@ -5,10 +5,12 @@ package org.nlogo.extensions.nw
 import org.nlogo.agent
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
+import org.nlogo.agent.World
 import org.nlogo.api
 import org.nlogo.api.Agent
 import org.nlogo.api.ExtensionException
 import org.nlogo.api.I18N
+import org.nlogo.api.AgentKind
 import org.nlogo.nvm
 import org.nlogo.util.MersenneTwisterFast
 
@@ -45,12 +47,11 @@ object NetworkExtensionUtil {
     new RichAgentSet(agentSet.asInstanceOf[agent.AgentSet])
 
   class RichAgentSet(agentSet: agent.AgentSet) {
-    lazy val world = agentSet.world.asInstanceOf[org.nlogo.agent.World]
     def isLinkBreed = (agentSet eq world.links) || world.isLinkBreed(agentSet)
     def isTurtleBreed = (agentSet eq world.turtles) || world.isBreed(agentSet)
 
-    def isLinkSet = classOf[api.Link].isAssignableFrom(agentSet.`type`)
-    def isTurtleSet = classOf[api.Turtle].isAssignableFrom(agentSet.`type`)
+    def isLinkSet = AgentKind.Link == agentSet.kind
+    def isTurtleSet = AgentKind.Turtle == agentSet.kind
     def requireTurtleSet =
       if (isTurtleSet) agentSet
       else throw new ExtensionException("Expected input to be a turtleset")
@@ -76,7 +77,7 @@ object NetworkExtensionUtil {
 
     private class AgentSetIterable[T <: Agent]
       extends Iterable[T] {
-      protected def newIt = agentSet.iterator()
+      protected def newIt = agentSet.iterator
       override def iterator: Iterator[T] = {
         val it = newIt
         new Iterator[T] {
@@ -107,7 +108,7 @@ object NetworkExtensionUtil {
       val nvmContext = extContext.nvmContext
       val turtles = createTurtles(args, context).toArray[agent.Agent]
       turtles.foreach(extContext.workspace.joinForeverButtons)
-      val agentSet = new agent.ArrayAgentSet(classOf[agent.Turtle], turtles, world)
+      val agentSet = new agent.ArrayAgentSet(AgentKind.Turtle, null, turtles)
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }
     def assemble(a: nvm.AssemblerAssistant) {

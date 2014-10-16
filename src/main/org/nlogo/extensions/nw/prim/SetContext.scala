@@ -30,7 +30,7 @@ class GetContext(getGraphContext: api.World => GraphContext)
   override def getSyntax = reporterSyntax(ListType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = getGraphContext(context.getAgent.world.asInstanceOf[org.nlogo.agent.World])
-    val workspace = context.asInstanceOf[ExtensionContext].workspace()
+    val workspace = context.asInstanceOf[ExtensionContext].workspace
     api.LogoList(gc.turtleSet, gc.linkSet)
   }
 }
@@ -49,7 +49,7 @@ class WithContext(setGraphContext: GraphContext => Unit, getGraphContext: api.Wo
     val extContext = context.asInstanceOf[ExtensionContext]
     val nvmContext = extContext.nvmContext
     // Note that this can optimized by hanging onto the array and just mutating it. Shouldn't be necessary though.
-    val agentSet = new ArrayAgentSet(nvmContext.agent.getAgentClass, Array(nvmContext.agent), world)
+    val agentSet = new ArrayAgentSet(nvmContext.agent.kind, null, Array(nvmContext.agent))
     val currentContext = getGraphContext(world)
     setGraphContext(gc)
     nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)

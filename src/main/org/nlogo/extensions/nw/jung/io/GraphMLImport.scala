@@ -93,10 +93,10 @@ object GraphMLImport {
     val program = agent.world.program
     agent match {
       case t: Turtle =>
-        for (breedAgentSet <- program.breeds.asScala.get(breed))
+        for (breedAgentSet <- program.breeds.get(breed))
           t.setTurtleOrLinkVariable("BREED", breedAgentSet)
       case l: Link =>
-        for (breedAgentSet <- program.linkBreeds.asScala.get(breed))
+        for (breedAgentSet <- program.linkBreeds.get(breed))
           l.setTurtleOrLinkVariable("BREED", breedAgentSet)
     }
   }
@@ -110,25 +110,25 @@ object GraphMLImport {
             attribute.name match {
               case "BREED" =>
                 val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                program.linkBreeds.asScala.get(breed).collect {
+                program.linkBreeds.get(breed).collect {
                   case b: AgentSet => l.setBreed(b)
                 }
               case v if program.linksOwn.indexOf(v) != -1 =>
-                agent.setTurtleOrLinkVariable(v, attribute.valueObject)
+                agent.setTurtleOrLinkVariable(v, attribute.valueObject.asInstanceOf[AnyRef])
               case v =>
-                agent.setLinkBreedVariable(v, attribute.valueObject)
+                agent.setLinkBreedVariable(v, attribute.valueObject.asInstanceOf[AnyRef])
             }
           case t: Turtle =>
             attribute.name match {
               case "BREED" =>
                 val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                program.breeds.asScala.get(breed).collect {
+                program.breeds.get(breed).collect {
                   case b: AgentSet => t.setBreed(b)
                 }
               case v if program.turtlesOwn.indexOf(v) != -1 =>
-                agent.setTurtleOrLinkVariable(v, attribute.valueObject)
+                agent.setTurtleOrLinkVariable(v, attribute.valueObject.asInstanceOf[AnyRef])
               case v =>
-                agent.setBreedVariable(v, attribute.valueObject)
+                agent.setBreedVariable(v, attribute.valueObject.asInstanceOf[AnyRef])
             }
         }
       } catch {
@@ -174,7 +174,7 @@ object GraphMLImport {
         }
 
       createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE)) {
-        e: Edge => createLink(turtles, graph.getEndpoints(e), world.links)
+        e: Edge => createLink(turtles, graph.getEndpoints(e), world.links, world)
       }
 
       turtles.valuesIterator

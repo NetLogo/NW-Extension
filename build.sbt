@@ -14,8 +14,8 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
 retrieveManaged := true
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogo" % "5.0.5-SNAPSHOT" from
-    "http://ccl.northwestern.edu/devel/NetLogo-d1794f4.jar",
+  "org.nlogo" % "NetLogoHeadless" % "6.0-M1" from
+    "http://ccl.northwestern.edu/devel/6.0-M1/NetLogoHeadless.jar",
   "jgrapht" % "jgrapht-jdk1.6" % "0.8.3" from
     "http://ccl.northwestern.edu/devel/jgrapht-jdk1.6-0.8.3.jar",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
