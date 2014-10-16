@@ -2,6 +2,8 @@
 
 package org.nlogo.extensions.nw.jung.io
 
+import java.io.FileNotFoundException
+
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
@@ -34,7 +36,7 @@ object Matrix {
         }
       }
     } catch {
-      case e: Exception => throw new ExtensionException("Error saving file: " + filename, e)
+      case e: Exception => throw new ExtensionException(e)
     }
   }
 
@@ -44,7 +46,16 @@ object Matrix {
     val matrixFile = new jung.io.MatrixFile(
       null, // TODO: provide weight key (null means 1) (issue #19) 
       factoryFor(linkBreed), DummyGraph.vertexFactory, DummyGraph.edgeFactory)
-    val graph = matrixFile.load(filename)
+    val graph = try {
+      matrixFile.load(filename)
+    } catch {
+      case e: Exception => e.getCause match {
+        case fileNotFound: FileNotFoundException =>
+          throw new ExtensionException(fileNotFound)
+        case _ =>
+          throw new ExtensionException(e)
+      }
+    }
     DummyGraph.importToNetLogo(graph, turtleBreed, linkBreed, rng)
   }
 }
