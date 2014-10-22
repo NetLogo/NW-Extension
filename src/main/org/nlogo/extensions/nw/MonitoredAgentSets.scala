@@ -30,7 +30,6 @@ trait MonitoredAgentSet[A <: Agent] {
 
 trait MonitoredTreeAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
   override val agentSet: TreeAgentSet
-  val world = agentSet.world
   val breedName = agentSet.printName
   var hasChanged = false
   protected val changeSubscriber = new AgentSetChangeSubscriber(agentSet, () => hasChanged = true)

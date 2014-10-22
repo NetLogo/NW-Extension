@@ -1,4 +1,4 @@
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.4"
 
 scalaSource in Compile := baseDirectory.value / "src" / "main"
 
@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "org.nlogo" % "NetLogo-tests" % "5.0.5" % "test" from
     "http://ccl.northwestern.edu/netlogo/5.0.5/NetLogo-tests.jar",
-  "org.scalatest" %% "scalatest" % "1.8" % "test",
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.picocontainer" % "picocontainer" % "2.13.6" % "test",
   "asm" % "asm-all" % "3.3.1" % "test"
 )

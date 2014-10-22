@@ -7,6 +7,7 @@ import scala.collection.JavaConverters._
 import org.apache.commons.collections15.Factory
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
+import org.nlogo.agent.World
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.util.MersenneTwisterFast
 
@@ -34,15 +35,15 @@ object DummyGraph {
     turtleBreed: AgentSet,
     linkBreed: AgentSet,
     rng: MersenneTwisterFast,
+    w: World,
     sorted: Boolean = false) = {
-    val w = turtleBreed.world
 
     val vs = graph.getVertices.asScala
     val vertices = if (sorted) vs.toSeq.sortBy(_.id) else vs
 
     val turtles: Map[Vertex, Turtle] =
       vertices.map { v =>
-        v -> createTurtle(turtleBreed, rng)
+        v -> createTurtle(turtleBreed, rng, w)
       }(collection.breakOut)
 
     graph.getEdges.asScala.foreach { e =>

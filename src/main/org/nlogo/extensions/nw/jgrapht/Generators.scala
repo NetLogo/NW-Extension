@@ -12,6 +12,7 @@ import org.jgrapht.generate.RingGraphGenerator
 import org.jgrapht.generate.StarGraphGenerator
 import org.jgrapht.generate.WheelGraphGenerator
 import org.nlogo.agent.AgentSet
+import org.nlogo.agent.World
 
 import org.jgrapht
 
@@ -19,7 +20,8 @@ class Vertex
 class Edge
 class Generator(
   turtleBreed: AgentSet,
-  linkBreed: AgentSet) {
+  linkBreed: AgentSet,
+  world: World) {
 
   private object vertexFactory extends VertexFactory[Vertex] {
     override def createVertex = new Vertex
@@ -32,16 +34,15 @@ class Generator(
       new jgrapht.graph.SimpleGraph[Vertex, Edge](classOf[Edge])
 
   private def importToNetLogo(graph: org.jgrapht.Graph[Vertex, Edge], rng: Random) = {
-    val w = turtleBreed.world
     val m = asScalaSetConverter(graph.vertexSet).asScala.map { v =>
-      v -> turtleBreed.world.createTurtle(
+      v -> world.createTurtle(
         turtleBreed,
         rng.nextInt(14), // color
         rng.nextInt(360)) // heading
     }.toMap
     asScalaSetConverter(graph.edgeSet).asScala
       .foreach { edge =>
-        w.linkManager.createLink(
+        world.linkManager.createLink(
           m(graph.getEdgeSource(edge)),
           m(graph.getEdgeTarget(edge)),
           linkBreed)

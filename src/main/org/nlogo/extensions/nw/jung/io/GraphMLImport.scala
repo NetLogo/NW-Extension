@@ -25,6 +25,7 @@ import edu.uci.ics.jung.io.graphml.Key
 import edu.uci.ics.jung.io.graphml.Metadata.MetadataType
 import edu.uci.ics.jung.io.graphml.NodeMetadata
 import org.nlogo.agent.World
+import org.nlogo.api
 
 object GraphMLImport {
 
@@ -65,9 +66,9 @@ object GraphMLImport {
             // trial and errors for unknown types
             try value.toDouble
             catch {
-              case _ =>
+              case _:Throwable =>
                 try value.toBoolean
-                catch { case _ => value } // string as a final resort
+                catch { case _:Throwable => value } // string as a final resort
             }
         }
       } catch {
@@ -110,7 +111,7 @@ object GraphMLImport {
             attribute.name match {
               case "BREED" =>
                 val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                program.linkBreeds.get(breed).collect {
+                agent.world.getLinkBreed(breed) match {
                   case b: AgentSet => l.setBreed(b)
                 }
               case v if program.linksOwn.indexOf(v) != -1 =>
@@ -122,7 +123,7 @@ object GraphMLImport {
             attribute.name match {
               case "BREED" =>
                 val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                program.breeds.get(breed).collect {
+                agent.world.getBreed(breed) match {
                   case b: AgentSet => t.setBreed(b)
                 }
               case v if program.turtlesOwn.indexOf(v) != -1 =>
@@ -170,7 +171,7 @@ object GraphMLImport {
 
       val turtles: Map[Vertex, Turtle] =
         createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE)) {
-          _ => createTurtle(world.turtles, rng)
+          _ => createTurtle(world.turtles, rng, world)
         }
 
       createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE)) {

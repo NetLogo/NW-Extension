@@ -19,7 +19,7 @@ class SetContext(setContext: GraphContext => Unit)
   override def perform(args: Array[api.Argument], context: api.Context) {
     val turtleSet = args(0).getAgentSet.requireTurtleSet
     val linkSet = args(1).getAgentSet.requireLinkSet
-    val world = linkSet.world
+    val world = context.getAgent.world.asInstanceOf[agent.World]
     val gc = new GraphContext(world, turtleSet, linkSet)
     setContext(gc)
   }
@@ -44,7 +44,7 @@ class WithContext(setGraphContext: GraphContext => Unit, getGraphContext: api.Wo
   def perform(args: Array[Argument], context: Context) {
     val turtleSet = args(0).getAgentSet.requireTurtleSet
     val linkSet = args(1).getAgentSet.requireLinkSet
-    val world = linkSet.world
+    val world = context.getAgent.world.asInstanceOf[agent.World]
     val gc = new GraphContext(world, turtleSet, linkSet)
     val extContext = context.asInstanceOf[ExtensionContext]
     val nvmContext = extContext.nvmContext

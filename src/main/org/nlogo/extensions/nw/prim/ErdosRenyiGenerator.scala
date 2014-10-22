@@ -8,13 +8,14 @@ import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.algorithms
+import org.nlogo.agent.World
 
 class ErdosRenyiGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType))
   def createTurtles(args: Array[api.Argument], context: api.Context) = {
-    val turtleBreed = args(0).getAgentSet.requireTurtleBreed
-    val linkBreed = args(1).getAgentSet.requireLinkBreed
+    val turtleBreed = args(0).getAgentSet.requireTurtleBreed(context.getAgent.world.asInstanceOf[World])
+    val linkBreed = args(1).getAgentSet.requireLinkBreed(context.getAgent.world.asInstanceOf[World])
     val nbTurtles = getIntValueWithMinimum(args(2), 1)
     val connexionProbability = args(3).getDoubleValue
     if (!(connexionProbability >= 0 && connexionProbability <= 1.0))
@@ -22,6 +23,7 @@ class ErdosRenyiGenerator extends TurtleCreatingCommand {
     algorithms.ErdosRenyiGenerator.generate(
       turtleBreed, linkBreed,
       nbTurtles, connexionProbability,
-      context.getRNG)
+      context.getRNG,
+      context.getAgent.world.asInstanceOf[World])
   }
 }

@@ -2,6 +2,7 @@
 
 package org.nlogo.extensions.nw.prim.jung
 
+import org.nlogo.agent
 import org.nlogo.api
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
@@ -21,10 +22,13 @@ class SaveMatrix(getGraphContext: api.World => GraphContext)
 class LoadMatrix
   extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
-  def createTurtles(args: Array[api.Argument], context: api.Context) =
+  def createTurtles(args: Array[api.Argument], context: api.Context) = {
+    val world = context.getAgent.world.asInstanceOf[agent.World]
     Matrix.load(
       filename = args(0).getString,
-      turtleBreed = args(1).getAgentSet.requireTurtleBreed,
-      linkBreed = args(2).getAgentSet.requireLinkBreed,
-      rng = context.getRNG)
+      turtleBreed = args(1).getAgentSet.requireTurtleBreed(world),
+      linkBreed = args(2).getAgentSet.requireLinkBreed(world),
+      rng = context.getRNG,
+      world)
+  }
 }

@@ -13,6 +13,7 @@ import org.nlogo.api.I18N
 import org.nlogo.api.AgentKind
 import org.nlogo.nvm
 import org.nlogo.util.MersenneTwisterFast
+import scala.language.implicitConversions
 
 object NetworkExtensionUtil {
 
@@ -47,8 +48,8 @@ object NetworkExtensionUtil {
     new RichAgentSet(agentSet.asInstanceOf[agent.AgentSet])
 
   class RichAgentSet(agentSet: agent.AgentSet) {
-    def isLinkBreed = (agentSet eq world.links) || world.isLinkBreed(agentSet)
-    def isTurtleBreed = (agentSet eq world.turtles) || world.isBreed(agentSet)
+    def isLinkBreed(world: World) = (agentSet eq world.links) || world.isLinkBreed(agentSet)
+    def isTurtleBreed(world: World) = (agentSet eq world.turtles) || world.isBreed(agentSet)
 
     def isLinkSet = AgentKind.Link == agentSet.kind
     def isTurtleSet = AgentKind.Turtle == agentSet.kind
@@ -59,19 +60,19 @@ object NetworkExtensionUtil {
       if (isLinkSet) agentSet
       else throw new ExtensionException("Expected input to be a linkset")
 
-    def requireTurtleBreed =
-      if (isTurtleBreed) agentSet.asInstanceOf[TreeAgentSet]
+    def requireTurtleBreed(world: World) =
+      if (isTurtleBreed(world)) agentSet.asInstanceOf[TreeAgentSet]
       else throw new ExtensionException("Expected input to be a turtle breed")
-    def requireLinkBreed =
-      if (isLinkBreed) agentSet.asInstanceOf[TreeAgentSet]
+    def requireLinkBreed(world: World) =
+      if (isLinkBreed(world)) agentSet.asInstanceOf[TreeAgentSet]
       else throw new ExtensionException(
         I18N.errors.get("org.nlogo.prim.etc.$common.expectedLastInputToBeLinkBreed"))
-    def requireDirectedLinkBreed =
-      if (isLinkBreed && agentSet.isDirected) agentSet.asInstanceOf[TreeAgentSet]
+    def requireDirectedLinkBreed(world: World) =
+      if (isLinkBreed(world) && agentSet.isDirected) agentSet.asInstanceOf[TreeAgentSet]
       else throw new ExtensionException(
         "Expected input to be a directed link breed")
-    def requireUndirectedLinkBreed =
-      if (isLinkBreed && !agentSet.isDirected) agentSet.asInstanceOf[TreeAgentSet]
+    def requireUndirectedLinkBreed(world: World) =
+      if (isLinkBreed(world) && !agentSet.isDirected) agentSet.asInstanceOf[TreeAgentSet]
       else throw new ExtensionException(
         "Expected input to be an undirected link breed")
 
@@ -128,8 +129,8 @@ object NetworkExtensionUtil {
 
   }
 
-  def createTurtle(turtleBreed: agent.AgentSet, rng: MersenneTwisterFast) =
-    turtleBreed.world.createTurtle(
+  def createTurtle(turtleBreed: agent.AgentSet, rng: MersenneTwisterFast, world: World) =
+    world.createTurtle(
       turtleBreed,
       rng.nextInt(14), // color
       rng.nextInt(360)) // heading
