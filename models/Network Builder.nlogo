@@ -124,6 +124,16 @@ to show-centrality [ centrality ]
   let measure (word "nw:" centrality "-centrality")
   ask turtles [ set label precision runresult measure 3 ]
 end
+
+to save-graphml
+  let file user-new-file
+  if file != false [ nw:save-graphml file ]
+end
+
+to load-graphml
+  let file user-file
+  if file != false [ nw:load-graphml file ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 251
@@ -160,7 +170,7 @@ CHOOSER
 mode
 mode
 "add-node" "add-undirected-link" "add-directed-link" "remove-node" "remove-link"
-2
+0
 
 BUTTON
 40
@@ -230,6 +240,40 @@ BUTTON
 353
 show centralities
 show-centrality centrality-measure
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+20
+370
+138
+403
+NIL
+save-graphml
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+20
+413
+137
+446
+NIL
+load-graphml
 NIL
 1
 T
@@ -583,7 +627,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.6
+NetLogo 5.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
