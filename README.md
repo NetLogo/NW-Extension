@@ -2,9 +2,9 @@
 
 # The NetLogo NW Extension for Network Analysis
 
-This is a future replacement for the Network Extension that is currently bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) As of NetLogo 5.1 this extension will come bundled with NetLogo. 
+This is the new extension for network analysis in NetLogo. It replaces the old Network Extension that came bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) This extension comes bundled with NetLogo as of NetLogo 5.1.
 
-This extension is still in development.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new) or by submitting bugs to bugs@ccl.northwestern.edu. 
+While this extension is stable and we encourage using this instead of the old extension, we're continuing to add new features to it.  Users are invited to experiment with it and report any issues they might find [here on GitHub](https://github.com/NetLogo/NW-Extension/issues/new) or by submitting bugs to bugs@ccl.northwestern.edu. If there are any features you would like to see added, feel free to request them!
 
 The source code for the extension is hosted online at
 https://github.com/NetLogo/NW-Extension.
