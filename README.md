@@ -543,9 +543,9 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-preferential-attachment turtles links 100 [ set color red ]
 
 #### generate-random
-`nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection_probability_ _optional-command-block_
+`nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection-probability_ _optional-command-block_
 
-Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection_probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G(n, p)_ variant of the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection-probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G(n, p)_ variant of the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
 The algorithm is O(n²) for directed networks and O(n²/2) for undirected networks, so generating more than a couple thousand nodes will likely take a very long time.
 
@@ -554,20 +554,20 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-random turtles links 100 0.5 [ set color red ]
 
 #### generate-small-world
-`nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _clustering-exponent_ _is-toroidal_ _optional-command-block_
+`nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column-count_ _clustering-exponent_ _is-toroidal_ _optional-command-block_
 
 Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model).
 
-The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is_toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering_exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
+The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is-toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering-exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-small-world turtles links 10 10 2.0 false [ set color red ]
 
 #### generate-lattice-2d
-`nw:generate-lattice-2d` _turtle-breed_ _link-breed_ _row-count_ _column_count_ _is-toroidal_ _optional-command-block_
+`nw:generate-lattice-2d` _turtle-breed_ _link-breed_ _row-count_ _column-count_ _is-toroidal_ _optional-command-block_
 
-Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column_count_ columns. The grid will wrap around itsef if _is_toroidal_ is `true`.
+Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column-count_ columns. The grid will wrap around itsef if _is-toroidal_ is `true`.
 
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
