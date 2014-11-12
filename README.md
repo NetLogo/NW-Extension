@@ -468,8 +468,6 @@ The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_cen
 
 Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
 
-Also note that, as of now, link weights are not taken into account.
-
 #### weighted-closeness-centrality
 ![turtle][turtle] `nw:weighted-closeness-centrality` _weight-variable-name_
 
