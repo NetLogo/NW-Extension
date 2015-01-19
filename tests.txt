@@ -1289,6 +1289,9 @@ exclude-dangling-link
 
 load-gdf
   extensions [ nw ]
-  O> nw:load "sample.gdf"
-  count turtles => 402
-  count links => 725
+  O> nw:load "test/sample.gdf" turtles links
+  count turtles => 3
+  count links => 3
+  O> nw:load "test/sample.gdf" mice undirected-links
+  count mice => 3
+  count undirected-links => 3
