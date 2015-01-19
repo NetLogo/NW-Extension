@@ -13,6 +13,8 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
 
 retrieveManaged := true
 
+resolvers += "Gephi Releases" at "http://nexus.gephi.org/nexus/content/repositories/releases/"
+
 libraryDependencies ++= Seq(
   "org.nlogo" % "NetLogo" % "5.1.0" from
     "http://ccl.northwestern.edu/netlogo/5.1.0/NetLogo.jar",
@@ -23,7 +25,8 @@ libraryDependencies ++= Seq(
   "net.sf.jung" % "jung-algorithms" % "2.0.1",
   "net.sf.jung" % "jung-api" % "2.0.1",
   "net.sf.jung" % "jung-graph-impl" % "2.0.1",
-  "net.sf.jung" % "jung-io" % "2.0.1"
+  "net.sf.jung" % "jung-io" % "2.0.1",
+  "org.gephi"   % "gephi-toolkit" % "0.8.2" classifier("all") intransitive
 )
 
 libraryDependencies ++= Seq(

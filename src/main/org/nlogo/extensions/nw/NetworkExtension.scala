@@ -95,5 +95,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
 
     add("save-graphml", new prim.jung.SaveGraphML(this))
     add("load-graphml", new prim.jung.LoadGraphML)
+
+    add("load", new prim.Load())
   }
 }
