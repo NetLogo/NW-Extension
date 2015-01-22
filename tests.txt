@@ -1287,17 +1287,18 @@ exclude-dangling-link
 
 # Loading and saving
 
-load-gdf-basic
+load-gdf-simple-dir
   extensions [ nw ]
-  O> nw:load "test/sample.gdf" turtles links
-  count turtles => 3
-  count links => 3
-  O> nw:load "test/sample.gdf" mice undirected-links
-  count mice => 3
-  count undirected-links => 3
+  O> nw:load "test/gdf/simple-dir.gdf" turtles links
+  count turtles => 2
+  count links => 1
+  [ is-directed-link? self ] of one-of links => true
+  [ is-undirected-link? self ] of one-of links => false
 
-load-gdf-labels-and-colors
+load-gdf-simple-undir
   extensions [ nw ]
-  O> nw:load "test/sample.gdf" turtles links
-  map [ [ label ] of ? ] sort turtles => ["one" "2" "3"]
-  map [ [ color ] of ? ] sort turtles => [[153 153 153] [153 153 153] [153 153 153]]
+  O> nw:load "test/gdf/simple-undir.gdf" turtles links
+  count turtles => 2
+  count links => 1
+  [ is-directed-link? self ] of one-of links => false
+  [ is-undirected-link? self ] of one-of links => true
