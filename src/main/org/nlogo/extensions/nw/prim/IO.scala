@@ -59,7 +59,7 @@ class Load extends TurtleCreatingCommand {
       val source = nodeToTurtle(edge.getSource)
       val target = nodeToTurtle(edge.getTarget)
       // There are three gephi edge types: directed, undirected, and mutual. Mutual is pretty much just indicating that
-      // and egde goes both ways/there are two edges in either direction, so we treat it as either. BCH 1/22/2015
+      // and edge goes both ways/there are two edges in either direction, so we treat it as either. BCH 1/22/2015
       val gephiDirected = edge.getType == EdgeType.DIRECTED
       val gephiUndirected = edge.getType == EdgeType.UNDIRECTED
       if (linkBreed.isDirected == linkBreed.isUndirected) {
