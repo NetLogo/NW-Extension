@@ -9,22 +9,21 @@ import org.gephi.io.importer.api.{EdgeDraftGetter, ImportController, NodeDraftGe
 import org.nlogo.agent.{Link, Turtle}
 import org.nlogo.api
 import org.nlogo.api.AgentVariableNumbers._
+import org.nlogo.api.{ExtensionException, LogoList}
 import org.nlogo.api.Syntax._
-import org.nlogo.api.{Context, LogoList}
-import org.nlogo.extensions.nw.NetworkExtensionUtil.{TurtleCreatingCommand, _}
-import org.nlogo.extensions.nw.gephi.GephiUtils.withNWLoaderContext
+import org.nlogo.extensions.nw.NetworkExtensionUtil._
 import org.nlogo.nvm.ExtensionContext
 import org.openide.util.Lookup
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-class Load extends TurtleCreatingCommand {
+class Load extends TurtleAskingCommand {
   private type JDouble = java.lang.Double
 
   override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
 
-  def createTurtles(args: Array[api.Argument], context: Context): TraversableOnce[Turtle] = withNWLoaderContext {
+  override def perform(args: Array[api.Argument], context: api.Context) = {
     val importer = Lookup.getDefault.lookup(classOf[ImportController])
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val world = ws.world
@@ -77,7 +76,15 @@ class Load extends TurtleCreatingCommand {
       links
     } toMap
 
-    nodeToTurtle.values
+    askTurtles(nodeToTurtle.values, context)
+
+    if(badEdges.nonEmpty) {
+      val edgesList = badEdges.map(e => e.getSource.getId + "->" + e.getTarget.getId).mkString(", ")
+      val errorMsg =
+        "The following edges had a directedness different than their assigned breed. They have been given " +
+        "the directedness of their breed. If you wish to ignore this error, wrap this command in a CAREFULLY:"
+      throw new ExtensionException(errorMsg + " " + edgesList)
+    }
   }
 
   private def convertColor(c: Color): LogoList = {

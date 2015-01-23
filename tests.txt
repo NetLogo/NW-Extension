@@ -1310,3 +1310,7 @@ load-gdf-simple-unspecified
   count links => 1
   [ is-directed-link? self ] of one-of links => false
   [ is-undirected-link? self ] of one-of links => true
+
+load-gdf-contradiction
+  extensions [ nw ]
+  O> nw:load "test/gdf/simple-undir.gdf" turtles directed-links => ERROR Extension exception: The following edges had a directedness different than their assigned breed. They have been given the directedness of their breed. If you wish to ignore this error, wrap this command in a CAREFULLY: 1->2

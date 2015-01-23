@@ -2,14 +2,9 @@
 
 package org.nlogo.extensions.nw
 
-import org.nlogo.agent
 import org.nlogo.agent.TreeAgentSet
-import org.nlogo.agent.Turtle
-import org.nlogo.api
-import org.nlogo.api.Agent
-import org.nlogo.api.ExtensionException
-import org.nlogo.api.I18N
-import org.nlogo.nvm
+import org.nlogo.api.{Agent, ExtensionException, I18N}
+import org.nlogo.{agent, api, nvm}
 import org.nlogo.util.MersenneTwisterFast
 
 object NetworkExtensionUtil {
@@ -97,24 +92,31 @@ object NetworkExtensionUtil {
 
   }
 
-  trait TurtleCreatingCommand extends api.DefaultCommand with nvm.CustomAssembled {
+  trait TurtleAskingCommand extends api.DefaultCommand with nvm.CustomAssembled {
     // the command itself is turtle or observer. inside the block is turtle code.
     // Issue #126 provides a good use case for this to be executed in turtle contexts.
     override def getAgentClassString = "OT:-T--"
-    def createTurtles(args: Array[api.Argument], context: api.Context): TraversableOnce[agent.Turtle]
-    override def perform(args: Array[api.Argument], context: api.Context) {
+
+    def askTurtles(turtles: TraversableOnce[agent.Turtle], context: api.Context) = {
+      val agents = turtles.toArray[agent.Agent]
       val world = context.getAgent.world.asInstanceOf[agent.World]
       val extContext = context.asInstanceOf[nvm.ExtensionContext]
       val nvmContext = extContext.nvmContext
-      val turtles = createTurtles(args, context).toArray[agent.Agent]
-      turtles.foreach(extContext.workspace.joinForeverButtons)
-      val agentSet = new agent.ArrayAgentSet(classOf[agent.Turtle], turtles, world)
+      agents.foreach(extContext.workspace.joinForeverButtons)
+      val agentSet = new agent.ArrayAgentSet(classOf[agent.Turtle], agents, world)
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }
     def assemble(a: nvm.AssemblerAssistant) {
       a.block()
       a.done()
     }
+
+  }
+
+  trait TurtleCreatingCommand extends TurtleAskingCommand {
+    def createTurtles(args: Array[api.Argument], context: api.Context): TraversableOnce[agent.Turtle]
+    override def perform(args: Array[api.Argument], context: api.Context) =
+      askTurtles(createTurtles(args, context), context)
 
     // helper function to validate a minimum number of "things" (could be nodes, rows, columns, etc.)
     // and throw an appropriate exception if the value is below that minimum
