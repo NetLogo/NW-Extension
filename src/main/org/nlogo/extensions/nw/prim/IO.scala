@@ -45,7 +45,7 @@ class Load extends TurtleAskingCommand {
           println(v.getColumn.getTitle -> v.getValue)
           v.getColumn.getTitle.toUpperCase -> convertAttribute(v.getValue)
         }.toMap
-        val breed: AgentSet = attrs.get("BREED").collect{case s: String => s}
+        val breed: AgentSet = attrs.get("BREED").collect{case s: String => s.toUpperCase}
                                                 .flatMap(s => breeds.get(s))
                                                 .collect{case b: AgentSet => b}
                                                 .getOrElse(turtleBreed)

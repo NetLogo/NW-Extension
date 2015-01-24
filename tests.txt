@@ -1328,3 +1328,13 @@ load-gdf-turtles-own
   O> nw:load "test/gdf/turtles-own.gdf" turtles links
   [tvar] of turtle 0 => true
   [tvar] of turtle 1 => false
+
+load-gdf-missing-turtle-var
+  extensions [ nw ]
+  O> nw:load "test/gdf/missing-attr.gdf" turtles links
+
+load-gdf-breeds-own
+  extensions [ nw ]
+  O> nw:load "test/gdf/breeds-own.gdf" turtles links
+  [fur] of mouse 0 => "white"
+  [spots] of frog 1 => "yellow"
