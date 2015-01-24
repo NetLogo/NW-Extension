@@ -1322,3 +1322,9 @@ load-gdf-builtins
   [label] of turtle 1 => "two"
   [color] of turtle 0 => [255 0 0]
   [color] of turtle 1 => [255 200 0]
+
+load-gdf-turtles-own
+  extensions [ nw ]
+  O> nw:load "test/gdf/turtles-own.gdf" turtles links
+  [tvar] of turtle 0 => true
+  [tvar] of turtle 1 => false

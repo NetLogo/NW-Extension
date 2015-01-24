@@ -6,7 +6,7 @@ import java.io.File
 import org.gephi.data.attributes.`type`.DynamicType
 import org.gephi.io.importer.api.EdgeDraft.EdgeType
 import org.gephi.io.importer.api.{EdgeDraftGetter, ImportController, NodeDraftGetter}
-import org.nlogo.agent.{Link, Turtle}
+import org.nlogo.agent.{Link, Turtle, AgentSet}
 import org.nlogo.api
 import org.nlogo.api.AgentVariableNumbers._
 import org.nlogo.api.{ExtensionException, LogoList}
@@ -27,27 +27,40 @@ class Load extends TurtleAskingCommand {
     val importer = Lookup.getDefault.lookup(classOf[ImportController])
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val world = ws.world
+    val breeds = world.program.breeds.asScala
+    val turtlesOwn = world.program.turtlesOwn
+    val linksOwn = world.program.linksOwn
     val fm = ws.fileManager
     val file = new File(fm.attachPrefix(args(0).getString))
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
     val linkBreed = args(2).getAgentSet.requireLinkBreed
+
     val unloader = importer.importFile(file).getUnloader
     val nodes: Iterable[NodeDraftGetter] = unloader.getNodes.asScala
     val edges: Iterable[EdgeDraftGetter] = unloader.getEdges.asScala
 
     val nodeToTurtle: Map[NodeDraftGetter, Turtle] = nodes zip nodes.map {
       node => {
-        val turtle = createTurtle(turtleBreed, ws.mainRNG)
+        val attrs: Map[String, AnyRef] = node.getAttributeRow.getValues.filter(v => v.getValue != null).map { v =>
+          println(v.getColumn.getTitle -> v.getValue)
+          v.getColumn.getTitle.toUpperCase -> convertAttribute(v.getValue)
+        }.toMap
+        val breed: AgentSet = attrs.get("BREED").collect{case s: String => s}
+                                                .flatMap(s => breeds.get(s))
+                                                .collect{case b: AgentSet => b}
+                                                .getOrElse(turtleBreed)
+        val turtle = createTurtle(breed, ws.mainRNG)
         Option(node.getLabel)      foreach (l => turtle.setTurtleVariable(VAR_LABEL, l))
         Option(node.getLabelColor) foreach (c => turtle.setTurtleVariable(VAR_LABELCOLOR, convertColor(c)))
         Option(node.getColor)      foreach (c => turtle.setTurtleVariable(VAR_COLOR, convertColor(c)))
         // Note that node's have a getSize. This does not correspond to the `size` attribute in files so should not be
         // used. BCH 1/21/2015
-
         //val values = node.getAttributeRow.getValues map (x => convertAttribute(x.getValue))
-        node.getAttributeRow.getValues foreach { attr =>
-          val name = attr.getColumn.getTitle
-
+        (attrs - "BREED") foreach { case (k: String, v: AnyRef) =>
+          if (turtlesOwn.contains(k))
+            turtle.setTurtleOrLinkVariable(k, v)
+          else if (turtle.ownsVariable(k))
+            turtle.setBreedVariable(k, v)
         }
         turtle
       }
@@ -97,10 +110,12 @@ class Load extends TurtleAskingCommand {
 
   private def convertAttribute(o: Any): AnyRef = o match {
     case n: java.lang.Number => n.doubleValue: JDouble
+    case b: java.lang.Boolean => b
     case c: java.util.Collection[_] => LogoList.fromIterator(c.asScala.map(x => convertAttribute(x)).iterator)
     // There may be a better handling of dynamic values, but this seems good enough for now. BCH 1/21/2015
     case d: DynamicType[_] => LogoList.fromIterator(d.getValues.asScala.map(x => convertAttribute(x)).iterator)
     case a: Array[_] => LogoList.fromIterator(a.map(x => convertAttribute(x)).iterator)
+    case x => x.toString
   }
 }
 
