@@ -1,9 +1,10 @@
 package org.nlogo.extensions.nw.prim
 
 import java.awt.Color
-import java.io.File
+import java.io.{File, FileReader, IOException}
 
 import org.gephi.data.attributes.`type`.DynamicType
+import org.gephi.data.attributes.api.AttributeRow
 import org.gephi.io.importer.api.EdgeDraft.EdgeType
 import org.gephi.io.importer.api.{EdgeDraftGetter, ImportController, NodeDraftGetter}
 import org.nlogo.agent.{Link, Turtle, AgentSet}
@@ -27,7 +28,8 @@ class Load extends TurtleAskingCommand {
     val importer = Lookup.getDefault.lookup(classOf[ImportController])
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val world = ws.world
-    val breeds = world.program.breeds.asScala
+    val turtleBreeds = world.program.breeds.asScala.toMap
+    val linkBreeds = world.program.linkBreeds.asScala.toMap
     val turtlesOwn = world.program.turtlesOwn
     val linksOwn = world.program.linksOwn
     val fm = ws.fileManager
@@ -35,32 +37,26 @@ class Load extends TurtleAskingCommand {
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
     val linkBreed = args(2).getAgentSet.requireLinkBreed
 
-    val unloader = importer.importFile(file).getUnloader
+    val parser = importer.getFileImporter(file)
+    val unloader = try using(new FileReader(file))(r => importer.importFile(r, parser).getUnloader)
+                   catch { case e: IOException => throw new ExtensionException(e) }
     val nodes: Iterable[NodeDraftGetter] = unloader.getNodes.asScala
     val edges: Iterable[EdgeDraftGetter] = unloader.getEdges.asScala
 
     val nodeToTurtle: Map[NodeDraftGetter, Turtle] = nodes zip nodes.map {
       node => {
-        val attrs: Map[String, AnyRef] = node.getAttributeRow.getValues.filter(v => v.getValue != null).map { v =>
-          println(v.getColumn.getTitle -> v.getValue)
-          v.getColumn.getTitle.toUpperCase -> convertAttribute(v.getValue)
-        }.toMap
-        val breed: AgentSet = attrs.get("BREED").collect{case s: String => s.toUpperCase}
-                                                .flatMap(s => breeds.get(s))
-                                                .collect{case b: AgentSet => b}
-                                                .getOrElse(turtleBreed)
-        val turtle = createTurtle(breed, ws.mainRNG)
-        Option(node.getLabel)      foreach (l => turtle.setTurtleVariable(VAR_LABEL, l))
-        Option(node.getLabelColor) foreach (c => turtle.setTurtleVariable(VAR_LABELCOLOR, convertColor(c)))
-        Option(node.getColor)      foreach (c => turtle.setTurtleVariable(VAR_COLOR, convertColor(c)))
+        val attrs = getAttributes(node.getAttributeRow()) ++
+                    pair("LABEL", node.getLabel) ++
+                    pair("LABEL-COLOR", node.getLabelColor) ++
+                    pair("COLOR", node.getColor)
         // Note that node's have a getSize. This does not correspond to the `size` attribute in files so should not be
         // used. BCH 1/21/2015
-        //val values = node.getAttributeRow.getValues map (x => convertAttribute(x.getValue))
+
+        val breed = getBreed(attrs, turtleBreeds).getOrElse(turtleBreed)
+        val turtle = createTurtle(breed, ws.mainRNG)
         (attrs - "BREED") foreach { case (k: String, v: AnyRef) =>
-          if (turtlesOwn.contains(k))
-            turtle.setTurtleOrLinkVariable(k, v)
-          else if (turtle.ownsVariable(k))
-            turtle.setBreedVariable(k, v)
+          val i = world.indexOfVariable(turtle, k)
+          if (i != -1) turtle.setVariable(i, v)
         }
         turtle
       }
@@ -74,17 +70,30 @@ class Load extends TurtleAskingCommand {
       // and edge goes both ways/there are two edges in either direction, so we treat it as either. BCH 1/22/2015
       val gephiDirected = edge.getType == EdgeType.DIRECTED
       val gephiUndirected = edge.getType == EdgeType.UNDIRECTED
-      if (linkBreed.isDirected == linkBreed.isUndirected) {
-        linkBreed.setDirected(gephiDirected)
-      } else if ((linkBreed.isDirected && gephiUndirected) || (linkBreed.isUndirected && gephiDirected)) {
+      val attrs = getAttributes(edge.getAttributeRow()) ++
+                  pair("LABEL", edge.getLabel) ++
+                  pair("LABEL-COLOR", edge.getLabelColor) ++
+                  pair("COLOR", edge.getColor) ++
+                  pair("WEIGHT", edge.getWeight: java.lang.Double)
+
+      val breed = getBreed(attrs, linkBreeds).getOrElse(linkBreed)
+      if (breed.isDirected == breed.isUndirected) {
+        breed.setDirected(gephiDirected)
+      } else if ((breed.isDirected && gephiUndirected) || (breed.isUndirected && gephiDirected)) {
         badEdges.append(edge)
       }
 
-      val links = List(world.linkManager.createLink(source, target, linkBreed)) ++ {
-        if (linkBreed.isDirected && edge.getType == EdgeType.MUTUAL)
-          Some(world.linkManager.createLink(target, source, linkBreed))
+      val links = List(world.linkManager.createLink(source, target, breed)) ++ {
+        if (breed.isDirected && edge.getType == EdgeType.MUTUAL)
+          Some(world.linkManager.createLink(target, source, breed))
         else
           None
+      }
+      links foreach { l =>
+        (attrs - "BREED") foreach { case (k: String, v: AnyRef) =>
+          val i = world.indexOfVariable(l, k)
+          if (i != -1) l.setVariable(i, v)
+        }
       }
       links
     } toMap
@@ -108,7 +117,21 @@ class Load extends TurtleAskingCommand {
     l
   }
 
+  private def pair(key: String, value: AnyRef): Option[(String, AnyRef)] =
+    Option(value) map (v => key -> convertAttribute(v))
+
+  private def getAttributes(row: AttributeRow): Map[String, AnyRef] =
+    row.getValues.filter(v => v.getValue != null).map { v =>
+      v.getColumn.getTitle.toUpperCase -> convertAttribute(v.getValue)
+    }.toMap
+
+  private def getBreed(attributes: Map[String, AnyRef], breeds: Map[String, AnyRef]): Option[AgentSet] =
+    attributes.get("BREED").collect{case s: String => s.toUpperCase}
+                          .flatMap(s => breeds.get(s))
+                          .collect{case b: AgentSet => b}
+
   private def convertAttribute(o: Any): AnyRef = o match {
+    case c: Color => convertColor(c)
     case n: java.lang.Number => n.doubleValue: JDouble
     case b: java.lang.Boolean => b
     case c: java.util.Collection[_] => LogoList.fromIterator(c.asScala.map(x => convertAttribute(x)).iterator)
