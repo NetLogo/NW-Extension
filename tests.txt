@@ -1351,6 +1351,6 @@ load-gdf-links-breeds
   extensions [ nw ]
   O> nw:load "test/gdf/link-breeds.gdf" turtles links
   [color] of one-of directed-links => [0 255 0]
-  [color] of one-of directed-links => [0 0 255]
+  [color] of one-of undirected-links => [0 0 255]
   [lvar] of one-of directed-links => 5
   [weight] of one-of undirected-links => 10
