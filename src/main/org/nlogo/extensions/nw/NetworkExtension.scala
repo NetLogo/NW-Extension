@@ -2,6 +2,8 @@
 
 package org.nlogo.extensions.nw
 
+import org.nlogo.extensions.nw.prim.LoadFileTypeDefaultBreeds
+
 import scala.collection.JavaConverters._
 
 import org.nlogo.api
@@ -94,7 +96,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("load-matrix", new prim.jung.LoadMatrix)
 
     add("save-graphml", new prim.jung.SaveGraphML(this))
-    add("load-graphml", new prim.jung.LoadGraphML)
+    add("load-graphml", new LoadFileTypeDefaultBreeds(".graphml"))
 
     add("load", new prim.Load())
   }

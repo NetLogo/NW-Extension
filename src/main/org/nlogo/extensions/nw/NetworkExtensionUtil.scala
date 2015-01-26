@@ -97,7 +97,7 @@ object NetworkExtensionUtil {
     // Issue #126 provides a good use case for this to be executed in turtle contexts.
     override def getAgentClassString = "OT:-T--"
 
-    def askTurtles(turtles: TraversableOnce[agent.Turtle], context: api.Context) = {
+    def askTurtles(context: api.Context)(turtles: TraversableOnce[agent.Turtle]) = {
       val agents = turtles.toArray[agent.Agent]
       val world = context.getAgent.world.asInstanceOf[agent.World]
       val extContext = context.asInstanceOf[nvm.ExtensionContext]
@@ -116,7 +116,7 @@ object NetworkExtensionUtil {
   trait TurtleCreatingCommand extends TurtleAskingCommand {
     def createTurtles(args: Array[api.Argument], context: api.Context): TraversableOnce[agent.Turtle]
     override def perform(args: Array[api.Argument], context: api.Context) =
-      askTurtles(createTurtles(args, context), context)
+      askTurtles(context)(createTurtles(args, context))
 
     // helper function to validate a minimum number of "things" (could be nodes, rows, columns, etc.)
     // and throw an appropriate exception if the value is below that minimum
