@@ -44,7 +44,7 @@ class LoadFileType(extension: String) extends TurtleAskingCommand {
 }
 
 class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
-  override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
+  override def getSyntax = commandSyntax(Array(StringType, CommandBlockType | OptionalType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
@@ -125,7 +125,7 @@ object GephiIO{
       val gephiUndirected = edge.getType == EdgeType.UNDIRECTED
       if (breed.isDirected == breed.isUndirected) {
         // This happens when the directedness of the default breed hasn't been set yet
-        breed.setDirected(gephiDirected)
+        breed.setDirected(!gephiUndirected)
         None
       } else if ((breed.isDirected && gephiUndirected) || (breed.isUndirected && gephiDirected)) {
         Some(edge)
