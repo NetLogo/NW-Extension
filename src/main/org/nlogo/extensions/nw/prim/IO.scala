@@ -4,16 +4,21 @@ import java.awt.Color
 import java.io.{File, FileReader, IOException}
 
 import org.gephi.data.attributes.`type`.DynamicType
-import org.gephi.data.attributes.api.AttributeRow
+import org.gephi.data.attributes.api.{AttributeController, AttributeRow}
+import org.gephi.graph.api.GraphController
+import org.gephi.io.exporter.api.ExportController
 import org.gephi.io.importer.api.EdgeDraft.EdgeType
-import org.gephi.io.importer.api.{EdgeDraftGetter, ImportController, NodeDraftGetter}
+import org.gephi.io.importer.api.{EdgeDefault, EdgeDraftGetter, ImportController, NodeDraftGetter}
 import org.gephi.io.importer.spi.FileImporter
+import org.gephi.project.api.ProjectController
 import org.nlogo.agent._
 import org.nlogo.api
-import org.nlogo.api.{AgentException, ExtensionException, LogoList}
+import org.nlogo.api.{DefaultReporter, AgentException, ExtensionException, LogoList}
 import org.nlogo.api.Syntax._
+import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.NetworkExtensionUtil._
 import org.nlogo.extensions.nw.gephi.GephiUtils
+import org.nlogo.extensions.nw.jung.io.GraphMLExport
 import org.nlogo.nvm.ExtensionContext
 import org.openide.util.Lookup
 
@@ -49,6 +54,40 @@ class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
     GephiIO.load(file, ws.world, ws.world.turtles, ws.world.links, askTurtles(context) _, extension)
+  }
+}
+
+class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
+  override def getSyntax = commandSyntax(Array(StringType))
+  override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
+    val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
+    val fn = fm.attachPrefix(args(0).getString)
+    val pc = Lookup.getDefault().lookup(classOf[ProjectController]);
+    val exportController = Lookup.getDefault.lookup(classOf[ExportController])
+    pc.newProject()
+    val ws = pc.getCurrentWorkspace
+    val gm = Lookup.getDefault.lookup(classOf[GraphController]).getModel
+    val am = Lookup.getDefault.lookup(classOf[AttributeController]).getModel
+    val gc = gcp.getGraphContext(context.getAgent.world)
+    val graph = (gc.links.exists(_.isDirectedLink), gc.links.exists(!_.isDirectedLink)) match {
+      case (true, true)  => gm.getMixedGraph
+      case (true, false) => gm.getDirectedGraph
+      case (false, true) => gm.getUndirectedGraph
+      case _             => gm.getGraph
+    }
+    val nodes = gc.turtles.map { turtle =>
+      val node = gm.factory.newNode(turtle.toString)
+      graph.addNode(node)
+      turtle -> node
+    }.toMap
+
+    gc.links.foreach { link =>
+      val edge = gm.factory.newEdge(nodes(link.end1), nodes(link.end2), 1, link.isDirectedLink)
+      graph.addEdge(edge)
+    }
+    ws.add(gm)
+    ws.add(am)
+    exportController.exportFile(new File(fn))
   }
 }
 

@@ -1385,3 +1385,22 @@ load-full-vna
   [(list tvar spots)] of one-of frogs => ["false" "true"]
   [(list lvar)] of one-of directed-links => ["5.0"]
   [(list weight)] of one-of undirected-links => [10]
+
+save-simple
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save "test/tmp/simple-undir.gdf"
+  O> ca
+  O> nw:load "test/tmp/simple-undir.gdf" turtles links
+  count turtles => 2
+  [is-undirected-link? self] of link 0 1 => true
+  [is-directed-link? self] of link 0 1 => false
+  O> ca
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  O> nw:save "test/tmp/simple-dir.gdf"
+  O> ca
+  O> nw:load "test/tmp/simple-dir.gdf" turtles links
+  count turtles => 2
+  [is-undirected-link? self] of link 0 1 => false
+  [is-directed-link? self] of link 0 1 => true
