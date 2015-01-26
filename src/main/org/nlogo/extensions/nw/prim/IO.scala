@@ -44,7 +44,7 @@ class LoadFileType(extension: String) extends TurtleAskingCommand {
 }
 
 class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
-  override def getSyntax = commandSyntax(Array(StringType, CommandBlockType | OptionalType))
+  override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))

@@ -3,6 +3,7 @@
 package org.nlogo.extensions.nw
 
 import org.nlogo.extensions.nw.prim.LoadFileTypeDefaultBreeds
+import org.nlogo.extensions.nw.prim.jung.LoadGraphML
 
 import scala.collection.JavaConverters._
 
@@ -96,8 +97,14 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("load-matrix", new prim.jung.LoadMatrix)
 
     add("save-graphml", new prim.jung.SaveGraphML(this))
-    add("load-graphml", new LoadFileTypeDefaultBreeds(".graphml"))
+    add("load-graphml", new prim.jung.LoadGraphML)
 
     add("load", new prim.Load())
+    add("load-csv", new LoadFileTypeDefaultBreeds(".csv"))
+    add("load-dl", new LoadFileTypeDefaultBreeds(".dl"))
+    add("load-gdf", new LoadFileTypeDefaultBreeds(".gdf"))
+    add("load-gexf", new LoadFileTypeDefaultBreeds(".gexf"))
+    add("load-gml", new LoadFileTypeDefaultBreeds(".gml"))
+    add("load-vna", new LoadFileTypeDefaultBreeds(".vna"))
   }
 }
