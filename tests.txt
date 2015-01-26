@@ -1312,8 +1312,8 @@ load-gdf-simple-unspecified
   O> nw:load "test/gdf/simple.gdf" turtles links
   count turtles => 2
   count links => 1
-  [ is-directed-link? self ] of one-of links => false
-  [ is-undirected-link? self ] of one-of links => true
+  [ is-directed-link? self ] of one-of links => true
+  [ is-undirected-link? self ] of one-of links => false
 
 load-gdf-contradiction
   extensions [ nw ]

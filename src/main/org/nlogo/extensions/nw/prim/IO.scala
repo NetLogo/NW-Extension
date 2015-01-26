@@ -80,7 +80,8 @@ object GephiIO{
     val container = try using(new FileReader(file))(r => importController.importFile(r, importer))
                     catch { case e: IOException => throw new ExtensionException(e) }
     val unloader = container.getUnloader
-    container.getReport
+    val defaultDirected = unloader.getEdgeDefault == EdgeDefault.DIRECTED
+    val defaultUndirected = unloader.getEdgeDefault == EdgeDefault.UNDIRECTED
     val nodes: Iterable[NodeDraftGetter] = unloader.getNodes.asScala
     val edges: Iterable[EdgeDraftGetter] = unloader.getEdges.asScala
 
@@ -100,7 +101,7 @@ object GephiIO{
       }
     } toMap
 
-    val badEdges = edges.map { edge =>
+    val badEdges: TraversableOnce[EdgeDraftGetter] = edges.map { edge =>
       val source = nodeToTurtle(edge.getSource)
       val target = nodeToTurtle(edge.getTarget)
       // There are three gephi edge types: directed, undirected, and mutual. Mutual is pretty much just indicating that
@@ -113,6 +114,18 @@ object GephiIO{
 
       val breed = getBreed(attrs, linkBreeds).getOrElse(defaultLinkBreed)
 
+
+      val gephiDirected = edge.getType == EdgeType.DIRECTED
+      val gephiUndirected = edge.getType == EdgeType.UNDIRECTED
+      val bad = if (breed.isDirected == breed.isUndirected) {
+        // This happens when the directedness of the default breed hasn't been set yet
+        if (edge.getType == null) breed.setDirected(defaultDirected)
+        else breed.setDirected(gephiDirected || edge.getType == EdgeType.MUTUAL)
+        false
+      } else {
+        (breed.isDirected && gephiUndirected) || (breed.isUndirected && gephiDirected)
+      }
+
       val links = List(world.linkManager.createLink(source, target, breed)) ++ {
         if (breed.isDirected && edge.getType == EdgeType.MUTUAL)
           Some(world.linkManager.createLink(target, source, breed))
@@ -121,17 +134,8 @@ object GephiIO{
       }
       links foreach { l => (attrs - "BREED") foreach (setAttribute(world, l) _).tupled }
 
-      val gephiDirected = edge.getType == EdgeType.DIRECTED
-      val gephiUndirected = edge.getType == EdgeType.UNDIRECTED
-      if (breed.isDirected == breed.isUndirected) {
-        // This happens when the directedness of the default breed hasn't been set yet
-        breed.setDirected(!gephiUndirected)
-        None
-      } else if ((breed.isDirected && gephiUndirected) || (breed.isUndirected && gephiDirected)) {
-        Some(edge)
-      } else {
-        None
-      }
+      if (bad) Some(edge)
+      else None
     }.collect{case Some(e: EdgeDraftGetter) => e}
 
     initTurtles(nodeToTurtle.values)
