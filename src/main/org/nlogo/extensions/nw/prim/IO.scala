@@ -94,9 +94,6 @@ object GephiExport {
   }
 
   def save(context: GraphContext, world: World, file: File, exporter: Exporter) = GephiUtils.withNWLoaderContext {
-    if (!file.exists) {
-      throw new ExtensionException("The file " + file + " cannot be found.")
-    }
     if (exporter == null) {
       throw new ExtensionException("Unable to find importer for " + file)
     }
@@ -144,8 +141,32 @@ object GephiExport {
       turtle -> node
     }.toMap
 
+    val edgeAttributes = attributeModel.getEdgeTable
+    val linksOwnAttributes: Map[String, AttributeColumn] = program.linksOwn.asScala.map { name =>
+      val kind = getBestType(world.links.asIterable[Link].map(l => l.getTurtleOrLinkVariable(name)))
+      name -> Option(edgeAttributes.getColumn(name)).getOrElse(edgeAttributes.addColumn(name, kind))
+    }.toMap
+
+    val linkBreedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.linkBreeds.asScala.collect {
+      case (breedName, breed: AgentSet) => breed -> program.linkBreedsOwn.get(breedName).asScala.map { name =>
+        val kind = getBestType(breed.asIterable[Link].map(l => l.getLinkBreedVariable(name)))
+        name -> Option(edgeAttributes.getColumn(name)).getOrElse(edgeAttributes.addColumn(name, kind))
+      }.toMap
+    }.toMap
+
     context.links.foreach { link =>
       val edge = graphModel.factory.newEdge(nodes(link.end1), nodes(link.end2), 1, link.isDirectedLink)
+      linksOwnAttributes.foreach { case (name, col) =>
+        edge.getAttributes.setValue(col.getIndex, coerce(link.getTurtleOrLinkVariable(name), col.getType))
+      }
+      if (link.getBreed != world.links) {
+        linkBreedsOwnAttributes(link.getBreed).foreach { case (name, col) =>
+          edge.getAttributes.setValue(col.getIndex, coerce(link.getLinkBreedVariable(name), col.getType))
+        }
+      }
+      val color = api.Color.getColor(link.color())
+      edge.getEdgeData.setColor(color.getRed / 255f, color.getGreen / 255f, color.getBlue / 255f)
+      edge.getEdgeData.setAlpha(color.getAlpha / 255f)
       graph.addEdge(edge)
     }
     gephiWorkspace.add(graphModel)
@@ -155,10 +176,9 @@ object GephiExport {
 
   private type JDouble = java.lang.Double
   private type JBoolean = java.lang.Boolean
-  private type JNumber = java.lang.Number
 
   private def getBestType(values: Iterable[AnyRef]): AttributeType = {
-    if (values.forall(_.isInstanceOf[JNumber])){
+    if (values.forall(_.isInstanceOf[Number])){
       AttributeType.DOUBLE
     } else if (values.forall(_.isInstanceOf[JBoolean])) {
       AttributeType.BOOLEAN
@@ -168,7 +188,8 @@ object GephiExport {
   }
 
   private def coerce(value: AnyRef, kind: AttributeType): AnyRef = value -> kind match {
-    case (x: JNumber, AttributeType.DOUBLE) => x.doubleValue: JDouble
+    case (x: Number, AttributeType.DOUBLE) => x.doubleValue: JDouble
+    case (x: Number, AttributeType.FLOAT) => x.doubleValue: JDouble
     case (b: JBoolean, AttributeType.BOOLEAN) => b
     // For Strings, we want to keep the escaping but ditch the surrounding quotes. BCH 1/26/2015
     case (s: String, AttributeType.STRING) => Dump.logoObject(s, readable = true, exporting = false).drop(1).dropRight(1)
@@ -281,7 +302,6 @@ object GephiImport{
 
   private type JDouble = java.lang.Double
   private type JBoolean = java.lang.Boolean
-  private type JNumber = java.lang.Number
   private def convertColor(c: Color): LogoList = {
     val l = LogoList(c.getRed.toDouble: JDouble,
                      c.getGreen.toDouble: JDouble,
@@ -308,17 +328,17 @@ object GephiImport{
   private val colorBuiltins = Set("COLOR", "LABEL-COLOR")
   private def convertAttribute(name: String, o: Any): AnyRef = {
     if (doubleBuiltins.contains(name)) o match {
-      case x: JNumber => x.doubleValue: JDouble
+      case x: Number => x.doubleValue: JDouble
       case s: String  => allCatch.opt(s.toDouble: JDouble).getOrElse(0.0: JDouble)
       case _ => "" // purposely invalid so it won't set. Might want to throw error instead. BCH 1/25/2015
     } else if (booleanBuiltins.contains(name)) o match {
-      case x: JNumber  => x.doubleValue != 0: JBoolean
+      case x: Number  => x.doubleValue != 0: JBoolean
       case b: JBoolean => b
       case s: String   => allCatch.opt(s.toBoolean: JBoolean).getOrElse(false: JBoolean)
       case _ => "" // purposely invalid so it won't set. Might want to throw error instead. BCH 1/25/2015
     } else if (colorBuiltins.contains(name)) o match {
       case c: Color => convertColor(c)
-      case x: JNumber => x.doubleValue: JDouble
+      case x: Number => x.doubleValue: JDouble
       case c: java.util.Collection[_] => LogoList.fromIterator(c.asScala.map(convertAttribute _).iterator)
       case s: String  => allCatch.opt(s.toDouble: JDouble).getOrElse("")
       case _ => "" // purposely invalid so it won't set. Might want to throw error instead. BCH 1/25/2015
@@ -329,7 +349,7 @@ object GephiImport{
 
   private def convertAttribute(o: Any): AnyRef = o match {
     case c: Color => convertColor(c)
-    case n: JNumber => n.doubleValue: JDouble
+    case n: Number => n.doubleValue: JDouble
     case b: JBoolean => b
     case c: java.util.Collection[_] => LogoList.fromIterator(c.asScala.map(x => convertAttribute(x)).iterator)
     // There may be a better handling of dynamic values, but this seems good enough for now. BCH 1/21/2015

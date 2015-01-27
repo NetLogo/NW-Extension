@@ -1440,3 +1440,14 @@ save-heterogeneous
   O> nw:load "test/tmp/heterogeneous.gdf" turtles links [ set tvar read-from-string tvar ]
   [tvar] of turtle 0 => true
   [tvar] of turtle 1 => 5
+
+save-link-breeds
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-directed-link-to turtle 1 [ set lvar true ]]
+  O> ask turtle 1 [ create-undirected-link-with turtle 2 [ set weight 5 ]]
+  O> nw:save "test/tmp/link-breeds.gdf"
+  O> ca
+  O> nw:load "test/tmp/link-breeds.gdf" turtles links
+  [lvar] of one-of directed-links => true
+  [weight] of one-of undirected-links => 5
