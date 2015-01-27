@@ -7,6 +7,7 @@ import org.gephi.data.attributes.`type`.DynamicType
 import org.gephi.data.attributes.api.{AttributeColumn, AttributeType, AttributeController, AttributeRow}
 import org.gephi.graph.api.GraphController
 import org.gephi.io.exporter.api.ExportController
+import org.gephi.io.exporter.spi.Exporter
 import org.gephi.io.importer.api.EdgeDraft.EdgeType
 import org.gephi.io.importer.api.{EdgeDefault, EdgeDraftGetter, ImportController, NodeDraftGetter}
 import org.gephi.io.importer.spi.FileImporter
@@ -19,7 +20,7 @@ import org.nlogo.agent.World
 import org.nlogo.api
 import org.nlogo.api._
 import org.nlogo.api.Syntax._
-import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.{GraphContext, GraphContextProvider}
 import org.nlogo.extensions.nw.NetworkExtensionUtil._
 import org.nlogo.extensions.nw.gephi.GephiUtils
 import org.nlogo.nvm.ExtensionContext
@@ -29,14 +30,13 @@ import scala.collection.JavaConverters._
 import scala.util.control.Exception.allCatch
 
 class Load extends TurtleAskingCommand {
-
   override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
     val linkBreed = args(2).getAgentSet.requireLinkBreed
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiIO.load(file, ws.world, turtleBreed, linkBreed, askTurtles(context))
+    GephiImport.load(file, ws.world, turtleBreed, linkBreed, askTurtles(context))
   }
 }
 
@@ -47,7 +47,7 @@ class LoadFileType(extension: String) extends TurtleAskingCommand {
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
     val linkBreed = args(2).getAgentSet.requireLinkBreed
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiIO.load(file, ws.world, turtleBreed, linkBreed, askTurtles(context) _, extension)
+    GephiImport.load(file, ws.world, turtleBreed, linkBreed, askTurtles(context) _, extension)
   }
 }
 
@@ -56,36 +56,64 @@ class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiIO.load(file, ws.world, ws.world.turtles, ws.world.links, askTurtles(context) _, extension)
+    GephiImport.load(file, ws.world, ws.world.turtles, ws.world.links, askTurtles(context) _, extension)
   }
 }
 
 class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
-  private type JDouble = java.lang.Double
-  private type JBoolean = java.lang.Boolean
-  private type JNumber = java.lang.Number
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val world = context.getAgent.world.asInstanceOf[World]
-    val program = world.program
     val workspace = context.asInstanceOf[ExtensionContext].workspace
-    val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
-    val fn = fm.attachPrefix(args(0).getString)
-    val pc = Lookup.getDefault().lookup(classOf[ProjectController])
-    val exportController = Lookup.getDefault.lookup(classOf[ExportController])
-    pc.newProject()
-    val ws = pc.getCurrentWorkspace
-    val gm = Lookup.getDefault.lookup(classOf[GraphController]).getModel
-    val am = Lookup.getDefault.lookup(classOf[AttributeController]).getModel
-    val gc = gcp.getGraphContext(world)
-    val graph = (gc.links.exists(_.isDirectedLink), gc.links.exists(!_.isDirectedLink)) match {
-      case (true, true)  => gm.getMixedGraph
-      case (true, false) => gm.getDirectedGraph
-      case (false, true) => gm.getUndirectedGraph
-      case _             => gm.getGraph
+    val fm = context.asInstanceOf[ExtensionContext].workspace.fileManager
+    val file = new File(fm.attachPrefix(args(0).getString))
+    GephiExport.save(gcp.getGraphContext(world), world, file)
+  }
+}
+
+class SaveFileType(gcp: GraphContextProvider, extension: String) extends api.DefaultCommand {
+  override def getSyntax = commandSyntax(Array(StringType))
+  override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
+    val world = context.getAgent.world.asInstanceOf[World]
+    val workspace = context.asInstanceOf[ExtensionContext].workspace
+    val fm = context.asInstanceOf[ExtensionContext].workspace.fileManager
+    val file = new File(fm.attachPrefix(args(0).getString))
+    GephiExport.save(gcp.getGraphContext(world), world, file, extension)
+  }
+}
+
+object GephiExport {
+  val exportController = GephiUtils.withNWLoaderContext {Lookup.getDefault.lookup(classOf[ExportController])}
+
+  def save(context: GraphContext, world: World, file: File, extension: String): Unit = GephiUtils.withNWLoaderContext {
+    save(context, world, file, exportController.getExporter(extension))
+  }
+
+  def save(context: GraphContext, world: World, file: File): Unit = GephiUtils.withNWLoaderContext {
+    save(context, world, file, exportController.getFileExporter(file))
+  }
+
+  def save(context: GraphContext, world: World, file: File, exporter: Exporter) = GephiUtils.withNWLoaderContext {
+    if (!file.exists) {
+      throw new ExtensionException("The file " + file + " cannot be found.")
+    }
+    if (exporter == null) {
+      throw new ExtensionException("Unable to find importer for " + file)
+    }
+    val program = world.program
+    val projectController = Lookup.getDefault.lookup(classOf[ProjectController])
+    projectController.newProject()
+    val gephiWorkspace = projectController.getCurrentWorkspace
+    val graphModel = Lookup.getDefault.lookup(classOf[GraphController]).getModel
+    val attributeModel = Lookup.getDefault.lookup(classOf[AttributeController]).getModel
+    val graph = (context.links.exists(_.isDirectedLink), context.links.exists(!_.isDirectedLink)) match {
+      case (true, true) => graphModel.getMixedGraph
+      case (true, false) => graphModel.getDirectedGraph
+      case (false, true) => graphModel.getUndirectedGraph
+      case _ => graphModel.getGraph
     }
 
-    val nodeAttributes = am.getNodeTable
+    val nodeAttributes = attributeModel.getNodeTable
 
     val turtlesOwnAttributes: Map[String, AttributeColumn] = program.turtlesOwn.asScala.map { name =>
       val kind = getBestType(world.turtles.asIterable[Turtle].map(t => t.getTurtleOrLinkVariable(name)))
@@ -99,10 +127,10 @@ class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
       }.toMap
     }.toMap
 
-    val nodes = gc.turtles.map { turtle =>
-      val node = gm.factory.newNode(turtle.toString)
+    val nodes = context.turtles.map { turtle =>
+      val node = graphModel.factory.newNode(turtle.toString)
       turtlesOwnAttributes.foreach { case (name, col) =>
-          node.getAttributes.setValue(col.getIndex, coerce(turtle.getTurtleOrLinkVariable(name), col.getType))
+        node.getAttributes.setValue(col.getIndex, coerce(turtle.getTurtleOrLinkVariable(name), col.getType))
       }
       if (turtle.getBreed != world.turtles) {
         breedsOwnAttributes(turtle.getBreed).foreach { case (name, col) =>
@@ -116,14 +144,18 @@ class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
       turtle -> node
     }.toMap
 
-    gc.links.foreach { link =>
-      val edge = gm.factory.newEdge(nodes(link.end1), nodes(link.end2), 1, link.isDirectedLink)
+    context.links.foreach { link =>
+      val edge = graphModel.factory.newEdge(nodes(link.end1), nodes(link.end2), 1, link.isDirectedLink)
       graph.addEdge(edge)
     }
-    ws.add(gm)
-    ws.add(am)
-    exportController.exportFile(new File(fn))
+    gephiWorkspace.add(graphModel)
+    gephiWorkspace.add(attributeModel)
+    exportController.exportFile(file, exporter)
   }
+
+  private type JDouble = java.lang.Double
+  private type JBoolean = java.lang.Boolean
+  private type JNumber = java.lang.Number
 
   private def getBestType(values: Iterable[AnyRef]): AttributeType = {
     if (values.forall(_.isInstanceOf[JNumber])){
@@ -142,9 +174,9 @@ class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
     case (s: String, AttributeType.STRING) => Dump.logoObject(s, readable = true, exporting = false).drop(1).dropRight(1)
     case (s: AnyRef, AttributeType.STRING) => Dump.logoObject(s, readable = true, exporting = false)
   }
-}
 
-object GephiIO{
+}
+object GephiImport{
   val importController = GephiUtils.withNWLoaderContext {
     Lookup.getDefault.lookup(classOf[ImportController])
   }
@@ -166,6 +198,12 @@ object GephiIO{
            defaultTurtleBreed: AgentSet, defaultLinkBreed: AgentSet,
            initTurtles: TraversableOnce[Turtle] => Unit,
            importer: FileImporter): Unit = GephiUtils.withNWLoaderContext {
+    if (!file.exists) {
+      throw new ExtensionException("The file " + file + " cannot be found.")
+    }
+    if (importer == null) {
+      throw new ExtensionException("Unable to find importer for " + file)
+    }
     val turtleBreeds = world.program.breeds.asScala.toMap
     val linkBreeds = world.program.linkBreeds.asScala.toMap
 

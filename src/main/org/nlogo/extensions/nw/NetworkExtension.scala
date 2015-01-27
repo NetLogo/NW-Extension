@@ -2,8 +2,8 @@
 
 package org.nlogo.extensions.nw
 
-import org.nlogo.extensions.nw.prim.{LoadFileType, LoadFileTypeDefaultBreeds}
-import org.nlogo.extensions.nw.prim.jung.LoadGraphML
+import org.nlogo.extensions.nw.prim.{SaveFileType, LoadFileType, LoadFileTypeDefaultBreeds}
+import org.nlogo.extensions.nw.prim.jung.{SaveGraphML, LoadGraphML}
 
 import scala.collection.JavaConverters._
 
@@ -96,8 +96,10 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("save-matrix", new prim.jung.SaveMatrix(this))
     add("load-matrix", new prim.jung.LoadMatrix)
 
-    add("save-graphml", new prim.jung.SaveGraphML(this))
-    add("load-graphml", new LoadFileTypeDefaultBreeds(".graphml"))
+    //add("save-graphml", new SaveFileType(this, ".graphml"))
+    add("save-graphml", new SaveGraphML(this))
+    //add("load-graphml", new LoadFileTypeDefaultBreeds(".graphml"))
+    add("load-graphml", new LoadGraphML())
 
     add("load", new prim.Load())
     add("load-csv", new LoadFileType(".csv"))
@@ -108,5 +110,11 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("load-vna", new LoadFileType(".vna"))
 
     add("save", new prim.Save(this))
+    add("save-csv", new SaveFileType(this, ".csv"))
+    add("save-dl", new SaveFileType(this, ".dl"))
+    add("save-gdf", new SaveFileType(this, ".gdf"))
+    add("save-gexf", new SaveFileType(this, ".gexf"))
+    add("save-gml", new SaveFileType(this, ".gml"))
+    add("save-vna", new SaveFileType(this, ".vna"))
   }
 }

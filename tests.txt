@@ -1170,6 +1170,7 @@ graphml-export-import-turtles
   O> nw:save-graphml "extensions/nw/test/tmp/graphml-export-import-turtles.xml"
   O> ca
   O> nw:load-graphml "extensions/nw/test/tmp/graphml-export-import-turtles.xml"
+  count turtles => 2
   sort [ color ] of turtles => [5 15]
   sort [ tvar ] of turtles => ["a" "b"]
   [ thickness ] of link 0 1 => 0.5
@@ -1289,7 +1290,7 @@ exclude-dangling-link
 
 load-missing-gdf
   extensions [ nw ]
-  O> nw:load "test/gdf/idontexist.gdf" turtles links => ERROR Extension exception: test/gdf/idontexist.gdf (No such file or directory)
+  O> nw:load "test/gdf/idontexist.gdf" turtles links => ERROR Extension exception: The file test/gdf/idontexist.gdf cannot be found.
 
 load-gdf-simple-dir
   extensions [ nw ]
@@ -1420,7 +1421,7 @@ save-breeds
   extensions [ nw ]
   O> create-frogs 1 [ set age 4 set tvar "hi" set spots true ]
   O> create-mice 1 [ set age 5 set tvar "bye" set fur 3 ]
-  O> nw:save "test/tmp/breeds.gdf"
+  O> nw:save-gdf "test/tmp/breeds.gdf"
   O> ca
   O> nw:load "test/tmp/breeds.gdf" turtles links
   [(list age tvar spots)] of one-of frogs => [4 "hi" true]
