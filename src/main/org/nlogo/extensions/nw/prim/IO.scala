@@ -4,21 +4,24 @@ import java.awt.Color
 import java.io.{File, FileReader, IOException}
 
 import org.gephi.data.attributes.`type`.DynamicType
-import org.gephi.data.attributes.api.{AttributeController, AttributeRow}
+import org.gephi.data.attributes.api.{AttributeColumn, AttributeType, AttributeController, AttributeRow}
 import org.gephi.graph.api.GraphController
 import org.gephi.io.exporter.api.ExportController
 import org.gephi.io.importer.api.EdgeDraft.EdgeType
 import org.gephi.io.importer.api.{EdgeDefault, EdgeDraftGetter, ImportController, NodeDraftGetter}
 import org.gephi.io.importer.spi.FileImporter
 import org.gephi.project.api.ProjectController
-import org.nlogo.agent._
+import org.nlogo.agent.Agent
+import org.nlogo.agent.AgentSet
+import org.nlogo.agent.Link
+import org.nlogo.agent.Turtle
+import org.nlogo.agent.World
 import org.nlogo.api
-import org.nlogo.api.{DefaultReporter, AgentException, ExtensionException, LogoList}
+import org.nlogo.api._
 import org.nlogo.api.Syntax._
 import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.NetworkExtensionUtil._
 import org.nlogo.extensions.nw.gephi.GephiUtils
-import org.nlogo.extensions.nw.jung.io.GraphMLExport
 import org.nlogo.nvm.ExtensionContext
 import org.openide.util.Lookup
 
@@ -58,25 +61,57 @@ class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
 }
 
 class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
+  private type JDouble = java.lang.Double
+  private type JBoolean = java.lang.Boolean
+  private type JNumber = java.lang.Number
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
+    val world = context.getAgent.world.asInstanceOf[World]
+    val program = world.program
+    val workspace = context.asInstanceOf[ExtensionContext].workspace
     val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
     val fn = fm.attachPrefix(args(0).getString)
-    val pc = Lookup.getDefault().lookup(classOf[ProjectController]);
+    val pc = Lookup.getDefault().lookup(classOf[ProjectController])
     val exportController = Lookup.getDefault.lookup(classOf[ExportController])
     pc.newProject()
     val ws = pc.getCurrentWorkspace
     val gm = Lookup.getDefault.lookup(classOf[GraphController]).getModel
     val am = Lookup.getDefault.lookup(classOf[AttributeController]).getModel
-    val gc = gcp.getGraphContext(context.getAgent.world)
+    val gc = gcp.getGraphContext(world)
     val graph = (gc.links.exists(_.isDirectedLink), gc.links.exists(!_.isDirectedLink)) match {
       case (true, true)  => gm.getMixedGraph
       case (true, false) => gm.getDirectedGraph
       case (false, true) => gm.getUndirectedGraph
       case _             => gm.getGraph
     }
+
+    val nodeAttributes = am.getNodeTable
+
+    val turtlesOwnAttributes: Map[String, AttributeColumn] = program.turtlesOwn.asScala.map { name =>
+      val kind = getBestType(world.turtles.asIterable[Turtle].map(t => t.getTurtleOrLinkVariable(name)))
+      name -> Option(nodeAttributes.getColumn(name)).getOrElse(nodeAttributes.addColumn(name, kind))
+    }.toMap
+
+    val breedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.breeds.asScala.collect {
+      case (breedName, breed: AgentSet) => breed -> program.breedsOwn.get(breedName).asScala.map { name =>
+        val kind = getBestType(breed.asIterable[Turtle].map(t => t.getBreedVariable(name)))
+        name -> Option(nodeAttributes.getColumn(name)).getOrElse(nodeAttributes.addColumn(name, kind))
+      }.toMap
+    }.toMap
+
     val nodes = gc.turtles.map { turtle =>
       val node = gm.factory.newNode(turtle.toString)
+      turtlesOwnAttributes.foreach { case (name, col) =>
+          node.getAttributes.setValue(col.getIndex, coerce(turtle.getTurtleOrLinkVariable(name), col.getType))
+      }
+      if (turtle.getBreed != world.turtles) {
+        breedsOwnAttributes(turtle.getBreed).foreach { case (name, col) =>
+          node.getAttributes.setValue(col.getIndex, coerce(turtle.getBreedVariable(name), col.getType))
+        }
+      }
+      val color = api.Color.getColor(turtle.color())
+      node.getNodeData.setColor(color.getRed / 255f, color.getGreen / 255f, color.getBlue / 255f)
+      node.getNodeData.setAlpha(color.getAlpha / 255f)
       graph.addNode(node)
       turtle -> node
     }.toMap
@@ -88,6 +123,24 @@ class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
     ws.add(gm)
     ws.add(am)
     exportController.exportFile(new File(fn))
+  }
+
+  private def getBestType(values: Iterable[AnyRef]): AttributeType = {
+    if (values.forall(_.isInstanceOf[JNumber])){
+      AttributeType.DOUBLE
+    } else if (values.forall(_.isInstanceOf[JBoolean])) {
+      AttributeType.BOOLEAN
+    } else {
+      AttributeType.STRING
+    }
+  }
+
+  private def coerce(value: AnyRef, kind: AttributeType): AnyRef = value -> kind match {
+    case (x: JNumber, AttributeType.DOUBLE) => x.doubleValue: JDouble
+    case (b: JBoolean, AttributeType.BOOLEAN) => b
+    // For Strings, we want to keep the escaping but ditch the surrounding quotes. BCH 1/26/2015
+    case (s: String, AttributeType.STRING) => Dump.logoObject(s, readable = true, exporting = false).drop(1).dropRight(1)
+    case (s: AnyRef, AttributeType.STRING) => Dump.logoObject(s, readable = true, exporting = false)
   }
 }
 
@@ -249,10 +302,6 @@ object GephiIO{
     case x => x.toString
   }
 
-  private val unsettableVars = Map[Class[_ <: Agent], Set[String]](
-    classOf[Turtle] -> Set("WHO"),
-    classOf[Link]   -> Set("WHO", "END1", "END2")
-  )
   private def setAttribute(world: World, agent: Agent)(name: String, value: AnyRef): Unit = {
     val i = world.indexOfVariable(agent, name)
     if (i != -1) try { agent.setVariable(i, value) } catch { case e: AgentException => /*Invalid variable or value, so skip*/}

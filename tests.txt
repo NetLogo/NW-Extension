@@ -1404,3 +1404,38 @@ save-simple
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => false
   [is-directed-link? self] of link 0 1 => true
+
+save-builtins
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> ask turtle 0 [ set color [255 0 0] set label "hello, world" ]
+  O> ask turtle 1 [ set color red set label-color red set size 5 ]
+  O> nw:save "test/tmp/builtins.gdf"
+  O> ca
+  O> nw:load "test/tmp/builtins.gdf" turtles links
+  [(list color label size)] of turtle 0 => [[255 0 0] "hello, world" 1]
+  [(list color label-color size)] of turtle 1 => [[215 50 41] 15 5]
+
+save-breeds
+  extensions [ nw ]
+  O> create-frogs 1 [ set age 4 set tvar "hi" set spots true ]
+  O> create-mice 1 [ set age 5 set tvar "bye" set fur 3 ]
+  O> nw:save "test/tmp/breeds.gdf"
+  O> ca
+  O> nw:load "test/tmp/breeds.gdf" turtles links
+  [(list age tvar spots)] of one-of frogs => [4 "hi" true]
+  [(list age tvar fur)] of one-of mice => [5 "bye" 3]
+
+save-heterogeneous
+  extensions [ nw ]
+  O> crt 1 [ set tvar true ]
+  O> crt 1 [ set tvar 5 ]
+  O> nw:save "test/tmp/heterogeneous.gdf"
+  O> ca
+  O> nw:load "test/tmp/heterogeneous.gdf" turtles links
+  [tvar] of turtle 0 => "true"
+  [tvar] of turtle 1 => "5"
+  O> ca
+  O> nw:load "test/tmp/heterogeneous.gdf" turtles links [ set tvar read-from-string tvar ]
+  [tvar] of turtle 0 => true
+  [tvar] of turtle 1 => 5
