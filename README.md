@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/NetLogo/NW-Extension.svg?branch=master)](https://travis-ci.org/NetLogo/NW-Extension)
-
 # The NetLogo NW Extension for Network Analysis
 
 This is the new extension for network analysis in NetLogo. It replaces the old Network Extension that came bundled with NetLogo (the old extension is [here](https://github.com/NetLogo/Network-Extension).) This extension comes bundled with NetLogo as of NetLogo 5.1.
