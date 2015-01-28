@@ -125,14 +125,14 @@ to show-centrality [ centrality ]
   ask turtles [ set label precision runresult measure 3 ]
 end
 
-to save-graphml
+to save
   let file user-new-file
-  if file != false [ nw:save-graphml file ]
+  if file != false [ nw:save file ]
 end
 
-to load-graphml
+to load
   let file user-file
-  if file != false [ nw:load-graphml file ]
+  if file != false [ nw:load file turtles links ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -256,7 +256,7 @@ BUTTON
 138
 403
 NIL
-save-graphml
+save
 NIL
 1
 T
@@ -273,7 +273,7 @@ BUTTON
 137
 446
 NIL
-load-graphml
+load
 NIL
 1
 T
@@ -627,7 +627,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.1.0
+NetLogo 5.1.0-RC2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

@@ -44,6 +44,8 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 [Import / Export](#import--export)
 
 - [save-matrix](#save-matrix), [load-matrix](#load-matrix), [save-graphml](#save-graphml), [load-graphml](#load-graphml)
+- [load](#load), [load-csv](#load-csv), [load-dl](#load-dl), [load-gdf](#load-gdf), [load-gexf](#load-gexf), [load-gml](#load-gml), [load-vna](#load-vna)
+- [save](#save), [save-csv](#save-csv), [save-dl](#save-dl), [save-gdf](#save-gdf), [save-gexf](#save-gexf), [save-gml](#save-gml), [save-vna](#save-vna)
 
 ## Changes
 
@@ -837,6 +839,90 @@ Note that this command block can be used to build a list or an agentset containi
       set node-list lput self node-list
     ]
     let node-set turtle-set node-list
+
+#### load
+
+`nw:load` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### load-csv
+
+`nw:load-csv` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### load-dl
+
+`nw:load-dl` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### load-gdf
+
+`nw:load-gdf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### load-gexf
+
+`nw:load-gexf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### load-gml
+
+`nw:load-gml` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### load-vna
+
+`nw:load-vna` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### save
+
+`nw:save` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### save-csv
+
+`nw:save-csv` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### save-dl
+
+`nw:save-dl` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### save-gdf
+
+`nw:save-gdf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### save-gexf
+
+`nw:save-gexf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### save-gml
+
+`nw:save-gml` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
+
+#### save-vna
+
+`nw:save-vna` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+
+Documentation coming...
 
 ## A note regarding floating point calculations
 

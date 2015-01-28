@@ -12,6 +12,8 @@ import org.gephi.io.importer.api.EdgeDraft.EdgeType
 import org.gephi.io.importer.api.{EdgeDefault, EdgeDraftGetter, ImportController, NodeDraftGetter}
 import org.gephi.io.importer.spi.FileImporter
 import org.gephi.project.api.ProjectController
+import org.gephi.utils.longtask.spi.LongTask
+import org.gephi.utils.progress.{ProgressTicket, ProgressTicketProvider}
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
@@ -97,6 +99,34 @@ object GephiExport {
     if (exporter == null) {
       throw new ExtensionException("Unable to find importer for " + file)
     }
+    exporter match {
+      case lt: LongTask => lt.setProgressTicket(new ProgressTicket {
+          def finish(): Unit = ()
+
+          def finish(finishMessage: String): Unit = ()
+
+          def getDisplayName: String = ""
+
+          def progress(): Unit = ()
+
+          def progress(workunit: Int): Unit = ()
+
+          def progress(message: String): Unit = ()
+
+          def progress(message: String, workunit: Int): Unit = ()
+
+          def switchToIndeterminate(): Unit = ()
+
+          def setDisplayName(newDisplayName: String): Unit = ()
+
+          def start(): Unit = ()
+
+          def start(workunits: Int): Unit = ()
+
+          def switchToDeterminate(workunits: Int): Unit = ()
+        } )
+      case _ => // ignore
+    }
     val program = world.program
     val projectController = Lookup.getDefault.lookup(classOf[ProjectController])
     projectController.newProject()
@@ -125,7 +155,7 @@ object GephiExport {
     }.toMap
 
     val nodes = context.turtles.map { turtle =>
-      val node = graphModel.factory.newNode(turtle.toString)
+      val node = graphModel.factory.newNode(turtle.toString.split(" ").mkString("-"))
       turtlesOwnAttributes.foreach { case (name, col) =>
         node.getAttributes.setValue(col.getIndex, coerce(turtle.getTurtleOrLinkVariable(name), col.getType))
       }
@@ -242,6 +272,7 @@ object GephiImport{
                     pair("LABEL", node.getLabel) ++
                     pair("LABEL-COLOR", node.getLabelColor) ++
                     pair("COLOR", node.getColor)
+        println(node.getId)
         // Note that node's have a getSize. This does not correspond to the `size` attribute in files so should not be
         // used. BCH 1/21/2015
 
