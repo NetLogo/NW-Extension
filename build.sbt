@@ -64,7 +64,7 @@ packageBin in Compile := {
       !path.getName.startsWith("scala-library")}
   for(path <- libraryJarPaths) {
     IO.copyFile(path, base / path.getName)
-    //pack200(path.getName)
+    pack200(path.getName)
   }
   if(Process("git diff --quiet --exit-code HEAD").! == 0) {
     // copy everything thing we need for distribution in

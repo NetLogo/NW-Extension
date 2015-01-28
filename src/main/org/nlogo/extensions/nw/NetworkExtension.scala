@@ -32,7 +32,8 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     "jung-graph-impl-2.0.1.jar",
     "jung-io-2.0.1.jar",
     "stax-api-1.0.1.jar",
-    "wstx-asl-3.2.6.jar").asJava
+    "wstx-asl-3.2.6.jar",
+    "gephi-toolkit-0.8.2-all.jar").asJava
 
   override def clearAll() { clearContext() }
   override def unload(em: api.ExtensionManager) { clearAll() }
