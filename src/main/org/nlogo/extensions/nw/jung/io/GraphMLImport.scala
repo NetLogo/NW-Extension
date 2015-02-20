@@ -110,9 +110,12 @@ object GraphMLImport {
           case l: Link =>
             attribute.name match {
               case "BREED" =>
-                val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                agent.world.getLinkBreed(breed) match {
-                  case b: AgentSet => l.setBreed(b)
+                val breedName = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
+                val breed = agent.world.getLinkBreed(breedName) 
+                if(breed != null) {  // Ugly java interop FD 2/20/15
+                  breed match {
+                    case b: AgentSet => l.setBreed(b)
+                  }
                 }
               case v if program.linksOwn.indexOf(v) != -1 =>
                 agent.setTurtleOrLinkVariable(v, attribute.valueObject.asInstanceOf[AnyRef])
@@ -122,9 +125,12 @@ object GraphMLImport {
           case t: Turtle =>
             attribute.name match {
               case "BREED" =>
-                val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                agent.world.getBreed(breed) match {
-                  case b: AgentSet => t.setBreed(b)
+                val breedName = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
+                val breed = agent.world.getBreed(breedName) 
+                if(breed != null) {   // Ugly java interop FD 2/20/15
+                  breed match {
+                    case b: AgentSet => t.setBreed(b)
+                  }
                 }
               case v if program.turtlesOwn.indexOf(v) != -1 =>
                 agent.setTurtleOrLinkVariable(v, attribute.valueObject.asInstanceOf[AnyRef])
