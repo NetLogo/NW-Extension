@@ -14,8 +14,8 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
 retrieveManaged := true
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogoHeadless" % "6.0-M1" from
-    "http://ccl.northwestern.edu/devel/6.0-M1/NetLogoHeadless.jar",
+  "org.nlogo" % "NetLogoHeadless" % "6.0.0-M3" from
+    "http://ccl.northwestern.edu/devel/6.0.0-M3/NetLogoHeadless.jar",
   "jgrapht" % "jgrapht-jdk1.6" % "0.8.3" from
     "http://ccl.northwestern.edu/devel/jgrapht-jdk1.6-0.8.3.jar",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
@@ -27,9 +27,9 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogo-tests" % "5.0.5" % "test" from
-    "http://ccl.northwestern.edu/netlogo/5.0.5/NetLogo-tests.jar",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "org.nlogo" % "NetLogoHeadless-tests" % "6.0.0-M3" from
+    "http://ccl.northwestern.edu/devel/6.0.0-M3/NetLogoHeadless-tests.jar",
+  "org.scalatest" %% "scalatest" % "2.0" % "test",
   "org.picocontainer" % "picocontainer" % "2.13.6" % "test",
   "asm" % "asm-all" % "3.3.1" % "test"
 )
