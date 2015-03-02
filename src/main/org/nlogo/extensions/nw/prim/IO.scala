@@ -272,7 +272,7 @@ object GephiImport{
                     pair("LABEL", node.getLabel) ++
                     pair("LABEL-COLOR", node.getLabelColor) ++
                     pair("COLOR", node.getColor)
-        println(node.getId)
+
         // Note that node's have a getSize. This does not correspond to the `size` attribute in files so should not be
         // used. BCH 1/21/2015
 

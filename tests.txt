@@ -1290,11 +1290,11 @@ exclude-dangling-link
 
 load-missing-gdf
   extensions [ nw ]
-  O> nw:load "test/gdf/idontexist.gdf" turtles links => ERROR Extension exception: The file test/gdf/idontexist.gdf cannot be found.
+  O> nw:load "extensions/nw/test/gdf/idontexist.gdf" turtles links => ERROR Extension exception: The file extensions/nw/test/gdf/idontexist.gdf cannot be found.
 
 load-gdf-simple-dir
   extensions [ nw ]
-  O> nw:load "test/gdf/simple-dir.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/simple-dir.gdf" turtles links
   count turtles => 2
   count links => 1
   [ is-directed-link? self ] of one-of links => true
@@ -1302,7 +1302,7 @@ load-gdf-simple-dir
 
 load-gdf-simple-undir
   extensions [ nw ]
-  O> nw:load "test/gdf/simple-undir.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/simple-undir.gdf" turtles links
   count turtles => 2
   count links => 1
   [ is-directed-link? self ] of one-of links => false
@@ -1310,7 +1310,7 @@ load-gdf-simple-undir
 
 load-gdf-simple-unspecified
   extensions [ nw ]
-  O> nw:load "test/gdf/simple.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/simple.gdf" turtles links
   count turtles => 2
   count links => 1
   [ is-directed-link? self ] of one-of links => true
@@ -1318,11 +1318,11 @@ load-gdf-simple-unspecified
 
 load-gdf-contradiction
   extensions [ nw ]
-  O> nw:load "test/gdf/simple-undir.gdf" turtles directed-links => ERROR Extension exception: The following edges had a directedness different than their assigned breed. They have been given the directedness of their breed. If you wish to ignore this error, wrap this command in a CAREFULLY: 1->2
+  O> nw:load "extensions/nw/test/gdf/simple-undir.gdf" turtles directed-links => ERROR Extension exception: The following edges had a directedness different than their assigned breed. They have been given the directedness of their breed. If you wish to ignore this error, wrap this command in a CAREFULLY: 1->2
 
 load-gdf-builtins
   extensions [ nw ]
-  O> nw:load "test/gdf/builtins.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/builtins.gdf" turtles links
   [label] of turtle 0 => "one"
   [label] of turtle 1 => "two"
   [color] of turtle 0 => [255 0 0]
@@ -1334,23 +1334,23 @@ load-gdf-builtins
 
 load-gdf-turtles-own
   extensions [ nw ]
-  O> nw:load "test/gdf/turtles-own.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/turtles-own.gdf" turtles links
   [tvar] of turtle 0 => true
   [tvar] of turtle 1 => false
 
 load-gdf-missing-turtle-var
   extensions [ nw ]
-  O> nw:load "test/gdf/missing-attr.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/missing-attr.gdf" turtles links
 
 load-gdf-breeds-own
   extensions [ nw ]
-  O> nw:load "test/gdf/breeds-own.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/breeds-own.gdf" turtles links
   [fur] of mouse 0 => "white"
   [spots] of frog 1 => "yellow"
 
 load-gdf-links-breeds
   extensions [ nw ]
-  O> nw:load "test/gdf/link-breeds.gdf" turtles links
+  O> nw:load "extensions/nw/test/gdf/link-breeds.gdf" turtles links
   [color] of one-of directed-links => [0 255 0]
   [color] of one-of undirected-links => [0 0 255]
   [lvar] of one-of directed-links => 5
@@ -1358,14 +1358,14 @@ load-gdf-links-breeds
 
 load-full-gdf
   extensions [ nw ]
-  O> nw:load-gdf "test/gdf/full.gdf" turtles links
+  O> nw:load-gdf "extensions/nw/test/gdf/full.gdf" turtles links
   [(list tvar fur)] of one-of mice => [true "white"]
   [(list tvar spots)] of one-of frogs => [false true]
   [(list color lvar)] of one-of directed-links => [[0 255 0] 5]
   [(list color weight)] of one-of undirected-links => [[0 0 255] 10]
 load-full-gexf
   extensions [ nw ]
-  O> nw:load-gexf "test/gexf/full.gexf" turtles links
+  O> nw:load-gexf "extensions/nw/test/gexf/full.gexf" turtles links
   [(list tvar fur)] of one-of mice => [true "white"]
   [(list tvar spots)] of one-of frogs => [false true]
   [(list color lvar)] of one-of directed-links => [[0 255 0] 5]
@@ -1374,14 +1374,14 @@ load-full-gexf
 # it looks like gml and vna are untyped and don't support link colors
 load-full-gml
   extensions [ nw ]
-  O> nw:load-gml "test/gml/full.gml" turtles links
+  O> nw:load-gml "extensions/nw/test/gml/full.gml" turtles links
   [(list tvar fur)] of one-of mice => ["true" "white"]
   [(list tvar spots)] of one-of frogs => ["false" "true"]
   [(list lvar)] of one-of directed-links => ["5.0"]
   [(list weight)] of one-of undirected-links => [10]
 load-full-vna
   extensions [ nw ]
-  O> nw:load-vna "test/vna/full.vna" turtles links
+  O> nw:load-vna "extensions/nw/test/vna/full.vna" turtles links
   [(list tvar fur)] of one-of mice => ["true" "white"]
   [(list tvar spots)] of one-of frogs => ["false" "true"]
   [(list lvar)] of one-of directed-links => ["5.0"]
@@ -1390,18 +1390,18 @@ load-full-vna
 save-simple
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  O> nw:save "test/tmp/simple-undir.gdf"
+  O> nw:save "extensions/nw/test/tmp/simple-undir.gdf"
   O> ca
-  O> nw:load "test/tmp/simple-undir.gdf" turtles links
+  O> nw:load "extensions/nw/test/tmp/simple-undir.gdf" turtles links
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => true
   [is-directed-link? self] of link 0 1 => false
   O> ca
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  O> nw:save "test/tmp/simple-dir.gdf"
+  O> nw:save "extensions/nw/test/tmp/simple-dir.gdf"
   O> ca
-  O> nw:load "test/tmp/simple-dir.gdf" turtles links
+  O> nw:load "extensions/nw/test/tmp/simple-dir.gdf" turtles links
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => false
   [is-directed-link? self] of link 0 1 => true
@@ -1411,9 +1411,9 @@ save-builtins
   O> crt 2 [ create-links-with other turtles ]
   O> ask turtle 0 [ set color [255 0 0] set label "hello, world" ]
   O> ask turtle 1 [ set color red set label-color red set size 5 ]
-  O> nw:save "test/tmp/builtins.gdf"
+  O> nw:save "extensions/nw/test/tmp/builtins.gdf"
   O> ca
-  O> nw:load "test/tmp/builtins.gdf" turtles links
+  O> nw:load "extensions/nw/test/tmp/builtins.gdf" turtles links
   [(list color label size)] of turtle 0 => [[255 0 0] "hello, world" 1]
   [(list color label-color size)] of turtle 1 => [[215 50 41] 15 5]
 
@@ -1421,9 +1421,9 @@ save-breeds
   extensions [ nw ]
   O> create-frogs 1 [ set age 4 set tvar "hi" set spots true ]
   O> create-mice 1 [ set age 5 set tvar "bye" set fur 3 ]
-  O> nw:save-gdf "test/tmp/breeds.gdf"
+  O> nw:save-gdf "extensions/nw/test/tmp/breeds.gdf"
   O> ca
-  O> nw:load "test/tmp/breeds.gdf" turtles links
+  O> nw:load "extensions/nw/test/tmp/breeds.gdf" turtles links
   [(list age tvar spots)] of one-of frogs => [4 "hi" true]
   [(list age tvar fur)] of one-of mice => [5 "bye" 3]
 
@@ -1431,13 +1431,13 @@ save-heterogeneous
   extensions [ nw ]
   O> crt 1 [ set tvar true ]
   O> crt 1 [ set tvar 5 ]
-  O> nw:save "test/tmp/heterogeneous.gdf"
+  O> nw:save "extensions/nw/test/tmp/heterogeneous.gdf"
   O> ca
-  O> nw:load "test/tmp/heterogeneous.gdf" turtles links
+  O> nw:load "extensions/nw/test/tmp/heterogeneous.gdf" turtles links
   [tvar] of turtle 0 => "true"
   [tvar] of turtle 1 => "5"
   O> ca
-  O> nw:load "test/tmp/heterogeneous.gdf" turtles links [ set tvar read-from-string tvar ]
+  O> nw:load "extensions/nw/test/tmp/heterogeneous.gdf" turtles links [ set tvar read-from-string tvar ]
   [tvar] of turtle 0 => true
   [tvar] of turtle 1 => 5
 
@@ -1446,54 +1446,54 @@ save-link-breeds
   O> crt 3
   O> ask turtle 0 [ create-directed-link-to turtle 1 [ set lvar true ]]
   O> ask turtle 1 [ create-undirected-link-with turtle 2 [ set weight 5 ]]
-  O> nw:save "test/tmp/link-breeds.gdf"
+  O> nw:save "extensions/nw/test/tmp/link-breeds.gdf"
   O> ca
-  O> nw:load "test/tmp/link-breeds.gdf" turtles links
+  O> nw:load "extensions/nw/test/tmp/link-breeds.gdf" turtles links
   [lvar] of one-of directed-links => true
   [weight] of one-of undirected-links => 5
 
 save-gml
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  O> nw:save-gml "test/tmp/simple-undir.gml"
+  O> nw:save-gml "extensions/nw/test/tmp/simple-undir.gml"
   O> ca
-  O> nw:load-gml "test/tmp/simple-undir.gml" turtles links
+  O> nw:load-gml "extensions/nw/test/tmp/simple-undir.gml" turtles links
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => true
   [is-directed-link? self] of link 0 1 => false
 #save-vna
 #  extensions [ nw ]
 #  O> crt 2 [ create-links-with other turtles ]
-#  O> nw:save-vna "test/tmp/simple-undir.vna"
+#  O> nw:save-vna "extensions/nw/test/tmp/simple-undir.vna"
 #  O> ca
-#  O> nw:load-vna "test/tmp/simple-undir.vna" turtles links
+#  O> nw:load-vna "extensions/nw/test/tmp/simple-undir.vna" turtles links
 #  count turtles => 2
 #  [is-undirected-link? self] of link 0 1 => true
 #  [is-directed-link? self] of link 0 1 => false
 save-dl
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  O> nw:save-dl "test/tmp/simple-undir.dl"
+  O> nw:save-dl "extensions/nw/test/tmp/simple-undir.dl"
   O> ca
-  O> nw:load-dl "test/tmp/simple-undir.dl" turtles undirected-links
+  O> nw:load-dl "extensions/nw/test/tmp/simple-undir.dl" turtles undirected-links
   count turtles => 2
   [is-undirected-link? self] of undirected-link 0 1 => true
   [is-directed-link? self] of undirected-link 0 1 => false
 save-gexf
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  O> nw:save-gexf "test/tmp/simple-undir.gexf"
+  O> nw:save-gexf "extensions/nw/test/tmp/simple-undir.gexf"
   O> ca
-  O> nw:load-gexf "test/tmp/simple-undir.gexf" turtles links
+  O> nw:load-gexf "extensions/nw/test/tmp/simple-undir.gexf" turtles links
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => true
   [is-directed-link? self] of link 0 1 => false
 #save-csv
 #  extensions [ nw ]
 #  O> crt 2 [ create-links-with other turtles ]
-#  O> nw:save-csv "test/tmp/simple-undir.csv"
+#  O> nw:save-csv "extensions/nw/test/tmp/simple-undir.csv"
 #  O> ca
-#  O> nw:load-csv "test/tmp/simple-undir.csv" turtles links
+#  O> nw:load-csv "extensions/nw/test/tmp/simple-undir.csv" turtles links
 #  count turtles => 2
 #  [is-undirected-link? self] of link 0 1 => true
 #  [is-directed-link? self] of link 0 1 => false
