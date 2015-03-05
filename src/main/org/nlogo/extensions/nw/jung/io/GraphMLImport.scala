@@ -111,11 +111,7 @@ object GraphMLImport {
         agent match {
           case l: Link =>
             attribute.name match {
-              case "BREED" =>
-                val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                program.linkBreeds.asScala.get(breed).collect {
-                  case b: AgentSet => l.setBreed(b)
-                }
+              case "BREED" => // Breed is set separately
               case v if program.linksOwn.indexOf(v) != -1 =>
                 agent.setTurtleOrLinkVariable(v, attribute.valueObject)
               case v =>
@@ -123,11 +119,7 @@ object GraphMLImport {
             }
           case t: Turtle =>
             attribute.name match {
-              case "BREED" =>
-                val breed = attribute.valueObject.toString.toUpperCase(Locale.ENGLISH)
-                program.breeds.asScala.get(breed).collect {
-                  case b: AgentSet => t.setBreed(b)
-                }
+              case "BREED" => // Breed is set separately
               case v if program.turtlesOwn.indexOf(v) != -1 =>
                 agent.setTurtleOrLinkVariable(v, attribute.valueObject)
               case v =>
@@ -140,11 +132,18 @@ object GraphMLImport {
       }
   }
 
-  private def createAgents[E <: GraphElement, A <: Agent](
-    elements: Iterable[E], keys: Seq[Key])(create: E => A): Map[E, A] =
+  private def createAgents[E <: GraphElement, A <: Agent](elements: Iterable[E],
+                                                          keys: Seq[Key],
+                                                          defaultBreed: AgentSet,
+                                                          breeds: String => AgentSet)
+                                                         (create: (E, AgentSet) => A): Map[E, A] =
     elements.map { elem =>
-      val agent = create(elem)
-      attributes(elem, keys).foreach { setAgentVariable(agent, _) }
+      val attrs = attributes(elem, keys)
+      val breed = attrs.find(_.name == "BREED").map{
+        _.valueObject.toString.toUpperCase(Locale.ENGLISH)
+      }.flatMap(name => Option(breeds(name))).getOrElse(defaultBreed)
+      val agent = create(elem, breed)
+      attrs.foreach { setAgentVariable(agent, _) }
       elem -> agent
     }(scala.collection.breakOut)
 
@@ -168,15 +167,15 @@ object GraphMLImport {
         val keyMap: Map[MetadataType, Seq[Key]] =
           graphReader
             .getGraphMLDocument.getKeyMap.entrySet()
-            .asScala.map(entry => entry.getKey() -> entry.getValue().asScala).toMap
+            .asScala.map(entry => entry.getKey -> entry.getValue.asScala).toMap
 
         val turtles: Map[Vertex, Turtle] =
-          createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE)) {
-            _ => createTurtle(world.turtles, rng)
+          createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE), world.turtles, world.getBreed) {
+            (_, breed) => createTurtle(breed, rng)
           }
 
-        createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE)) {
-          e: Edge => createLink(turtles, graph.getEndpoints(e), world.links)
+        createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE), world.links, world.getLinkBreed) {
+          (e: Edge, breed) => createLink(turtles, graph.getEndpoints(e), breed)
         }
 
         turtles.valuesIterator

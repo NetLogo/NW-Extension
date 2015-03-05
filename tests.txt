@@ -1179,15 +1179,16 @@ graphml-export-import-breeds
   extensions [ nw ]
   O> nw:set-context mice links
   O> create-ordered-mice 2
-  O> ask mouse 0 [ set fur "a" ]
+  O> ask mouse 0 [ set fur "a" set age 1 ]
   O> ask mouse 0 [ create-undirected-link-with mouse 1 ]
-  O> ask mouse 1 [ set fur "b" ]
+  O> ask mouse 1 [ set fur "b" set age 2 ]
   O> ask undirected-link 0 1 [ set weight 0.5 ]
   O> nw:save-graphml "extensions/nw/test/tmp/graphml-export-import-breeds.xml"
   O> ca
   O> nw:load-graphml "extensions/nw/test/tmp/graphml-export-import-breeds.xml"
   sort [ color ] of mice => [5 15]
   sort [ fur ] of mice => ["a" "b"]
+  sort [ age ] of mice => [1 2]
   [ weight ] of undirected-link 0 1 => 0.5
 
 save-graphml-first-turtle-double
@@ -1227,6 +1228,17 @@ load-graphml-missing-attr-type
   O> nw:load-graphml "extensions/nw/test/missing-attr-type.graphml"
   [ heading ] of turtle 0 => 0
   [ color ] of turtle 0 => 5
+
+export-import-graphml-multigraph
+  extensions [ nw ]
+  O> crt 2
+  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
+  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> nw:save-graphml "extensions/nw/test/tmp/multigraph.graphml"
+  O> ca
+  O> nw:load-graphml "extensions/nw/test/tmp/multigraph.graphml"
+  count undirected-links => 1
+  count directed-links => 1
 
 ## The new import/export implementations actually handle this, but I'm not comfortable switching graphml over yet. BCH 1/27/2015
 #load-graphml-preserves-undirectedness
