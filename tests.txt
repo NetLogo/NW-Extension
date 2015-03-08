@@ -1473,15 +1473,18 @@ save-gml
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => true
   [is-directed-link? self] of link 0 1 => false
-#save-vna
-#  extensions [ nw ]
-#  O> crt 2 [ create-links-with other turtles ]
-#  O> nw:save-vna "extensions/nw/test/tmp/simple-undir.vna"
-#  O> ca
-#  O> nw:load-vna "extensions/nw/test/tmp/simple-undir.vna" turtles links
-#  count turtles => 2
-#  [is-undirected-link? self] of link 0 1 => true
-#  [is-directed-link? self] of link 0 1 => false
+
+# vna doesn't store directedness
+save-vna
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-vna "extensions/nw/test/tmp/simple-undir.vna"
+  O> ca
+  O> nw:load-vna "extensions/nw/test/tmp/simple-undir.vna" turtles undirected-links
+  count turtles => 2
+  [is-undirected-link? self] of undirected-link 0 1 => true
+  [is-directed-link? self] of undirected-link 0 1 => false
+
 save-dl
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
