@@ -1503,12 +1503,3 @@ save-gexf
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => true
   [is-directed-link? self] of link 0 1 => false
-#save-csv
-#  extensions [ nw ]
-#  O> crt 2 [ create-links-with other turtles ]
-#  O> nw:save-csv "extensions/nw/test/tmp/simple-undir.csv"
-#  O> ca
-#  O> nw:load-csv "extensions/nw/test/tmp/simple-undir.csv" turtles links
-#  count turtles => 2
-#  [is-undirected-link? self] of link 0 1 => true
-#  [is-directed-link? self] of link 0 1 => false

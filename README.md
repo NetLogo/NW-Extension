@@ -42,8 +42,8 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 [Import / Export](#import--export)
 
 - [save-matrix](#save-matrix), [load-matrix](#load-matrix), [save-graphml](#save-graphml), [load-graphml](#load-graphml)
-- [load](#load), [load-csv](#load-csv), [load-dl](#load-dl), [load-gdf](#load-gdf), [load-gexf](#load-gexf), [load-gml](#load-gml), [load-vna](#load-vna)
-- [save](#save), [save-csv](#save-csv), [save-dl](#save-dl), [save-gdf](#save-gdf), [save-gexf](#save-gexf), [save-gml](#save-gml), [save-vna](#save-vna)
+- [load](#load), [load-dl](#load-dl), [load-gdf](#load-gdf), [load-gexf](#load-gexf), [load-gml](#load-gml), [load-vna](#load-vna)
+- [save](#save), [save-dl](#save-dl), [save-gdf](#save-gdf), [save-gexf](#save-gexf), [save-gml](#save-gml), [save-vna](#save-vna)
 
 ## Changes
 
@@ -844,12 +844,6 @@ Note that this command block can be used to build a list or an agentset containi
 
 Documentation coming...
 
-#### load-csv
-
-`nw:load-csv` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
 #### load-dl
 
 `nw:load-dl` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
@@ -883,12 +877,6 @@ Documentation coming...
 #### save
 
 `nw:save` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### save-csv
-
-`nw:save-csv` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
 
 Documentation coming...
 

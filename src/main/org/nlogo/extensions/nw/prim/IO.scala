@@ -7,9 +7,11 @@ import org.gephi.data.attributes.`type`.DynamicType
 import org.gephi.data.attributes.api.{AttributeColumn, AttributeType, AttributeController, AttributeRow}
 import org.gephi.graph.api.GraphController
 import org.gephi.io.exporter.api.ExportController
+import org.gephi.io.exporter.plugin.{ExporterCSV, ExporterGraphML}
 import org.gephi.io.exporter.spi.Exporter
 import org.gephi.io.importer.api.EdgeDraft.EdgeType
 import org.gephi.io.importer.api.{EdgeDefault, EdgeDraftGetter, ImportController, NodeDraftGetter}
+import org.gephi.io.importer.plugin.file.{ImporterCSV, ImporterGraphML}
 import org.gephi.io.importer.spi.FileImporter
 import org.gephi.project.api.ProjectController
 import org.gephi.utils.longtask.spi.LongTask
@@ -97,8 +99,15 @@ object GephiExport {
 
   def save(context: GraphContext, world: World, file: File, exporter: Exporter) = GephiUtils.withNWLoaderContext {
     if (exporter == null) {
-      throw new ExtensionException("Unable to find importer for " + file)
+      throw new ExtensionException("Unable to find exporter for " + file)
+    } else if (exporter.isInstanceOf[ExporterCSV]) {
+      throw new ExtensionException("Exporting CSV files is not supported.")
+    } else if (exporter.isInstanceOf[ExporterGraphML]) {
+      throw new ExtensionException("You must use nw:save-graphml to save graphml files.")
     }
+
+
+    // Some exporters expect a progress ticker to be passed in :( BCH 5/8/2015
     exporter match {
       case lt: LongTask => lt.setProgressTicket(new ProgressTicket {
           def finish(): Unit = ()
@@ -254,6 +263,10 @@ object GephiImport{
     }
     if (importer == null) {
       throw new ExtensionException("Unable to find importer for " + file)
+    } else if (importer.isInstanceOf[ImporterCSV]) {
+      throw new ExtensionException("Importing CSV files is not supported.")
+    } else if (importer.isInstanceOf[ImporterGraphML]) {
+      throw new ExtensionException("You must use nw:load-graphml to load graphml files.")
     }
     val turtleBreeds = world.program.breeds.asScala.toMap
     val linkBreeds = world.program.linkBreeds.asScala.toMap

@@ -103,7 +103,6 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("load-graphml", new LoadGraphML())
 
     add("load", new prim.Load())
-    add("load-csv", new LoadFileType(".csv"))
     add("load-dl", new LoadFileType(".dl"))
     add("load-gdf", new LoadFileType(".gdf"))
     add("load-gexf", new LoadFileType(".gexf"))
@@ -111,7 +110,6 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("load-vna", new LoadFileType(".vna"))
 
     add("save", new prim.Save(this))
-    add("save-csv", new SaveFileType(this, ".csv"))
     add("save-dl", new SaveFileType(this, ".dl"))
     add("save-gdf", new SaveFileType(this, ".gdf"))
     add("save-gexf", new SaveFileType(this, ".gexf"))
