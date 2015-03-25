@@ -42,8 +42,8 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 [Import / Export](#import--export)
 
 - [save-matrix](#save-matrix), [load-matrix](#load-matrix), [save-graphml](#save-graphml), [load-graphml](#load-graphml)
-- [load](#load), [load-dl](#load-dl), [load-gdf](#load-gdf), [load-gexf](#load-gexf), [load-gml](#load-gml), [load-vna](#load-vna)
-- [save](#save), [save-dl](#save-dl), [save-gdf](#save-gdf), [save-gexf](#save-gexf), [save-gml](#save-gml), [save-vna](#save-vna)
+- [load, load-dl, load-gdf, load-gexf, load-gml, load-vna](#load)
+- [save, save-dl, save-gdf, save-gexf, save-gml, save-vna](#save)
 
 ## Changes
 
@@ -841,74 +841,40 @@ Note that this command block can be used to build a list or an agentset containi
 #### load
 
 `nw:load` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### load-dl
-
 `nw:load-dl` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### load-gdf
-
 `nw:load-gdf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### load-gexf
-
 `nw:load-gexf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### load-gml
-
 `nw:load-gml` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### load-vna
-
 `nw:load-vna` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
 
-Documentation coming...
+Import the given file into NetLogo. Like `nw:load-graphml`, the importer will do its best to match node and edge attributes in the file with turtle and link variables in NetLogo. If `breed` is specified for nodes and edges in the file and exists in NetLogo, it will be used. Otherwise, the default turtle and link breeds are used.
+
+Limitations:
+
+- Multigraphs are not supported in importing. Even if the file format supports it (and many don't), only the first link will be used on import. This is due to a limitation in the parsing libraries NW uses. `nw:load-graphml` does support multigraphs with the normal NetLogo limitation that two turtles can share more than one link only if all the links are of different breeds.
+
+`nw:load` determines the file-type of given file based on the extension and calls the corresponding `load-*` primitive on it. Note that GraphML must be imported with `nw:load-graphml`.
 
 #### save
 
 `nw:save` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### save-dl
-
 `nw:save-dl` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### save-gdf
-
 `nw:save-gdf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### save-gexf
-
 `nw:save-gexf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### save-gml
-
 `nw:save-gml` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
-
-Documentation coming...
-
-#### save-vna
-
 `nw:save-vna` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
 
-Documentation coming...
+Export the network context in the given format to the given file. Turtle and link attributes will be exported to formats that support node and edge properties.
+
+Limitations:
+
+- `x` and `y` (not `xcor` and `ycor`) can only be numbers. `x` and `y` are commonly used in formats pertaining to position and behind the scenes NW uses Gephi's libraries for exporting. Furthermore, `x` and `y` will be added even if they didn't exist in the model. Again, this is because NW uses Gephi's libraries which assume that nodes have positions stored in `x` and `y`. If you wish to export to Gephi specifically, we recommend creating `x` and `y` turtles variables and setting them to `xcor` and `ycor` before export.
+- Color will be exported in a standard RGB format. This should hopefully increase compatibility with other programs.
+- Turtle and link variables that contain values of different types will be stored as strings. Unfortunately, most network formats require that node and attributes have a single type.
+- Many programs use `label` to store the id of nodes. Thus, if you're having trouble importing data exported from NetLogo into another program, you might try setting turtles' labels to their `who` number.
+- Multigraphs are not supported. Thus, two turtles can share at most one link. `nw:save-graphml` does support multigraphs, so use that if turtles can have more than one type of link connecting them.
+
+`nw:save` determines the file-type of the given file based on the extension and calls the corresponding `save-*` primitive on it. Note that GraphML must be exported with `nw:save-graphml`.
 
 ## A note regarding floating point calculations
 
