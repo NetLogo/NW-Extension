@@ -7,7 +7,7 @@ While this extension is stable and we encourage using this instead of the old ex
 The source code for the extension is hosted online at
 https://github.com/NetLogo/NW-Extension.
 
-A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
+A much shorter version of this documentation, that can be useful as a cheat sheet, is [available as a PDF file](https://github.com/NetLogo/NW-Extension/blob/master/doc/cheat-sheet/nw-ext-cheat-sheet.pdf?raw=true).
 
 ## Index of Primitives
 
@@ -23,7 +23,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 - [betweenness-centrality](#betweenness-centrality), [eigenvector-centrality](#eigenvector-centrality), [page-rank](#page-rank), [closeness-centrality](#closeness-centrality), [weighted-closeness-centrality](#weighted-closeness-centrality)
 
-[Clustering Measures](#clustering)
+[Clustering Measures](#clustering-measures)
 
 - [clustering-coefficient](#clustering-coefficient)
 
@@ -39,7 +39,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 - [generate-preferential-attachment](#generate-preferential-attachment), [generate-random](#generate-random), [generate-small-world](#generate-small-world), [generate-lattice-2d](#generate-lattice-2d), [generate-ring](#generate-ring), [generate-star](#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](#generate-wheel-generate-wheel-inward-generate-wheel-outward)
 
-[Import / Export](#import--export)
+[Import and Export](#import-and-export)
 
 - [save-matrix](#save-matrix), [load-matrix](#load-matrix), [save-graphml](#save-graphml), [load-graphml](#load-graphml)
 - [load, load-dl, load-gdf, load-gexf, load-gml, load-vna](#load)
@@ -84,7 +84,7 @@ Some examples:
 - `nw:set-context bankers links` will give you all the bankers, and any links between them, whether these links are friendships or accounts.
 - `nw:set-context clients accounts` will give you all the clients, and accounts between each other, but since in our fictional example clients can only have accounts with bankers, this will be a completely disconnected network.
 
-### Special agentsets vs. normal agentsets
+### Special agentsets vs normal agentsets
 
 It must be noted that NetLogo has two types of agentsets that behave slightly differently, and that this has an impact on the way `nw:set-context` works. We will say a few words about these concepts here but, for a thorough understanding, it is highly recommended that you read [the section on agentsets in the NetLogo programming guide](http://ccl.northwestern.edu/netlogo/docs/programming.html#agentsets).
 
@@ -213,7 +213,7 @@ observer> show nw:get-context
 observer: [(agentset, 0 turtles) (agentset, 0 links)]
 ```
 
-If you then create new turtles and links, they are not added to the context because normal agentsets don't grow (see [Special agentsets vs. normal agentsets](#special-agentsets-vs-normal-agentsets)):
+If you then create new turtles and links, they are not added to the context because normal agentsets don't grow (see [Special agentsets vs normal agentsets](#special-agentsets-vs-normal-agentsets)):
 
 ```
 observer> crt 2 [ create-links-with other turtles ]
@@ -496,6 +496,8 @@ The average local clustering coefficient is another popular method for measuring
 
     mean [ nw:clustering-coefficient ] of turtles
 
+### Clusterers
+
 #### bicomponent-clusters
 `nw:bicomponent-clusters`
 
@@ -610,7 +612,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 
     nw:generate-wheel turtles links 100 [ set color red ]
 
-### Import / Export
+### Import and Export
 
 #### save-matrix
 `nw:save-matrix` _file-name_
@@ -916,5 +918,5 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 [Jung](http://jung.sourceforge.net/) is licensed under the [BSD license](http://jung.sourceforge.net/license.txt) and [JGraphT](http://jgrapht.org/) is licensed under the [LGPL license](http://jgrapht.org/LGPL.html).
 
-[turtle]: https://github.com/NetLogo/NW-Extension/raw/master/turtle.gif  "Turtle"
+[turtle]: http://ccl.northwestern.edu/netlogo/docs/images/turtle.gif  "Turtle"
 [link]: https://github.com/NetLogo/NW-Extension/raw/master/link.gif  "Link"
