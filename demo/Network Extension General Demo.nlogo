@@ -908,15 +908,15 @@ This model demonstrates various features of the Netlogo Network extension.
 
 ## HOW IT WORKS
 
-It is not a model _of_ anything per se, but rather a collection of tools that allow you the generate various kind of networks, lay them out on screen, and get information about them.
+It is not a model _of_ anything per se, but rather a collection of tools that allow you to generate various kinds of networks, lay them out on screen, and get information about them.
 
 ## HOW TO USE IT
 
-The first thing to think about is if you want to use directed or undirected links. The **links-to-use** chooser will allow you to specify that: all the generators will use the kind of links specfied in the chooser. You can generate different networks with different kinds of links without clearing everything in between.
+The first thing to think about is if you want to use directed or undirected links. The **links-to-use** chooser will allow you to specify that: all the generators will use the kind of links specified in the chooser. You can generate different networks with different kinds of links without clearing everything in between.
 
 As an aside, also note that the value of the **links-to-use** chooser is used by the different clusterers and measures as well. Be careful to use the right value for the network you are interested in! For example, if you ask for betweenness centrality with "directed links" selected in the chooser, but the network on the screen is undirected, the betweenness centrality values will all be zero, because the algorithm only takes directed links into account!
 
-On the right of the **links-to-use** chooser, is another one called **layout**. NetLogo currently offers four different kinds of layouts (this is not new in the extension - they were all available before): [circle](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-circle), [radial](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-radial), [spring](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-spring) and [tutte](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-tutte). The chosen layout will be applied automatically when generating new networks, but you can also apply yourself by clicking the **layout** button. One special case is the "spring" layout, which works better when applied multiple times (or even continuously). To make it easy to do that, we have a **spring** forever button. When you click this button, it will automatically choose "spring" layout and apply it as long as the button is pressed.
+On the right of the **links-to-use** chooser, is another one called **layout**. NetLogo currently offers four different kinds of layouts (this is not new in the extension - they were all available before): [circle](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-circle), [radial](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-radial), [spring](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-spring) and [tutte](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#layout-tutte). The chosen layout will be applied automatically when generating new networks, but you can also apply yourself by clicking the **layout** button. One special case is the "spring" layout, which works better when applied multiple times (or even continuously). To make it easy to do that, we have a **spring** forever button. When you click this button, it will automatically choose the "spring" layout and apply it as long as the button is pressed.
 
 Now that you know what kind of links you want, and how you want it to look, it's time to generate a network!
 
@@ -1361,7 +1361,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.5-RC1
+NetLogo 5.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
