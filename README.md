@@ -174,7 +174,7 @@ Nope:
 
 #### set-context
 
-`nw:set-context` _turtleset_ _linkset_
+<tt>nw:set-context <i>turtleset linkset</i></tt>
 
 Specifies the set of turtles and the set of links that the extension will consider to be the current graph. All the turtles from _turtleset_ and all the links from _linkset_ that connect two turtles from _turtleset_ will be included.
 
@@ -275,7 +275,8 @@ observer: [[(turtle 0) (turtle 1)] [(link 0 1)]]
 ```
 
 #### with-context
-`nw:with-context` _turtleset_ _linkset_ _command-block_
+
+<tt>nw:with-context <i>turtleset linkset command-block</i></tt>
 
 Executes the _command-block_ with the context temporarily set to _turtleset_ and _linkset_.
 After _command-block_ finishes running, the previous context will be restored.
@@ -296,9 +297,9 @@ If you have NW extension code running in two forever buttons or `loop` blocks th
 
 #### turtles-in-radius, turtles-in-reverse-radius
 
-![turtle][turtle] `nw:turtles-in-radius` _radius_
+![turtle][turtle] <tt>nw:turtles-in-radius <i>radius</i></tt>
 
-![turtle][turtle] `nw:turtles-in-reverse-radius` _radius_
+![turtle][turtle] <tt>nw:turtles-in-reverse-radius <i>radius</i></tt>
 
 Returns the set of turtles within the given distance (number of links followed) of the calling turtle in the current context. Both forms include the calling turtle, whom you can exclude with `other` if need be.
 
@@ -326,9 +327,9 @@ As you may have noticed, the result includes the calling turtle. This mimics the
 
 #### distance-to, weighted-distance-to
 
-![turtle][turtle] `nw:distance-to` _target-turtle_
+![turtle][turtle] <tt>nw:distance-to <i>target-turtle</i></tt>
 
-![turtle][turtle] `nw:weighted-distance-to` _target-turtle_ _weight-variable-name_
+![turtle][turtle] <tt>nw:weighted-distance-to <i>target-turtle weight-variable-name</i></tt>
 
 Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current context.
 
@@ -356,13 +357,13 @@ Will ouput:
 
 #### path-to, turtles-on-path-to, weighted-path-to, turtles-on-weighted-path-to
 
-![turtle][turtle] `nw:path-to` _target-turtle_
+![turtle][turtle] <tt>nw:path-to <i>target-turtle</i></tt>
 
-![turtle][turtle] `nw:turtles-on-path-to` _target-turtle_
+![turtle][turtle] <tt>nw:turtles-on-path-to <i>target-turtle</i></tt>
 
-![turtle][turtle] `nw:weighted-path-to` _target-turtle_ _weight-variable-name_
+![turtle][turtle] <tt>nw:weighted-path-to <i>target-turtle weight-variable-name</i></tt>
 
-![turtle][turtle] `nw:turtles-on-weighted-path-to` _target-turtle_ _weight-variable-name_
+![turtle][turtle] <tt>nw:turtles-on-weighted-path-to <i>target-turtle weight-variable-name</i></tt>
 
 Finds the shortest path to the target turtle and reports the actual path between the source and the target turtle. The `nw:path-to` and `nw:weighted-path-to` variants will report the list of links that constitute the path, while the `nw:turtles-on-path-to` and `nw:turtles-on-weighted-path-to` variants will report the list of turtles along the path, including the source and destination turtles.
 
@@ -398,9 +399,9 @@ Will output:
 
 #### mean-path-length, mean-weighted-path-length
 
-`nw:mean-path-length`
+<tt>nw:mean-path-length</tt>
 
-`nw:mean-weighted-path-length` _weight-variable-name_
+<tt>nw:mean-weighted-path-length <i>weight-variable-name</i></tt>
 
 Reports the average shortest-path length between all distinct pairs of nodes in the current context. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
 
@@ -469,7 +470,7 @@ The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_cen
 Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
 
 #### weighted-closeness-centrality
-![turtle][turtle] `nw:weighted-closeness-centrality` _weight-variable-name_
+![turtle][turtle] <tt>nw:weighted-closeness-centrality <i>weight-variable-name</i></tt>
 
 This is identical to [closeness-centrality](#closeness-centrality), except that weights provided by the given variable are treated as the distances of links.
 
@@ -534,7 +535,7 @@ The generators are amongst the only primitives that do not operate on the curren
 
 #### generate-preferential-attachment
 
-`nw:generate-preferential-attachment` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
+<tt>nw:generate-preferential-attachment <i>turtle-breed link-breed nb-nodes optional-command-block</i></tt>
 
 Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
 
@@ -545,7 +546,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-preferential-attachment turtles links 100 [ set color red ]
 
 #### generate-random
-`nw:generate-random` _turtle-breed_ _link-breed_ _nb-nodes_ _connection-probability_ _optional-command-block_
+<tt>nw:generate-random <i>turtle-breed link-breed nb-nodes connection-probability optional-command-block</i></tt>
 
 Generates a new random network of _nb-nodes_ turtles in which each one has a  _connection-probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G(n, p)_ variant of the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
@@ -556,7 +557,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-random turtles links 100 0.5 [ set color red ]
 
 #### generate-small-world
-`nw:generate-small-world` _turtle-breed_ _link-breed_ _row-count_ _column-count_ _clustering-exponent_ _is-toroidal_ _optional-command-block_
+<tt>nw:generate-small-world <i>turtle-breed link-breed row-count column-count clustering-exponent is-toroidal optional-command-block</i></tt>
 
 Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model).
 
@@ -567,7 +568,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-small-world turtles links 10 10 2.0 false [ set color red ]
 
 #### generate-lattice-2d
-`nw:generate-lattice-2d` _turtle-breed_ _link-breed_ _row-count_ _column-count_ _is-toroidal_ _optional-command-block_
+<tt>nw:generate-lattice-2d <i>turtle-breed link-breed row-count column-count is-toroidal optional-command-block</i></tt>
 
 Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column-count_ columns. The grid will wrap around itsef if _is-toroidal_ is `true`.
 
@@ -576,7 +577,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-lattice-2d turtles links 10 10 false [ set color red ]
 
 #### generate-ring
-`nw:generate-ring` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
+<tt>nw:generate-ring <i>turtle-breed link-breed nb-nodes optional-command-block</i></tt>
 
 Generates a [ring network](http://en.wikipedia.org/wiki/Ring_network) of _nb-nodes_ turtles, in which each turtle is connected to exactly two other turtles.
 
@@ -587,7 +588,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-ring turtles links 100 [ set color red ]
 
 #### generate-star
-`nw:generate-star` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
+<tt>nw:generate-star <i>turtle-breed link-breed nb-nodes optional-command-block</i></tt>
 
 Generates a [star network](http://en.wikipedia.org/wiki/Star_graph) in which there is one central turtle and every other turtle is connected only to this central node. The number of turtles can be as low as one, but it won't look much like a star.
 
@@ -596,11 +597,11 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
     nw:generate-star turtles links 100 [ set color red ]
 
 #### generate-wheel, generate-wheel-inward, generate-wheel-outward
-`nw:generate-wheel` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
+<tt>nw:generate-wheel <i>turtle-breed link-breed nb-nodes optional-command-block</i></tt>
 
-`nw:generate-wheel-inward` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
+<tt>nw:generate-wheel-inward <i>turtle-breed link-breed nb-nodes optional-command-block</i></tt>
 
-`nw:generate-wheel-outward` _turtle-breed_ _link-breed_ _nb-nodes_ _optional-command-block_
+<tt>nw:generate-wheel-outward <i>turtle-breed link-breed nb-nodes optional-command-block</i></tt>
 
 Generates a [wheel network](http://en.wikipedia.org/wiki/Wheel_graph), which is basically a [ring network](http://en.wikipedia.org/wiki/Ring_network) with an additional "central" turtle that is connected to every other turtle.
 
@@ -615,7 +616,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 ### Import and Export
 
 #### save-matrix
-`nw:save-matrix` _file-name_
+<tt>nw:save-matrix <i>file-name</i></tt>
 
 Saves the current network, as defined by `nw:set-context`, to _file-name_, as a text file, in the form of a simple connection matrix.
 
@@ -636,7 +637,7 @@ And here is the directed version:
 At the moment, `nw:save-matrix` does not support link weights. Every link is represented as a "1.00" in the connection matrix. This will change in a future version of the extension.
 
 #### load-matrix
-`nw:load-matrix` _file-name_ _turtle-breed_ _link-breed_ _optional-command-block_
+<tt>nw:load-matrix <i>file-name turtle-breed link-breed optional-command-block</i></tt>
 
 Generates a new network according to the connection matrix saved in _file-name_, using _turtle-breed_ and _link-breed_ to create the new turtles and links.
 
@@ -665,7 +666,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
       nw:load-matrix "matrix.txt" turtles links [ set color red ]
 
 #### save-graphml
-`nw:save-graphml` _file-name_
+<tt>nw:save-graphml <i>file-name</i></tt>
 
 You can save the current graph to GraphML. The following NetLogo code:
 
@@ -792,7 +793,6 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </edge>
 </graph>
 </graphml>
-
 ```
 
 A few things to notice:
@@ -804,7 +804,7 @@ A few things to notice:
 
 #### load-graphml
 
-`nw:load-graphml` _file-name_ _optional-command-block_
+<tt>nw:load-graphml <i>file-name optional-command-block</i></tt>
 
 Loading a GraphML file into NetLogo with the network extension should be as simple as calling `nw:load-graphml "example.graphml"`, but there is a bit of preparation involved.
 
@@ -842,17 +842,17 @@ Note that this command block can be used to build a list or an agentset containi
 
 #### load
 
-`nw:load` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:load <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:load-dl` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:load-dl <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:load-gdf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:load-gdf <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:load-gexf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:load-gexf <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:load-gml` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:load-gml <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:load-vna` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:load-vna <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
 Import the given file into NetLogo. Like `nw:load-graphml`, the importer will do its best to match node and edge attributes in the file with turtle and link variables in NetLogo. If `breed` is specified for nodes and edges in the file and exists in NetLogo, it will be used. Otherwise, the default turtle and link breeds are used.
 
@@ -864,17 +864,17 @@ Limitations:
 
 #### save
 
-`nw:save` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:save <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:save-dl` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:save-dl <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:save-gdf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:save-gdf <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:save-gexf` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:save-gexf <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:save-gml` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:save-gml <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
-`nw:save-vna` _file-name_ _default-turtle-breed_ _default-link-breed_ _optional-command-block_
+<tt>nw:save-vna <i>file-name default-turtle-breed default-link-breed optional-command-block</i></tt>
 
 Export the network context in the given format to the given file. Turtle and link attributes will be exported to formats that support node and edge properties.
 
