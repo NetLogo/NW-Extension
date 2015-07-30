@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions.nw
 
-import org.nlogo.extensions.nw.prim.{SaveFileType, LoadFileType, LoadFileTypeDefaultBreeds}
+import org.nlogo.extensions.nw.prim.{WattsStrogatzGenerator, SaveFileType, LoadFileType, LoadFileTypeDefaultBreeds}
 import org.nlogo.extensions.nw.prim.jung.{SaveGraphML, LoadGraphML}
 
 import scala.collection.JavaConverters._
@@ -87,6 +87,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("generate-random", new prim.ErdosRenyiGenerator)
     add("generate-small-world", new prim.jung.KleinbergSmallWorldGenerator)
     add("generate-lattice-2d", new prim.jung.Lattice2DGenerator)
+    add("generate-watts-strogatz", new WattsStrogatzGenerator)
 
     add("generate-ring", new prim.jgrapht.RingGenerator)
     add("generate-star", new prim.jgrapht.StarGenerator)
