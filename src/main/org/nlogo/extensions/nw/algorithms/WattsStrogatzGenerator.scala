@@ -6,6 +6,7 @@ package org.nlogo.extensions.nw.algorithms
 
 import org.nlogo.agent
 import org.nlogo.agent.AgentSet
+import org.nlogo.api.Turtle
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.util.MersenneTwisterFast
 
@@ -22,6 +23,7 @@ object WattsStrogatzGenerator {
     require(rewireProbability >= 0 && rewireProbability <= 1.0,
       "The rewire probability must be between 0 and 1.")
     val turtles = Iterator.fill(nbTurtles)(createTurtle(turtleBreed, rng)).toIndexedSeq
+    turtles.zipWithIndex.foreach{case (t: Turtle,i: Int) => t.heading(360.0*i/nbTurtles)}
     for {
       i <- 0 until nbTurtles //turtles
       j <- 1 to neighborPerSide //edges
