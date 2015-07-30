@@ -27,7 +27,15 @@ object WattsStrogatzGenerator {
     for {
       i <- 0 until nbTurtles //turtles
       j <- 1 to neighborPerSide //edges
-    } linkBreed.world.linkManager.createLink(turtles(i),turtles((i+j) % nbTurtles),linkBreed) //create the links
+    } {
+      //create the links
+      if (rng.nextDouble() < rewireProbability){
+        linkBreed.world.linkManager.createLink(turtles(i),turtles(rng.nextInt(nbTurtles)),linkBreed) //randomly
+      }
+      else {
+        linkBreed.world.linkManager.createLink(turtles(i),turtles((i+j) % nbTurtles),linkBreed) //next turtles over
+      }
+    }
     turtles
   }
 }
