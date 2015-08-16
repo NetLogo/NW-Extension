@@ -10,6 +10,7 @@ import org.nlogo.api.Turtle
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.util.MersenneTwisterFast
 
+
 object WattsStrogatzGenerator {
   def generate(
                 turtleBreed: AgentSet,
@@ -20,6 +21,8 @@ object WattsStrogatzGenerator {
                 rng: MersenneTwisterFast): Seq[agent.Turtle] = {
     require(nbTurtles > 0,
       "A positive number of turtles must be specified.")
+    require(neighborPerSide <= math.round(math.ceil(nbTurtles/2)),
+      "The neighbors on each side cannot be greater than half of the total number of turtles")
     require(rewireProbability >= 0 && rewireProbability <= 1.0,
       "The rewire probability must be between 0 and 1.")
     val turtles = Iterator.fill(nbTurtles)(createTurtle(turtleBreed, rng)).toIndexedSeq
