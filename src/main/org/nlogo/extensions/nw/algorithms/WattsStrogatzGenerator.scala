@@ -10,7 +10,6 @@ import org.nlogo.api.Turtle
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.util.MersenneTwisterFast
 
-
 object WattsStrogatzGenerator {
   def generate(
                 turtleBreed: AgentSet,

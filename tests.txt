@@ -1037,6 +1037,19 @@ generate-random-directed-unconnected
   O> nw:generate-random turtles directed-links 2 0.0
   (word sort directed-links) =>  "[]"
 
+##watts-strogatz generator
+watts-strogatz-no-rewire
+  extensions [ nw ]
+  O> nw:generate-watts-strogatz turtles links 20 1 0
+  remove-duplicates [ count link-neighbors ] of turtles => [2]
+  remove-duplicate [ nw:clustering-coefficient ] of turtles => [0]
+  count links => 20
+  O> clear-all
+  O> nw:generate-watts-strogatz turtles links 20 2 0
+  remove-duplicates [ count link-neighbors ] of turtles => [4]
+  remove-duplicate [ nw:clustering-coefficient ] of turtles => [0.25]
+  count links => 40
+
 ## weak-component-clusterer
 
 weak-components-empty-graph
