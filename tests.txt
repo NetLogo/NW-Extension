@@ -1042,7 +1042,7 @@ watts-strogatz-no-rewire
   extensions [ nw ]
   O> nw:generate-watts-strogatz turtles links 20 1 0
   remove-duplicates [ count link-neighbors ] of turtles => [2]
-  remove-duplicate [ nw:clustering-coefficient ] of turtles => [0]
+  remove-duplicates [ nw:clustering-coefficient ] of turtles => [0]
   count links => 20
   O> clear-all
   O> nw:generate-watts-strogatz turtles links 20 2 0
