@@ -23,7 +23,7 @@ class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.Defau
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     val weightVar = args(0).getString.toUpperCase(Locale.ENGLISH)
-    graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent], weightVar): java.lang.Double
+  graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent], weightVar): java.lang.Double
   }
 }
 
