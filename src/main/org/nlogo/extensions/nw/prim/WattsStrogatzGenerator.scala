@@ -22,7 +22,7 @@ class WattsStrogatzGenerator extends TurtleCreatingCommand {
     val linkBreed = args(1).getAgentSet.requireLinkBreed
     val nbTurtles = getIntValueWithMinimum(args(2), 1)
     val neighborsPerSide = getIntValueWithMinimum(args(3),1)
-    if (neighborsPerSide > math.round(math.ceil(neighborsPerSide/2)))
+    if (neighborsPerSide > math.ceil(neighborsPerSide/2))
       throw new ExtensionException("There can only be half of the number of turtles on a side.")
     val rewireProbability = args(4).getDoubleValue
     if (!(rewireProbability >= 0 && rewireProbability <= 1.0))
