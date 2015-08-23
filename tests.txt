@@ -1049,6 +1049,13 @@ watts-strogatz-no-rewire
   remove-duplicates [ count link-neighbors ] of turtles => [4]
   remove-duplicates [ nw:clustering-coefficient ] of turtles => [0.25]
   count links => 40
+  O> clear-all
+  O> nw:generate-watts-strogatz turtles links 8 5 0 => ERROR
+  O> clear-all
+  O> nw:generate-watts-strogatz turtles links 8 3 0.25
+  remove-duplicates [ count link-neighbors ] of turtles => [6]
+
+
 
 ## weak-component-clusterer
 
