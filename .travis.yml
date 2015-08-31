@@ -5,9 +5,9 @@
 # it didn't work for the full NetLogo build, but might work
 # for this.)
 
-jdk: oraclejdk7
+jdk: oraclejdk8
 language: scala
-scala: 2.9.2
+scala: 2.11.7
 install:
   - sbt update
 script:

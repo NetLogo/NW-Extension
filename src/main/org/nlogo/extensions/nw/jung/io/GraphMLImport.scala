@@ -68,9 +68,9 @@ object GraphMLImport {
             // trial and errors for unknown types
             try value.toDouble
             catch {
-              case _ =>
+              case _: Exception =>
                 try value.toBoolean
-                catch { case _ => value } // string as a final resort
+                catch { case _: Exception => value } // string as a final resort
             }
         }
       } catch {

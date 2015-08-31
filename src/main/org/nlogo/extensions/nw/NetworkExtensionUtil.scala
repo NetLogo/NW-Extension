@@ -6,6 +6,7 @@ import org.nlogo.agent.TreeAgentSet
 import org.nlogo.api.{Agent, ExtensionException, I18N}
 import org.nlogo.{agent, api, nvm}
 import org.nlogo.util.MersenneTwisterFast
+import scala.language.{ implicitConversions, reflectiveCalls }
 
 object NetworkExtensionUtil {
 

@@ -1,4 +1,6 @@
-scalaVersion := "2.9.2"
+scalaVersion := "2.11.7"
+
+enablePlugins(org.nlogo.build.NetLogoExtension)
 
 scalaSource in Compile := baseDirectory.value / "src" / "main"
 
@@ -8,18 +10,21 @@ javaSource in Compile := baseDirectory.value / "src" / "main"
 
 javaSource in Test := baseDirectory.value / "src" / "test"
 
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature",
                       "-encoding", "us-ascii")
-
-retrieveManaged := true
 
 resolvers += "Gephi Releases" at "http://nexus.gephi.org/nexus/content/repositories/releases/"
 
+val netLogoJarURL =
+  Option(System.getProperty("netlogo.jar.url"))
+    .getOrElse("http://ccl.northwestern.edu/netlogo/5.3.0/NetLogo.jar")
+
+val netLogoTestsURL =
+  netLogoJarURL.stripSuffix(".jar") + "-tests.jar"
+
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogo" % "5.1.0" from
-    "http://ccl.northwestern.edu/netlogo/5.1.0/NetLogo.jar",
-  "jgrapht" % "jgrapht-jdk1.6" % "0.8.3" from
-    "http://ccl.northwestern.edu/devel/jgrapht-jdk1.6-0.8.3.jar",
+  "org.nlogo" % "NetLogo" % "5.3.0" from netLogoJarURL changing(),
+  "net.sf.jgrapht" % "jgrapht" % "0.8.3",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
   "colt" % "colt" % "1.2.0",
   "net.sf.jung" % "jung-algorithms" % "2.0.1",
@@ -30,73 +35,61 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogo-tests" % "5.1.0" % "test" from
-    "http://ccl.northwestern.edu/netlogo/5.1.0/NetLogo-tests.jar",
-  "org.scalatest" %% "scalatest" % "1.8" % "test",
+  "org.nlogo" % "NetLogo-tests" % "5.3.0" % "test" from netLogoTestsURL changing(),
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.picocontainer" % "picocontainer" % "2.13.6" % "test",
   "asm" % "asm-all" % "3.3.1" % "test"
 )
 
-artifactName := { (_, _, _) => "nw.jar" }
+netLogoExtName      := "nw"
 
-packageOptions +=
-  Package.ManifestAttributes(
-    ("Extension-Name", "nw"),
-    ("Class-Manager", "org.nlogo.extensions.nw.NetworkExtension"),
-    ("NetLogo-Extension-API-Version", "5.0"))
+netLogoClassManager := "org.nlogo.extensions.nw.NetworkExtension"
+
+val moveToNwDir = taskKey[Unit]("move to nw directory")
+
+val nwDirectory = settingKey[File]("directory that extension is moved to for testing")
+
+nwDirectory := {
+  baseDirectory.value / "extensions" / "nw"
+}
+
+moveToNwDir := {
+  val nwJar = (packageBin in Compile).value
+  val base = baseDirectory.value
+  IO.createDirectory(nwDirectory.value)
+  val allDependencies =
+    Attributed.data((dependencyClasspath in Compile).value)
+  val zipExtras =
+    (allDependencies :+ nwJar)
+      .filterNot(_.getName contains "NetLogo")
+  for(extra <- zipExtras)
+    IO.copyFile(extra, nwDirectory.value / extra.getName)
+  for (dir <- Seq("alternate-netlogolite", "demo"))
+    IO.copyDirectory(base / dir, nwDirectory.value / dir)
+  IO.createDirectory(nwDirectory.value / "test" / "tmp")
+  val testResources =
+    (baseDirectory.value / "test" ***).filter { f =>
+      f.getName.contains(".") && ! f.getName.endsWith(".scala")
+    }
+  for (file <- testResources.get)
+    IO.copyFile(file, nwDirectory.value / "test" / IO.relativize(baseDirectory.value / "test", file).get)
+}
 
 packageBin in Compile := {
   val jar = (packageBin in Compile).value
-  val classpath = (dependencyClasspath in Runtime).value
-  val base = baseDirectory.value
-  val s = streams.value
-  IO.copyFile(jar, base / "nw.jar")
-  def pack200(name: String) {
-    Process(sys.env("JAVA_HOME") + "/bin/pack200 " +
-            "--modification-time=latest --effort=9 --strip-debug " +
-            "--no-keep-file-order --unknown-attribute=strip " +
-            name + ".pack.gz " + name).!!
-  }
-  pack200("nw.jar")
-  val libraryJarPaths =
-    classpath.files.filter{path =>
-      path.getName.endsWith(".jar") &&
-      !path.getName.startsWith("scala-library")}
-  for(path <- libraryJarPaths) {
-    IO.copyFile(path, base / path.getName)
-    pack200(path.getName)
-  }
-  if(Process("git diff --quiet --exit-code HEAD").! == 0) {
-    // copy everything thing we need for distribution in
-    // a temporary "nw" directory, which we will then zip
-    // before deleting it.
-    IO.createDirectory(base / "nw")
-    val zipExtras =
-      (libraryJarPaths.map(_.getName) :+ "nw.jar")
-        .filterNot(_ contains "NetLogo")
-        .flatMap{ jar => Seq(jar, jar + ".pack.gz") }
-    for(extra <- zipExtras)
-      IO.copyFile(base / extra, base / "nw" / extra)
-    for (dir <- Seq("alternate-netlogolite", "demo"))
-      IO.copyDirectory(base / dir, base / "nw" / dir)
-    Process("zip -r nw.zip nw").!!
-    IO.delete(base / "nw")
-  }
-  else {
-    s.log.warn("working tree not clean; no zip archive made")
-    IO.delete(base / "nw.zip")
+  val nwZip = baseDirectory.value / "nw.zip"
+  if (nwZip.exists) {
+    IO.unzip(nwZip, baseDirectory.value)
+    for (file <- (baseDirectory.value / "nw" ** "*.jar").get)
+      IO.copyFile(file, baseDirectory.value / file.getName)
+  } else {
+    sys.error("No zip file - nw extension not built")
   }
   jar
 }
 
 test in Test := {
-  val _ = (packageBin in Compile).value
+  moveToNwDir.value
   (test in Test).value
-}
-
-cleanFiles ++= {
-  val base = baseDirectory.value
-  Seq(base / "nw.jar",
-      base / "nw.jar.pack.gz",
-      base / "nw.zip")
+  IO.delete(nwDirectory.value)
 }

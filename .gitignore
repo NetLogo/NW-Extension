@@ -3,7 +3,10 @@
 /jung-src/
 /jgrapht-src/
 /project/target/
+/project/project/
 /target/
+/nw/
+/extensions/nw/
 classes/
 *.jar
 *.gz

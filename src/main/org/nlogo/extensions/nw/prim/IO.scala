@@ -33,6 +33,8 @@ import org.openide.util.Lookup
 import scala.collection.JavaConverters._
 import scala.util.control.Exception.allCatch
 
+import scala.language.postfixOps
+
 class Load extends TurtleAskingCommand {
   override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
@@ -226,14 +228,17 @@ object GephiExport {
     }
   }
 
-  private def coerce(value: AnyRef, kind: AttributeType): AnyRef = value -> kind match {
-    case (x: Number, AttributeType.DOUBLE) => x.doubleValue: JDouble
-    case (x: Number, AttributeType.FLOAT) => x.doubleValue: JDouble
-    case (b: JBoolean, AttributeType.BOOLEAN) => b
-    // For Strings, we want to keep the escaping but ditch the surrounding quotes. BCH 1/26/2015
-    case (s: String, AttributeType.STRING) => Dump.logoObject(s, readable = true, exporting = false).drop(1).dropRight(1)
-    case (s: AnyRef, AttributeType.STRING) => Dump.logoObject(s, readable = true, exporting = false)
-  }
+  private def coerce(value: AnyRef, kind: AttributeType): AnyRef =
+    (value, kind) match {
+      case (x: Number, AttributeType.DOUBLE)    => x.doubleValue: JDouble
+      case (x: Number, AttributeType.FLOAT)     => x.doubleValue: JDouble
+      case (b: JBoolean, AttributeType.BOOLEAN) => b
+      // For Strings, we want to keep the escaping but ditch the surrounding quotes. BCH 1/26/2015
+      case (s: String, AttributeType.STRING)    => Dump.logoObject(s, readable = true, exporting = false).drop(1).dropRight(1)
+      case (s: AnyRef, AttributeType.STRING)    => Dump.logoObject(s, readable = true, exporting = false)
+      case (o: AnyRef, attributeType)           =>
+        throw new ExtensionException(s"Could not coerce ${Dump.logoObject(o, readable = true, exporting = false)} to $attributeType")
+    }
 
 }
 object GephiImport{
