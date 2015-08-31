@@ -1,10 +1,12 @@
 import org.nlogo.build.NetLogoExtension
 
-enablePlugins(NetLogoExtension)
-
 scalaVersion := "2.11.7"
 
+enablePlugins(NetLogoExtension)
+
 name := "nw"
+
+netLogoExtName      := "nw"
 
 netLogoClassManager := "org.nlogo.extensions.nw.NetworkExtension"
 
@@ -39,6 +41,15 @@ val netLogoJarsOrDependencies = {
 }
 
 netLogoJarsOrDependencies
+
+resolvers += "Gephi Releases" at "http://nexus.gephi.org/nexus/content/repositories/releases/"
+
+val netLogoJarURL =
+  Option(System.getProperty("netlogo.jar.url"))
+    .getOrElse("http://ccl.northwestern.edu/netlogo/5.3.0/NetLogo.jar")
+
+val netLogoTestsURL =
+  netLogoJarURL.stripSuffix(".jar") + "-tests.jar"
 
 libraryDependencies ++= Seq(
   "net.sf.jgrapht" % "jgrapht" % "0.8.3",
@@ -80,7 +91,6 @@ moveToNwDir := {
 }
 
 test in Test := {
-  IO.createDirectory(nwDirectory.value)
   moveToNwDir.value
   (test in Test).value
   IO.delete(nwDirectory.value)
