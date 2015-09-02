@@ -15,15 +15,26 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-featur
 
 resolvers += "Gephi Releases" at "http://nexus.gephi.org/nexus/content/repositories/releases/"
 
-val netLogoJarURL =
+val netLogoJarsOrDependencies =
   Option(System.getProperty("netlogo.jar.url"))
-    .getOrElse("http://ccl.northwestern.edu/netlogo/5.3.0/NetLogo.jar")
+    .orElse(Some("http://ccl.northwestern.edu/netlogo/5.3.0/NetLogo.jar"))
+    .map { url =>
+      import java.io.File
+      import java.net.URI
+      val testsUrl = url.stripSuffix(".jar") + "-tests.jar"
+      if (url.startsWith("file:"))
+        (Seq(new File(new URI(url)), new File(new URI(testsUrl))), Seq())
+      else
+        (Seq(), Seq(
+          "org.nlogo" % "NetLogo" % "5.3.0" from url,
+          "org.nlogo" % "NetLogo-tests" % "5.3.0" % "test" from testsUrl))
+    }.get
 
-val netLogoTestsURL =
-  netLogoJarURL.stripSuffix(".jar") + "-tests.jar"
+unmanagedJars in Compile ++= netLogoJarsOrDependencies._1
+
+libraryDependencies ++= netLogoJarsOrDependencies._2
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogo" % "5.3.0" from netLogoJarURL changing(),
   "net.sf.jgrapht" % "jgrapht" % "0.8.3",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
   "colt" % "colt" % "1.2.0",
@@ -35,7 +46,6 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogo-tests" % "5.3.0" % "test" from netLogoTestsURL changing(),
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.picocontainer" % "picocontainer" % "2.13.6" % "test",
   "asm" % "asm-all" % "3.3.1" % "test"
