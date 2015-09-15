@@ -92,6 +92,7 @@ packageBin in Compile := {
     IO.unzip(nwZip, baseDirectory.value)
     for (file <- (baseDirectory.value / "nw" ** "*.jar").get)
       IO.copyFile(file, baseDirectory.value / file.getName)
+    IO.delete(baseDirectory.value / "nw")
   } else {
     sys.error("No zip file - nw extension not built")
   }
