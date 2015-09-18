@@ -36,7 +36,10 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     "gephi-toolkit-0.8.2-all.jar").asJava
 
   override def clearAll() { clearContext() }
-  override def unload(em: api.ExtensionManager) { clearAll() }
+  override def unload(em: api.ExtensionManager) {
+    clearAll()
+    gephi.GephiUtils.shutdownStupidExtraThreads()
+  }
 
   override def load(primManager: api.PrimitiveManager) {
 
