@@ -21,7 +21,7 @@ val netLogoJarsOrDependencies =
     .map { url =>
       import java.io.File
       import java.net.URI
-      val testsUrl = url.stripSuffix(".jar") + "-tests.jar"
+      val testsUrl = url.replaceFirst("NetLogo", "NetLogo-tests")
       if (url.startsWith("file:"))
         (Seq(new File(new URI(url)), new File(new URI(testsUrl))), Seq())
       else
