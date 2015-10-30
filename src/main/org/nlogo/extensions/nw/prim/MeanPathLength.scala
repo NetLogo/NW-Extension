@@ -1,7 +1,7 @@
 package org.nlogo.extensions.nw.prim
 
 import org.nlogo.api
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.algorithms.MeanPathLength._
 import org.nlogo.agent.Turtle
@@ -11,7 +11,7 @@ import org.nlogo.extensions.nw.GraphContextProvider
 
 class MeanPathLength(gcp: GraphContextProvider)
   extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(NumberType | BooleanType)
+  override def getSyntax = reporterSyntax(ret = NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = gcp.getGraphContext(context.getAgent.world)
     val dist = gc.distance(_: Turtle, _: Turtle)
@@ -24,8 +24,8 @@ class MeanPathLength(gcp: GraphContextProvider)
 class MeanWeightedPathLength(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
-    Array(StringType),
-    NumberType | BooleanType)
+    right = List(StringType),
+    ret = NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val weightVariable = args(0).getString.toUpperCase(Locale.ENGLISH)
     val gc = gcp.getGraphContext(context.getAgent.world)

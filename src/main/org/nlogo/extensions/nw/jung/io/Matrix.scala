@@ -11,7 +11,7 @@ import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.jung.DummyGraph
 import org.nlogo.extensions.nw.jung.factoryFor
 import org.nlogo.extensions.nw.NetworkExtensionUtil.using
-import org.nlogo.util.MersenneTwisterFast
+import org.nlogo.api.MersenneTwisterFast
 
 import edu.uci.ics.jung
 import edu.uci.ics.jung.algorithms.matrix.GraphMatrixOperations

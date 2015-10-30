@@ -3,7 +3,7 @@
 package org.nlogo.extensions.nw.prim.jung
 
 import org.nlogo.api
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.agent
 import java.util.Locale
@@ -11,7 +11,7 @@ import org.nlogo.agent.Agent
 import org.nlogo.extensions.nw.GraphContextProvider
 
 class BetweennessCentrality(gcp:GraphContextProvider) extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(NumberType, "-T-L")
+  override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent]): java.lang.Double
@@ -19,7 +19,7 @@ class BetweennessCentrality(gcp:GraphContextProvider) extends api.DefaultReporte
 }
 
 class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(Array(StringType), NumberType, "-T-L")
+  override def getSyntax = reporterSyntax(right = List(StringType), ret = NumberType, agentClassString = "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     val weightVar = args(0).getString.toUpperCase(Locale.ENGLISH)
@@ -28,7 +28,7 @@ class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.Defau
 }
 
 class EigenvectorCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(NumberType, "-T--")
+  override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
     // make sure graph is connected
@@ -40,7 +40,7 @@ class EigenvectorCentrality(gcp: GraphContextProvider) extends api.DefaultReport
 }
 
 class PageRank(gcp: GraphContextProvider) extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(NumberType, "-T--")
+  override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
     graph.PageRank.getScore(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
@@ -48,7 +48,7 @@ class PageRank(gcp: GraphContextProvider) extends api.DefaultReporter {
 }
 
 class ClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(NumberType, "-T--")
+  override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     graph.closenessCentrality(context.getAgent.asInstanceOf[agent.Turtle]): java.lang.Double
@@ -56,7 +56,7 @@ class ClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter
 }
 
 class WeightedClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(Array(StringType), NumberType, "-T--")
+  override def getSyntax = reporterSyntax(right = List(StringType), ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     val varName = args(0).getString.toUpperCase(Locale.ENGLISH)

@@ -3,7 +3,7 @@
 package org.nlogo.extensions.nw.prim.jgrapht
 
 import org.nlogo.api
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jgrapht.Generator
@@ -11,7 +11,8 @@ import org.nlogo.extensions.nw.jgrapht.Generator
 trait SimpleGeneratorPrim
   extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
-    Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    List(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType),
+    blockAgentClassString = Some("-T--"))
   def turtleBreed(args: Array[api.Argument]) =
     args(0).getAgentSet.requireTurtleBreed
   def linkBreed(args: Array[api.Argument]) =

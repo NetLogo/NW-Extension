@@ -4,7 +4,7 @@ package org.nlogo.extensions.nw.prim
 
 import org.nlogo.agent
 import org.nlogo.api
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.algorithms.InRadius._
 import scala.collection.JavaConverters._
@@ -18,9 +18,9 @@ trait InRadiusPrim extends api.DefaultReporter {
   val followInLinks: Boolean
   val followOutLinks: Boolean
   override def getSyntax = reporterSyntax(
-    Array(NumberType),
-    TurtlesetType,
-    "-T--")
+    right = List(NumberType),
+    ret = TurtlesetType,
+    agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val world = context.getAgent.world.asInstanceOf[agent.World]
     val graphContext = gcp.getGraphContext(context.getAgent.world)

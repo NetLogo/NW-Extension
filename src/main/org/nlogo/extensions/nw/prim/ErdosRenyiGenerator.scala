@@ -4,14 +4,14 @@ package org.nlogo.extensions.nw.prim
 
 import org.nlogo.api
 import org.nlogo.api.ExtensionException
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.algorithms
 
 class ErdosRenyiGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
-    Array(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType))
+    List(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
   def createTurtles(args: Array[api.Argument], context: api.Context) = {
     val turtleBreed = args(0).getAgentSet.requireTurtleBreed
     val linkBreed = args(1).getAgentSet.requireLinkBreed

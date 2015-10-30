@@ -3,7 +3,7 @@
 package org.nlogo.extensions.nw.jung
 
 import org.nlogo.agent.AgentSet
-import org.nlogo.util.MersenneTwisterFast
+import org.nlogo.api.MersenneTwisterFast
 
 import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
 import edu.uci.ics.jung.algorithms.generators.random.BarabasiAlbertGenerator

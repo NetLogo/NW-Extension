@@ -12,6 +12,11 @@
 # - non numeric weights
 # - negative weights
 
+# Note:
+# undirected-edges/edge and directed-edges/edge refer to undirected and directed breeds, respectively.
+# Note that is-directed-link? / is-undirected-link? do not check breed identity,
+# but rather whether the particular links are directed or undirected, regardless of
+# breed membership
 ### set-context tests
 
 clear-all-clears-context
@@ -55,23 +60,23 @@ closeness-after-deaths
 
 default-context-with-undir-links-betweenness
   extensions [nw]
-  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  O> crt 2 [ create-undirected-edge-with one-of other turtles ]
   [ nw:betweenness-centrality ] of turtles => [0 0]
 
 undir-context-with-undir-links-betweenness
   extensions [nw]
-  O> nw:set-context turtles undirected-links
-  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  O> nw:set-context turtles undirected-edges
+  O> crt 2 [ create-undirected-edge-with one-of other turtles ]
   [ nw:betweenness-centrality ] of turtles => [0 0]
 
 default-context-with-undir-links-closeness
   extensions [nw]
-  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  O> crt 2 [ create-undirected-edge-with one-of other turtles ]
   [ nw:closeness-centrality ] of turtles => [1 1]
 
 default-context-with-undir-links-distance
   extensions [nw]
-  O> crt 2 [ create-undirected-link-with one-of other turtles ]
+  O> crt 2 [ create-undirected-edge-with one-of other turtles ]
   [ nw:distance-to turtle 1 ] of turtle 0 => 1
 
 
@@ -113,48 +118,48 @@ after-clear-turtles-agentset
 path-through-different-breeds
   extensions [ nw ]
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-links-with frogs ]
-  O> ask undirected-links [ set weight 2 ]
-  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  O> create-mice 2 [ create-undirected-edges-with frogs ]
+  O> ask undirected-edges [ set weight 2 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
   [ nw:distance-to mouse 2 ] of mouse 1 => 2
   [ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => 4
   O> ask frogs [ die ]
   [ nw:distance-to mouse 2 ] of mouse 1 => false
   [ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => false
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-link-with frog 3 ]
+  O> create-mice 2 [ create-undirected-edge-with frog 3 ]
   # new agents not added to non-breed context:
   [ nw:distance-to mouse 4 ] of mouse 5 => false
 
 after-world-resize-non-breed_2D
   extensions [ nw ]
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-link-with frog 0 ]
-  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  O> create-mice 2 [ create-undirected-edge-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
   [ nw:distance-to mouse 2 ] of mouse 1 => 2
   O> resize-world -1 1 -1 1
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-link-with frog 3 ]
+  O> create-mice 2 [ create-undirected-edge-with frog 3 ]
   # new agents should not be added to context:
   [ nw:distance-to mouse 4 ] of mouse 5 => false
 
 after-world-resize-non-breed_3D
   extensions [ nw ]
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-link-with frog 0 ]
-  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  O> create-mice 2 [ create-undirected-edge-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
   [ nw:distance-to mouse 2 ] of mouse 1 => 2
   O> resize-world -1 1 -1 1 -1 1
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-link-with frog 3 ]
+  O> create-mice 2 [ create-undirected-edge-with frog 3 ]
   # new agents should not be added to context:
   [ nw:distance-to mouse 4 ] of mouse 5 => false
 
 closeness-after-births-non-breed
   extensions [ nw ]
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-link-with frog 0 ]
-  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  O> create-mice 2 [ create-undirected-edge-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [1 0.67 0.67]
   O> crt 1
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => ERROR Extension exception: turtle 3 is not a member of the current graph context.
@@ -163,8 +168,8 @@ closeness-after-births-non-breed
 closeness-after-deaths-non-breed
   extensions [ nw ]
   O> create-frogs 1
-  O> create-mice 2 [ create-undirected-link-with frog 0 ]
-  O> nw:set-context (turtle-set mice frogs) (link-set undirected-links)
+  O> create-mice 2 [ create-undirected-edge-with frog 0 ]
+  O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [1 0.67 0.67]
   O> ask frogs [ die ]
   # create new link that should not be part of context:
@@ -243,26 +248,26 @@ in-link-radius-source-set-filtering
 mixed-turtles-in-radius
   extensions [nw]
   O> cro 13
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 0 [ create-directed-link-to turtle 2 ]
-  O> ask turtle 0 [ create-directed-link-from turtle 3 ]
-  O> ask turtle 1 [ create-undirected-link-with turtle 4 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 5 ]
-  O> ask turtle 1 [ create-directed-link-from turtle 6 ]
-  O> ask turtle 2 [ create-undirected-link-with turtle 7 ]
-  O> ask turtle 2 [ create-directed-link-to turtle 8 ]
-  O> ask turtle 2 [ create-directed-link-from turtle 9 ]
-  O> ask turtle 3 [ create-undirected-link-with turtle 10 ]
-  O> ask turtle 3 [ create-directed-link-to turtle 11 ]
-  O> ask turtle 3 [ create-directed-link-from turtle 12 ]
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 0 [ create-directed-edge-to turtle 2 ]
+  O> ask turtle 0 [ create-directed-edge-from turtle 3 ]
+  O> ask turtle 1 [ create-undirected-edge-with turtle 4 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 5 ]
+  O> ask turtle 1 [ create-directed-edge-from turtle 6 ]
+  O> ask turtle 2 [ create-undirected-edge-with turtle 7 ]
+  O> ask turtle 2 [ create-directed-edge-to turtle 8 ]
+  O> ask turtle 2 [ create-directed-edge-from turtle 9 ]
+  O> ask turtle 3 [ create-undirected-edge-with turtle 10 ]
+  O> ask turtle 3 [ create-directed-edge-to turtle 11 ]
+  O> ask turtle 3 [ create-directed-edge-from turtle 12 ]
   sort [who] of [nw:turtles-in-radius 1] of turtle 0 => [0 1 2]
   sort [who] of [nw:turtles-in-reverse-radius 1] of turtle 0 => [0 1 3]
   sort [who] of [nw:turtles-in-radius 2] of turtle 0 => [0 1 2 4 5 7 8]
   sort [who] of [nw:turtles-in-reverse-radius 2] of turtle 0 => [0 1 3 4 6 10 12]
-  O> nw:set-context turtles undirected-links
+  O> nw:set-context turtles undirected-edges
   sort [who] of [nw:turtles-in-radius 1] of turtle 0 => [0 1]
   sort [who] of [nw:turtles-in-radius 2] of turtle 0 => [0 1 4]
-  O> nw:set-context turtles directed-links
+  O> nw:set-context turtles directed-edges
   sort [who] of [nw:turtles-in-radius 1] of turtle 0 => [0 2]
   sort [who] of [nw:turtles-in-radius 2] of turtle 0 => [0 2 8]
   sort [who] of [nw:turtles-in-reverse-radius 1] of turtle 0 => [0 3]
@@ -402,22 +407,22 @@ path-to-random-equal-paths
 path-to-random-equal-paths-parallel-links
   extensions [ nw ]
   O> cro 3
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 1 [ create-undirected-link-with turtle 2 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 1 [ create-undirected-edge-with turtle 2 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
   length remove-duplicates n-values 100 [ [ nw:path-to turtle 2 ] of turtle 0 ] => 2
 
 path-to-mixed-directed-undirected
   extensions [ nw ]
   O> crt 4
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
-  O> ask turtle 3 [ create-directed-link-to turtle 1 ]
-  (word [ nw:path-to turtle 2 ] of turtle 0) => "[(undirected-link 0 1) (directed-link 1 2)]"
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
+  O> ask turtle 3 [ create-directed-edge-to turtle 1 ]
+  (word [ nw:path-to turtle 2 ] of turtle 0) => "[(undirected-edge 0 1) (directed-edge 1 2)]"
   (word [ nw:turtles-on-path-to turtle 2 ] of turtle 0) => "[(turtle 0) (turtle 1) (turtle 2)]"
   (word [ nw:path-to turtle 3 ] of turtle 0) => "[]"
   (word [ nw:turtles-on-path-to turtle 3 ] of turtle 0) => "[]"
-  (word [ nw:path-to turtle 0 ] of turtle 3) => "[(directed-link 3 1) (undirected-link 0 1)]"
+  (word [ nw:path-to turtle 0 ] of turtle 3) => "[(directed-edge 3 1) (undirected-edge 0 1)]"
   (word [ nw:turtles-on-path-to turtle 0 ] of turtle 3) => "[(turtle 3) (turtle 1) (turtle 0)]"
 
 ### turtles-on-path-to
@@ -549,8 +554,8 @@ closeness-centrality-directed-pair
 closeness-centrality-simple-mixed
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
   map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [0.667 1 0]
 
 closeness-centrality-simple-undirected
@@ -563,25 +568,25 @@ closeness-centrality-simple-undirected
 closeness-centrality-simple-directed
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 0 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
-  O> ask turtle 2 [ create-directed-link-to turtle 1 ]
-  O> nw:set-context turtles directed-links
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 0 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
+  O> ask turtle 2 [ create-directed-edge-to turtle 1 ]
+  O> nw:set-context turtles directed-edges
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
 
 closeness-centrality-bigger-directed
   extensions [ nw ]
   O> crt 6
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 5 ]
-  O> ask turtle 2 [ create-directed-link-to turtle 1 ]
-  O> ask turtle 2 [ create-directed-link-to turtle 3 ]
-  O> ask turtle 2 [ create-directed-link-to turtle 4 ]
-  O> ask turtle 4 [ create-directed-link-to turtle 3 ]
-  O> ask turtle 5 [ create-directed-link-to turtle 0 ]
-  O> ask turtle 5 [ create-directed-link-to turtle 4 ]
-  O> nw:set-context turtles directed-links
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 5 ]
+  O> ask turtle 2 [ create-directed-edge-to turtle 1 ]
+  O> ask turtle 2 [ create-directed-edge-to turtle 3 ]
+  O> ask turtle 2 [ create-directed-edge-to turtle 4 ]
+  O> ask turtle 4 [ create-directed-edge-to turtle 3 ]
+  O> ask turtle 5 [ create-directed-edge-to turtle 0 ]
+  O> ask turtle 5 [ create-directed-edge-to turtle 4 ]
+  O> nw:set-context turtles directed-edges
   map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [0.4 0.5 0.625 0 1 0.667]
 
 closeness-centrality-disconnected-pentagon-triangle
@@ -609,11 +614,11 @@ weighted-closeness-centrality-simple-undirected
 weighted-closeness-centrality-simple-directed
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-directed-link-to turtle 1 [ set thickness 1 ] ]
-  O> ask turtle 1 [ create-directed-link-to turtle 0 [ set thickness 2 ] ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 [ set thickness 2 ] ]
-  O> ask turtle 2 [ create-directed-link-to turtle 1 [ set thickness 1 ] ]
-  O> nw:set-context turtles directed-links
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 [ set thickness 1 ] ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 0 [ set thickness 2 ] ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 [ set thickness 2 ] ]
+  O> ask turtle 2 [ create-directed-edge-to turtle 1 [ set thickness 1 ] ]
+  O> nw:set-context turtles directed-edges
   map [ [ precision nw:weighted-closeness-centrality "thickness" 2 ] of ? ] sort turtles => [0.5 0.5 0.5]
 
 weighted-closeness-centrality-changes
@@ -701,8 +706,8 @@ betweenness-centrality-bigger-connected-directed-graph
 betweennes-centrality-directed-line
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0]
 
 
@@ -715,10 +720,10 @@ betweenness-centrality-center-node
 betweenness-centrality-mixed
   extensions [ nw ]
   O> crt 5
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 0 [ create-directed-link-to turtle 2 ]
-  O> ask turtle 0 [ create-directed-link-from turtle 3 ]
-  O> ask turtle 0 [ create-directed-link-from turtle 4 ]
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 0 [ create-directed-edge-to turtle 2 ]
+  O> ask turtle 0 [ create-directed-edge-from turtle 3 ]
+  O> ask turtle 0 [ create-directed-edge-from turtle 4 ]
   map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [5 0 0 0 0]
 
 ### eigenvector-centrality
@@ -793,8 +798,8 @@ eigenvector-centrality-changes
 eigenvector-centrality-mixed
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
-  O> ask turtle 1 [ create-undirected-link-with turtle 2 ]
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  O> ask turtle 1 [ create-undirected-edge-with turtle 2 ]
   map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0 1 1]
 
 page-rank-3-line
@@ -850,8 +855,8 @@ directed-triangle-clustering-coefficient
 mixed-triangle-clustering-coefficient
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 create-directed-link-to turtle 2 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 create-directed-edge-to turtle 2 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
   map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.5 0.5 0]
 
 ## weighted primitives
@@ -861,27 +866,27 @@ mixed-triangle-clustering-coefficient
 weighted-distance-to-between-two-turtles
   extensions [ nw ]
   O> crt 2
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
-  O> nw:set-context turtles undirected-links
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 [ set weight 0.5 ] ]
+  O> nw:set-context turtles undirected-edges
   [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 => 0.5
 
 weighted-distance-to-variable-name-case-should-not-matter
   extensions [ nw ]
   O> crt 2
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
-  O> nw:set-context turtles undirected-links
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 [ set weight 0.5 ] ]
+  O> nw:set-context turtles undirected-edges
   [ nw:weighted-distance-to turtle 1 "WEIGHT" ] of turtle 0 => 0.5
 
 weighted-distance-to-self
   extensions [nw]
   O> crt 1
-  O> nw:set-context turtles undirected-links
+  O> nw:set-context turtles undirected-edges
   [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 0 => 0
 
 weighted-distance-two-turtles-no-links
   extensions [nw]
   O> crt 2
-  O> nw:set-context turtles undirected-links
+  O> nw:set-context turtles undirected-edges
   [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 1 => false
   [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 => false
 
@@ -912,13 +917,13 @@ weighted-distance-changes
 weighted-path-to-self
   extensions [ nw ]
   O> crt 1
-  O> nw:set-context turtles undirected-links
+  O> nw:set-context turtles undirected-edges
   [ nw:weighted-path-to turtle 0 "weight" ] of turtle 0 => []
 
 weighted-path-to-no-path
   extensions [ nw ]
   O> crt 2
-  O> nw:set-context turtles undirected-links
+  O> nw:set-context turtles undirected-edges
   [ nw:weighted-path-to turtle 1 "weight" ] of turtle 0 => []
   [ nw:weighted-path-to turtle 0 "weight" ] of turtle 1 => []
 
@@ -1027,13 +1032,13 @@ generate-random-undirected-unconnected
 
 generate-random-directed-fully-connected
   extensions [ nw ]
-  O> nw:generate-random turtles directed-links 2 1.0
-  (word sort directed-links) =>  "[(directed-link 0 1) (directed-link 1 0)]"
+  O> nw:generate-random turtles directed-edges 2 1.0
+  (word sort directed-edges) =>  "[(directed-edge 0 1) (directed-edge 1 0)]"
 
 generate-random-directed-unconnected
   extensions [ nw ]
-  O> nw:generate-random turtles directed-links 2 0.0
-  (word sort directed-links) =>  "[]"
+  O> nw:generate-random turtles directed-edges 2 0.0
+  (word sort directed-edges) =>  "[]"
 
 ## weak-component-clusterer
 
@@ -1054,61 +1059,61 @@ weak-components-two-isolates
 weak-components-connected-undirected-pair-and-isolate
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> nw:set-context turtles undirected-links
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> nw:set-context turtles undirected-edges
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
-  O> nw:set-context turtles (link-set undirected-links)
+  O> nw:set-context turtles (link-set undirected-edges)
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
 
 weak-components-connected-directed-pair-and-isolate
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
-  O> nw:set-context turtles directed-links
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  O> nw:set-context turtles directed-edges
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
-  O> nw:set-context turtles (link-set directed-links)
+  O> nw:set-context turtles (link-set directed-edges)
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
 
 weak-components-two-connected-undirected-pairs
   extensions [ nw ]
   O> crt 4
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 2 [ create-undirected-link-with turtle 3 ]
-  O> nw:set-context turtles undirected-links
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 2 [ create-undirected-edge-with turtle 3 ]
+  O> nw:set-context turtles undirected-edges
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
-  O> nw:set-context turtles (link-set undirected-links)
+  O> nw:set-context turtles (link-set undirected-edges)
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
 
 weak-components-two-connected-directed-pairs
   extensions [ nw ]
   O> crt 4
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
-  O> ask turtle 2 [ create-directed-link-to turtle 3 ]
-  O> nw:set-context turtles directed-links
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  O> ask turtle 2 [ create-directed-edge-to turtle 3 ]
+  O> nw:set-context turtles directed-edges
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
-  O> nw:set-context turtles (link-set directed-links)
+  O> nw:set-context turtles (link-set directed-edges)
   length nw:weak-component-clusters => 2
   (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
 
 weak-components-three-turtles-connected-by-two-link-breeds
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
-  O> nw:set-context turtles undirected-links
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
+  O> nw:set-context turtles undirected-edges
   length nw:weak-component-clusters => 2
-  O> nw:set-context turtles (link-set undirected-links)
+  O> nw:set-context turtles (link-set undirected-edges)
   length nw:weak-component-clusters => 2
-  O> nw:set-context turtles directed-links
+  O> nw:set-context turtles directed-edges
   length nw:weak-component-clusters => 2
-  O> nw:set-context turtles (link-set directed-links)
+  O> nw:set-context turtles (link-set directed-edges)
   length nw:weak-component-clusters => 2
   O> nw:set-context turtles links
   length nw:weak-component-clusters => 1
@@ -1151,9 +1156,9 @@ biggest-maximal-clique-directed
 biggest-maximal-clique-mixed
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
-  O> ask turtle 1 [ create-directed-link-to turtle 2 ]
-  O> ask turtle 2 [ create-undirected-link-with turtle 0 ]
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
+  O> ask turtle 2 [ create-undirected-edge-with turtle 0 ]
   count first nw:biggest-maximal-cliques => ERROR Extension exception: Current graph must be undirected
 
 # graphml tests
@@ -1178,16 +1183,16 @@ graphml-export-import-breeds
   O> nw:set-context mice links
   O> create-ordered-mice 2
   O> ask mouse 0 [ set fur "a" set age 1 ]
-  O> ask mouse 0 [ create-undirected-link-with mouse 1 ]
+  O> ask mouse 0 [ create-undirected-edge-with mouse 1 ]
   O> ask mouse 1 [ set fur "b" set age 2 ]
-  O> ask undirected-link 0 1 [ set weight 0.5 ]
+  O> ask undirected-edge 0 1 [ set weight 0.5 ]
   O> nw:save-graphml "extensions/nw/test/tmp/graphml-export-import-breeds.xml"
   O> ca
   O> nw:load-graphml "extensions/nw/test/tmp/graphml-export-import-breeds.xml"
   sort [ color ] of mice => [5 15]
   sort [ fur ] of mice => ["a" "b"]
   sort [ age ] of mice => [1 2]
-  [ weight ] of undirected-link 0 1 => 0.5
+  [ weight ] of undirected-edge 0 1 => 0.5
 
 save-graphml-first-turtle-double
   extensions [ nw ]
@@ -1230,13 +1235,13 @@ load-graphml-missing-attr-type
 export-import-graphml-multigraph
   extensions [ nw ]
   O> crt 2
-  O> ask turtle 0 [ create-undirected-link-with turtle 1 ]
-  O> ask turtle 0 [ create-directed-link-to turtle 1 ]
+  O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
   O> nw:save-graphml "extensions/nw/test/tmp/multigraph.graphml"
   O> ca
   O> nw:load-graphml "extensions/nw/test/tmp/multigraph.graphml"
-  count undirected-links => 1
-  count directed-links => 1
+  count undirected-edges => 1
+  count directed-edges => 1
 
 ## The new import/export implementations actually handle this, but I'm not comfortable switching graphml over yet. BCH 1/27/2015
 #load-graphml-preserves-undirectedness
@@ -1328,7 +1333,7 @@ load-gdf-simple-unspecified
 
 load-gdf-contradiction
   extensions [ nw ]
-  O> nw:load "extensions/nw/test/gdf/simple-undir.gdf" turtles directed-links => ERROR Extension exception: The following edges had a directedness different than their assigned breed. They have been given the directedness of their breed. If you wish to ignore this error, wrap this command in a CAREFULLY: 1->2
+  O> nw:load "extensions/nw/test/gdf/simple-undir.gdf" turtles directed-edges => ERROR Extension exception: The following edges had a directedness different than their assigned breed. They have been given the directedness of their breed. If you wish to ignore this error, wrap this command in a CAREFULLY: 1->2
 
 load-gdf-builtins
   extensions [ nw ]
@@ -1361,25 +1366,25 @@ load-gdf-breeds-own
 load-gdf-links-breeds
   extensions [ nw ]
   O> nw:load "extensions/nw/test/gdf/link-breeds.gdf" turtles links
-  [color] of one-of directed-links => [0 255 0]
-  [color] of one-of undirected-links => [0 0 255]
-  [lvar] of one-of directed-links => 5
-  [weight] of one-of undirected-links => 10
+  [color] of one-of directed-edges => [0 255 0]
+  [color] of one-of undirected-edges => [0 0 255]
+  [lvar] of one-of directed-edges => 5
+  [weight] of one-of undirected-edges => 10
 
 load-full-gdf
   extensions [ nw ]
   O> nw:load-gdf "extensions/nw/test/gdf/full.gdf" turtles links
   [(list tvar fur)] of one-of mice => [true "white"]
   [(list tvar spots)] of one-of frogs => [false true]
-  [(list color lvar)] of one-of directed-links => [[0 255 0] 5]
-  [(list color weight)] of one-of undirected-links => [[0 0 255] 10]
+  [(list color lvar)] of one-of directed-edges => [[0 255 0] 5]
+  [(list color weight)] of one-of undirected-edges => [[0 0 255] 10]
 load-full-gexf
   extensions [ nw ]
   O> nw:load-gexf "extensions/nw/test/gexf/full.gexf" turtles links
   [(list tvar fur)] of one-of mice => [true "white"]
   [(list tvar spots)] of one-of frogs => [false true]
-  [(list color lvar)] of one-of directed-links => [[0 255 0] 5]
-  [(list color weight)] of one-of undirected-links => [[0 0 255] 10]
+  [(list color lvar)] of one-of directed-edges => [[0 255 0] 5]
+  [(list color weight)] of one-of undirected-edges => [[0 0 255] 10]
 
 # it looks like gml and vna are untyped and don't support link colors
 load-full-gml
@@ -1387,15 +1392,15 @@ load-full-gml
   O> nw:load-gml "extensions/nw/test/gml/full.gml" turtles links
   [(list tvar fur)] of one-of mice => ["true" "white"]
   [(list tvar spots)] of one-of frogs => ["false" "true"]
-  [(list lvar)] of one-of directed-links => ["5.0"]
-  [(list weight)] of one-of undirected-links => [10]
+  [(list lvar)] of one-of directed-edges => ["5.0"]
+  [(list weight)] of one-of undirected-edges => [10]
 load-full-vna
   extensions [ nw ]
   O> nw:load-vna "extensions/nw/test/vna/full.vna" turtles links
   [(list tvar fur)] of one-of mice => ["true" "white"]
   [(list tvar spots)] of one-of frogs => ["false" "true"]
-  [(list lvar)] of one-of directed-links => ["5.0"]
-  [(list weight)] of one-of undirected-links => [10]
+  [(list lvar)] of one-of directed-edges => ["5.0"]
+  [(list weight)] of one-of undirected-edges => [10]
 
 save-simple
   extensions [ nw ]
@@ -1454,13 +1459,13 @@ save-heterogeneous
 save-link-breeds
   extensions [ nw ]
   O> crt 3
-  O> ask turtle 0 [ create-directed-link-to turtle 1 [ set lvar true ]]
-  O> ask turtle 1 [ create-undirected-link-with turtle 2 [ set weight 5 ]]
+  O> ask turtle 0 [ create-directed-edge-to turtle 1 [ set lvar true ]]
+  O> ask turtle 1 [ create-undirected-edge-with turtle 2 [ set weight 5 ]]
   O> nw:save "extensions/nw/test/tmp/link-breeds.gdf"
   O> ca
   O> nw:load "extensions/nw/test/tmp/link-breeds.gdf" turtles links
-  [lvar] of one-of directed-links => true
-  [weight] of one-of undirected-links => 5
+  [lvar] of one-of directed-edges => true
+  [weight] of one-of undirected-edges => 5
 
 save-gml
   extensions [ nw ]
@@ -1478,20 +1483,20 @@ save-vna
   O> crt 2 [ create-links-with other turtles ]
   O> nw:save-vna "extensions/nw/test/tmp/simple-undir.vna"
   O> ca
-  O> nw:load-vna "extensions/nw/test/tmp/simple-undir.vna" turtles undirected-links
+  O> nw:load-vna "extensions/nw/test/tmp/simple-undir.vna" turtles undirected-edges
   count turtles => 2
-  [is-undirected-link? self] of undirected-link 0 1 => true
-  [is-directed-link? self] of undirected-link 0 1 => false
+  [is-undirected-link? self] of undirected-edge 0 1 => true
+  [is-directed-link? self] of undirected-edge 0 1 => false
 
 save-dl
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
   O> nw:save-dl "extensions/nw/test/tmp/simple-undir.dl"
   O> ca
-  O> nw:load-dl "extensions/nw/test/tmp/simple-undir.dl" turtles undirected-links
+  O> nw:load-dl "extensions/nw/test/tmp/simple-undir.dl" turtles undirected-edges
   count turtles => 2
-  [is-undirected-link? self] of undirected-link 0 1 => true
-  [is-directed-link? self] of undirected-link 0 1 => false
+  [is-undirected-link? self] of undirected-edge 0 1 => true
+  [is-directed-link? self] of undirected-edge 0 1 => false
 save-gexf
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]

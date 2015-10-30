@@ -18,7 +18,7 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.{createTurtle, using}
 import org.nlogo.extensions.nw.jung.createLink
 import org.nlogo.extensions.nw.jung.sparseGraphFactory
 import org.nlogo.extensions.nw.jung.transformer
-import org.nlogo.util.MersenneTwisterFast
+import org.nlogo.api.MersenneTwisterFast
 import edu.uci.ics.jung
 import edu.uci.ics.jung.io.graphml.AbstractMetadata
 import edu.uci.ics.jung.io.graphml.EdgeMetadata
@@ -96,10 +96,10 @@ object GraphMLImport {
     val program = agent.world.program
     agent match {
       case t: Turtle =>
-        for (breedAgentSet <- program.breeds.asScala.get(breed))
+        for (breedAgentSet <- Option(agent.world.getBreed(breed)))
           t.setTurtleOrLinkVariable("BREED", breedAgentSet)
       case l: Link =>
-        for (breedAgentSet <- program.linkBreeds.asScala.get(breed))
+        for (breedAgentSet <- Option(agent.world.getLinkBreed(breed)))
           l.setTurtleOrLinkVariable("BREED", breedAgentSet)
     }
   }

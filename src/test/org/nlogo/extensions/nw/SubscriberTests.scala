@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions.nw
 
-import org.nlogo.agent.TreeAgentSet
+import org.nlogo.agent.{ AgentSet, TreeAgentSet }
 import org.nlogo.headless.HeadlessWorkspace
 import org.scalatest.FunSuite
 import org.scalatest.Matchers._
@@ -10,7 +10,7 @@ import org.scalatest.GivenWhenThen
 
 class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
 
-  def getSubscribers(agentSet: AnyRef): collection.Set[AgentSetChangeSubscriber] = {
+  def getSubscribers(agentSet: AgentSet): collection.Set[AgentSetChangeSubscriber] = {
     val pub = agentSet.asInstanceOf[TreeAgentSet].simpleChangeEventPublisher
     // get private `filters` field using reflection:
     val field = pub.getClass.getDeclaredField("scala$collection$mutable$Publisher$$filters")
@@ -33,10 +33,10 @@ class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
       Then("there should be no subscribers")
       val t = getSubscribers(ws.world.turtles)
       val l = getSubscribers(ws.world.links)
-      val f = getSubscribers(ws.world.program.breeds.get("FROGS"))
-      val m = getSubscribers(ws.world.program.breeds.get("MICE"))
-      val u = getSubscribers(ws.world.program.linkBreeds.get("UNDIRECTED-LINKS"))
-      val d = getSubscribers(ws.world.program.linkBreeds.get("DIRECTED-LINKS"))
+      val f = getSubscribers(ws.world.getBreed("FROGS"))
+      val m = getSubscribers(ws.world.getBreed("MICE"))
+      val u = getSubscribers(ws.world.getLinkBreed("UNDIRECTED-LINKS"))
+      val d = getSubscribers(ws.world.getLinkBreed("DIRECTED-LINKS"))
       checkSizes(t -> 0, l -> 0, f -> 0, m -> 0, u -> 0, d -> 0)
 
       When("we `nw:set-context turtles links`")

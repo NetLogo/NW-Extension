@@ -44,13 +44,6 @@ netLogoJarsOrDependencies
 
 resolvers += "Gephi Releases" at "http://nexus.gephi.org/nexus/content/repositories/releases/"
 
-val netLogoJarURL =
-  Option(System.getProperty("netlogo.jar.url"))
-    .getOrElse("http://ccl.northwestern.edu/netlogo/5.3.0/NetLogo.jar")
-
-val netLogoTestsURL =
-  netLogoJarURL.stripSuffix(".jar") + "-tests.jar"
-
 libraryDependencies ++= Seq(
   "net.sf.jgrapht" % "jgrapht" % "0.8.3",
   "net.sourceforge.collections" % "collections-generic" % "4.01",

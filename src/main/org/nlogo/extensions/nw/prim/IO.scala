@@ -23,7 +23,10 @@ import org.nlogo.agent.Turtle
 import org.nlogo.agent.World
 import org.nlogo.api
 import org.nlogo.api._
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Breed
+import org.nlogo.core.Syntax
+import org.nlogo.core.LogoList
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.{GraphContext, GraphContextProvider}
 import org.nlogo.extensions.nw.NetworkExtensionUtil._
 import org.nlogo.extensions.nw.gephi.GephiUtils
@@ -36,7 +39,9 @@ import scala.util.control.Exception.allCatch
 import scala.language.postfixOps
 
 class Load extends TurtleAskingCommand {
-  override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
+  override def getSyntax = commandSyntax(
+    right = List(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType),
+    blockAgentClassString = Some("-T--"))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
@@ -47,7 +52,7 @@ class Load extends TurtleAskingCommand {
 }
 
 class LoadFileType(extension: String) extends TurtleAskingCommand {
-  override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
+  override def getSyntax = commandSyntax(right = List(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
@@ -58,7 +63,7 @@ class LoadFileType(extension: String) extends TurtleAskingCommand {
 }
 
 class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
-  override def getSyntax = commandSyntax(Array(StringType, CommandBlockType | OptionalType))
+  override def getSyntax = commandSyntax(right = List(StringType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
@@ -67,7 +72,7 @@ class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
 }
 
 class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
-  override def getSyntax = commandSyntax(Array(StringType))
+  override def getSyntax = commandSyntax(right = List(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val world = context.getAgent.world.asInstanceOf[World]
     val workspace = context.asInstanceOf[ExtensionContext].workspace
@@ -78,7 +83,7 @@ class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
 }
 
 class SaveFileType(gcp: GraphContextProvider, extension: String) extends api.DefaultCommand {
-  override def getSyntax = commandSyntax(Array(StringType))
+  override def getSyntax = commandSyntax(right = List(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val world = context.getAgent.world.asInstanceOf[World]
     val workspace = context.asInstanceOf[ExtensionContext].workspace
@@ -153,16 +158,17 @@ object GephiExport {
 
     val nodeAttributes = attributeModel.getNodeTable
 
-    val turtlesOwnAttributes: Map[String, AttributeColumn] = program.turtlesOwn.asScala.map { name =>
+    val turtlesOwnAttributes: Map[String, AttributeColumn] = program.turtlesOwn.map { name =>
       val kind = getBestType(world.turtles.asIterable[Turtle].map(t => t.getTurtleOrLinkVariable(name)))
       name -> Option(nodeAttributes.getColumn(name)).getOrElse(nodeAttributes.addColumn(name, kind))
     }.toMap
 
-    val breedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.breeds.asScala.collect {
-      case (breedName, breed: AgentSet) => breed -> program.breedsOwn.get(breedName).asScala.map { name =>
-        val kind = getBestType(breed.asIterable[Turtle].map(t => t.getBreedVariable(name)))
-        name -> Option(nodeAttributes.getColumn(name)).getOrElse(nodeAttributes.addColumn(name, kind))
-      }.toMap
+    val breedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.breeds.collect {
+      case (breedName, breed: Breed) =>
+        world.getBreed(breedName) -> breed.owns.map { name =>
+          val kind = getBestType(world.getBreed(breedName).asIterable[Turtle].map(t => t.getBreedVariable(name)))
+          name -> Option(nodeAttributes.getColumn(name)).getOrElse(nodeAttributes.addColumn(name, kind))
+        }.toMap
     }.toMap
 
     val nodes = context.turtles.map { turtle =>
@@ -183,16 +189,18 @@ object GephiExport {
     }.toMap
 
     val edgeAttributes = attributeModel.getEdgeTable
-    val linksOwnAttributes: Map[String, AttributeColumn] = program.linksOwn.asScala.map { name =>
+    val linksOwnAttributes: Map[String, AttributeColumn] = program.linksOwn.map { name =>
       val kind = getBestType(world.links.asIterable[Link].map(l => l.getTurtleOrLinkVariable(name)))
       name -> Option(edgeAttributes.getColumn(name)).getOrElse(edgeAttributes.addColumn(name, kind))
     }.toMap
 
-    val linkBreedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.linkBreeds.asScala.collect {
-      case (breedName, breed: AgentSet) => breed -> program.linkBreedsOwn.get(breedName).asScala.map { name =>
-        val kind = getBestType(breed.asIterable[Link].map(l => l.getLinkBreedVariable(name)))
-        name -> Option(edgeAttributes.getColumn(name)).getOrElse(edgeAttributes.addColumn(name, kind))
-      }.toMap
+    val linkBreedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.linkBreeds.collect {
+      case (breedName, breed: Breed) =>
+        val breedSet = world.getLinkBreed(breedName.toUpperCase)
+        breedSet -> breed.owns.map { name =>
+          lazy val kind = getBestType(breedSet.asIterable[Link].map(_.getLinkBreedVariable(name)))
+          name -> Option(edgeAttributes.getColumn(name)).getOrElse(edgeAttributes.addColumn(name, kind))
+        }.toMap
     }.toMap
 
     context.links.foreach { link =>
@@ -273,8 +281,8 @@ object GephiImport{
     } else if (importer.isInstanceOf[ImporterGraphML]) {
       throw new ExtensionException("You must use nw:load-graphml to load graphml files.")
     }
-    val turtleBreeds = world.program.breeds.asScala.toMap
-    val linkBreeds = world.program.linkBreeds.asScala.toMap
+    val turtleBreeds = world.getBreeds.asScala
+    val linkBreeds = world.getLinkBreeds.asScala
 
     val container = try using(new FileReader(file))(r => importController.importFile(r, importer))
                     catch { case e: IOException => throw new ExtensionException(e) }
@@ -314,9 +322,9 @@ object GephiImport{
 
       val breed = getBreed(attrs, linkBreeds).getOrElse(defaultLinkBreed)
 
-
       val gephiDirected = edge.getType == EdgeType.DIRECTED
       val gephiUndirected = edge.getType == EdgeType.UNDIRECTED
+
       val bad = if (breed.isDirected == breed.isUndirected) {
         // This happens when the directedness of the default breed hasn't been set yet
         if (edge.getType == null) breed.setDirected(defaultDirected)
@@ -332,10 +340,10 @@ object GephiImport{
         else
           None
       }
-      links foreach { l => (attrs - "BREED") foreach (setAttribute(world, l) _).tupled }
 
-      if (bad) Some(edge)
-      else None
+      links foreach { l => (attrs - "BREED") foreach (setAttribute(world, l) _).tupled }
+        if (bad) Some(edge)
+        else None
     }.collect{case Some(e: EdgeDraftGetter) => e}
 
     initTurtles(nodeToTurtle.values)
@@ -367,10 +375,11 @@ object GephiImport{
       v.getColumn.getTitle.toUpperCase -> convertAttribute(v.getColumn.getTitle.toUpperCase, v.getValue)
     }.toMap
 
-  private def getBreed(attributes: Map[String, AnyRef], breeds: Map[String, AnyRef]): Option[AgentSet] =
+  private def getBreed(attributes: Map[String, AnyRef],
+    breeds: scala.collection.Map[String, AgentSet]): Option[AgentSet] = {
     attributes.get("BREED").collect{case s: String => s.toUpperCase}
                           .flatMap(s => breeds.get(s))
-                          .collect{case b: AgentSet => b}
+  }
 
   private val doubleBuiltins = Set("XCOR", "YCOR", "HEADING", "PEN-SIZE", "THICKNESS", "SIZE")
   private val booleanBuiltins = Set("HIDDEN")
@@ -400,6 +409,7 @@ object GephiImport{
     case c: Color => convertColor(c)
     case n: Number => n.doubleValue: JDouble
     case b: JBoolean => b
+    case ll: LogoList => ll
     case c: java.util.Collection[_] => LogoList.fromIterator(c.asScala.map(x => convertAttribute(x)).iterator)
     // There may be a better handling of dynamic values, but this seems good enough for now. BCH 1/21/2015
     case d: DynamicType[_] => LogoList.fromIterator(d.getValues.asScala.map(x => convertAttribute(x)).iterator)

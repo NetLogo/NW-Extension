@@ -4,7 +4,7 @@ package org.nlogo.extensions.nw
 
 import org.nlogo.agent._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.util.MersenneTwisterFast
+import org.nlogo.api.MersenneTwisterFast
 import scala.collection.{GenIterable, mutable}
 import org.nlogo.api.ExtensionException
 import scala.Some

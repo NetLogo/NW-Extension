@@ -4,12 +4,12 @@ package org.nlogo.extensions.nw.prim.jgrapht
 
 import org.nlogo.api
 import org.nlogo.api.ScalaConversions.toLogoList
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContextProvider
 
 trait CliquePrim
   extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(ListType)
+  override def getSyntax = reporterSyntax(ret = ListType)
   val gcp: GraphContextProvider
   def graph(context: api.Context) = {
     val gc = gcp.getGraphContext(context.getAgent.world)

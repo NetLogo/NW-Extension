@@ -6,7 +6,8 @@ import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.api
 import org.nlogo.api.Argument
 import org.nlogo.api.Context
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
+import org.nlogo.core.LogoList
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.GraphContextManager
 import org.nlogo.extensions.nw.GraphContextProvider
@@ -18,7 +19,7 @@ import org.nlogo.nvm.ExtensionContext
 class SetContext(gcm: GraphContextManager)
   extends api.DefaultCommand {
   override def getSyntax = commandSyntax(
-    Array(AgentsetType, AgentsetType))
+    right = List(AgentsetType, AgentsetType))
   override def perform(args: Array[api.Argument], context: api.Context) {
     val turtleSet = args(0).getAgentSet.requireTurtleSet
     val linkSet = args(1).getAgentSet.requireLinkSet
@@ -30,11 +31,11 @@ class SetContext(gcm: GraphContextManager)
 
 class GetContext(gcp: GraphContextProvider)
   extends api.DefaultReporter {
-  override def getSyntax = reporterSyntax(ListType)
+  override def getSyntax = reporterSyntax(ret = ListType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = gcp.getGraphContext(context.getAgent.world.asInstanceOf[org.nlogo.agent.World])
     val workspace = context.asInstanceOf[ExtensionContext].workspace()
-    api.LogoList(gc.turtleSet, gc.linkSet)
+    LogoList(gc.turtleSet, gc.linkSet)
   }
 }
 
@@ -42,7 +43,7 @@ class WithContext(gcp: GraphContextProvider)
   extends api.DefaultCommand
   with CustomAssembled {
   override def getSyntax = commandSyntax(
-    Array(AgentsetType, AgentsetType, CommandBlockType))
+    right = List(AgentsetType, AgentsetType, CommandBlockType))
 
   def perform(args: Array[Argument], context: Context) {
     val turtleSet = args(0).getAgentSet.requireTurtleSet
@@ -52,7 +53,7 @@ class WithContext(gcp: GraphContextProvider)
     val extContext = context.asInstanceOf[ExtensionContext]
     val nvmContext = extContext.nvmContext
     // Note that this can optimized by hanging onto the array and just mutating it. Shouldn't be necessary though.
-    val agentSet = new ArrayAgentSet(nvmContext.agent.getAgentClass, Array(nvmContext.agent), world)
+    val agentSet = new ArrayAgentSet(nvmContext.agent.kind, Array(nvmContext.agent), world)
     gcp.withTempGraphContext(gc) { () =>
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }

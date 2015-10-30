@@ -3,7 +3,7 @@
 package org.nlogo.extensions.nw.prim.jung
 
 import org.nlogo.api
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.jung.Generator
@@ -11,7 +11,8 @@ import org.nlogo.agent
 
 class BarabasiAlbertGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
-    Array(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType))
+    List(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType),
+    blockAgentClassString = Some("-T--"))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
     new Generator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
@@ -21,7 +22,8 @@ class BarabasiAlbertGenerator extends TurtleCreatingCommand {
 
 class KleinbergSmallWorldGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
-    Array(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType))
+    List(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType),
+    blockAgentClassString = Some("-T--"))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
     new Generator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
@@ -36,7 +38,8 @@ class KleinbergSmallWorldGenerator extends TurtleCreatingCommand {
 
 class Lattice2DGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
-    Array(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType))
+    List(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType),
+    blockAgentClassString = Some("-T--"))
   def createTurtles(args: Array[api.Argument], context: api.Context) =
     new Generator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,

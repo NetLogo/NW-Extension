@@ -4,9 +4,9 @@ package org.nlogo.extensions.nw.prim
 
 import org.nlogo.agent
 import org.nlogo.api
-import org.nlogo.api.LogoList
+import org.nlogo.core.LogoList
 import org.nlogo.api.ScalaConversions.toLogoObject
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToRichAgent
 import java.util.Locale
@@ -20,9 +20,9 @@ import org.nlogo.extensions.nw.GraphContextProvider
 class DistanceTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
-    Array(TurtleType),
-    NumberType | BooleanType,
-    "-T--")
+    right = List(TurtleType),
+    ret = NumberType | BooleanType,
+    agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
@@ -34,9 +34,9 @@ class DistanceTo(gcp: GraphContextProvider)
 class WeightedDistanceTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
-    Array(TurtleType, StringType),
-    NumberType | BooleanType,
-    "-T--")
+    right = List(TurtleType, StringType),
+    ret = NumberType | BooleanType,
+    agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
@@ -49,9 +49,9 @@ class WeightedDistanceTo(gcp: GraphContextProvider)
 class PathTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
-    Array(TurtleType),
-    ListType,
-    "-T--")
+    right = List(TurtleType),
+    ret = ListType,
+    agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
@@ -73,9 +73,9 @@ class PathTo(gcp: GraphContextProvider)
 class TurtlesOnPathTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
-    Array(TurtleType),
-    ListType,
-    "-T--")
+    right = List(TurtleType),
+    ret = ListType,
+    agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
@@ -89,9 +89,9 @@ class TurtlesOnPathTo(gcp: GraphContextProvider)
 class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
-    Array(TurtleType, StringType),
-    ListType,
-    "-T--")
+    right = List(TurtleType, StringType),
+    ret = ListType,
+    agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
@@ -106,9 +106,9 @@ class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
 class WeightedPathTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
-    Array(TurtleType, StringType),
-    ListType,
-    "-T--")
+    right = List(TurtleType, StringType),
+    ret = ListType,
+    agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]

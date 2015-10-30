@@ -3,7 +3,7 @@
 package org.nlogo.extensions.nw.prim.jung
 
 import org.nlogo.api
-import org.nlogo.api.Syntax._
+import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
@@ -21,7 +21,7 @@ class SaveMatrix(gcp: GraphContextProvider)
 
 class LoadMatrix
   extends TurtleCreatingCommand {
-  override def getSyntax = commandSyntax(Array(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType))
+  override def getSyntax = commandSyntax(List(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
   def createTurtles(args: Array[api.Argument], context: api.Context) = {
     val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
     Matrix.load(

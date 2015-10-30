@@ -46,8 +46,8 @@ object GraphMLExport {
     val turtles = graphContext.turtles
     val links = graphContext.links
 
-    val turtlesOwn = program.turtlesOwn.asScala
-    val linksOwn = program.linksOwn.asScala
+    val turtlesOwn = program.turtlesOwn
+    val linksOwn = program.linksOwn
 
     addVariables(
       turtles, turtlesOwn,
@@ -61,12 +61,12 @@ object GraphMLExport {
       graphMLWriter.addEdgeData _)
 
     addVariables(
-      turtles, program.breedsOwn.asScala.values.flatMap(_.asScala),
+      turtles, program.breeds.values.flatMap(_.owns),
       (t: agent.Turtle, v: String) => world.breedOwns(t.getBreed, v),
       (t: agent.Turtle, v: String) => t.getBreedVariable(v),
       graphMLWriter.addVertexData _)
     addVariables(
-      links, program.linkBreedsOwn.asScala.values.flatMap(_.asScala),
+      links, program.linkBreeds.values.flatMap(_.owns),
       (l: agent.Link, v: String) => world.linkBreedOwns(l.getBreed, v),
       (l: agent.Link, v: String) => l.getLinkBreedVariable(v),
       graphMLWriter.addEdgeData _)

@@ -3,9 +3,10 @@
 package org.nlogo.extensions.nw
 
 import org.nlogo.agent.TreeAgentSet
-import org.nlogo.api.{Agent, ExtensionException, I18N}
+import org.nlogo.api.{Agent, ExtensionException}
+import org.nlogo.core.{ AgentKind, I18N }
 import org.nlogo.{agent, api, nvm}
-import org.nlogo.util.MersenneTwisterFast
+import org.nlogo.api.MersenneTwisterFast
 import scala.language.{ implicitConversions, reflectiveCalls }
 
 object NetworkExtensionUtil {
@@ -41,6 +42,7 @@ object NetworkExtensionUtil {
     new RichAgentSet(agentSet.asInstanceOf[agent.AgentSet])
 
   class RichAgentSet(agentSet: agent.AgentSet) {
+    assert(agentSet != null)
     lazy val world = agentSet.world.asInstanceOf[org.nlogo.agent.World]
     def isLinkBreed = (agentSet eq world.links) || world.isLinkBreed(agentSet)
     def isTurtleBreed = (agentSet eq world.turtles) || world.isBreed(agentSet)
@@ -104,7 +106,7 @@ object NetworkExtensionUtil {
       val extContext = context.asInstanceOf[nvm.ExtensionContext]
       val nvmContext = extContext.nvmContext
       agents.foreach(extContext.workspace.joinForeverButtons)
-      val agentSet = new agent.ArrayAgentSet(classOf[agent.Turtle], agents, world)
+      val agentSet = new agent.ArrayAgentSet(AgentKind.Turtle, agents, world)
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }
     def assemble(a: nvm.AssemblerAssistant) {

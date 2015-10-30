@@ -65,7 +65,7 @@ graph
     target "2"
     value 1.0
     directed 1
-    breed "directed-links"
+    breed "directed-edges"
     lvar "5.0"
   ]
   edge
@@ -75,6 +75,6 @@ graph
     target "1"
     value 10.0
     directed 0
-    breed "undirected-links"
+    breed "undirected-edges"
   ]
 ]

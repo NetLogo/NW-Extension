@@ -8,7 +8,7 @@ import org.apache.commons.collections15.Factory
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
-import org.nlogo.util.MersenneTwisterFast
+import org.nlogo.api.MersenneTwisterFast
 
 import edu.uci.ics.jung
 

@@ -3,5 +3,5 @@ nodedef> name VARCHAR,tvar BOOLEAN,breed VARCHAR,spots BOOLEAN,fur VARCHAR,missi
 2,false,FROGS,true,,foo
 3,false,FROGS,true,,foo
 edgedef> node1,node2,color,breed VARCHAR,lvar DOUBLE,weight DOUBLE,directed BOOLEAN
-1,2,'0,255,0',directed-links,5,,true
-3,1,'0,0,255',undirected-links,,10,false
+1,2,'0,255,0',directed-edges,5,,true
+3,1,'0,0,255',undirected-edges,,10,false
