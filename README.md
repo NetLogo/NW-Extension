@@ -525,7 +525,7 @@ The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/
 #### biggest-maximal-cliques
 `nw:biggest-maximal-cliques`
 
-The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current context. Often, more than one clique are tied for the title of biggest clique, so the result if reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
+The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current context. Often, more than one clique are tied for the title of biggest clique, so the result is reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
 
 The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
