@@ -107,7 +107,7 @@ class WeightedPathTo(gcp: GraphContextProvider)
   extends api.DefaultReporter {
   override def getSyntax = reporterSyntax(
     Array(TurtleType, StringType),
-    NumberType | BooleanType,
+    ListType,
     "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
