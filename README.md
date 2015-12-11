@@ -166,7 +166,7 @@ Nope:
 
     [[(turtle 0) (turtle 2)] [(link 0 2)]]
 
-**A final note regarding the different types of agentsets**: because of how they are implemented in NetLogo and handled in the NW extension, it is likely that special agentsets will perform better for some of the extension's primitives. So, if you can, prefer a context refering to `turtles` and `links` or simple breeds, instead of agentsets built with `with`, `turtle-set`, etc.
+**A final note regarding the different types of agentsets**: because of how they are implemented in NetLogo and handled in the NW extension, it is likely that special agentsets will perform better for some of the extension's primitives. So, if you can, prefer a context referring to `turtles` and `links` or simple breeds, instead of agentsets built with `with`, `turtle-set`, etc.
 
 ## Primitives
 
@@ -186,7 +186,7 @@ See [the usage section](#usage) for a much more detailed explanation of `nw:set-
 
 `nw:get-context`
 
-Reports the content of the current graph context as a list containing two agentssets: the agentset of turtles that are part of the context and the agentset of links that are part of the context.
+Reports the content of the current graph context as a list containing two agentsets: the agentset of turtles that are part of the context and the agentset of links that are part of the context.
 
 Let's say with start with a blank slate and the default context consisting of `turtles` and `links`, `nw:get-context` will report a list the special `turtles` and `links` breed agentsets:
 
@@ -350,7 +350,7 @@ The `nw:distance-to` version of the primitive assumes that each link counts for 
       ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
     end
 
-Will ouput:
+Will output:
 
     (turtle 0): 2
     (turtle 0): 1.5
@@ -434,7 +434,7 @@ Will ouput:
 #### betweenness-centrality
 ![turtle][turtle] `nw:betweenness-centrality`
 
-To calculate the [betweenness centrality](http://en.wikipedia.org/wiki/Betweenness_centrality) of a turtle, you take every other possible pairs of turtles and, for each pair, you calculate the proportion of shortest paths between members of the pair that passes through the current turtle. The betweeness centrality of a turtle is the sum of these.
+To calculate the [betweenness centrality](http://en.wikipedia.org/wiki/Betweenness_centrality) of a turtle, you take every other possible pairs of turtles and, for each pair, you calculate the proportion of shortest paths between members of the pair that passes through the current turtle. The betweenness centrality of a turtle is the sum of these.
 
 As of now, link weights are not taken into account.
 
@@ -570,7 +570,7 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 #### generate-lattice-2d
 <tt>nw:generate-lattice-2d <i>turtle-breed link-breed row-count column-count is-toroidal optional-command-block</i></tt>
 
-Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column-count_ columns. The grid will wrap around itsef if _is-toroidal_ is `true`.
+Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column-count_ columns. The grid will wrap around itself if _is-toroidal_ is `true`.
 
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
