@@ -21,7 +21,7 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-featur
                       "-encoding", "us-ascii")
 
 val netLogoJarURL =
-  Option(System.getProperty("netlogo.jar.url")).getOrElse("http://ccl.northwestern.edu/netlogo/5.3.0/NetLogo.jar")
+  Option(System.getProperty("netlogo.jar.url")).getOrElse("https://s3.amazonaws.com/ccl-artifacts/NetLogo-hexy-fd7cd755.jar")
 
 val netLogoJarsOrDependencies = {
   import java.io.File
@@ -34,8 +34,8 @@ val netLogoJarsOrDependencies = {
       new File(new URI(netLogoJarURL)), new File(new URI(testsUrl))))
   else
     Seq(libraryDependencies ++= Seq(
-      "org.nlogo" % "NetLogo" % "5.3.0" from netLogoJarURL,
-      "org.nlogo" % "NetLogo-tests" % "5.3.0" % "test" from testsUrl))
+      "org.nlogo" % "NetLogo" % "6.0-PREVIEW-12-15" from netLogoJarURL,
+      "org.nlogo" % "NetLogo-tests" % "6.0-PREVIEW-12-15" % "test" from testsUrl))
 }
 
 netLogoJarsOrDependencies
