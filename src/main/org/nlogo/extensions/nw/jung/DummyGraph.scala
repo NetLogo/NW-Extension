@@ -7,14 +7,15 @@ import scala.collection.JavaConverters._
 import org.apache.commons.collections15.Factory
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
+import org.nlogo.agent.World
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.api.MersenneTwisterFast
 
 import edu.uci.ics.jung
 
 object DummyGraph {
-  // TODO: the vertex id thing is a ugly hack to get around the fact that 
-  // Jung has no ordered SparseGraph (only ordered MultiGraphs). Ideally, 
+  // TODO: the vertex id thing is a ugly hack to get around the fact that
+  // Jung has no ordered SparseGraph (only ordered MultiGraphs). Ideally,
   // we would add a custom sorted graph. NP 2012-06-13
   private var vertexIdCounter = 0L
   case class Vertex(val id: Long)
@@ -31,22 +32,22 @@ object DummyGraph {
 
   def importToNetLogo(
     graph: jung.graph.Graph[Vertex, Edge],
+    world: World,
     turtleBreed: AgentSet,
     linkBreed: AgentSet,
     rng: MersenneTwisterFast,
     sorted: Boolean = false) = {
-    val w = turtleBreed.world
 
     val vs = graph.getVertices.asScala
     val vertices = if (sorted) vs.toSeq.sortBy(_.id) else vs
 
     val turtles: Map[Vertex, Turtle] =
       vertices.map { v =>
-        v -> createTurtle(turtleBreed, rng)
+        v -> createTurtle(world, turtleBreed, rng)
       }(collection.breakOut)
 
     graph.getEdges.asScala.foreach { e =>
-      createLink(turtles, graph.getEndpoints(e), linkBreed)
+      createLink(turtles, graph.getEndpoints(e), linkBreed, world)
     }
 
     turtles.valuesIterator

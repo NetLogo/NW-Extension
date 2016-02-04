@@ -13,40 +13,49 @@ class BarabasiAlbertGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     List(TurtlesetType, LinksetType, NumberType, CommandBlockType | OptionalType),
     blockAgentClassString = Some("-T--"))
-  def createTurtles(args: Array[api.Argument], context: api.Context) =
+  def createTurtles(args: Array[api.Argument], context: api.Context) = {
+    implicit val world = context.world.asInstanceOf[agent.World]
     new Generator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
-      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      linkBreed = args(1).getAgentSet.requireLinkBreed,
+      world = world)
       .barabasiAlbert(getIntValueWithMinimum(args(2), 1), context.getRNG)
+  }
 }
 
 class KleinbergSmallWorldGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     List(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType),
     blockAgentClassString = Some("-T--"))
-  def createTurtles(args: Array[api.Argument], context: api.Context) =
+  def createTurtles(args: Array[api.Argument], context: api.Context) = {
+    implicit val world = context.world.asInstanceOf[agent.World]
     new Generator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
-      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      linkBreed = args(1).getAgentSet.requireLinkBreed,
+      world = world)
       .kleinbergSmallWorld(
         rowCount = getIntValueWithMinimum(args(2), 2, "rows"),
         colCount = getIntValueWithMinimum(args(3), 2, "columns"),
         clusteringExponent = args(4).getDoubleValue,
         isToroidal = args(5).getBooleanValue,
         rng = context.getRNG)
+  }
 }
 
 class Lattice2DGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
     List(TurtlesetType, LinksetType, NumberType, NumberType, BooleanType, CommandBlockType | OptionalType),
     blockAgentClassString = Some("-T--"))
-  def createTurtles(args: Array[api.Argument], context: api.Context) =
+  def createTurtles(args: Array[api.Argument], context: api.Context) = {
+    implicit val world = context.world.asInstanceOf[agent.World]
     new Generator(
       turtleBreed = args(0).getAgentSet.requireTurtleBreed,
-      linkBreed = args(1).getAgentSet.requireLinkBreed)
+      linkBreed = args(1).getAgentSet.requireLinkBreed,
+      world = world)
       .lattice2D(
         rowCount = getIntValueWithMinimum(args(2), 2, "rows"),
         colCount = getIntValueWithMinimum(args(3), 2, "columns"),
         isToroidal = args(4).getBooleanValue,
         rng = context.getRNG)
+  }
 }

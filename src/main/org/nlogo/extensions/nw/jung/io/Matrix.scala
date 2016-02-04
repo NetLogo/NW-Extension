@@ -7,6 +7,7 @@ import java.io.FileNotFoundException
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
+import org.nlogo.agent.World
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.jung.DummyGraph
 import org.nlogo.extensions.nw.jung.factoryFor
@@ -40,7 +41,7 @@ object Matrix {
     }
   }
 
-  def load(filename: String, turtleBreed: AgentSet, linkBreed: AgentSet, rng: MersenneTwisterFast) = {
+  def load(filename: String, turtleBreed: AgentSet, linkBreed: AgentSet, world: World, rng: MersenneTwisterFast) = {
     if (org.nlogo.workspace.AbstractWorkspace.isApplet)
       throw new ExtensionException("Cannot load matrix file when in applet mode.")
     val matrixFile = new jung.io.MatrixFile(
@@ -56,6 +57,6 @@ object Matrix {
           throw new ExtensionException(e)
       }
     }
-    DummyGraph.importToNetLogo(graph, turtleBreed, linkBreed, rng)
+    DummyGraph.importToNetLogo(graph, world, turtleBreed, linkBreed, rng)
   }
 }

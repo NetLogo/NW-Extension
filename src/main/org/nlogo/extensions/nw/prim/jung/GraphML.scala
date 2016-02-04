@@ -11,7 +11,7 @@ import org.nlogo.extensions.nw.jung.io.GraphMLImport
 import org.nlogo.extensions.nw.GraphContextProvider
 
 class SaveGraphML(gcp: GraphContextProvider)
-  extends api.DefaultCommand {
+  extends api.Command {
   override def getSyntax = commandSyntax(Array(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
     val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager

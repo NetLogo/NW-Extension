@@ -3,7 +3,7 @@
 package org.nlogo.extensions.nw.prim
 
 import org.nlogo.agent.ArrayAgentSet
-import org.nlogo.api
+import org.nlogo.{ api, agent }
 import org.nlogo.api.Argument
 import org.nlogo.api.Context
 import org.nlogo.core.Syntax._
@@ -17,43 +17,43 @@ import org.nlogo.nvm.CustomAssembled
 import org.nlogo.nvm.ExtensionContext
 
 class SetContext(gcm: GraphContextManager)
-  extends api.DefaultCommand {
+  extends api.Command {
   override def getSyntax = commandSyntax(
     right = List(AgentsetType, AgentsetType))
   override def perform(args: Array[api.Argument], context: api.Context) {
+    implicit val world = context.world.asInstanceOf[agent.World]
     val turtleSet = args(0).getAgentSet.requireTurtleSet
     val linkSet = args(1).getAgentSet.requireLinkSet
-    val world = linkSet.world
     val gc = new GraphContext(world, turtleSet, linkSet)
     gcm.setGraphContext(gc)
   }
 }
 
 class GetContext(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = ListType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    val gc = gcp.getGraphContext(context.getAgent.world.asInstanceOf[org.nlogo.agent.World])
+    val gc = gcp.getGraphContext(context.world.asInstanceOf[org.nlogo.agent.World])
     val workspace = context.asInstanceOf[ExtensionContext].workspace()
     LogoList(gc.turtleSet, gc.linkSet)
   }
 }
 
 class WithContext(gcp: GraphContextProvider)
-  extends api.DefaultCommand
+  extends api.Command
   with CustomAssembled {
   override def getSyntax = commandSyntax(
     right = List(AgentsetType, AgentsetType, CommandBlockType))
 
   def perform(args: Array[Argument], context: Context) {
+    implicit val world = context.world.asInstanceOf[agent.World]
     val turtleSet = args(0).getAgentSet.requireTurtleSet
     val linkSet = args(1).getAgentSet.requireLinkSet
-    val world = linkSet.world
     val gc = new GraphContext(world, turtleSet, linkSet)
     val extContext = context.asInstanceOf[ExtensionContext]
     val nvmContext = extContext.nvmContext
     // Note that this can optimized by hanging onto the array and just mutating it. Shouldn't be necessary though.
-    val agentSet = new ArrayAgentSet(nvmContext.agent.kind, Array(nvmContext.agent), world)
+    val agentSet = new ArrayAgentSet(nvmContext.agent.kind, Array(nvmContext.agent))
     gcp.withTempGraphContext(gc) { () =>
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }

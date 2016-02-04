@@ -36,6 +36,7 @@ trait Algorithms {
   def getOrCreateCache(variable: String) = {
     weightedGraphCaches.getOrElseUpdate(variable, {
       val weightFunction = (link: Link) => {
+        implicit val world = gc.world
         val value = link.getBreedOrLinkVariable(variable)
         try value.asInstanceOf[java.lang.Number]
         catch {
@@ -108,7 +109,7 @@ trait Algorithms {
 
   object WeakComponentClusterer
     extends jungalg.cluster.WeakComponentClusterer[Turtle, Link] {
-    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, gc.world, rng)
+    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, rng)
   }
 
 }
@@ -117,7 +118,7 @@ trait UndirectedAlgorithms extends Algorithms {
   self: UndirectedGraph =>
   object BicomponentClusterer
     extends jungalg.cluster.BicomponentClusterer[Turtle, Link] {
-    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, gc.world, rng)
+    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, rng)
   }
 }
 

@@ -35,8 +35,8 @@ class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
       val l = getSubscribers(ws.world.links)
       val f = getSubscribers(ws.world.getBreed("FROGS"))
       val m = getSubscribers(ws.world.getBreed("MICE"))
-      val u = getSubscribers(ws.world.getLinkBreed("UNDIRECTED-LINKS"))
-      val d = getSubscribers(ws.world.getLinkBreed("DIRECTED-LINKS"))
+      val u = getSubscribers(ws.world.getLinkBreed("UNDIRECTED-EDGES"))
+      val d = getSubscribers(ws.world.getLinkBreed("DIRECTED-EDGES"))
       checkSizes(t -> 0, l -> 0, f -> 0, m -> 0, u -> 0, d -> 0)
 
       When("we `nw:set-context turtles links`")
@@ -50,7 +50,7 @@ class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
       checkSizes(t -> 1, l -> 1, f -> 0, m -> 0, u -> 0, d -> 0)
 
       When("we create a couple of frogs with undir links to each other")
-      ws.command("create-frogs 2 [ create-undirected-links-with other frogs ]")
+      ws.command("create-frogs 2 [ create-undirected-edges-with other frogs ]")
       Then("subscriber counts should not change")
       checkSizes(t -> 1, l -> 1, f -> 0, m -> 0, u -> 0, d -> 0)
 
@@ -60,7 +60,7 @@ class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
       checkSizes(t -> 1, l -> 1, f -> 0, m -> 0, u -> 0, d -> 0)
 
       When("we set the context to the breeds")
-      ws.command("nw:set-context frogs undirected-links")
+      ws.command("nw:set-context frogs undirected-edges")
       Then("turtles and links should loose their subscribers and frogs/undir-links should get theirs")
       checkSizes(t -> 0, l -> 0, f -> 1, m -> 0, u -> 1, d -> 0)
 
@@ -73,7 +73,7 @@ class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
         val turtleSub = t.head
         val linkSub = l.head
         When("we use `nw:with-context` to do something innocuous")
-        ws.command("nw:with-context frogs undirected-links [" +
+        ws.command("nw:with-context frogs undirected-edges [" +
           "let d [ nw:distance-to one-of other frogs ] of one-of frogs ]")
         Then("the subscribers counts should not change")
         checkSizes(t -> 1, l -> 1, f -> 0, m -> 0, u -> 0, d -> 0)
@@ -87,7 +87,7 @@ class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
         t.head should be theSameInstanceAs turtleSub
         l.head should be theSameInstanceAs linkSub
         When("we do something within nw:with-context that should invalidate the cache")
-        ws.command("nw:with-context frogs undirected-links [ ask one-of frogs [ die ] ]")
+        ws.command("nw:with-context frogs undirected-edges [ ask one-of frogs [ die ] ]")
         Then("the subscribers counts should not change")
         checkSizes(t -> 1, l -> 1, f -> 0, m -> 0, u -> 0, d -> 0)
         When("we do something that verifies the context")

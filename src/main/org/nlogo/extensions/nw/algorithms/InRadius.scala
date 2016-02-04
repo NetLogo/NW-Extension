@@ -20,6 +20,6 @@ object InRadius {
         .from(start, followUnLinks, followInLinks, followOutLinks)
         .takeWhile(_.tail.size <= radius)
         .map(_.head)
-    toTurtleSet(result, graphContext.world)
+    toTurtleSet(result)
   }
 }

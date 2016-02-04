@@ -4,7 +4,7 @@ package org.nlogo.extensions.nw
 
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.api.{Agent, ExtensionException}
-import org.nlogo.core.{ AgentKind, I18N }
+import org.nlogo.core.{ AgentKind, I18N, Syntax }
 import org.nlogo.{agent, api, nvm}
 import org.nlogo.api.MersenneTwisterFast
 import scala.language.{ implicitConversions, reflectiveCalls }
@@ -25,11 +25,13 @@ object NetworkExtensionUtil {
         I18N.errors.get("org.nlogo.$common.thatAgentIsDead"))
   }
 
-  implicit def LinkToRichLink(link: org.nlogo.agent.Link) = new RichLink(link)
-  class RichLink(link: org.nlogo.agent.Link) {
+  implicit def LinkToRichLink(link: org.nlogo.agent.Link)(implicit world: agent.World) =
+    new RichLink(link, world)
+
+  class RichLink(link: org.nlogo.agent.Link, world: agent.World) {
     def getBreedOrLinkVariable(variable: String) =
       try {
-        link.world.program.linksOwn.indexOf(variable) match {
+        world.program.linksOwn.indexOf(variable) match {
           case -1 => link.getLinkBreedVariable(variable)
           case i  => link.getLinkVariable(i)
         }
@@ -38,12 +40,11 @@ object NetworkExtensionUtil {
       }
   }
 
-  implicit def AgentSetToRichAgentSet(agentSet: api.AgentSet) =
-    new RichAgentSet(agentSet.asInstanceOf[agent.AgentSet])
+  implicit def AgentSetToRichAgentSet(agentSet: api.AgentSet)(implicit world: org.nlogo.agent.World) =
+    new RichAgentSet(agentSet.asInstanceOf[agent.AgentSet], world)
 
-  class RichAgentSet(agentSet: agent.AgentSet) {
+  class RichAgentSet(agentSet: agent.AgentSet, val world: org.nlogo.agent.World) {
     assert(agentSet != null)
-    lazy val world = agentSet.world.asInstanceOf[org.nlogo.agent.World]
     def isLinkBreed = (agentSet eq world.links) || world.isLinkBreed(agentSet)
     def isTurtleBreed = (agentSet eq world.turtles) || world.isBreed(agentSet)
 
@@ -95,18 +96,18 @@ object NetworkExtensionUtil {
 
   }
 
-  trait TurtleAskingCommand extends api.DefaultCommand with nvm.CustomAssembled {
+  trait TurtleAskingCommand extends api.Command with nvm.CustomAssembled {
     // the command itself is turtle or observer. inside the block is turtle code.
     // Issue #126 provides a good use case for this to be executed in turtle contexts.
-    override def getAgentClassString = "OT:-T--"
+    override def getSyntax =
+      Syntax.commandSyntax(agentClassString = "OT--", blockAgentClassString = Some("-T--"))
 
     def askTurtles(context: api.Context)(turtles: TraversableOnce[agent.Turtle]) = {
       val agents = turtles.toArray[agent.Agent]
-      val world = context.getAgent.world.asInstanceOf[agent.World]
       val extContext = context.asInstanceOf[nvm.ExtensionContext]
       val nvmContext = extContext.nvmContext
       agents.foreach(extContext.workspace.joinForeverButtons)
-      val agentSet = new agent.ArrayAgentSet(AgentKind.Turtle, agents, world)
+      val agentSet = new agent.ArrayAgentSet(AgentKind.Turtle, agents)
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }
     def assemble(a: nvm.AssemblerAssistant) {
@@ -133,8 +134,8 @@ object NetworkExtensionUtil {
 
   }
 
-  def createTurtle(turtleBreed: agent.AgentSet, rng: MersenneTwisterFast) =
-    turtleBreed.world.createTurtle(
+  def createTurtle(world: agent.World, turtleBreed: agent.AgentSet, rng: MersenneTwisterFast) =
+    world.createTurtle(
       turtleBreed,
       rng.nextInt(14), // color
       rng.nextInt(360)) // heading

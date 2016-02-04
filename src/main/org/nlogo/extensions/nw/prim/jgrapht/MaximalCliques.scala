@@ -8,7 +8,7 @@ import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContextProvider
 
 trait CliquePrim
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = ListType)
   val gcp: GraphContextProvider
   def graph(context: api.Context) = {

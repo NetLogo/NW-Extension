@@ -12,7 +12,7 @@ import org.nlogo.extensions.nw.util.TurtleSetsConverters._
 import org.nlogo.agent.AgentSet
 import org.nlogo.extensions.nw.GraphContextProvider
 
-trait InRadiusPrim extends api.DefaultReporter {
+trait InRadiusPrim extends api.Reporter {
   val gcp: GraphContextProvider
   val followUnLinks: Boolean = true
   val followInLinks: Boolean

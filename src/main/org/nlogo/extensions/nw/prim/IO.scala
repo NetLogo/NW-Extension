@@ -23,6 +23,7 @@ import org.nlogo.agent.Turtle
 import org.nlogo.agent.World
 import org.nlogo.api
 import org.nlogo.api._
+import org.nlogo.api.Command
 import org.nlogo.core.Breed
 import org.nlogo.core.Syntax
 import org.nlogo.core.LogoList
@@ -43,35 +44,38 @@ class Load extends TurtleAskingCommand {
     right = List(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType),
     blockAgentClassString = Some("-T--"))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
+    implicit val world = context.world.asInstanceOf[World]
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
     val linkBreed = args(2).getAgentSet.requireLinkBreed
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiImport.load(file, ws.world, turtleBreed, linkBreed, askTurtles(context))
+    GephiImport.load(file, world, turtleBreed, linkBreed, askTurtles(context))
   }
 }
 
 class LoadFileType(extension: String) extends TurtleAskingCommand {
   override def getSyntax = commandSyntax(right = List(StringType, TurtlesetType, LinksetType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
+    implicit val world = context.world.asInstanceOf[World]
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
     val linkBreed = args(2).getAgentSet.requireLinkBreed
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiImport.load(file, ws.world, turtleBreed, linkBreed, askTurtles(context) _, extension)
+    GephiImport.load(file, world, turtleBreed, linkBreed, askTurtles(context) _, extension)
   }
 }
 
 class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
   override def getSyntax = commandSyntax(right = List(StringType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
+    val world = context.world.asInstanceOf[World]
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiImport.load(file, ws.world, ws.world.turtles, ws.world.links, askTurtles(context) _, extension)
+    GephiImport.load(file, world, world.turtles, world.links, askTurtles(context) _, extension)
   }
 }
 
-class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
+class Save(gcp: GraphContextProvider) extends api.Command {
   override def getSyntax = commandSyntax(right = List(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val world = context.getAgent.world.asInstanceOf[World]
@@ -82,7 +86,7 @@ class Save(gcp: GraphContextProvider) extends api.DefaultCommand {
   }
 }
 
-class SaveFileType(gcp: GraphContextProvider, extension: String) extends api.DefaultCommand {
+class SaveFileType(gcp: GraphContextProvider, extension: String) extends api.Command {
   override def getSyntax = commandSyntax(right = List(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val world = context.getAgent.world.asInstanceOf[World]
@@ -105,6 +109,8 @@ object GephiExport {
   }
 
   def save(context: GraphContext, world: World, file: File, exporter: Exporter) = GephiUtils.withNWLoaderContext {
+    implicit val implicitWorld = world;
+
     if (exporter == null) {
       throw new ExtensionException("Unable to find exporter for " + file)
     } else if (exporter.isInstanceOf[ExporterCSV]) {
@@ -303,7 +309,7 @@ object GephiImport{
         // used. BCH 1/21/2015
 
         val breed = getBreed(attrs, turtleBreeds).getOrElse(defaultTurtleBreed)
-        val turtle = createTurtle(breed, world.mainRNG)
+        val turtle = createTurtle(world, breed, world.mainRNG)
         (attrs - "BREED") foreach (setAttribute(world, turtle) _).tupled
         turtle
       }

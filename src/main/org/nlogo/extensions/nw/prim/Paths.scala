@@ -18,7 +18,7 @@ import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.GraphContextProvider
 
 class DistanceTo(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType),
     ret = NumberType | BooleanType,
@@ -32,7 +32,7 @@ class DistanceTo(gcp: GraphContextProvider)
 }
 
 class WeightedDistanceTo(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType, StringType),
     ret = NumberType | BooleanType,
@@ -47,7 +47,7 @@ class WeightedDistanceTo(gcp: GraphContextProvider)
 }
 
 class PathTo(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType),
     ret = ListType,
@@ -71,7 +71,7 @@ class PathTo(gcp: GraphContextProvider)
 }
 
 class TurtlesOnPathTo(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType),
     ret = ListType,
@@ -87,7 +87,7 @@ class TurtlesOnPathTo(gcp: GraphContextProvider)
 }
 
 class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType, StringType),
     ret = ListType,
@@ -104,7 +104,7 @@ class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
 }
 
 class WeightedPathTo(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType, StringType),
     ret = ListType,

@@ -10,7 +10,7 @@ import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.GraphContextProvider
 
 class MeanPathLength(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = gcp.getGraphContext(context.getAgent.world)
@@ -22,7 +22,7 @@ class MeanPathLength(gcp: GraphContextProvider)
 }
 
 class MeanWeightedPathLength(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(StringType),
     ret = NumberType | BooleanType)

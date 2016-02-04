@@ -57,9 +57,9 @@ trait Graph
 
   object BronKerboschCliqueFinder extends jgrapht.alg.BronKerboschCliqueFinder(this) {
     def allCliques(rng: java.util.Random): Seq[api.AgentSet] =
-      toTurtleSets(getAllMaximalCliques.asScala, gc.world, rng)
+      toTurtleSets(getAllMaximalCliques.asScala, rng)
     def biggestCliques(rng: java.util.Random): Seq[api.AgentSet] =
-      toTurtleSets(getBiggestMaximalCliques.asScala, gc.world, rng)
+      toTurtleSets(getBiggestMaximalCliques.asScala, rng)
   }
 }
 

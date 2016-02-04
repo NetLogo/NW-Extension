@@ -10,6 +10,7 @@ import org.nlogo.agent.ArrayAgentSet
 import org.nlogo.agent.Link
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.agent.Turtle
+import org.nlogo.agent.World
 import org.nlogo.api.SimpleChangeEvent
 import org.nlogo.api.SimpleChangeEventPublisher
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
@@ -30,17 +31,17 @@ trait MonitoredAgentSet[A <: Agent] {
 
 trait MonitoredTreeAgentSet[A <: Agent] extends MonitoredAgentSet[A] {
   override val agentSet: TreeAgentSet
-  val world = agentSet.world
+  def world : World
   val breedName = agentSet.printName
   var hasChanged = false
   protected val changeSubscriber = new AgentSetChangeSubscriber(agentSet, () => hasChanged = true)
   def unsubscribe(): Unit = changeSubscriber.unsubscribe()
 }
 
-class MonitoredTurtleTreeAgentSet(override val agentSet: TreeAgentSet)
+class MonitoredTurtleTreeAgentSet(override val agentSet: TreeAgentSet, val world: World)
   extends MonitoredTreeAgentSet[Turtle]
 
-class MonitoredLinkTreeAgentSet(override val agentSet: TreeAgentSet)
+class MonitoredLinkTreeAgentSet(override val agentSet: TreeAgentSet, val world: World)
   extends MonitoredTreeAgentSet[Link]
 
 trait MonitoredArrayAgentSet[A <: Agent] extends MonitoredAgentSet[A] {

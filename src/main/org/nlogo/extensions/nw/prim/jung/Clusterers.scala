@@ -9,7 +9,7 @@ import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.GraphContextProvider
 
 class BicomponentClusters(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = ListType)
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
@@ -20,7 +20,7 @@ class BicomponentClusters(gcp: GraphContextProvider)
 }
 
 class WeakComponentClusters(gcp: GraphContextProvider)
-  extends api.DefaultReporter {
+  extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = ListType)
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph

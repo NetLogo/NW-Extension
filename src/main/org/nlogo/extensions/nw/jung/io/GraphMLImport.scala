@@ -171,11 +171,11 @@ object GraphMLImport {
 
         val turtles: Map[Vertex, Turtle] =
           createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE), world.turtles, world.getBreed) {
-            (_, breed) => createTurtle(breed, rng)
+            (_, breed) => createTurtle(world, breed, rng)
           }
 
         createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE), world.links, world.getLinkBreed) {
-          (e: Edge, breed) => createLink(turtles, graph.getEndpoints(e), breed)
+          (e: Edge, breed) => createLink(turtles, graph.getEndpoints(e), breed, world)
         }
 
         turtles.valuesIterator

@@ -9,21 +9,21 @@ import java.lang.{ Iterable => JIterable }
 
 object TurtleSetsConverters {
 
-  def toTurtleSets(turtleIterables: Traversable[JIterable[Turtle]], world: World, rng: java.util.Random): Seq[api.AgentSet] = {
+  def toTurtleSets(turtleIterables: Traversable[JIterable[Turtle]], rng: java.util.Random): Seq[api.AgentSet] = {
     val turtleSets: Seq[api.AgentSet] =
-      turtleIterables.map(toTurtleSet(_, world))(collection.breakOut)
+      turtleIterables.map(toTurtleSet)(collection.breakOut)
     new scala.util.Random(rng).shuffle(turtleSets)
   }
 
-  def toTurtleSet(turtles: java.lang.Iterable[Turtle], world: World): api.AgentSet =
-    toTurtleSet(turtles.asScala, world)
+  def toTurtleSet(turtles: java.lang.Iterable[Turtle]): api.AgentSet =
+    toTurtleSet(turtles.asScala)
 
-  def toTurtleSet(turtles: Iterable[Turtle], world: World): api.AgentSet = {
+  def toTurtleSet(turtles: Iterable[Turtle]): api.AgentSet = {
     val agents = turtles.toArray[Agent]
-    new ArrayAgentSet(AgentKind.Turtle, agents, world)
+    new ArrayAgentSet(AgentKind.Turtle, agents)
   }
 
   def emptyTurtleSet(world: World) =
-    new ArrayAgentSet(AgentKind.Turtle, Array[Agent](), world)
+    new ArrayAgentSet(AgentKind.Turtle, Array[Agent]())
 
 }

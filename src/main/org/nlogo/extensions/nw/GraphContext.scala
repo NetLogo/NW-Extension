@@ -19,18 +19,21 @@ class GraphContext(
     with algorithms.CentralityMeasurer
     with algorithms.ClusteringMetrics {
 
+  implicit val implicitWorld = world
+
   val rng = new scala.util.Random(world.mainRNG)
   val turtleMonitor = turtleSet match {
-    case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas)
+    case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
   }
 
   val linkMonitor = linkSet match {
-    case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas)
+    case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas)
   }
 
   val turtles: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
+
   val links: Set[Link] = linkSet.asIterable[Link]
     .filter(link => turtles.contains(link.end1) && turtles.contains(link.end2))
     .toSet

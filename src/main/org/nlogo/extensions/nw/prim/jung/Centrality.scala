@@ -10,7 +10,7 @@ import java.util.Locale
 import org.nlogo.agent.Agent
 import org.nlogo.extensions.nw.GraphContextProvider
 
-class BetweennessCentrality(gcp:GraphContextProvider) extends api.DefaultReporter {
+class BetweennessCentrality(gcp:GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
@@ -18,7 +18,7 @@ class BetweennessCentrality(gcp:GraphContextProvider) extends api.DefaultReporte
   }
 }
 
-class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
+class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(right = List(StringType), ret = NumberType, agentClassString = "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
@@ -27,7 +27,7 @@ class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.Defau
   }
 }
 
-class EigenvectorCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
+class EigenvectorCentrality(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
@@ -39,7 +39,7 @@ class EigenvectorCentrality(gcp: GraphContextProvider) extends api.DefaultReport
   }
 }
 
-class PageRank(gcp: GraphContextProvider) extends api.DefaultReporter {
+class PageRank(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
@@ -47,7 +47,7 @@ class PageRank(gcp: GraphContextProvider) extends api.DefaultReporter {
   }
 }
 
-class ClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
+class ClosenessCentrality(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
@@ -55,7 +55,7 @@ class ClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter
   }
 }
 
-class WeightedClosenessCentrality(gcp: GraphContextProvider) extends api.DefaultReporter {
+class WeightedClosenessCentrality(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(right = List(StringType), ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph

@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions.nw.jung
 
-import org.nlogo.agent.AgentSet
+import org.nlogo.agent.{ AgentSet, World }
 import org.nlogo.api.MersenneTwisterFast
 
 import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
@@ -11,7 +11,8 @@ import edu.uci.ics.jung.algorithms.generators.random.KleinbergSmallWorldGenerato
 
 class Generator(
   turtleBreed: AgentSet,
-  linkBreed: AgentSet) {
+  linkBreed: AgentSet,
+  world: World) {
 
   type V = DummyGraph.Vertex
   type E = DummyGraph.Edge
@@ -21,11 +22,12 @@ class Generator(
   lazy val edgeFactory = DummyGraph.edgeFactory
   lazy val vertexFactory = DummyGraph.vertexFactory
 
-  def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean, rng: MersenneTwisterFast) =
-    DummyGraph.importToNetLogo(new Lattice2DGenerator(
-      graphFactory, vertexFactory, edgeFactory,
-      rowCount, colCount, isToroidal)
-      .create, turtleBreed, linkBreed, rng)
+  def lattice2D(rowCount: Int, colCount: Int, isToroidal: Boolean, rng: MersenneTwisterFast) = {
+    val generator = new Lattice2DGenerator(
+      graphFactory, vertexFactory, edgeFactory, rowCount, colCount, isToroidal).create
+
+    DummyGraph.importToNetLogo(generator, world, turtleBreed, linkBreed, rng)
+  }
 
   def barabasiAlbert(nbVertices: Int, rng: MersenneTwisterFast) = {
     val gen = new BarabasiAlbertGenerator(
@@ -39,7 +41,7 @@ class Generator(
 
     while (gen.create.getVertexCount < nbVertices)
       gen.evolveGraph(1)
-    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng, sorted = true)
+    DummyGraph.importToNetLogo(gen.create, world, turtleBreed, linkBreed, rng, sorted = true)
   }
 
   def kleinbergSmallWorld(rowCount: Int, colCount: Int,
@@ -48,7 +50,7 @@ class Generator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, clusteringExponent, isToroidal)
     gen.setRandom(rng)
-    DummyGraph.importToNetLogo(gen.create, turtleBreed, linkBreed, rng)
+    DummyGraph.importToNetLogo(gen.create, world, turtleBreed, linkBreed, rng)
   }
 }
 
