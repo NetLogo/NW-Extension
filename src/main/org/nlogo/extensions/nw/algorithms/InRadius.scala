@@ -16,8 +16,7 @@ object InRadius {
     followInLinks: Boolean,
     followOutLinks: Boolean): api.AgentSet = {
     val result: Stream[Turtle] =
-      new BreadthFirstSearch(graphContext)
-        .from(start, followUnLinks, followInLinks, followOutLinks)
+      BreadthFirstSearch(graphContext, start, followUnLinks, followInLinks, followOutLinks)
         .takeWhile(_.tail.size <= radius)
         .map(_.head)
     toTurtleSet(result)

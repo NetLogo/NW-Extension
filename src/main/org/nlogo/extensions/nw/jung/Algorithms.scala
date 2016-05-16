@@ -106,12 +106,6 @@ trait Algorithms {
       else res
     }
   }
-
-  object WeakComponentClusterer
-    extends jungalg.cluster.WeakComponentClusterer[Turtle, Link] {
-    def clusters(rng: java.util.Random) = toTurtleSets(transform(self).asScala, rng)
-  }
-
 }
 
 trait UndirectedAlgorithms extends Algorithms {

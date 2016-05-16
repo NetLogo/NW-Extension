@@ -49,9 +49,6 @@ trait Graph
     throw sys.error("not implemented")
   def addEdge(link: Link, turtles: Pair[_ <: Turtle], edgeType: EdgeType): Boolean =
     throw sys.error("not implemented")
-
-  // If the whole graph is only one cluster, then it's weakly connected
-  lazy val isWeaklyConnected = WeakComponentClusterer.transform(this).size == 1
 }
 
 class DirectedGraph(

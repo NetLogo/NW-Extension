@@ -4,6 +4,7 @@ package org.nlogo.extensions.nw
 
 import org.nlogo.agent._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
+import org.nlogo.extensions.nw.algorithms.BreadthFirstSearch
 import org.nlogo.api.MersenneTwisterFast
 import scala.collection.{GenIterable, mutable}
 import org.nlogo.api.ExtensionException
@@ -151,6 +152,18 @@ class GraphContext(
   def allNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, true, true)
 
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
+
+  lazy val components: Traversable[Set[Turtle]] = {
+    val foundBy = mutable.Map[Turtle, Turtle]()
+    turtles.groupBy { t =>
+      foundBy.getOrElseUpdate(t, {
+        BreadthFirstSearch(this, t, followUnLinks = true, followInLinks = false, followOutLinks = true)
+          .map(_.head)
+          .foreach(found => foundBy(found) = t)
+        t
+      })
+    }.values
+  }
 
   def monitoredTreeAgentSets =
     Seq(turtleMonitor, linkMonitor).collect {

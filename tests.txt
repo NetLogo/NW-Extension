@@ -779,7 +779,10 @@ eigenvector-centrality-single-isolate
 eigenvector-centrality-disconnected
   extensions [ nw ]
   O> crt 4
-  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [false false false false]
+  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [1 1 1 1]
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [1 1 1 1]
+
 
 eigenvector-centrality-pair
   extensions [ nw ]
