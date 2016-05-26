@@ -1,7 +1,7 @@
 extensions [ nw ]
 
-undirected-link-breed [ undirected-links undirected-link ]
-directed-link-breed [ directed-links directed-link ]
+undirected-link-breed [ undirected-edges undirected-edge ]
+directed-link-breed [ directed-edges directed-edge ]
 
 globals [
   mouse-was-down?
@@ -23,7 +23,7 @@ to-report closest-turtle [ x y ]
 end
 
 to go
-  set-default-shape directed-links "directed"
+  set-default-shape directed-edges "directed"
   ask turtles [ set color gray ]
   ask links [ set color gray ]
   set mouse-is-down? mouse-down?
@@ -45,13 +45,13 @@ end
 
 to add-undirected-link
   add-link task [
-    create-undirected-link-with ?1 [ run ?2 ]
+    create-undirected-edge-with ?1 [ run ?2 ]
   ]
 end
 
 to add-directed-link
   add-link task [
-    create-directed-link-to ?1 [ run ?2 ]
+    create-directed-edge-to ?1 [ run ?2 ]
   ]
 end
 

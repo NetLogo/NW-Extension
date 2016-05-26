@@ -3,11 +3,11 @@ globals [ glob1 ]
 
 breed [ mice mouse ]
 
-directed-link-breed [ directed-links directed-link ]
-directed-links-own [ lvar ]
+directed-link-breed [ directed-edges directed-edge ]
+directed-edges-own [ lvar ]
 
-undirected-link-breed [ undirected-links undirected-link ]
-undirected-links-own [ weight ]
+undirected-link-breed [ undirected-edges undirected-edge ]
+undirected-edges-own [ weight ]
 
 to test
   turtles-in-radius-zero-radius
@@ -369,26 +369,26 @@ end
 to closeness-centrality-simple-directed
   clear-all
   crt 3
-  ask turtle 0 [ create-directed-link-to turtle 1 ]
-  ask turtle 1 [ create-directed-link-to turtle 0 ]
-  ask turtle 1 [ create-directed-link-to turtle 2 ]
-  ask turtle 2 [ create-directed-link-to turtle 1 ]
-  nw:set-context turtles directed-links
+  ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  ask turtle 1 [ create-directed-edge-to turtle 0 ]
+  ask turtle 1 [ create-directed-edge-to turtle 2 ]
+  ask turtle 2 [ create-directed-edge-to turtle 1 ]
+  nw:set-context turtles directed-edges
   output-show map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles ;=> [0.67 1 0.67]
 end
 
 to closeness-centrality-bigger-directed
   clear-all
   crt 6
-  ask turtle 0 [ create-directed-link-to turtle 1 ]
-  ask turtle 1 [ create-directed-link-to turtle 5 ]
-  ask turtle 2 [ create-directed-link-to turtle 1 ]
-  ask turtle 2 [ create-directed-link-to turtle 3 ]
-  ask turtle 2 [ create-directed-link-to turtle 4 ]
-  ask turtle 4 [ create-directed-link-to turtle 3 ]
-  ask turtle 5 [ create-directed-link-to turtle 0 ]
-  ask turtle 5 [ create-directed-link-to turtle 4 ]
-  nw:set-context turtles directed-links
+  ask turtle 0 [ create-directed-edge-to turtle 1 ]
+  ask turtle 1 [ create-directed-edge-to turtle 5 ]
+  ask turtle 2 [ create-directed-edge-to turtle 1 ]
+  ask turtle 2 [ create-directed-edge-to turtle 3 ]
+  ask turtle 2 [ create-directed-edge-to turtle 4 ]
+  ask turtle 4 [ create-directed-edge-to turtle 3 ]
+  ask turtle 5 [ create-directed-edge-to turtle 0 ]
+  ask turtle 5 [ create-directed-edge-to turtle 4 ]
+  nw:set-context turtles directed-edges
   output-show map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles ;=> [0.4 0.5 0.625 0 1 0.667] 
 end
 
@@ -491,30 +491,30 @@ end
 to weighted-distance-to-between-two-turtles
   clear-all
   crt 2
-  ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
-  nw:set-context turtles undirected-links
+  ask turtle 0 [ create-undirected-edge-with turtle 1 [ set weight 0.5 ] ]
+  nw:set-context turtles undirected-edges
   output-show [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 ;=> 0.5
 end
 
 to weighted-distance-to-variable-name-case-should-not-matter
   clear-all
   crt 2
-  ask turtle 0 [ create-undirected-link-with turtle 1 [ set weight 0.5 ] ]
-  nw:set-context turtles undirected-links
+  ask turtle 0 [ create-undirected-edge-with turtle 1 [ set weight 0.5 ] ]
+  nw:set-context turtles undirected-edges
   output-show [ nw:weighted-distance-to turtle 1 "WEIGHT" ] of turtle 0 ;=> 0.5
 end
 
 to weighted-distance-to-self
   clear-all
   crt 1
-  nw:set-context turtles undirected-links
+  nw:set-context turtles undirected-edges
   output-show [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 0 ;=> 0
 end
 
 to weighted-distance-two-turtles-no-links
   clear-all
   crt 2
-  nw:set-context turtles undirected-links
+  nw:set-context turtles undirected-edges
   output-show [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 1 ;=> false
   output-show [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 ;=> false
 end
@@ -539,14 +539,14 @@ end
 to weighted-path-to-self
   clear-all
   crt 1
-  nw:set-context turtles undirected-links
+  nw:set-context turtles undirected-edges
   output-show [ nw:weighted-path-to turtle 0 "weight" ] of turtle 0 ;=> []
 end
 
 to weighted-path-to-no-path
   clear-all
   crt 2
-  nw:set-context turtles undirected-links
+  nw:set-context turtles undirected-edges
   output-show [ nw:weighted-path-to turtle 1 "weight" ] of turtle 0 ;=> []
   output-show [ nw:weighted-path-to turtle 0 "weight" ] of turtle 1 ;=> []
 end
