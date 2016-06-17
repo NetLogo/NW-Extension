@@ -12,7 +12,7 @@ import org.nlogo.extensions.nw.jung.io.Matrix
 
 class SaveMatrix(gcp: GraphContextProvider)
   extends api.Command {
-  override def getSyntax = commandSyntax(Array(StringType))
+  override def getSyntax = commandSyntax(List(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
     val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager

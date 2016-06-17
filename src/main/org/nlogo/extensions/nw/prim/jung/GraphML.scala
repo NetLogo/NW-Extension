@@ -12,7 +12,7 @@ import org.nlogo.extensions.nw.GraphContextProvider
 
 class SaveGraphML(gcp: GraphContextProvider)
   extends api.Command {
-  override def getSyntax = commandSyntax(Array(StringType))
+  override def getSyntax = commandSyntax(right = List(StringType))
   override def perform(args: Array[api.Argument], context: api.Context) {
     val fm = context.asInstanceOf[org.nlogo.nvm.ExtensionContext].workspace.fileManager
     GraphMLExport.save(gcp.getGraphContext(context.getAgent.world),
