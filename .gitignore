@@ -35,3 +35,7 @@ classes/
 # emacs
 \#*\#
 \.\#*
+
+# os x
+
+.DS_Store
