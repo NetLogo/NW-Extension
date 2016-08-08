@@ -8,13 +8,8 @@ import org.nlogo.core.LogoList
 import org.nlogo.api.ScalaConversions.toLogoObject
 import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContext
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentToRichAgent
+import org.nlogo.extensions.nw.NetworkExtensionUtil.{AgentToRichAgent, canonocilizeVar}
 import java.util.Locale
-import org.nlogo.extensions.nw.GraphContextProvider
-import org.nlogo.extensions.nw.GraphContextProvider
-import org.nlogo.extensions.nw.GraphContextProvider
-import org.nlogo.extensions.nw.GraphContextProvider
-import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.GraphContextProvider
 
 class DistanceTo(gcp: GraphContextProvider)
@@ -34,13 +29,13 @@ class DistanceTo(gcp: GraphContextProvider)
 class WeightedDistanceTo(gcp: GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
-    right = List(TurtleType, StringType),
+    right = List(TurtleType, StringType | SymbolType),
     ret = NumberType | BooleanType,
     agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
-    val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
+    val weightVariable = canonocilizeVar(args(1).get)
     val distance = gcp.getGraphContext(context.getAgent.world).distance(source, target, Some(weightVariable))
     toLogoObject(distance.getOrElse(false))
   }
@@ -89,13 +84,13 @@ class TurtlesOnPathTo(gcp: GraphContextProvider)
 class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
-    right = List(TurtleType, StringType),
+    right = List(TurtleType, StringType | SymbolType),
     ret = ListType,
     agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
-    val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
+    val weightVariable = canonocilizeVar(args(1).get)
     val graphContext = gcp.getGraphContext(context.getAgent.world)
     graphContext.path(source, target, Some(weightVariable))
       .map { p => LogoList.fromIterator(p.iterator) }
@@ -106,13 +101,13 @@ class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
 class WeightedPathTo(gcp: GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
-    right = List(TurtleType, StringType),
+    right = List(TurtleType, StringType | SymbolType),
     ret = ListType,
     agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
-    val weightVariable = args(1).getString.toUpperCase(Locale.ENGLISH)
+    val weightVariable = canonocilizeVar(args(1).get)
     val graphContext = gcp.getGraphContext(context.getAgent.world)
     def turtlesToLinks(turtles: List[agent.Turtle]): Iterator[agent.Link] =
       for {

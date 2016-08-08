@@ -6,9 +6,9 @@ import org.nlogo.api
 import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.agent
-import java.util.Locale
 import org.nlogo.agent.Agent
 import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.NetworkExtensionUtil.canonocilizeVar
 
 class BetweennessCentrality(gcp:GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T-L")
@@ -19,10 +19,10 @@ class BetweennessCentrality(gcp:GraphContextProvider) extends api.Reporter {
 }
 
 class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.Reporter {
-  override def getSyntax = reporterSyntax(right = List(StringType), ret = NumberType, agentClassString = "-T-L")
+  override def getSyntax = reporterSyntax(right = List(StringType | SymbolType), ret = NumberType, agentClassString = "-T-L")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
-    val weightVar = args(0).getString.toUpperCase(Locale.ENGLISH)
+    val weightVar = canonocilizeVar(args(0).get)
     graph.betweennessCentrality(context.getAgent.asInstanceOf[Agent], weightVar): java.lang.Double
   }
 }
@@ -53,10 +53,10 @@ class ClosenessCentrality(gcp: GraphContextProvider) extends api.Reporter {
 }
 
 class WeightedClosenessCentrality(gcp: GraphContextProvider) extends api.Reporter {
-  override def getSyntax = reporterSyntax(right = List(StringType), ret = NumberType, agentClassString = "-T--")
+  override def getSyntax = reporterSyntax(right = List(StringType | SymbolType), ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
     val graph = gcp.getGraphContext(context.getAgent.world).asJungGraph
-    val varName = args(0).getString.toUpperCase(Locale.ENGLISH)
+    val varName = canonocilizeVar(args(0).get)
     graph.closenessCentrality(context.getAgent.asInstanceOf[agent.Turtle], varName): java.lang.Double
   }
 }

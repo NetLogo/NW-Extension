@@ -4,10 +4,11 @@ package org.nlogo.extensions.nw
 
 import org.nlogo.agent.TreeAgentSet
 import org.nlogo.api.{Agent, ExtensionException}
-import org.nlogo.core.{ AgentKind, I18N, Syntax }
+import org.nlogo.core.{ AgentKind, I18N, Syntax, Token }
 import org.nlogo.{agent, api, nvm}
 import org.nlogo.api.MersenneTwisterFast
 import scala.language.{ implicitConversions, reflectiveCalls }
+import java.util.Locale
 
 object NetworkExtensionUtil {
 
@@ -143,5 +144,9 @@ object NetworkExtensionUtil {
   def using[A <: { def close() }, B](closeable: A)(body: A => B): B =
     try body(closeable) finally closeable.close()
 
+  def canonocilizeVar(variable: AnyRef) = variable match {
+    case s: String => s.toUpperCase(Locale.ENGLISH)
+    case t: Token  => t.text.toString.toUpperCase(Locale.ENGLISH)
+  }
 }
 

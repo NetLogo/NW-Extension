@@ -329,11 +329,11 @@ As you may have noticed, the result includes the calling turtle. This mimics the
 
 ![turtle][turtle] <tt>nw:distance-to <i>target-turtle</i></tt>
 
-![turtle][turtle] <tt>nw:weighted-distance-to <i>target-turtle weight-variable-name</i></tt>
+![turtle][turtle] <tt>nw:weighted-distance-to <i>target-turtle weight-variable</i></tt>
 
 Finds the shortest path to the target turtle and reports the total distance for this path, or false if no path exists in the current context.
 
-The `nw:distance-to` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-distance-to` version accepts a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
+The `nw:distance-to` version of the primitive assumes that each link counts for a distance of one. The `nw:weighted-distance-to` version accepts a _weight-variable_ parameter, the link variable to use as the weight of each link in distance calculations (alternatively, it can be a string containing the variable name). The weights cannot be negative numbers.
 
 ##### Example:
 
@@ -347,7 +347,7 @@ The `nw:distance-to` version of the primitive assumes that each link counts for 
       ask turtle 3 [ create-link-with turtle 4 [ set weight 0.5 ] ]
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
       ask turtle 0 [ show nw:distance-to turtle 2 ]
-      ask turtle 0 [ show nw:weighted-distance-to turtle 2 "weight" ]
+      ask turtle 0 [ show nw:weighted-distance-to turtle 2 weight ]
     end
 
 Will output:
@@ -361,13 +361,13 @@ Will output:
 
 ![turtle][turtle] <tt>nw:turtles-on-path-to <i>target-turtle</i></tt>
 
-![turtle][turtle] <tt>nw:weighted-path-to <i>target-turtle weight-variable-name</i></tt>
+![turtle][turtle] <tt>nw:weighted-path-to <i>target-turtle weight-variable</i></tt>
 
-![turtle][turtle] <tt>nw:turtles-on-weighted-path-to <i>target-turtle weight-variable-name</i></tt>
+![turtle][turtle] <tt>nw:turtles-on-weighted-path-to <i>target-turtle weight-variable</i></tt>
 
 Finds the shortest path to the target turtle and reports the actual path between the source and the target turtle. The `nw:path-to` and `nw:weighted-path-to` variants will report the list of links that constitute the path, while the `nw:turtles-on-path-to` and `nw:turtles-on-weighted-path-to` variants will report the list of turtles along the path, including the source and destination turtles.
 
-As with the link distance primitives, the `nw:weighted-path-to` and `nw:turtles-on-weighted-path-to` accept a _weight-variable-name_ parameter, which must be **a string** naming the link variable to use as the weight of each link in distance calculations. The weights cannot be negative numbers.
+As with the link distance primitives, the `nw:weighted-path-to` and `nw:turtles-on-weighted-path-to` accept a _weight-variable_ parameter, the link variable to use as the weight of each link in distance calculations (alternatively, it can be a string containing the variable name). The weights cannot be negative numbers.
 
 If no path exist between the source and the target turtles, all primitives will report an empty list.
 
@@ -386,8 +386,8 @@ Note that the NW-Extension remembers paths that its calculated previously unless
       ask turtle 4 [ create-link-with turtle 2 [ set weight 0.5 ] ]
       ask turtle 0 [ show nw:path-to turtle 2 ]
       ask turtle 0 [ show nw:turtles-on-path-to turtle 2 ]
-      ask turtle 0 [ show nw:weighted-path-to turtle 2 "weight" ]
-      ask turtle 0 [ show nw:turtles-on-weighted-path-to turtle 2 "weight" ]
+      ask turtle 0 [ show nw:weighted-path-to turtle 2 weight ]
+      ask turtle 0 [ show nw:turtles-on-weighted-path-to turtle 2 weight ]
     end
 
 Will output:
@@ -401,9 +401,9 @@ Will output:
 
 <tt>nw:mean-path-length</tt>
 
-<tt>nw:mean-weighted-path-length <i>weight-variable-name</i></tt>
+<tt>nw:mean-weighted-path-length <i>weight-variable</i></tt>
 
-Reports the average shortest-path length between all distinct pairs of nodes in the current context. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable-name_. The weights cannot be negative numbers.
+Reports the average shortest-path length between all distinct pairs of nodes in the current context. If the `nw:mean-weighted-path-length` is used, the distances will be calculated using _weight-variable_. The weights cannot be negative numbers.
 
 Reports false unless paths exist between all pairs.
 
@@ -416,10 +416,10 @@ Reports false unless paths exist between all pairs.
       ask turtle 0 [ create-link-with turtle 1 [ set weight 2.0 ] ]
       ask turtle 1 [ create-link-with turtle 2 [ set weight 2.0 ] ]
       show nw:mean-path-length
-      show nw:mean-weighted-path-length "weight"
+      show nw:mean-weighted-path-length weight
       create-turtles 1 ; create a new, disconnected turtle
       show nw:mean-path-length
-      show nw:mean-weighted-path-length "weight"
+      show nw:mean-weighted-path-length weight
     end
 
 Will ouput:
@@ -470,7 +470,7 @@ The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_cen
 Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
 
 #### weighted-closeness-centrality
-![turtle][turtle] <tt>nw:weighted-closeness-centrality <i>weight-variable-name</i></tt>
+![turtle][turtle] <tt>nw:weighted-closeness-centrality <i>weight-variable</i></tt>
 
 This is identical to [closeness-centrality](#closeness-centrality), except that weights provided by the given variable are treated as the distances of links.
 

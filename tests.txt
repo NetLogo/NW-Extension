@@ -129,10 +129,10 @@ path-through-different-breeds
   O> ask undirected-edges [ set weight 2 ]
   O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
   [ nw:distance-to mouse 2 ] of mouse 1 => 2
-  [ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => 4
+  [ nw:weighted-distance-to mouse 2 weight ] of mouse 1 => 4
   O> ask frogs [ die ]
   [ nw:distance-to mouse 2 ] of mouse 1 => false
-  [ nw:weighted-distance-to mouse 2 "weight" ] of mouse 1 => false
+  [ nw:weighted-distance-to mouse 2 weight ] of mouse 1 => false
   O> create-frogs 1
   O> create-mice 2 [ create-undirected-edge-with frog 3 ]
   # new agents not added to non-breed context:
@@ -638,14 +638,14 @@ weighted-closeness-centrality-pair-undirected
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 2 ] ]
-  map [ [ precision nw:weighted-closeness-centrality "thickness" 2 ] of ? ] sort turtles => [0.5 0.5]
+  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.5 0.5]
 
 weighted-closeness-centrality-simple-undirected
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 2 ] ]
   O> ask turtle 1 [ create-link-with turtle 2 [ set thickness 1 ] ]
-  map [ [ precision nw:weighted-closeness-centrality "thickness" 2 ] of ? ] sort turtles => [0.4 0.67 0.5]
+  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.4 0.67 0.5]
 
 weighted-closeness-centrality-simple-directed
   extensions [ nw ]
@@ -656,14 +656,14 @@ weighted-closeness-centrality-simple-directed
   O> ask turtle 1 [ create-directed-edge-to turtle 2 [ set thickness 2 ] ]
   O> ask turtle 2 [ create-directed-edge-to turtle 1 [ set thickness 1 ] ]
   O> nw:set-context turtles directed-edges
-  map [ [ precision nw:weighted-closeness-centrality "thickness" 2 ] of ? ] sort turtles => [0.5 0.5 0.5]
+  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.5 0.5 0.5]
 
 weighted-closeness-centrality-changes
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 2 ] ]
   O> ask turtle 1 [ create-link-with turtle 2 [ set thickness 1 ] ]
-  map [ [ precision nw:weighted-closeness-centrality "thickness" 2 ] of ? ] sort turtles => [0.4 0.67 0.5]
+  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.4 0.67 0.5]
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 1 ] ]
   map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
 
@@ -916,7 +916,7 @@ weighted-distance-to-between-two-turtles
   O> crt 2
   O> ask turtle 0 [ create-undirected-edge-with turtle 1 [ set weight 0.5 ] ]
   O> nw:set-context turtles undirected-edges
-  [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 => 0.5
+  [ nw:weighted-distance-to turtle 1 weight ] of turtle 0 => 0.5
 
 weighted-distance-to-variable-name-case-should-not-matter
   extensions [ nw ]
@@ -925,7 +925,7 @@ weighted-distance-to-variable-name-case-should-not-matter
   O> crt 2
   O> ask turtle 0 [ create-undirected-edge-with turtle 1 [ set weight 0.5 ] ]
   O> nw:set-context turtles undirected-edges
-  [ nw:weighted-distance-to turtle 1 "WEIGHT" ] of turtle 0 => 0.5
+  [ nw:weighted-distance-to turtle 1 WEIGHT ] of turtle 0 => 0.5
 
 weighted-distance-to-self
   extensions [nw]
@@ -933,7 +933,7 @@ weighted-distance-to-self
   undirected-edges-own [weight]
   O> crt 1
   O> nw:set-context turtles undirected-edges
-  [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 0 => 0
+  [ nw:weighted-distance-to turtle 0 weight ] of turtle 0 => 0
 
 weighted-distance-two-turtles-no-links
   extensions [nw]
@@ -941,29 +941,29 @@ weighted-distance-two-turtles-no-links
   undirected-edges-own [weight]
   O> crt 2
   O> nw:set-context turtles undirected-edges
-  [ nw:weighted-distance-to turtle 0 "weight" ] of turtle 1 => false
-  [ nw:weighted-distance-to turtle 1 "weight" ] of turtle 0 => false
+  [ nw:weighted-distance-to turtle 0 weight ] of turtle 1 => false
+  [ nw:weighted-distance-to turtle 1 weight ] of turtle 0 => false
 
 weighted-distance-one-unbreeded-undirected-link-using-thickness
   extensions [nw]
   O> crt 2 [ create-links-with other turtles [ set thickness 0.5 ]]
-  [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 => 0.5
-  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 0.5
+  [ nw:weighted-distance-to turtle 0 thickness ] of turtle 1 => 0.5
+  [ nw:weighted-distance-to turtle 1 thickness ] of turtle 0 => 0.5
 
 weighted-distance-one-unbreeded-directed-link-using-thickness
   extensions [nw]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 [ set thickness 0.5 ]]
-  [ nw:weighted-distance-to turtle 0 "thickness" ] of turtle 1 => false
-  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 0.5
+  [ nw:weighted-distance-to turtle 0 thickness ] of turtle 1 => false
+  [ nw:weighted-distance-to turtle 1 thickness ] of turtle 0 => 0.5
 
 weighted-distance-changes
   extensions [nw]
   O> crt 2 [ create-links-with other turtles ]
   O> ask links [ set thickness 2 ]
-  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 2
+  [ nw:weighted-distance-to turtle 1 thickness ] of turtle 0 => 2
   O> ask links [ set thickness 4 ]
-  [ nw:weighted-distance-to turtle 1 "thickness" ] of turtle 0 => 4
+  [ nw:weighted-distance-to turtle 1 thickness ] of turtle 0 => 4
 
 ### weighted-path-to
 
@@ -973,7 +973,7 @@ weighted-path-to-self
   undirected-edges-own [weight]
   O> crt 1
   O> nw:set-context turtles undirected-edges
-  [ nw:weighted-path-to turtle 0 "weight" ] of turtle 0 => []
+  [ nw:weighted-path-to turtle 0 weight ] of turtle 0 => []
 
 weighted-path-to-no-path
   extensions [ nw ]
@@ -981,26 +981,26 @@ weighted-path-to-no-path
   undirected-edges-own [weight]
   O> crt 2
   O> nw:set-context turtles undirected-edges
-  [ nw:weighted-path-to turtle 1 "weight" ] of turtle 0 => []
-  [ nw:weighted-path-to turtle 0 "weight" ] of turtle 1 => []
+  [ nw:weighted-path-to turtle 1 weight ] of turtle 0 => []
+  [ nw:weighted-path-to turtle 0 weight ] of turtle 1 => []
 
 weighted-path-to-undirected-pair
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles [ set thickness 1 ]]
-  (word [ nw:weighted-path-to turtle 1 "thickness" ] of turtle 0) => "[(link 0 1)]"
-  (word [ nw:weighted-path-to turtle 0 "thickness" ] of turtle 1) => "[(link 0 1)]"
+  (word [ nw:weighted-path-to turtle 1 thickness ] of turtle 0) => "[(link 0 1)]"
+  (word [ nw:weighted-path-to turtle 0 thickness ] of turtle 1) => "[(link 0 1)]"
 
 weighted-path-to-random-equal-paths
   extensions [ nw ]
   O> cro 4 [ create-link-with turtle ((who + 1) mod 4) [ set thickness 1 ] ]
-  length remove-duplicates n-values 100 [ [ nw:weighted-path-to turtle 2 "thickness" ] of turtle 0 ] => 2
+  length remove-duplicates n-values 100 [ [ nw:weighted-path-to turtle 2 thickness ] of turtle 0 ] => 2
 
 ### turtles-on-weighted-path-to
 
 turtles-on-weighted-path-to-random-equal-paths
   extensions [ nw ]
   O> cro 4 [ create-link-with turtle ((who + 1) mod 4) [ set thickness 1 ] ]
-  length remove-duplicates n-values 100 [ [ nw:turtles-on-weighted-path-to turtle 2 "thickness" ] of turtle 0 ] => 2
+  length remove-duplicates n-values 100 [ [ nw:turtles-on-weighted-path-to turtle 2 thickness ] of turtle 0 ] => 2
 
 ### mean-weighted-path-length
 
@@ -1008,38 +1008,38 @@ turtles-on-weighted-path-to-random-equal-paths
 
 mean-weighted-path-length-empty
   extensions [ nw ]
-  nw:mean-weighted-path-length "thickness" => false
+  nw:mean-weighted-path-length thickness => false
 
 mean-weighted-path-length-one-turtle
   extensions [ nw ]
   O> crt 1
-  nw:mean-weighted-path-length "thickness" => false
+  nw:mean-weighted-path-length thickness => false
 
 mean-weighted-path-length-two-unconnected-turtles
   extensions [ nw ]
   O> crt 2
-  nw:mean-weighted-path-length "thickness" => false
+  nw:mean-weighted-path-length thickness => false
 
 mean-weighted-path-length-two-connected-turtles
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles [ set thickness 5 ] ]
-  nw:mean-weighted-path-length "thickness" => 5
+  nw:mean-weighted-path-length thickness => 5
 
 mean-weighted-path-length-two-connected-and-one-unconnected-turtles
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles [ set thickness 5 ] ]
   O> crt 1
-  nw:mean-weighted-path-length "thickness" => false
+  nw:mean-weighted-path-length thickness => false
 
 mean-weighted-path-length-fully-connected
   extensions [ nw ]
   O> crt 10 [ create-links-with other turtles [ set thickness sum [ who ] of both-ends ] ]
-  nw:mean-weighted-path-length "thickness" => 9
+  nw:mean-weighted-path-length thickness => 9
 
 mean-weighted-path-length-on-a-pentagon
   extensions [ nw ]
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) [ set thickness [ 1 + who ] of end1 ] ]
-  nw:mean-weighted-path-length "thickness" => 3
+  nw:mean-weighted-path-length thickness => 3
 
 mean-weighted-path-length-connected-pair-of-turtles-on-a-pentagon
   extensions [ nw ]
@@ -1047,7 +1047,7 @@ mean-weighted-path-length-connected-pair-of-turtles-on-a-pentagon
   O> nw:set-context mice links
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) [ set thickness 1 ] ]
   O> ask (turtle-set turtle 0 turtle 1) [ set breed mice ]
-  nw:mean-weighted-path-length "thickness" => 1
+  nw:mean-weighted-path-length thickness => 1
 
 mean-weighted-path-length-disconnected-pair-of-turtles-on-a-pentagon
   extensions [ nw ]
@@ -1055,7 +1055,7 @@ mean-weighted-path-length-disconnected-pair-of-turtles-on-a-pentagon
   O> nw:set-context mice links
   O> crt 5 [ create-link-with turtle ((who + 1) mod 5) [ set thickness 1 ] ]
   O> ask (turtle-set turtle 0 turtle 2) [ set breed mice ]
-  nw:mean-weighted-path-length "thickness" => false
+  nw:mean-weighted-path-length thickness => false
 
 ## directed links
 
@@ -1063,19 +1063,19 @@ mean-weighted-path-length-directed-two-half-connected-turtles
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-links-to other turtles [ set thickness 1 ] ]
-  nw:mean-weighted-path-length "thickness" => false
+  nw:mean-weighted-path-length thickness => false
 
 mean-weighted-path-length-directed-two-connected-turtles
   extensions [ nw ]
   O> crt 2 [ create-links-to other turtles [ set thickness 5 ] ]
-  nw:mean-weighted-path-length "thickness" => 5
+  nw:mean-weighted-path-length thickness => 5
 
 mean-weighted-path-changes
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles [ set thickness 5 ] ]
-  nw:mean-weighted-path-length "thickness" => 5
+  nw:mean-weighted-path-length thickness => 5
   O> ask links [ set thickness 3 ]
-  nw:mean-weighted-path-length "thickness" => 3
+  nw:mean-weighted-path-length thickness => 3
 
 ## generators
 

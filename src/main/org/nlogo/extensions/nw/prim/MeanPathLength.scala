@@ -5,9 +5,8 @@ import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.algorithms.MeanPathLength._
 import org.nlogo.agent.Turtle
-import java.util.Locale
 import org.nlogo.extensions.nw.GraphContextProvider
-import org.nlogo.extensions.nw.GraphContextProvider
+import org.nlogo.extensions.nw.NetworkExtensionUtil.canonocilizeVar
 
 class MeanPathLength(gcp: GraphContextProvider)
   extends api.Reporter {
@@ -24,10 +23,10 @@ class MeanPathLength(gcp: GraphContextProvider)
 class MeanWeightedPathLength(gcp: GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
-    right = List(StringType),
+    right = List(StringType | SymbolType),
     ret = NumberType | BooleanType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
-    val weightVariable = args(0).getString.toUpperCase(Locale.ENGLISH)
+    val weightVariable = canonocilizeVar(args(0).get)
     val gc = gcp.getGraphContext(context.getAgent.world)
     val dist = gc.distance(_: Turtle, _: Turtle, Some(weightVariable))
     meanPathLength(gc.turtles, dist)
