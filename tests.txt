@@ -396,8 +396,8 @@ path-to-self
 path-to-no-path
   extensions [ nw ]
   O> crt 2
-  [ nw:path-to turtle 1 ] of turtle 0 => []
-  [ nw:path-to turtle 0 ] of turtle 1 => []
+  [ nw:path-to turtle 1 ] of turtle 0 => false
+  [ nw:path-to turtle 0 ] of turtle 1 => false
 
 path-to-undirected-pair
   extensions [ nw ]
@@ -419,7 +419,7 @@ path-to-a-b-c-directed
   O> ask turtle 0 [ create-link-to turtle 1 ]
   O> ask turtle 1 [ create-link-to turtle 2 ]
   (word [ nw:path-to turtle 2 ] of turtle 0) => "[(link 0 1) (link 1 2)]"
-  (word [ nw:path-to turtle 0 ] of turtle 2) => "[]"
+  (word [ nw:path-to turtle 0 ] of turtle 2) => "false"
 
 path-to-fully-connected
   extensions [ nw ]
@@ -456,8 +456,8 @@ path-to-mixed-directed-undirected
   O> ask turtle 3 [ create-directed-edge-to turtle 1 ]
   (word [ nw:path-to turtle 2 ] of turtle 0) => "[(undirected-edge 0 1) (directed-edge 1 2)]"
   (word [ nw:turtles-on-path-to turtle 2 ] of turtle 0) => "[(turtle 0) (turtle 1) (turtle 2)]"
-  (word [ nw:path-to turtle 3 ] of turtle 0) => "[]"
-  (word [ nw:turtles-on-path-to turtle 3 ] of turtle 0) => "[]"
+  (word [ nw:path-to turtle 3 ] of turtle 0) => "false"
+  (word [ nw:turtles-on-path-to turtle 3 ] of turtle 0) => "false"
   (word [ nw:path-to turtle 0 ] of turtle 3) => "[(directed-edge 3 1) (undirected-edge 0 1)]"
   (word [ nw:turtles-on-path-to turtle 0 ] of turtle 3) => "[(turtle 3) (turtle 1) (turtle 0)]"
 
@@ -471,8 +471,8 @@ turtles-on-path-to-self
 turtles-on-path-to-no-path
   extensions [ nw ]
   O> crt 2
-  map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => []
-  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => []
+  [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => false
+  [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => false
 
 turtles-on-path-to-undirected-pair
   extensions [ nw ]
@@ -485,7 +485,7 @@ turtles-on-path-to-directed-pair
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
   map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
-  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => []
+  [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => false
 
 turtles-on-path-to-fully-connected
   extensions [ nw ]
@@ -987,8 +987,8 @@ weighted-path-to-no-path
   undirected-edges-own [weight]
   O> crt 2
   O> nw:set-context turtles undirected-edges
-  [ nw:weighted-path-to turtle 1 weight ] of turtle 0 => []
-  [ nw:weighted-path-to turtle 0 weight ] of turtle 1 => []
+  [ nw:weighted-path-to turtle 1 weight ] of turtle 0 => false
+  [ nw:weighted-path-to turtle 0 weight ] of turtle 1 => false
 
 weighted-path-to-undirected-pair
   extensions [ nw ]

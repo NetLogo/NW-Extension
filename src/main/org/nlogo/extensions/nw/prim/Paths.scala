@@ -45,7 +45,7 @@ class PathTo(gcp: GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType),
-    ret = ListType,
+    ret = ListType | BooleanType,
     agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
@@ -59,9 +59,9 @@ class PathTo(gcp: GraphContextProvider)
           .filter(l => l.end1 == target || l.end2 == target)
           .head
       } yield l
-    graphContext.path(source, target)
+    toLogoObject(graphContext.path(source, target)
       .map { p => LogoList.fromIterator(turtlesToLinks(p.toList)) }
-      .getOrElse(LogoList.Empty)
+      .getOrElse(false))
   }
 }
 
@@ -69,15 +69,15 @@ class TurtlesOnPathTo(gcp: GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType),
-    ret = ListType,
+    ret = ListType | BooleanType,
     agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
     val graphContext = gcp.getGraphContext(context.getAgent.world)
-    graphContext.path(source, target)
+    toLogoObject(graphContext.path(source, target)
       .map { p => LogoList.fromIterator(p.iterator) }
-      .getOrElse(LogoList.Empty)
+      .getOrElse(false))
   }
 }
 
@@ -85,16 +85,16 @@ class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType, StringType | SymbolType),
-    ret = ListType,
+    ret = ListType | BooleanType,
     agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
     val weightVariable = canonocilizeVar(args(1).get)
     val graphContext = gcp.getGraphContext(context.getAgent.world)
-    graphContext.path(source, target, Some(weightVariable))
+    toLogoObject(graphContext.path(source, target, Some(weightVariable))
       .map { p => LogoList.fromIterator(p.iterator) }
-      .getOrElse(LogoList.Empty)
+      .getOrElse(false))
   }
 }
 
@@ -102,7 +102,7 @@ class WeightedPathTo(gcp: GraphContextProvider)
   extends api.Reporter {
   override def getSyntax = reporterSyntax(
     right = List(TurtleType, StringType | SymbolType),
-    ret = ListType,
+    ret = ListType | BooleanType,
     agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
@@ -117,9 +117,9 @@ class WeightedPathTo(gcp: GraphContextProvider)
           .filter(l => l.end1 == target || l.end2 == target)
           .head
       } yield l
-    graphContext
+    toLogoObject(graphContext
       .path(source, target, Some(weightVariable))
       .map { p => LogoList.fromIterator(turtlesToLinks(p.toList)) }
-      .getOrElse(LogoList.Empty)
+      .getOrElse(false))
   }
 }
