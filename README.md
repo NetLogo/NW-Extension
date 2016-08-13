@@ -369,7 +369,7 @@ Finds the shortest path to the target turtle and reports the actual path between
 
 As with the link distance primitives, the `nw:weighted-path-to` and `nw:turtles-on-weighted-path-to` accept a _weight-variable_ parameter, the link variable to use as the weight of each link in distance calculations (alternatively, it can be a string containing the variable name). The weights cannot be negative numbers.
 
-If no path exist between the source and the target turtles, all primitives will report an empty list.
+If no path exist between the source and the target turtles, all primitives will report `false` (this is a change from versions that came with NetLogo 5.x).
 
 Note that the NW-Extension remembers paths that its calculated previously unless the network changes. Thus, you don't need to store paths to efficiently move across the network; you can just keep re-calling one of the path primitives. If the network changes, however, the stored answers are forgotten.
 

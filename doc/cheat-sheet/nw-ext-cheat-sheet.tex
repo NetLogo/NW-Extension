@@ -151,7 +151,7 @@ As with the link distance primitives, the \texttt{nw:weighted-path-to} and
 parameter, which must be a string naming the link variable to use as the weight
 of each link in distance calculations. The weights cannot be negative numbers.
 If no path exist between the source and the target turtles, all primitives will
-report an empty list. Examples:
+report false. Examples:
 
 \begin{Verbatim}
 ask turtle 0 [ show nw:path-to turtle 2 ]
