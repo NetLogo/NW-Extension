@@ -1,5 +1,6 @@
 package org.nlogo.extensions.nw.algorithms
 
+import scala.util.Random
 import collection.mutable
 import org.nlogo.agent.{Agent, World, Turtle, Link}
 import scala.collection.mutable.ArrayBuffer
@@ -37,9 +38,8 @@ trait PathFinder {
     }
   }: (Option[String]) => Turtle => Iterator[Turtle])
 
-  val rng: scala.util.Random
-  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Turtle]
-  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Link]
+  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random]): Iterable[Turtle]
+  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random]): Iterable[Link]
 
   private var lastSource: Option[Turtle] = None
   private var lastDest: Option[Turtle] = None
@@ -81,7 +81,7 @@ trait PathFinder {
     lastDest = Some(dest)
   }
 
-  private def cachedPath(cache: ((Turtle, Turtle)) => Seq[Turtle], source: Turtle, dest: Turtle): Option[List[Turtle]]
+  private def cachedPath(cache: ((Turtle, Turtle)) => Seq[Turtle], source: Turtle, dest: Turtle, rng: Random): Option[List[Turtle]]
     = {
     if (source == dest) {
       Some(List(dest))
@@ -89,20 +89,20 @@ trait PathFinder {
       val availableSuccessors = cache((source, dest))
       if (availableSuccessors.nonEmpty) {
         val succ = availableSuccessors(rng.nextInt(availableSuccessors.length))
-        cachedPath(cache, succ, dest) map {source :: _ }
+        cachedPath(cache, succ, dest, rng) map {source :: _ }
       } else {
         None
       }
     }
   }
 
-  private def cachedPath(variable: Option[String], source: Turtle, dest: Turtle): Option[List[Turtle]] =
-    cachedPath(successorCaches(variable), source, dest) orElse cachedPath(predecessorCaches(variable), dest, source).map(_.reverse)
+  private def cachedPath(variable: Option[String], source: Turtle, dest: Turtle, rng: Random): Option[List[Turtle]] =
+    cachedPath(successorCaches(variable), source, dest, rng) orElse cachedPath(predecessorCaches(variable), dest, source, rng).map(_.reverse)
 
-  def path(source: Turtle, dest: Turtle, weightVariable: Option[String] = None): Option[Iterable[Turtle]] = {
-    cachedPath(weightVariable, source, dest) orElse {
+  def path(source: Turtle, dest: Turtle, rng: Random, weightVariable: Option[String] = None): Option[Iterable[Turtle]] = {
+    cachedPath(weightVariable, source, dest, rng) orElse {
       expandBestTraversal(weightVariable, source, dest)
-      cachedPath(weightVariable, source, dest)
+      cachedPath(weightVariable, source, dest, rng)
     }
   }
 
@@ -138,7 +138,7 @@ trait PathFinder {
       for {
         node <- last
         distance = dists((start, node))
-        neighbor <- neighbors(node, includeUn = true, includeIn = reverse, includeOut = !reverse, shuffle = false)
+        neighbor <- neighbors(node, includeUn = true, includeIn = reverse, includeOut = !reverse, shuffle = None)
       } {
         if (!dists.contains((start, neighbor))) {
           dists((start, neighbor)) = distance + 1
@@ -177,7 +177,7 @@ trait PathFinder {
             } else {
               distanceCache(start -> turtle) = distance
             }
-            edges(turtle, includeUn = true, includeIn = reverse, includeOut = !reverse).foreach { link =>
+            edges(turtle, includeUn = true, includeIn = reverse, includeOut = !reverse, shuffle = None).foreach { link =>
               val other = if (turtle == link.end1 ) link.end2 else link.end1
               val dist = distance + weight(link)
               if (!(dists contains other)) {

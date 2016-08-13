@@ -11,6 +11,7 @@ import org.nlogo.api.ExtensionException
 import scala.Some
 import org.nlogo.extensions.nw.util.CacheManager
 import scala.collection.mutable.ArrayBuffer
+import scala.util.Random
 
 class GraphContext(
   val world: World,
@@ -22,7 +23,6 @@ class GraphContext(
 
   implicit val implicitWorld = world
 
-  val rng = new scala.util.Random(world.mainRNG)
   val turtleMonitor = turtleSet match {
     case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
@@ -122,17 +122,17 @@ class GraphContext(
   def turtleCount: Int = turtles.size
   def linkCount: Int = links.size
 
-  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Link] = {
+  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random] = None): Iterable[Link] = {
     // Using mutable stuff here actually made a significant performance different (>10%), but I do
     // feel bad about it -- BCH 5/14/2014
     val result = ArrayBuffer.empty[Link]
     if (includeUn) result ++= undirLinks.getOrElse(turtle, ArrayBuffer.empty)
     if (includeIn) result ++= inLinks.getOrElse(turtle, ArrayBuffer.empty)
     if (includeOut) result ++= outLinks.getOrElse(turtle, ArrayBuffer.empty)
-    if (shuffle) rng.shuffle(result) else result
+    shuffle.map(_.shuffle(result)).getOrElse(result)
   }
 
-  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Boolean = true): Iterable[Turtle] = {
+  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random] = None): Iterable[Turtle] = {
     edges(turtle, includeUn, includeIn, includeOut, shuffle) map { l: Link =>
       if (l.end1 == turtle) l.end2 else l.end1
     }
