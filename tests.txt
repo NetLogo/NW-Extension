@@ -26,6 +26,8 @@ clear-all-clears-context
   (word map sort nw:get-context) => "[[(turtle 0) (turtle 1)] [(link 0 1)]]"
   O> clear-all
   (map sort nw:get-context) => [[] []]
+  O> crt 2 [ create-links-with other turtles ]
+  (word map sort nw:get-context) => "[[(turtle 0) (turtle 1)] [(link 0 1)]]"
 
 distance-after-changes
   extensions [nw]
@@ -100,21 +102,25 @@ after-clear-turtles-agentset
   O> crt 2 [ create-links-with other turtles ]
   [ nw:distance-to one-of other turtles ] of one-of turtles => false
 
-# after-world-resize_2D
-#   extensions [ nw ]
-#   O> crt 2 [ create-links-with other turtles ]
-#   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
-#   O> resize-world -1 1 -1 1
-#   O> crt 2 [ create-links-with other turtles ]
-#   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+after-world-resize_2D
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+  O> resize-world -1 1 -1 1
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+  O> resize-world -2 2 -2 2
+  O> resize-world -1 1 -1 1
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
-# after-world-resize_3D
-#   extensions [ nw ]
-#   O> crt 2 [ create-links-with other turtles ]
-#   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
-#   O> resize-world -1 1 -1 1 -1 1
-#   O> crt 2 [ create-links-with other turtles ]
-#   [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+after-world-resize_3D
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
+  O> resize-world -1 1 -1 1 -1 1
+  O> crt 2 [ create-links-with other turtles ]
+  [ nw:distance-to one-of other turtles ] of one-of turtles => 1
 
 ## set-context with non-breed agentsets
 
