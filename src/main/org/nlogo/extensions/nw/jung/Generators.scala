@@ -26,7 +26,7 @@ class Generator(
     val generator = new Lattice2DGenerator(
       graphFactory, vertexFactory, edgeFactory, rowCount, colCount, isToroidal).create
 
-    DummyGraph.importToNetLogo(generator, world, turtleBreed, linkBreed, rng)
+    DummyGraph.importToNetLogo(generator, world, turtleBreed, linkBreed, rng, sorted = true)
   }
 
   def barabasiAlbert(nbVertices: Int, rng: MersenneTwisterFast) = {
@@ -50,7 +50,7 @@ class Generator(
       undirectedGraphFactory, vertexFactory, edgeFactory,
       rowCount, colCount, clusteringExponent, isToroidal)
     gen.setRandom(rng)
-    DummyGraph.importToNetLogo(gen.create, world, turtleBreed, linkBreed, rng)
+    DummyGraph.importToNetLogo(gen.create, world, turtleBreed, linkBreed, rng, sorted = true)
   }
 }
 

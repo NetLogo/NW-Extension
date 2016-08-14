@@ -567,6 +567,11 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 
     nw:generate-small-world turtles links 10 10 2.0 false [ set color red ]
 
+The turtles are generated in the order that they appear in the lattice. So, for instance, to generate a kleinberg lattice accross the entire world, and lay it out accordingly, try the following:
+
+    nw:generate-small-world turtles links world-width world-height 2.0 false
+    (forach (sort turtles) (sort patches) [ ask ?1 [ move-to ?2 ] ])
+
 #### generate-lattice-2d
 <tt>nw:generate-lattice-2d <i>turtle-breed link-breed row-count column-count is-toroidal optional-command-block</i></tt>
 
@@ -575,6 +580,11 @@ Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph)
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
     nw:generate-lattice-2d turtles links 10 10 false [ set color red ]
+
+The turtles are generated in the order that they appear in the lattice. So, for instance, to generate a lattice accross the entire world, and lay it out accordingly, try the following:
+
+    nw:generate-lattice-2d turtles links world-width world-height false
+    (forach (sort turtles) (sort patches) [ ask ?1 [ move-to ?2 ] ])
 
 #### generate-ring
 <tt>nw:generate-ring <i>turtle-breed link-breed nb-nodes optional-command-block</i></tt>
