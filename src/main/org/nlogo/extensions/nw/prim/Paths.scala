@@ -54,8 +54,9 @@ class PathTo(gcp: GraphContextProvider)
     def turtlesToLinks(turtles: List[agent.Turtle]): Iterator[agent.Link] =
       for {
         (source, target) <- turtles.iterator zip turtles.tail.iterator
+        // RNG is necessary because there may be more than one link between the turtles
         l = graphContext
-          .edges(source, true, false, true)
+          .edges(source, true, false, true, Some(context.getRNG))
           .filter(l => l.end1 == target || l.end2 == target)
           .head
       } yield l
@@ -112,8 +113,9 @@ class WeightedPathTo(gcp: GraphContextProvider)
     def turtlesToLinks(turtles: List[agent.Turtle]): Iterator[agent.Link] =
       for {
         (source, target) <- turtles.iterator zip turtles.tail.iterator
+        // RNG is necessary because there may be more than one link between the turtles
         l = graphContext
-          .edges(source, true, false, true)
+          .edges(source, true, false, true, Some(context.getRNG))
           .filter(l => l.end1 == target || l.end2 == target)
           .head
       } yield l
