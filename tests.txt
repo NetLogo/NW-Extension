@@ -1134,6 +1134,20 @@ generate-random-directed-unconnected
   O> nw:generate-random turtles directed-edges 2 0.0
   (word sort directed-edges) =>  "[]"
 
+generate-watts-strogatz
+  extensions [ nw ]
+  O> nw:generate-watts-strogatz turtles links 100 2 0
+  count links => 200
+  O> ca
+  O> nw:generate-watts-strogatz turtles links 100 5 0.5
+  count links => 500
+  O> ca
+  O> nw:generate-watts-strogatz turtles links 100 3 1
+  count links => 300
+  O> ca
+  O> nw:generate-watts-strogatz turtles links 11 5 1
+  count links => 55
+
 ## weak-component-clusterer
 
 weak-components-empty-graph

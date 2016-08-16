@@ -90,6 +90,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("generate-preferential-attachment", new prim.jung.BarabasiAlbertGenerator)
     add("generate-random", new prim.ErdosRenyiGenerator)
     add("generate-small-world", new prim.jung.KleinbergSmallWorldGenerator)
+    add("generate-watts-strogatz", new prim.WattsStrogatzGenerator)
     add("generate-lattice-2d", new prim.jung.Lattice2DGenerator)
 
     add("generate-ring", new prim.jgrapht.RingGenerator)
