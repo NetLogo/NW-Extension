@@ -4,7 +4,6 @@ import scala.util.Random
 import collection.mutable
 import org.nlogo.agent.{Agent, World, Turtle, Link}
 import scala.collection.mutable.ArrayBuffer
-import org.nlogo.extensions.nw.Memoize
 import org.nlogo.agent.World.VariableWatcher
 import org.nlogo.api.ExtensionException
 import scala.ref.WeakReference

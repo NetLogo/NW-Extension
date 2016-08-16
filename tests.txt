@@ -911,6 +911,33 @@ mixed-triangle-clustering-coefficient
   O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
   map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.5 0.5 0]
 
+## Modularity
+
+undirected-separate-components
+  extensions [ nw ]
+  O> crt 100 [ set color blue ]
+  O> crt 100 [ set color red ]
+  O> ask turtles [ create-links-with other turtles with [ color = [ color ] of myself ] ]
+  nw:modularity nw:weak-component-clusters => 0.5
+
+directed-separate-components
+  extensions [ nw ]
+  O> crt 100 [ set color blue ]
+  O> crt 100 [ set color red ]
+  O> ask turtles [ create-links-to other turtles with [ color = [ color ] of myself ] ]
+  nw:modularity nw:weak-component-clusters => 0.5
+
+# tests to make sure undirected edges are worth twice directed edges
+mixed-separate-components
+  extensions [ nw ]
+  directed-link-breed [directed-edges directed-edge]
+  undirected-link-breed [undirected-edges undirected-edge]
+  O> crt 100 [ set color blue ]
+  O> crt 100 [ set color red ]
+  O> ask turtles [ create-directed-edges-to other turtles with [ color = [ color ] of myself ] ]
+  O> ask turtles [ create-undirected-edges-with other turtles with [ color != [ color ] of myself ] ]
+  nw:modularity nw:weak-component-clusters => 0
+
 ## weighted primitives
 
 ### weighted-distance-to

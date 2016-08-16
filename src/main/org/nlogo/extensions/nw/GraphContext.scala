@@ -19,7 +19,7 @@ class GraphContext(
   val linkSet: AgentSet)
     extends algorithms.PathFinder
     with algorithms.CentralityMeasurer
-    with algorithms.ClusteringMetrics {
+    with algorithms.ClusteringMetrics[Turtle, Link] {
 
   implicit val implicitWorld = world
 
@@ -133,10 +133,11 @@ class GraphContext(
   }
 
   def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random] = None): Iterable[Turtle] = {
-    edges(turtle, includeUn, includeIn, includeOut, shuffle) map { l: Link =>
-      if (l.end1 == turtle) l.end2 else l.end1
-    }
+    edges(turtle, includeUn, includeIn, includeOut, shuffle) map otherEnd(turtle)
   }
+
+  def otherEnd(turtle: Turtle)(link: Link): Turtle = if (link.end1 == turtle) link.end2 else link.end1
+  def bothEnds(link: Link): (Turtle, Turtle) = (link.end1, link.end2)
 
   def undirectedEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, false, false)
   def undirectedNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, false, false)
