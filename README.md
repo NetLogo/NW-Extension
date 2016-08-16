@@ -26,6 +26,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 [Clustering Measures](#clustering-measures)
 
 - [clustering-coefficient](#clustering-coefficient)
+- [modularity](#modularity)
 
 [Clusterers](#clusterers)
 
@@ -496,6 +497,20 @@ Note that the above will only work with the default context, and may need to twe
 The average local clustering coefficient is another popular method for measuring the amount of clustering in the network as a whole. It may be calculated with
 
     mean [ nw:clustering-coefficient ] of turtles
+
+#### modularity
+
+<tt>nw:modularity <i>list-of-agentsets</i></tt>
+
+[modularity](https://en.wikipedia.org/wiki/Modularity_(networks)) is a measurement of community structure in the network. It is defined based on the number of in-community links versus the number of between-community links. This primitive takes as input a list of agentsets, where each of the agentsets is one the communities that you're separating the network into.
+
+This measurement works on undirected, directed, and mixed-directedness networks. In the case of mixed-directedness, undirected links are treated essentially the same as two opposing directed links. It does not take weight into account.
+
+Example:
+
+```
+nw:modularity (list (turtles with [ color = blue ]) (turtles with [ color = red ]))
+```
 
 ### Clusterers
 
