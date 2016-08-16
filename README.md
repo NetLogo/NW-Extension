@@ -38,7 +38,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 
 [Generators](#generators)
 
-- [generate-preferential-attachment](#generate-preferential-attachment), [generate-random](#generate-random), [generate-small-world](#generate-small-world), [generate-lattice-2d](#generate-lattice-2d), [generate-ring](#generate-ring), [generate-star](#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](#generate-wheel-generate-wheel-inward-generate-wheel-outward)
+- [generate-preferential-attachment](#generate-preferential-attachment), [generate-random](#generate-random), [generate-watts-strogatz](#generate-watts-strogatz), [generate-small-world](#generate-small-world), [generate-lattice-2d](#generate-lattice-2d), [generate-ring](#generate-ring), [generate-star](#generate-star), [generate-wheel, generate-wheel-inward, generate-wheel-outward](#generate-wheel-generate-wheel-inward-generate-wheel-outward)
 
 [Import and Export](#import-and-export)
 
@@ -571,10 +571,22 @@ If you specify an _optional-command-block_, it is executed for each turtle in th
 
     nw:generate-random turtles links 100 0.5 [ set color red ]
 
+#### generate-watts-strogatz
+
+<tt>nw:generate-watts-strogatz <i>turtle-breed link-breed num-nodes neighborhood-size rewire-probability optional-command-block</i></tt>
+
+Generates a new [Watts-Strogatz small-world network](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model).
+
+The algorithm begins by creating a ring of nodes, where each node is connected to `neighborhood-size` nodes on either side. Then, each link is rewired with probability `rewire-prob`.
+
+If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. Furthermore, the turtles are generated in the order they appear as in `create-ordered-turtles`. So, in order to lay the ring out as a ring, you can do something like:
+
+    nw:generate-watts-strogatz turtles links 50 2 0.1 [ fd 10 ]
+
 #### generate-small-world
 <tt>nw:generate-small-world <i>turtle-breed link-breed row-count column-count clustering-exponent is-toroidal optional-command-block</i></tt>
 
-Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model).
+Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). Note that [`nw:generate-watts-strogatz`](#generate-watts-strogatz) generates a more traditional small-world network.
 
 The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is-toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering-exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 

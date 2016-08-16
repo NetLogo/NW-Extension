@@ -22,12 +22,12 @@ object WattsStrogatzGenerator {
       t.heading((360.0 * i) / nbTurtles)
       t
     }
+    val availBuffer = turtles.toArray
 
     val adjMap: Map[Turtle, mutable.Set[Turtle]] = turtles.zipWithIndex.map { case (t: Turtle, i: Int) =>
       val targets: mutable.Set[Turtle] = (1 to neighborhoodSize).map(j => turtles((i + j) % nbTurtles))(collection.breakOut)
         t -> targets
     }(collection.breakOut)
-    println(adjMap.values.map(_.size).sum)
 
     for {
       (source, i) <- turtles.zipWithIndex
@@ -36,14 +36,22 @@ object WattsStrogatzGenerator {
       val target = turtles((i + neighbor) % nbTurtles)
       val realTarget = if (rng.nextDouble < rewireProbability) {
         adjMap(source).remove(target)
-        val avail = turtles.filter( t => t != source && !adjMap(source).contains(t) && !adjMap(t).contains(source))
-        val newTarget = avail(rng.nextInt(avail.size))
+
+        val newTarget = Iterator.from(0).map { i =>
+          val j = rng.nextInt(availBuffer.size - i) + i
+          val t = availBuffer(j)
+          availBuffer(j) = availBuffer(i)
+          availBuffer(i) = t
+          t
+        }.dropWhile {
+          t => t == source || adjMap(source).contains(t) || adjMap(t).contains(source)
+        }.next
+
         adjMap(source).add(newTarget)
         newTarget
       } else target
       world.linkManager.createLink(source, realTarget, linkBreed)
     }
-    println(adjMap.values.map(_.size).sum)
     turtles
   }
 }

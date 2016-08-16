@@ -27,7 +27,7 @@ class ErdosRenyiGenerator extends TurtleCreatingCommand {
 
 class WattsStrogatzGenerator extends TurtleCreatingCommand {
   override def getSyntax = commandSyntax(
-    List(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, CommandBlockType | OptionalType))
+    List(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
   def createTurtles(args: Array[api.Argument], context: api.Context) = {
     implicit val world = context.world.asInstanceOf[World]
     val turtleBreed = args(0).getAgentSet.requireTurtleBreed
