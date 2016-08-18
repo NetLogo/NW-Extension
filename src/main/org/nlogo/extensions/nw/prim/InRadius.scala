@@ -14,9 +14,7 @@ import org.nlogo.extensions.nw.GraphContextProvider
 
 trait InRadiusPrim extends api.Reporter {
   val gcp: GraphContextProvider
-  val followUnLinks: Boolean = true
-  val followInLinks: Boolean
-  val followOutLinks: Boolean
+  val reverse: Boolean
   override def getSyntax = reporterSyntax(
     right = List(NumberType),
     ret = TurtlesetType,
@@ -27,18 +25,16 @@ trait InRadiusPrim extends api.Reporter {
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val radius = args(0).getIntValue
     if (radius < 0) throw new api.ExtensionException("radius cannot be negative")
-    inRadius(graphContext, source, radius, followUnLinks, followInLinks, followOutLinks)
+    inRadius(graphContext, source, radius, reverse)
   }
 }
 
 class TurtlesInRadius(override val gcp: GraphContextProvider)
   extends InRadiusPrim {
-  override val followInLinks = false
-  override val followOutLinks = true
+  override val reverse = false
 }
 
 class TurtlesInReverseRadius(override val gcp: GraphContextProvider)
   extends InRadiusPrim {
-  override val followInLinks = true
-  override val followOutLinks = false
+  override val reverse = true
 }

@@ -35,28 +35,24 @@ class GraphContext(
 
   val turtles: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
 
-  val links: Set[Link] = linkSet.asIterable[Link]
+  val links: Seq[Link] = linkSet.asIterable[Link]
     .filter(link => turtles.contains(link.end1) && turtles.contains(link.end2))
-    .toSet
+    .toSeq
 
-  private val inLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
-  private val outLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
-  private val undirLinks: mutable.Map[Turtle, mutable.ArrayBuffer[Link]] = mutable.Map()
-
-  for (turtle: Turtle <- turtles) {
-    inLinks(turtle) = mutable.ArrayBuffer(): mutable.ArrayBuffer[Link]
-    outLinks(turtle) = mutable.ArrayBuffer(): mutable.ArrayBuffer[Link]
-    undirLinks(turtle) = mutable.ArrayBuffer(): mutable.ArrayBuffer[Link]
-  }
-
-  for (link: Link <- links) {
-    if (link.isDirectedLink) {
-      outLinks(link.end1) += link
-      inLinks(link.end2) += link
-    } else {
-      undirLinks(link.end1) += link
-      undirLinks(link.end2) += link
+  val (undirLinks, inLinks, outLinks) = {
+    val in = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
+    val out = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
+    val undir = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
+    links foreach { link =>
+      if (link.isDirectedLink) {
+        out(link.end1) = link +: out(link.end1)
+        in(link.end2) = link +: in(link.end2)
+      } else {
+        undir(link.end1) = link +: undir(link.end1)
+        undir(link.end2) = link +: undir(link.end2)
+      }
     }
+    (undir.toMap withDefaultValue List.empty[Link], in.toMap withDefaultValue List.empty[Link], out.toMap withDefaultValue List.empty[Link])
   }
 
   def verify(w: World): GraphContext = {
@@ -122,40 +118,17 @@ class GraphContext(
   def turtleCount: Int = turtles.size
   def linkCount: Int = links.size
 
-  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random] = None): Iterable[Link] = {
-    // Using mutable stuff here actually made a significant performance different (>10%), but I do
-    // feel bad about it -- BCH 5/14/2014
-    val result = ArrayBuffer.empty[Link]
-    if (includeUn) result ++= undirLinks.getOrElse(turtle, ArrayBuffer.empty)
-    if (includeIn) result ++= inLinks.getOrElse(turtle, ArrayBuffer.empty)
-    if (includeOut) result ++= outLinks.getOrElse(turtle, ArrayBuffer.empty)
-    shuffle.map(_.shuffle(result)).getOrElse(result)
-  }
-
-  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random] = None): Iterable[Turtle] = {
-    edges(turtle, includeUn, includeIn, includeOut, shuffle) map otherEnd(turtle)
-  }
-
   def otherEnd(turtle: Turtle)(link: Link): Turtle = if (link.end1 == turtle) link.end2 else link.end1
   def bothEnds(link: Link): (Turtle, Turtle) = (link.end1, link.end2)
 
-  def undirectedEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, false, false)
-  def undirectedNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, false, false)
+  def inEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ::: undirLinks(turtle)
+  def inNeighbors(turtle: Turtle): Seq[Turtle] = inEdges(turtle) map otherEnd(turtle)
 
-  def inEdges(turtle: Turtle): Iterable[Link] = edges(turtle, includeUn = true, includeIn = true, includeOut = false)
-  def inNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, includeUn = true, includeIn = true, includeOut = false)
+  def outEdges(turtle: Turtle): Seq[Link] = outLinks(turtle) ::: undirLinks(turtle)
+  def outNeighbors(turtle: Turtle): Seq[Turtle] = outEdges(turtle) map otherEnd(turtle)
 
-  def directedInEdges(turtle: Turtle): Iterable[Link] = edges(turtle, false, true, false)
-  def directedInNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, true, false)
-
-  def outEdges(turtle: Turtle): Iterable[Link] = edges(turtle, includeUn = true, includeIn = false, includeOut = true)
-  def outNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, includeUn = true, includeIn = false, includeOut = true)
-
-  def directedOutEdges(turtle: Turtle): Iterable[Link] = edges(turtle, false, false, true)
-  def directedOutNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, false, false, true)
-
-  def allEdges(turtle: Turtle): Iterable[Link] = edges(turtle, true, true, true)
-  def allNeighbors(turtle: Turtle): Iterable[Turtle] = neighbors(turtle, true, true, true)
+  def allEdges(turtle: Turtle): Seq[Link] = (inLinks(turtle) ::: outLinks(turtle) ::: undirLinks(turtle)).distinct
+  def allNeighbors(turtle: Turtle): Seq[Turtle] = allEdges(turtle) map otherEnd(turtle)
 
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
 
@@ -163,7 +136,7 @@ class GraphContext(
     val foundBy = mutable.Map[Turtle, Turtle]()
     turtles.groupBy { t =>
       foundBy.getOrElseUpdate(t, {
-        BreadthFirstSearch(this, t, followUnLinks = true, followInLinks = false, followOutLinks = true)
+        BreadthFirstSearch(this, t)
           .map(_.head)
           .foreach(found => foundBy(found) = t)
         t

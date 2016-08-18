@@ -8,15 +8,9 @@ import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
 
 object InRadius {
-  def inRadius(
-    graphContext: GraphContext,
-    start: Turtle,
-    radius: Int,
-    followUnLinks: Boolean,
-    followInLinks: Boolean,
-    followOutLinks: Boolean): api.AgentSet = {
+  def inRadius(graphContext: GraphContext, start: Turtle, radius: Int, reverse: Boolean = false): api.AgentSet = {
     val result: Stream[Turtle] =
-      BreadthFirstSearch(graphContext, start, followUnLinks, followInLinks, followOutLinks)
+      BreadthFirstSearch(graphContext, start, reverse)
         .takeWhile(_.tail.size <= radius)
         .map(_.head)
     toTurtleSet(result)

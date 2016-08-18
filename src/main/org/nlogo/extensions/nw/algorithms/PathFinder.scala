@@ -37,15 +37,15 @@ trait PathFinder {
     }
   }: (Option[String]) => Turtle => Iterator[Turtle])
 
-  def neighbors(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random]): Iterable[Turtle]
-  def edges(turtle: Turtle, includeUn: Boolean, includeIn: Boolean, includeOut: Boolean, shuffle: Option[Random]): Iterable[Link]
+  def inEdges(turtle: Turtle): Iterable[Link]
+  def inNeighbors(turtle: Turtle): Iterable[Turtle]
+  def outEdges(turtle: Turtle): Iterable[Link]
+  def outNeighbors(turtle: Turtle): Iterable[Turtle]
 
   private var lastSource: Option[Turtle] = None
   private var lastDest: Option[Turtle] = None
 
   def world: World
-  def turtles: Set[Turtle]
-  def links: Set[Link]
 
   /**
    * Attempts to expand the cache with the least duplicated amount of work possible. It tries to detect users doing
@@ -125,6 +125,7 @@ trait PathFinder {
   will thinks it's done computing paths for a certain pair when it has not.
    */
   private def cachingBFS(start: Turtle, reverse: Boolean, predecessorCache: ((Turtle, Turtle)) => ArrayBuffer[Turtle]): Iterator[Turtle] = {
+    val neighbors = if (reverse) (inNeighbors _) else (outNeighbors _)
     val dists = mutable.Map[(Turtle,Turtle), Int]()
     dists((start, start)) = 0
 
@@ -137,7 +138,7 @@ trait PathFinder {
       for {
         node <- last
         distance = dists((start, node))
-        neighbor <- neighbors(node, includeUn = true, includeIn = reverse, includeOut = !reverse, shuffle = None)
+        neighbor <- neighbors(node)
       } {
         if (!dists.contains((start, neighbor))) {
           dists((start, neighbor)) = distance + 1
@@ -157,6 +158,7 @@ trait PathFinder {
   }
 
   private def cachingDijkstra(start: Turtle, weight: Link => Double, reverse: Boolean, predecessorCache: ((Turtle, Turtle)) => ArrayBuffer[Turtle], distanceCache: Cache[(Turtle, Turtle), Double]): Iterator[Turtle] = {
+    val edges = if (reverse) (inEdges _) else (outEdges _)
     val dists = mutable.Map[Turtle, Double]()
     val heap = mutable.PriorityQueue[(Turtle, Double, Turtle)]()(Ordering[Double].on(-_._2))
     distanceCache(start -> start) = 0
@@ -176,7 +178,7 @@ trait PathFinder {
             } else {
               distanceCache(start -> turtle) = distance
             }
-            edges(turtle, includeUn = true, includeIn = reverse, includeOut = !reverse, shuffle = None).foreach { link =>
+            edges(turtle).foreach { link =>
               val other = if (turtle == link.end1 ) link.end2 else link.end1
               val dist = distance + weight(link)
               if (!(dists contains other)) {

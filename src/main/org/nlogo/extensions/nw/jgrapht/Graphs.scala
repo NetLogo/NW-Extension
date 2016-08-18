@@ -23,10 +23,7 @@ trait Graph
     gc.allEdges(sourceVertex).toSet.filter(_.end2 == targetVertex).asJava
 
   override def getEdge(sourceVertex: Turtle, targetVertex: Turtle) =
-    if (gc.isDirected)
-      gc.directedOutEdges(sourceVertex).find(_.end2 == targetVertex).orNull
-    else
-      gc.allEdges(sourceVertex).find(l => l.end1 == targetVertex || l.end2 == targetVertex).orNull
+    gc.outEdges(sourceVertex).find(e => gc.otherEnd(sourceVertex)(e) == targetVertex).orNull
 
   override def containsEdge(sourceVertex: Turtle, targetVertex: Turtle) =
     getEdge(sourceVertex, targetVertex) != null
@@ -67,7 +64,7 @@ class UndirectedGraph(
   override val gc: GraphContext)
   extends Graph
   with jgrapht.UndirectedGraph[Turtle, Link] {
-  override def degreeOf(vertex: Turtle) = gc.allEdges(vertex).size
+  override def degreeOf(vertex: Turtle) = gc.outEdges(vertex).size
 }
 
 class DirectedGraph(
@@ -77,9 +74,9 @@ class DirectedGraph(
   if (!gc.isDirected)
     throw new ExtensionException("link set must be directed")
 
-  override def incomingEdgesOf(vertex: Turtle) = gc.directedInEdges(vertex).toSet.asJava
-  override def inDegreeOf(vertex: Turtle) = gc.directedInEdges(vertex).size
-  override def outgoingEdgesOf(vertex: Turtle) = gc.directedOutEdges(vertex).toSet.asJava
-  override def outDegreeOf(vertex: Turtle) = gc.directedOutEdges(vertex).size
+  override def incomingEdgesOf(vertex: Turtle) = gc.inEdges(vertex).toSet.asJava
+  override def inDegreeOf(vertex: Turtle) = gc.inEdges(vertex).size
+  override def outgoingEdgesOf(vertex: Turtle) = gc.outEdges(vertex).toSet.asJava
+  override def outDegreeOf(vertex: Turtle) = gc.outEdges(vertex).size
 
 }
