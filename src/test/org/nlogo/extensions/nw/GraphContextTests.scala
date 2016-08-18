@@ -28,7 +28,7 @@ class SetContextTestSuite extends FunSuite with GivenWhenThen {
       assertResult(1)(gc.links.size)
 
       And("the set of allEdges from all the turtles should be the same as `links`")
-      assertResult(gc.turtles.flatMap(gc.allEdges))(gc.links)
+      assertResult(gc.turtles.flatMap(gc.allEdges).toSeq)(gc.links.toSeq)
 
     } finally ws.dispose()
   }
