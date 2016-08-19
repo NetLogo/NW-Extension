@@ -65,7 +65,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("turtles-on-weighted-path-to", new prim.TurtlesOnWeightedPathTo(this))
 
     add("betweenness-centrality", new prim.jung.BetweennessCentrality(this))
-    add("eigenvector-centrality", new prim.jung.EigenvectorCentrality(this))
+    add("eigenvector-centrality", new prim.EigenvectorCentrality(this))
     add("page-rank", new prim.jung.PageRank(this))
     add("closeness-centrality", new prim.jung.ClosenessCentrality(this))
 

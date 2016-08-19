@@ -27,12 +27,12 @@ trait CentralityMeasurer {
         result map {
           case (turtle: Turtle, score: Double) => turtle -> score / normalizer
         }
-        } else {
-          // Everything is disconnected... just give everyone 1s -- BCH 5/12/2014
-          result map {
-            case (turtle: Turtle, score: Double) => turtle -> 1.0
-          }
+      } else {
+        // Everything is disconnected... just give everyone 1s -- BCH 5/12/2014
+        result map {
+          case (turtle: Turtle, score: Double) => turtle -> 1.0
         }
+      }
     }).drop(100).next()
   }.toMap
 

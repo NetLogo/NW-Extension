@@ -28,7 +28,7 @@ trait Graph
   override def containsEdge(sourceVertex: Turtle, targetVertex: Turtle) =
     getEdge(sourceVertex, targetVertex) != null
 
-  override def containsEdge(edge: Link) = gc.links.exists(_ == edge)
+  override def containsEdge(edge: Link) = gc.links contains edge
   override def containsVertex(vertex: Turtle) = gc.turtles.exists(_ == vertex)
 
   override def edgeSet() = gc.links.toSet.asJava

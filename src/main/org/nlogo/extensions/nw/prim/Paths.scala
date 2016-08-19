@@ -22,7 +22,7 @@ class DistanceTo(gcp: GraphContextProvider)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
     val graphContext = gcp.getGraphContext(context.getAgent.world)
-    toLogoObject(graphContext.distance(source, target).getOrElse(false))
+    toLogoObject(graphContext.pathFinder.distance(source, target).getOrElse(false))
   }
 }
 
@@ -36,7 +36,7 @@ class WeightedDistanceTo(gcp: GraphContextProvider)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
     val weightVariable = canonocilizeVar(args(1).get)
-    val distance = gcp.getGraphContext(context.getAgent.world).distance(source, target, Some(weightVariable))
+    val distance = gcp.getGraphContext(context.getAgent.world).pathFinder.distance(source, target, Some(weightVariable))
     toLogoObject(distance.getOrElse(false))
   }
 }
@@ -58,7 +58,7 @@ class PathTo(gcp: GraphContextProvider)
         links = gc.outEdges(source).filter(l => gc.otherEnd(source)(l) == target)
         l = links(context.getRNG.nextInt(links.size))
       } yield l
-    toLogoObject(gc.path(source, target, context.getRNG)
+    toLogoObject(gc.pathFinder.path(source, target, context.getRNG)
       .map { p => LogoList.fromIterator(turtlesToLinks(p.toList)) }
       .getOrElse(false))
   }
@@ -74,7 +74,7 @@ class TurtlesOnPathTo(gcp: GraphContextProvider)
     val source = context.getAgent.asInstanceOf[agent.Turtle]
     val target = args(0).getAgent.requireAlive.asInstanceOf[agent.Turtle]
     val graphContext = gcp.getGraphContext(context.getAgent.world)
-    toLogoObject(graphContext.path(source, target, context.getRNG)
+    toLogoObject(graphContext.pathFinder.path(source, target, context.getRNG)
       .map { p => LogoList.fromIterator(p.iterator) }
       .getOrElse(false))
   }
@@ -91,7 +91,7 @@ class TurtlesOnWeightedPathTo(gcp:GraphContextProvider)
     val target = args(0).getAgent.asInstanceOf[agent.Turtle]
     val weightVariable = canonocilizeVar(args(1).get)
     val graphContext = gcp.getGraphContext(context.getAgent.world)
-    toLogoObject(graphContext.path(source, target, context.getRNG, Some(weightVariable))
+    toLogoObject(graphContext.pathFinder.path(source, target, context.getRNG, Some(weightVariable))
       .map { p => LogoList.fromIterator(p.iterator) }
       .getOrElse(false))
   }
@@ -116,7 +116,7 @@ class WeightedPathTo(gcp: GraphContextProvider)
         l = links(context.getRNG.nextInt(links.size))
       } yield l
     toLogoObject(gc
-      .path(source, target, context.getRNG, Some(weightVariable))
+      .pathFinder.path(source, target, context.getRNG, Some(weightVariable))
       .map { p => LogoList.fromIterator(turtlesToLinks(p.toList)) }
       .getOrElse(false))
   }

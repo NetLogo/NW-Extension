@@ -4,7 +4,7 @@ package org.nlogo.extensions.nw
 
 import org.nlogo.agent._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
-import org.nlogo.extensions.nw.algorithms.BreadthFirstSearch
+import org.nlogo.extensions.nw.algorithms.{BreadthFirstSearch, PathFinder}
 import org.nlogo.api.MersenneTwisterFast
 import scala.collection.{GenIterable, mutable}
 import org.nlogo.api.ExtensionException
@@ -17,7 +17,7 @@ class GraphContext(
   val world: World,
   val turtleSet: AgentSet,
   val linkSet: AgentSet)
-    extends algorithms.PathFinder
+    extends Graph[Turtle, Link]
     with algorithms.CentralityMeasurer
     with algorithms.ClusteringMetrics[Turtle, Link] {
 
@@ -34,16 +34,16 @@ class GraphContext(
   }
 
   val turtles: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
-
-  val links: Seq[Link] = linkSet.asIterable[Link]
-    .filter(link => turtles.contains(link.end1) && turtles.contains(link.end2))
-    .toSeq
+  val links: Set[Link] = linkSet.asIterable[Link]
+    .filter((l => turtles.contains(l.end1) && turtles.contains(l.end2)))
+    .toSet
 
   val (undirLinks, inLinks, outLinks) = {
     val in = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
     val out = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
     val undir = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
     links foreach { link =>
+
       if (link.isDirectedLink) {
         out(link.end1) = link +: out(link.end1)
         in(link.end2) = link +: in(link.end2)
@@ -52,7 +52,9 @@ class GraphContext(
         undir(link.end2) = link +: undir(link.end2)
       }
     }
-    (undir.toMap withDefaultValue List.empty[Link], in.toMap withDefaultValue List.empty[Link], out.toMap withDefaultValue List.empty[Link])
+    (undir.toMap withDefaultValue List.empty[Link],
+     in.toMap withDefaultValue List.empty[Link],
+     out.toMap withDefaultValue List.empty[Link])
   }
 
   def verify(w: World): GraphContext = {
@@ -108,29 +110,25 @@ class GraphContext(
       }
   }
 
-  /*
-  linkSet.isDirected fails for empty and mixed directed networks. The only reliable way I've found to detect
-  directedness is by literally checking each link. If any are directed, we consider the whole thing to be directed.
-  -- BCH 5/13/2014
- */
-  lazy val isDirected = links exists { _.isDirectedLink }
+  // linkSet.isDirected fails for empty and mixed directed networks. The only
+  // reliable way is to actually see if there are any directed links.
+  // -- BCH 5/13/2014
+  lazy val isDirected = !outLinks.isEmpty
 
   def turtleCount: Int = turtles.size
   def linkCount: Int = links.size
 
-  def otherEnd(turtle: Turtle)(link: Link): Turtle = if (link.end1 == turtle) link.end2 else link.end1
-  def bothEnds(link: Link): (Turtle, Turtle) = (link.end1, link.end2)
+  override def ends(link: Link): (Turtle, Turtle) = (link.end1, link.end2)
 
-  def inEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ::: undirLinks(turtle)
-  def inNeighbors(turtle: Turtle): Seq[Turtle] = inEdges(turtle) map otherEnd(turtle)
+  override def inEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ::: undirLinks(turtle)
 
-  def outEdges(turtle: Turtle): Seq[Link] = outLinks(turtle) ::: undirLinks(turtle)
-  def outNeighbors(turtle: Turtle): Seq[Turtle] = outEdges(turtle) map otherEnd(turtle)
+  override def outEdges(turtle: Turtle): Seq[Link] = outLinks(turtle) ::: undirLinks(turtle)
 
-  def allEdges(turtle: Turtle): Seq[Link] = (inLinks(turtle) ::: outLinks(turtle) ::: undirLinks(turtle)).distinct
-  def allNeighbors(turtle: Turtle): Seq[Turtle] = allEdges(turtle) map otherEnd(turtle)
+  override def allEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ::: outLinks(turtle) ::: undirLinks(turtle)
 
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
+
+  val pathFinder = new PathFinder[Turtle, Link](this, world, weightFunction _)
 
   lazy val components: Traversable[Set[Turtle]] = {
     val foundBy = mutable.Map[Turtle, Turtle]()

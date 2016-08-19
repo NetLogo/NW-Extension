@@ -1,51 +1,41 @@
 package org.nlogo.extensions.nw.algorithms
 
+import org.nlogo.agent.World
 import scala.util.Random
 import collection.mutable
-import org.nlogo.agent.{Agent, World, Turtle, Link}
 import scala.collection.mutable.ArrayBuffer
-import org.nlogo.agent.World.VariableWatcher
-import org.nlogo.api.ExtensionException
 import scala.ref.WeakReference
 import org.nlogo.extensions.nw.util.{Cache, CacheManager}
+import org.nlogo.extensions.nw.Graph
 
-trait PathFinder {
-  private val distanceCaches = CacheManager[(Turtle, Turtle), Double](world)
-  private val predecessorCaches = CacheManager(world, (_: Option[String]) => (p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle])
-  private val successorCaches = CacheManager(world, (_: Option[String]) => (p: (Turtle, Turtle)) => ArrayBuffer.empty[Turtle])
-  private val singleSourceTraversalCaches = CacheManager[Turtle, Iterator[Turtle]](world, {
+class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String) => (E) => Double) {
+  private val distanceCaches = CacheManager[(V, V), Double](world)
+  private val predecessorCaches = CacheManager(world, (_: Option[String]) => (p: (V, V)) => ArrayBuffer.empty[V])
+  private val successorCaches = CacheManager(world, (_: Option[String]) => (p: (V, V)) => ArrayBuffer.empty[V])
+  private val singleSourceTraversalCaches = CacheManager[V, Iterator[V]](world, {
     case None => {
-      source: Turtle => cachingBFS(source, reverse = false, predecessorCaches(None))
+      source: V => cachingBFS(source, reverse = false, predecessorCaches(None))
     }
     case Some(varName: String) => {
-      source: Turtle =>
+      source: V =>
         cachingDijkstra(source, weightFunction(varName), reverse = false,
           predecessorCaches(Some(varName)), distanceCaches(Some(varName)))
     }
-  }: (Option[String]) => Turtle => Iterator[Turtle])
+  }: (Option[String]) => V => Iterator[V])
 
-  def weightFunction(s: String): (Link) => Double
-
-  private val singleDestTraversalCaches = CacheManager[Turtle, Iterator[Turtle]](world, {
+  private val singleDestTraversalCaches = CacheManager[V, Iterator[V]](world, {
     case None => {
-      source: Turtle => cachingBFS(source, reverse = true, successorCaches(None))
+      source: V => cachingBFS(source, reverse = true, successorCaches(None))
     }
     case Some(varName: String) => {
-      source: Turtle =>
+      source: V =>
         cachingDijkstra(source, weightFunction(varName), reverse = true,
           successorCaches(Some(varName)), distanceCaches(Some(varName)))
     }
-  }: (Option[String]) => Turtle => Iterator[Turtle])
+  }: (Option[String]) => V => Iterator[V])
 
-  def inEdges(turtle: Turtle): Iterable[Link]
-  def inNeighbors(turtle: Turtle): Iterable[Turtle]
-  def outEdges(turtle: Turtle): Iterable[Link]
-  def outNeighbors(turtle: Turtle): Iterable[Turtle]
-
-  private var lastSource: Option[Turtle] = None
-  private var lastDest: Option[Turtle] = None
-
-  def world: World
+  private var lastSource: Option[V] = None
+  private var lastDest: Option[V] = None
 
   /**
    * Attempts to expand the cache with the least duplicated amount of work possible. It tries to detect users doing
@@ -54,7 +44,7 @@ trait PathFinder {
    * @param source
    * @param dest
    */
-  private def expandBestTraversal(variable: Option[String] = None, source: Turtle, dest: Turtle) {
+  private def expandBestTraversal(variable: Option[String] = None, source: V, dest: V) {
     val sourceTraversal = singleSourceTraversalCaches(variable)(source)
     val destTraversal = singleDestTraversalCaches(variable)(dest)
     // If one doesn't have a next, the nodes are disconnected
@@ -80,7 +70,7 @@ trait PathFinder {
     lastDest = Some(dest)
   }
 
-  private def cachedPath(cache: ((Turtle, Turtle)) => Seq[Turtle], source: Turtle, dest: Turtle, rng: Random): Option[List[Turtle]]
+  private def cachedPath(cache: ((V, V)) => Seq[V], source: V, dest: V, rng: Random): Option[List[V]]
     = {
     if (source == dest) {
       Some(List(dest))
@@ -95,24 +85,24 @@ trait PathFinder {
     }
   }
 
-  private def cachedPath(variable: Option[String], source: Turtle, dest: Turtle, rng: Random): Option[List[Turtle]] =
+  private def cachedPath(variable: Option[String], source: V, dest: V, rng: Random): Option[List[V]] =
     cachedPath(successorCaches(variable), source, dest, rng) orElse cachedPath(predecessorCaches(variable), dest, source, rng).map(_.reverse)
 
-  def path(source: Turtle, dest: Turtle, rng: Random, weightVariable: Option[String] = None): Option[Iterable[Turtle]] = {
+  def path(source: V, dest: V, rng: Random, weightVariable: Option[String] = None): Option[Iterable[V]] = {
     cachedPath(weightVariable, source, dest, rng) orElse {
       expandBestTraversal(weightVariable, source, dest)
       cachedPath(weightVariable, source, dest, rng)
     }
   }
 
-  def distance(source: Turtle, dest: Turtle, weightVariable: Option[String] = None): Option[Double] = {
+  def distance(source: V, dest: V, weightVariable: Option[String] = None): Option[Double] = {
     distanceCaches(weightVariable).get((source, dest)) orElse {
       expandBestTraversal(weightVariable, source, dest)
       distanceCaches(weightVariable).get(source, dest)
     }
   }
 
-  // TODO: Separate caching and traversing by having traversal return an iterator over (Turtle, Distance, Predecessor)
+  // TODO: Separate caching and traversing by having traversal return an iterator over (V, Distance, Predecessor)
   // This may be impossible: the caching needs to know about items not actually returned by the traversal (it needs
   // to visit each node once for each predecessor, rather than just once). I tried just having the traversal return
   // nodes for each predecessor but performance was insane. -BCH 4/30/2014
@@ -124,9 +114,9 @@ trait PathFinder {
   information for any turtle appearing there. This is crucial or else this class
   will thinks it's done computing paths for a certain pair when it has not.
    */
-  private def cachingBFS(start: Turtle, reverse: Boolean, predecessorCache: ((Turtle, Turtle)) => ArrayBuffer[Turtle]): Iterator[Turtle] = {
-    val neighbors = if (reverse) (inNeighbors _) else (outNeighbors _)
-    val dists = mutable.Map[(Turtle,Turtle), Int]()
+  private def cachingBFS(start: V, reverse: Boolean, predecessorCache: ((V, V)) => ArrayBuffer[V]): Iterator[V] = {
+    val neighbors = if (reverse) (graph.inNeighbors _) else (graph.outNeighbors _)
+    val dists = mutable.Map[(V,V), Int]()
     dists((start, start)) = 0
 
     // note that I can't use the global distances cache to detect visited nodes since
@@ -134,7 +124,7 @@ trait PathFinder {
     val distances = distanceCaches(None)
     distances((start, start)) = 0
     Iterator.iterate(List(start))((last) => {
-      var layer: List[Turtle] = List()
+      var layer: List[V] = List()
       for {
         node <- last
         distance = dists((start, node))
@@ -157,15 +147,15 @@ trait PathFinder {
     }).takeWhile(_.nonEmpty).flatten
   }
 
-  private def cachingDijkstra(start: Turtle, weight: Link => Double, reverse: Boolean, predecessorCache: ((Turtle, Turtle)) => ArrayBuffer[Turtle], distanceCache: Cache[(Turtle, Turtle), Double]): Iterator[Turtle] = {
-    val edges = if (reverse) (inEdges _) else (outEdges _)
-    val dists = mutable.Map[Turtle, Double]()
-    val heap = mutable.PriorityQueue[(Turtle, Double, Turtle)]()(Ordering[Double].on(-_._2))
+  private def cachingDijkstra(start: V, weight: E => Double, reverse: Boolean, predecessorCache: ((V, V)) => ArrayBuffer[V], distanceCache: Cache[(V, V), Double]): Iterator[V] = {
+    val edges = if (reverse) (graph.inEdges _) else (graph.outEdges _)
+    val dists = mutable.Map[V, Double]()
+    val heap = mutable.PriorityQueue[(V, Double, V)]()(Ordering[Double].on(-_._2))
     distanceCache(start -> start) = 0
     Iterator.continually {
       val curDistance = heap.headOption map { _._2 } getOrElse 0.0
       heap.enqueue((start, 0, start))
-      var layer: List[Turtle] = List()
+      var layer: List[V] = List()
       while (heap.nonEmpty && heap.head._2 <= curDistance) {
         val (turtle, distance, predecessor) = heap.dequeue()
         val alreadyAdded = dists contains turtle
@@ -179,7 +169,7 @@ trait PathFinder {
               distanceCache(start -> turtle) = distance
             }
             edges(turtle).foreach { link =>
-              val other = if (turtle == link.end1 ) link.end2 else link.end1
+              val other = graph.otherEnd(turtle)(link)
               val dist = distance + weight(link)
               if (!(dists contains other)) {
                 heap.enqueue((other, dist, turtle))
