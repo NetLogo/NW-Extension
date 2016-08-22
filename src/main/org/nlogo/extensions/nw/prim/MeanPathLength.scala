@@ -14,7 +14,7 @@ class MeanPathLength(gcp: GraphContextProvider)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = gcp.getGraphContext(context.getAgent.world)
     val dist = gc.pathFinder.distance(_: Turtle, _: Turtle)
-    meanPathLength(gc.turtles, dist)
+    meanPathLength(gc.nodes, dist)
       .map(Double.box)
       .getOrElse(java.lang.Boolean.FALSE)
   }
@@ -29,7 +29,7 @@ class MeanWeightedPathLength(gcp: GraphContextProvider)
     val weightVariable = canonocilizeVar(args(0).get)
     val gc = gcp.getGraphContext(context.getAgent.world)
     val dist = gc.pathFinder.distance(_: Turtle, _: Turtle, Some(weightVariable))
-    meanPathLength(gc.turtles, dist)
+    meanPathLength(gc.nodes, dist)
       .map(Double.box)
       .getOrElse(java.lang.Boolean.FALSE)
   }

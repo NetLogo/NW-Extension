@@ -28,14 +28,14 @@ trait Graph
   override def containsEdge(sourceVertex: Turtle, targetVertex: Turtle) =
     getEdge(sourceVertex, targetVertex) != null
 
-  override def containsEdge(edge: Link) = gc.links contains edge
-  override def containsVertex(vertex: Turtle) = gc.turtles.exists(_ == vertex)
+  override def containsEdge(edge: Link) = gc.outEdges(edge.end1).contains(edge)
+  override def containsVertex(vertex: Turtle) = gc.nodes.contains(vertex)
 
   override def edgeSet() = gc.links.toSet.asJava
 
   override def edgesOf(vertex: Turtle) = gc.allEdges(vertex).toSet.asJava
 
-  override def vertexSet() = gc.turtles.toSet.asJava
+  override def vertexSet() = gc.nodes.toSet.asJava
 
   override def getEdgeSource(edge: Link) = edge.end1
   override def getEdgeTarget(edge: Link) = edge.end2

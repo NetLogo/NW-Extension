@@ -22,7 +22,7 @@ trait Algorithms {
 
   val cacheInvalidator: World.VariableWatcher = new VariableWatcher {
     def update(agent: Agent, variable: String, value: scala.Any) = agent match {
-      case link: Link => if (gc.links contains link) {
+      case link: Link => if (gc.outEdges(link.end1) contains link) {
         weightedGraphCaches.remove(variable)
         gc.world.deleteWatcher(variable, cacheInvalidator)
       }

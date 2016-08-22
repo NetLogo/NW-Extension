@@ -31,10 +31,10 @@ trait Graph
   override def getNeighbors(turtle: Turtle): Collection[Turtle] = gc.allNeighbors(turtle).asJavaCollection
 
   override def getVertexCount: Int = gc.turtleCount
-  override def getVertices: Collection[Turtle] = gc.turtles.asJavaCollection
+  override def getVertices: Collection[Turtle] = gc.nodes.asJavaCollection
   override def getEdges: Collection[Link] = gc.links.asJavaCollection
-  override def containsEdge(link: Link): Boolean = gc.links.contains(link)
-  override def containsVertex(turtle: Turtle): Boolean = gc.turtles.contains(turtle)
+  override def containsEdge(link: Link): Boolean = gc.outEdges(link.end1).contains(link)
+  override def containsVertex(turtle: Turtle): Boolean = gc.nodes.contains(turtle)
 
   def getEndpoints(link: Link): Pair[Turtle] =
     new Pair(link.end1, link.end2) // Note: contract says nothing about edge being in graph

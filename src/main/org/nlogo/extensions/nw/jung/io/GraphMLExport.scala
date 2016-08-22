@@ -43,7 +43,7 @@ object GraphMLExport {
 
     val program = world.program
 
-    val turtles = graphContext.turtles
+    val turtles = graphContext.nodes
     val links = graphContext.links
 
     val turtlesOwn = program.turtlesOwn

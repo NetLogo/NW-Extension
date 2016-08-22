@@ -23,12 +23,12 @@ class SetContextTestSuite extends FunSuite with GivenWhenThen {
       val gc = networkExtension(ws).getGraphContext(ws.world)
 
       Then("the context should contain the two mice")
-      assertResult(2)(gc.turtles.size)
+      assertResult(2)(gc.nodes.size)
       And("only the one link between them")
       assertResult(1)(gc.links.size)
 
       And("the set of allEdges from all the turtles should be the same as `links`")
-      assertResult(gc.turtles.flatMap(gc.allEdges).toSeq)(gc.links.toSeq)
+      assertResult(gc.nodes.flatMap(gc.allEdges _).toSeq)(gc.links.toSeq)
 
     } finally ws.dispose()
   }

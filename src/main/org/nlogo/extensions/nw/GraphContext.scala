@@ -13,13 +13,9 @@ import org.nlogo.extensions.nw.util.CacheManager
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
-class GraphContext(
-  val world: World,
-  val turtleSet: AgentSet,
-  val linkSet: AgentSet)
-    extends Graph[Turtle, Link]
-    with algorithms.CentralityMeasurer
-    with algorithms.ClusteringMetrics[Turtle, Link] {
+class GraphContext( val world: World, val turtleSet: AgentSet, val linkSet: AgentSet)
+extends Graph[Turtle, Link]
+with algorithms.CentralityMeasurer {
 
   implicit val implicitWorld = world
 
@@ -33,28 +29,27 @@ class GraphContext(
     case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas)
   }
 
-  val turtles: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
-  val links: Set[Link] = linkSet.asIterable[Link]
-    .filter((l => turtles.contains(l.end1) && turtles.contains(l.end2)))
-    .toSet
+  override val nodes: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
+  override val links: Iterable[Link] = linkSet.asIterable[Link]
+    .filter((l => nodes.contains(l.end1) && nodes.contains(l.end2)))
 
   val (undirLinks, inLinks, outLinks) = {
-    val in = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
-    val out = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
-    val undir = mutable.Map.empty[Turtle, List[Link]] withDefaultValue List.empty[Link]
+    val in = mutable.Map.empty[Turtle, ArrayBuffer[Link]]
+    val out = mutable.Map.empty[Turtle, ArrayBuffer[Link]]
+    val undir = mutable.Map.empty[Turtle, ArrayBuffer[Link]]
+    var arcs = 0
     links foreach { link =>
-
       if (link.isDirectedLink) {
-        out(link.end1) = link +: out(link.end1)
-        in(link.end2) = link +: in(link.end2)
+        out.getOrElseUpdate(link.end1, ArrayBuffer.empty[Link]) += link
+        in.getOrElseUpdate(link.end2, ArrayBuffer.empty[Link]) += link
       } else {
-        undir(link.end1) = link +: undir(link.end1)
-        undir(link.end2) = link +: undir(link.end2)
+        undir.getOrElseUpdate(link.end1, ArrayBuffer.empty[Link]) += link
+        undir.getOrElseUpdate(link.end2, ArrayBuffer.empty[Link]) += link
       }
     }
-    (undir.toMap withDefaultValue List.empty[Link],
-     in.toMap withDefaultValue List.empty[Link],
-     out.toMap withDefaultValue List.empty[Link])
+    (undir.toMap[Turtle, Seq[Link]] withDefaultValue Seq.empty[Link],
+     in.toMap[Turtle, Seq[Link]] withDefaultValue Seq.empty[Link],
+     out.toMap[Turtle, Seq[Link]] withDefaultValue Seq.empty[Link])
   }
 
   def verify(w: World): GraphContext = {
@@ -115,16 +110,16 @@ class GraphContext(
   // -- BCH 5/13/2014
   lazy val isDirected = !outLinks.isEmpty
 
-  def turtleCount: Int = turtles.size
-  def linkCount: Int = links.size
+  lazy val turtleCount: Int = nodes.size
+  lazy val linkCount: Int = links.size
 
   override def ends(link: Link): (Turtle, Turtle) = (link.end1, link.end2)
 
-  override def inEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ::: undirLinks(turtle)
+  override def inEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ++ undirLinks(turtle)
 
-  override def outEdges(turtle: Turtle): Seq[Link] = outLinks(turtle) ::: undirLinks(turtle)
+  override def outEdges(turtle: Turtle): Seq[Link] = outLinks(turtle) ++ undirLinks(turtle)
 
-  override def allEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ::: outLinks(turtle) ::: undirLinks(turtle)
+  override def allEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ++ outLinks(turtle) ++ undirLinks(turtle)
 
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
 
@@ -132,7 +127,7 @@ class GraphContext(
 
   lazy val components: Traversable[Set[Turtle]] = {
     val foundBy = mutable.Map[Turtle, Turtle]()
-    turtles.groupBy { t =>
+    nodes.groupBy { t =>
       foundBy.getOrElseUpdate(t, {
         BreadthFirstSearch(this, t)
           .map(_.head)
