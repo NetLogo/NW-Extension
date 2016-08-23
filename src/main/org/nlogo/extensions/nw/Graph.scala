@@ -14,6 +14,7 @@ trait Graph[V, E] {
    * of the network.
    */
   lazy val arcCount: Int = nodes.view.map(outEdges(_).size).sum
+  lazy val totalArcWeight: Double = nodes.view.flatMap(outEdges _).map(weight _).sum
 
   def otherEnd(node: V)(link: E): V = {
     val (end1, end2) = ends(link)

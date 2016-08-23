@@ -28,7 +28,7 @@ object ClusteringMetrics {
     val internal: Double = community.view.map { v =>
       graph.outEdges(v).filter(e => community contains graph.otherEnd(v)(e)).map(graph.weight _).sum
     }.sum
-    (internal - totalIn * totalOut / graph.arcCount) / graph.arcCount
+    (internal - totalIn * totalOut / graph.totalArcWeight) / graph.totalArcWeight
   }
 
 }
@@ -64,6 +64,7 @@ object Louvain {
       graph.nodes.foreach { v =>
         val originalCommunity = communityIndex(v)
         val originalScore = deltaMod(graph, members(originalCommunity) - v, v)
+
         // Note that the original community is almost certainly in the connected communities, so we remove it
         val connectedCommunities = graph.outNeighbors(v).map(communityIndex).toSet - originalCommunity
         if (!connectedCommunities.isEmpty) {
