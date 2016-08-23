@@ -7,9 +7,10 @@ import org.nlogo.core.{AgentKind}
 import org.nlogo.agent
 import org.nlogo.agent.Turtle
 import org.nlogo.extensions.nw.{GraphContext, GraphContextProvider}
-import org.nlogo.extensions.nw.algorithms.ClusteringMetrics
+import org.nlogo.extensions.nw.algorithms.{ClusteringMetrics, Louvain}
 import collection.JavaConverters._
 import org.nlogo.api.TypeNames
+import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
 
 class ClusteringCoefficient(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
@@ -31,6 +32,14 @@ class Modularity(gcp: GraphContextProvider) extends api.Reporter {
       )
     }
     ScalaConversions.toLogoObject(ClusteringMetrics.modularity(graph, communities))
+  }
+}
+
+class LouvainCommunities(gcp: GraphContextProvider) extends api.Reporter {
+  override def getSyntax = reporterSyntax(ret = ListType)
+  override def report(args: Array[api.Argument], context: api.Context) = {
+    val graph = gcp.getGraphContext(context.getAgent.world)
+    ScalaConversions.toLogoList(Louvain.cluster(graph).map(toTurtleSet))
   }
 }
 

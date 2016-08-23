@@ -927,6 +927,15 @@ directed-separate-components
   O> ask turtles [ create-links-to other turtles with [ color = [ color ] of myself ] ]
   nw:modularity nw:weak-component-clusters => 0.5
 
+
+## Louvain Communities
+
+louvain-communities
+  extensions [ nw ]
+  O> crt 9
+  O> foreach [[0 1] [1 2] [2 3] [3 0] [0 4] [4 5] [5 6] [6 7] [7 4] [1 7] [8 0] [8 1] [8 2] [8 3]] [ ask turtle first ? [ create-link-with turtle last ?] ]
+  sort map count nw:louvain-communities => [4 5]
+
 # tests to make sure undirected edges are worth twice directed edges
 mixed-separate-components
   extensions [ nw ]

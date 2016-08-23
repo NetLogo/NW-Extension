@@ -25,23 +25,23 @@ trait Graph[V, E] {
   /**
    * Should return both incoming directed and undirected edges.
    */
-  def inEdges(node: V): Iterable[E] = nodes.flatMap(v => outEdges(v) filter (otherEnd(v)(_) == node))
+  def inEdges(node: V): Seq[E] = nodes.view.flatMap(v => outEdges(v) filter (otherEnd(v)(_) == node)).toSeq
   /**
    * Should return both incoming directed and undirected neighbors.
    */
-  def inNeighbors(node: V): Iterable[V] = inEdges(node) map otherEnd(node)
+  def inNeighbors(node: V): Seq[V] = inEdges(node) map otherEnd(node)
 
   /**
    * Should return both outgoing directed and undirected edges.
    */
-  def outEdges(node: V): Iterable[E]
+  def outEdges(node: V): Seq[E]
   /**
    * Should return both outgoing directed and undirected neighbors.
    */
-  def outNeighbors(node: V): Iterable[V] = outEdges(node) map otherEnd(node)
+  def outNeighbors(node: V): Seq[V] = outEdges(node) map otherEnd(node)
 
-  def allEdges(node: V): Iterable[E] = (inEdges(node) ++ outEdges(node)).toSet
-  def allNeighbors(node: V): Iterable[V] = allEdges(node) map otherEnd(node)
+  def allEdges(node: V): Seq[E] = (inEdges(node) ++ outEdges(node)).distinct
+  def allNeighbors(node: V): Seq[V] = allEdges(node) map otherEnd(node)
 
   def weight(link: E): Double = 1.0
 }
