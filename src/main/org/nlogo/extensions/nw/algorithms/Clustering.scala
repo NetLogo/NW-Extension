@@ -23,11 +23,17 @@ object ClusteringMetrics {
   }
 
   def communityModularity[V,E](graph: Graph[V,E], community: Set[V]): Double = {
-    val totalIn: Double = community.view.map(graph.inEdges(_).map(graph.weight _).sum).sum
-    val totalOut: Double = community.view.map(graph.outEdges(_).map(graph.weight _).sum).sum
-    val internal: Double = community.view.map { v =>
-      graph.outEdges(v).filter(e => community contains graph.otherEnd(v)(e)).map(graph.weight _).sum
-    }.sum
+    var totalIn: Double = 0
+    var totalOut: Double = 0
+    var internal: Double = 0
+    community.foreach { node =>
+      graph.outEdges(node).foreach { edge =>
+        val weight = graph.weight(edge)
+        if (community contains graph.otherEnd(node)(edge)) internal += weight
+        totalOut += weight
+      }
+      graph.inEdges(node).foreach { edge => totalIn += graph.weight(edge) }
+    }
     (internal - totalIn * totalOut / graph.totalArcWeight) / graph.totalArcWeight
   }
 
@@ -62,6 +68,7 @@ object Louvain {
     while (switchOccurred) {
       switchOccurred  = false
       graph.nodes.foreach { v =>
+        // TODO: Optimize by storing community modularities in parts and updating.
         val originalCommunity = communityIndex(v)
         val originalScore = deltaMod(graph, members(originalCommunity) - v, v)
 
@@ -84,23 +91,32 @@ object Louvain {
     (communities, ClusteringMetrics.modularity(graph, communities) - originalMod)
   }
 
-  case class MergedGraph[V,E](graph: Graph[V, E], communities: Iterable[Set[V]]) extends Graph[Set[V], (Set[V], Set[V])] {
+  case class MergedGraph[V,E](graph: Graph[V, E], communities: Seq[Set[V]]) extends Graph[Set[V], (Set[V], Set[V])] {
     val community: Map[V, Set[V]] = communities.flatMap(c => c.map(_ -> c))(collection.breakOut)
-    override val nodes = communities.toSet
+    override val nodes = communities
     override def ends(link: (Set[V], Set[V])) = link
 
-    override def inEdges(node: Set[V]) = node.view.flatMap(v => graph.inNeighbors(v).map(community)).map(_ -> node).toSeq.distinct
-    override def outEdges(node: Set[V]) = node.view.flatMap(v => graph.outNeighbors(v).map(community)).map(node -> _).toSeq.distinct
-    override def weight(link: (Set[V], Set[V])): Double = link match {
-      case (source: Set[V], target: Set[V]) =>
-        // Mapping from a set gives a set, which means that we could lose
-        // weights that aren't unique. By converting to IterableView, we avoid
-        // this.
-        source.view.flatMap { v =>
-          val edges = graph.outEdges(v).filter(e => community(graph.otherEnd(v)(e)) == target)
-          edges.map(graph.weight)
-        }.sum
+    val weights: mutable.Map[(Set[V], Set[V]), Double] = mutable.Map.empty[(Set[V], Set[V]), Double]
+    graph.nodes.foreach { source =>
+      val sourceComm = community(source)
+      graph.outEdges(source).foreach { edge =>
+        val targetComm = community(graph.otherEnd(source)(edge))
+        val commEdge = (sourceComm, targetComm)
+        weights(commEdge) = weights.getOrElse(commEdge, 0.0) + graph.weight(edge)
+      }
     }
+
+    val inEdgeMap: Map[Set[V], Seq[(Set[V], Set[V])]] = nodes.map{ node =>
+      node -> node.flatMap(v => graph.inNeighbors(v).map(community)).map(_ -> node).toSeq
+    }.toMap
+    val outEdgeMap: Map[Set[V], Seq[(Set[V], Set[V])]] = nodes.map { node =>
+      node -> node.flatMap(v => graph.outNeighbors(v).map(community)).map(node -> _).toSeq
+    }.toMap
+
+
+    override def inEdges(node: Set[V]): Seq[(Set[V], Set[V])] = inEdgeMap(node)
+    override def outEdges(node: Set[V]): Seq[(Set[V], Set[V])] = outEdgeMap(node)
+    override def weight(link: (Set[V], Set[V])): Double = weights(link)
   }
 }
 

@@ -27,15 +27,6 @@ class WeightedBetweennessCentrality(gcp: GraphContextProvider) extends api.Repor
   }
 }
 
-class EigenvectorCentrality(gcp: GraphContextProvider) extends api.Reporter {
-  override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
-  override def report(args: Array[api.Argument], context: api.Context) = {
-    val graph = gcp.getGraphContext(context.getAgent.world).asUndirectedJungGraph
-    // make sure graph is connected
-    graph.gc.eigenvectorCentrality(context.getAgent.asInstanceOf[agent.Turtle]).asInstanceOf[java.lang.Double]
-  }
-}
-
 class PageRank(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
   override def report(args: Array[api.Argument], context: api.Context) = {
