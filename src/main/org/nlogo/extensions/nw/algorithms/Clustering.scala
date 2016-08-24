@@ -41,13 +41,14 @@ object ClusteringMetrics {
 
 object Louvain {
   def cluster[V,E](graph: Graph[V,E]): Seq[Set[V]] = {
-    val initComms: Seq[Com[V]] = graph.nodes.map(v => Com(Set(v))).toSeq
-    Iterator.iterate((initComms, MergedGraph(graph, initComms), 1.0)) ({
-      (communities: Seq[Com[V]], mGraph: MergedGraph[V,E], modDelta: Double) =>
-        val (nextComms: Seq[Set[Com[V]]], nextModDelta: Double) = clusterLocally(mGraph)
-        val flattenedComms = nextComms map (c => Com(c.flatMap(_.members)))
-        (flattenedComms, MergedGraph(graph, flattenedComms), nextModDelta)
-    }.tupled).dropWhile(_._3 > 0).next._1.map(_.members)
+    val (initComms, delta) = clusterLocally(graph)
+    if (delta > 0) {
+      val mGraph = MergedGraph(graph, initComms.map(Com(_)))
+      val metaComms: Seq[Set[Com[V]]] = cluster(mGraph)
+      metaComms.map(_.flatMap(_.members))
+    } else {
+      initComms
+    }
   }
 
   def deltaMod[V,E](graph: Graph[V,E], community: Set[V], node: V): Double =
