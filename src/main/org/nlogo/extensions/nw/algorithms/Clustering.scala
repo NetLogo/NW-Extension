@@ -104,16 +104,40 @@ object Louvain {
   class CommunityStructure[V,E](graph: Graph[V,E], comMap: Map[V, Int], internal: Vector[Double], totalIn: Vector[Double], totalOut: Vector[Double], val modularity: Double) {
     def community(node: V): Int = comMap(node)
     def move(node: V, newCommunity: Int): CommunityStructure[V,E] = {
-      val inDegree = graph.inEdges(node).map(graph.weight _).sum
-      val outDegree = graph.outEdges(node).map(graph.weight _).sum
-
       val originalCommunity = community(node)
       val otherEnd = graph.otherEnd(node)_
-      val isInternal = (link: E, comm: Int) => (otherEnd(link) == node) || (community(otherEnd(link)) == comm)
-      val internalWeight = (comm: Int) => graph.outEdges(node).filter(isInternal(_, comm)).map(graph.weight _).sum + graph.inEdges(node).filter(isInternal(_, comm)).map(graph.weight _).sum
-
-      val internalOriginal = internalWeight(originalCommunity)
-      val internalNew = internalWeight(newCommunity)
+      var inDegree = 0.0
+      var outDegree = 0.0
+      var internalOriginal = 0.0
+      var internalNew = 0.0
+      graph.outEdges(node).foreach { link =>
+        val other = otherEnd(link)
+        val comOther = community(other)
+        val weight = graph.weight(link)
+        outDegree += weight
+        if (other == node) {
+          internalOriginal += weight
+          internalNew += weight
+        } else if (comOther == originalCommunity) {
+          internalOriginal += weight
+        } else if (comOther == newCommunity) {
+          internalNew += weight
+        }
+      }
+      graph.inEdges(node).foreach { link =>
+        val other = otherEnd(link)
+        val comOther = community(other)
+        val weight = graph.weight(link)
+        inDegree += weight
+        if (other == node) {
+          internalOriginal += weight
+          internalNew += weight
+        } else if (comOther == originalCommunity) {
+          internalOriginal += weight
+        } else if (comOther == newCommunity) {
+          internalNew += weight
+        }
+      }
 
       val newTotalIn = totalIn
         .updated(originalCommunity, totalIn(originalCommunity) - inDegree)
@@ -135,7 +159,7 @@ object Louvain {
         contrib(newCommunity, internal, totalIn, totalOut)
       new CommunityStructure[V,E](graph, comMap.updated(node, newCommunity), newInternal, newTotalIn, newTotalOut, modularity + deltaOriginal + deltaNew)
     }
-    def communities: Seq[Set[V]] = graph.nodes.groupBy(comMap).valuesIterator.map(_.toSet).toSeq
+    def communities: Seq[Set[V]] = graph.nodes.groupBy(comMap).valuesIterator.map(_.toSet).toList
 
   }
 

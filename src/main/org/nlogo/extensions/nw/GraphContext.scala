@@ -114,6 +114,7 @@ with algorithms.CentralityMeasurer {
   lazy val linkCount: Int = links.size
 
   override def ends(link: Link): (Turtle, Turtle) = (link.end1, link.end2)
+  override def otherEnd(node: Turtle)(link: Link): Turtle = if (link.end1 == node) link.end2 else link.end1
 
   override def inEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ++ undirLinks(turtle)
 
