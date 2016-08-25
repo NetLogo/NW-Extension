@@ -31,6 +31,7 @@ A much shorter version of this documentation, that can be useful as a cheat shee
 [Clusterers](#clusterers)
 
 - [bicomponent-clusters](#bicomponent-clusters), [weak-component-clusters](#weak-component-clusters)
+- [louvain-communities](#louvain-communities)
 
 [Cliques](#cliques)
 
@@ -525,6 +526,34 @@ Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnec
 Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network context. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
 
 The result is reported as a list of agentsets, in random order. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
+
+#### louvain-communities
+`nw:louvain-communities`
+
+Detects community structure present in the network. It does this by maximizing [modularity](#modularity) using the [Louvain method](https://en.wikipedia.org/wiki/Louvain_Modularity). The communities are reported as a list of turtlesets.
+
+Often you'll want to tell turtles about the community that they are in. You can do this like so:
+
+```
+turtles-own [ community ]
+
+...
+
+foreach ls:louvain-communities [
+  ask ? [ set community ? ]
+]
+```
+
+You can give each community its own color with something like this:
+
+```
+let communities ls:louvain-communities
+let colors sublist 0 (length communities) base-colors
+(foreach communities colors [
+  ask ?1 [ set color ?2 ]
+])
+```
+
 
 ### Cliques
 
