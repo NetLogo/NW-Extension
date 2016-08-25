@@ -41,8 +41,8 @@ object ClusteringMetrics {
 
 object Louvain {
   def cluster[V,E](graph: Graph[V,E]): Seq[Set[V]] = {
-    val (initComms, delta) = clusterLocally(graph)
-    if (delta > 0) {
+    val initComms = clusterLocally(graph)
+    if (initComms.size < graph.nodes.size) {
       val mGraph = MergedGraph(graph, initComms.map(Com(_)))
       val metaComms: Seq[Set[Com[V]]] = cluster(mGraph)
       metaComms.map(_.flatMap(_.members))
@@ -51,45 +51,92 @@ object Louvain {
     }
   }
 
-  def deltaMod[V,E](graph: Graph[V,E], community: Set[V], node: V): Double =
-    // This should also take into account losing the community consisting only of the node,
-    // but since all the communities have that term, we can drop it.
-    ClusteringMetrics.communityModularity(graph, community + node) - ClusteringMetrics.communityModularity(graph, community)
 
-  def clusterLocally[V,E](graph: Graph[V,E]): (Seq[Set[V]], Double) = {
+  def clusterLocally[V,E](graph: Graph[V,E]): Seq[Set[V]] = {
     // This way we get the benefits of immutable Set operations while being
     // able to update membership easily.
+    var comStruct = CommunityStructure(graph)
     val nodes = graph.nodes.toSeq
-    val members: Array[Set[V]] = nodes.map(Set(_)).toArray
-    val communityIndex: mutable.Map[V, Int] = mutable.Map(nodes.zipWithIndex.toSeq: _*)
-
-    val originalMod = ClusteringMetrics.modularity(graph, members)
 
     var switchOccurred = true
     while (switchOccurred) {
       switchOccurred  = false
       graph.nodes.foreach { v =>
-        // TODO: Optimize by storing community modularities in parts and updating.
-        val originalCommunity = communityIndex(v)
-        val originalScore = deltaMod(graph, members(originalCommunity) - v, v)
-
         // Note that the original community is almost certainly in the connected communities, so we remove it
-        val connectedCommunities = graph.outNeighbors(v).map(communityIndex).toSet - originalCommunity
+        val originalCommunity = comStruct.community(v)
+        val connectedCommunities = graph.outNeighbors(v).map(comStruct.community _).toSet - originalCommunity
         if (!connectedCommunities.isEmpty) {
-          val (best, score) = connectedCommunities.map(i => i -> deltaMod(graph, members(i), v)).maxBy(_._2)
+          val newComStruct = connectedCommunities.map(comStruct.move(v, _)).maxBy(_.modularity)
           // Require a strictly better score to switch.
-          if (score > originalScore) {
-            members(originalCommunity) = members(originalCommunity) - v
-            members(best) = members(best) + v
-            communityIndex(v) = best
+          if (newComStruct.modularity > comStruct.modularity) {
+            comStruct = newComStruct
             switchOccurred = true
           }
         }
       }
     }
+    comStruct.communities
+  }
 
-    val communities: Seq[Set[V]] = members.filterNot(_.isEmpty)
-    (communities, ClusteringMetrics.modularity(graph, communities) - originalMod)
+  object CommunityStructure {
+    def apply[V,E](graph: Graph[V,E]) = {
+      val comMap = graph.nodes.zipWithIndex.toMap
+      val internal = Array.fill(graph.nodes.size)(0.0)
+      val totalIn = Array.fill(graph.nodes.size)(0.0)
+      val totalOut = Array.fill(graph.nodes.size)(0.0)
+      graph.nodes.foreach { node =>
+        val com = comMap(node)
+        graph.outEdges(node).foreach { edge =>
+          val weight = graph.weight(edge)
+          val other = graph.otherEnd(node)(edge)
+          if (com == comMap(other)) internal(com) += weight
+          totalOut(com) += weight
+          totalIn(comMap(other)) += weight
+        }
+      }
+      val mod = (internal, totalIn, totalOut).zipped.toIterator.map { case (intern: Double, in: Double, out: Double) =>
+        (intern - in * out / graph.totalArcWeight) / graph.totalArcWeight
+      }.sum
+      new CommunityStructure[V,E](graph, comMap, internal.toVector, totalIn.toVector, totalOut.toVector, mod)
+    }
+  }
+
+  class CommunityStructure[V,E](graph: Graph[V,E], comMap: Map[V, Int], internal: Vector[Double], totalIn: Vector[Double], totalOut: Vector[Double], val modularity: Double) {
+    def community(node: V): Int = comMap(node)
+    def move(node: V, newCommunity: Int): CommunityStructure[V,E] = {
+      val inDegree = graph.inEdges(node).map(graph.weight _).sum
+      val outDegree = graph.outEdges(node).map(graph.weight _).sum
+
+      val originalCommunity = community(node)
+      val otherEnd = graph.otherEnd(node)_
+      val isInternal = (link: E, comm: Int) => (otherEnd(link) == node) || (community(otherEnd(link)) == comm)
+      val internalWeight = (comm: Int) => graph.outEdges(node).filter(isInternal(_, comm)).map(graph.weight _).sum + graph.inEdges(node).filter(isInternal(_, comm)).map(graph.weight _).sum
+
+      val internalOriginal = internalWeight(originalCommunity)
+      val internalNew = internalWeight(newCommunity)
+
+      val newTotalIn = totalIn
+        .updated(originalCommunity, totalIn(originalCommunity) - inDegree)
+        .updated(newCommunity, totalIn(newCommunity) + inDegree)
+      val newTotalOut = totalOut
+        .updated(originalCommunity, totalOut(originalCommunity) - outDegree)
+        .updated(newCommunity, totalOut(newCommunity) + outDegree)
+      val newInternal = internal
+        .updated(originalCommunity, internal(originalCommunity) - internalOriginal)
+        .updated(newCommunity, internal(newCommunity) + internalNew)
+      val contrib = (com: Int, intern: Vector[Double], in: Vector[Double], out: Vector[Double]) =>
+        (intern(com) - in(com) * out(com) / graph.totalArcWeight) / graph.totalArcWeight
+
+      val deltaOriginal =
+        contrib(originalCommunity, newInternal, newTotalIn, newTotalOut) -
+        contrib(originalCommunity, internal, totalIn, totalOut)
+      val deltaNew =
+        contrib(newCommunity, newInternal, newTotalIn, newTotalOut) -
+        contrib(newCommunity, internal, totalIn, totalOut)
+      new CommunityStructure[V,E](graph, comMap.updated(node, newCommunity), newInternal, newTotalIn, newTotalOut, modularity + deltaOriginal + deltaNew)
+    }
+    def communities: Seq[Set[V]] = graph.nodes.groupBy(comMap).valuesIterator.map(_.toSet).toSeq
+
   }
 
   case class Com[V](members: Set[V]) {
