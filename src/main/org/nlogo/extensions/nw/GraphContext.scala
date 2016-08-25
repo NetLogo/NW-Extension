@@ -130,7 +130,7 @@ with algorithms.CentralityMeasurer {
     val foundBy = mutable.Map[Turtle, Turtle]()
     nodes.groupBy { t =>
       foundBy.getOrElseUpdate(t, {
-        BreadthFirstSearch(this, t)
+        BreadthFirstSearch(this, t, followOut = true, followIn = true)
           .map(_.head)
           .foreach(found => foundBy(found) = t)
         t

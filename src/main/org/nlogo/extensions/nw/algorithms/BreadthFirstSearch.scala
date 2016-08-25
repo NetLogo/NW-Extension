@@ -12,8 +12,11 @@ object BreadthFirstSearch {
    * the paths share storage, so total memory usage stays within O(n).
    * Adapted from the original network extension written by Seth Tisue
    */
-  def apply(gc: GraphContext, start: Turtle, reverse: Boolean = false): Stream[List[Turtle]] = {
-    val rawNeighbors = if (reverse) (gc.inNeighbors _) else (gc.outNeighbors _)
+  def apply(gc: GraphContext, start: Turtle, followOut: Boolean, followIn: Boolean): Stream[List[Turtle]] = {
+    def rawNeighbors(node: Turtle) =
+      (if (followOut) gc.outNeighbors(node) else Seq.empty[Turtle]) ++
+      (if (followIn) gc.inNeighbors(node) else Seq.empty[Turtle])
+
     val seen: Turtle => Boolean = {
       val memory = collection.mutable.HashSet[Turtle](start)
       t => memory(t) || { memory += t; false }

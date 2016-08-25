@@ -1255,6 +1255,16 @@ weak-components-three-turtles-connected-by-two-link-breeds
   O> nw:set-context turtles (link-set links)
   length nw:weak-component-clusters => 1
 
+weak-components-three-turtles-directed-links
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-to turtle 1 create-link-to turtle 2 ]
+  length nw:weak-component-clusters => 1
+  O> ca
+  O> crt 3
+  O> ask turtle 0 [ create-link-from turtle 1 create-link-from turtle 2 ]
+  length nw:weak-component-clusters => 1
+
 # clique tests
 
 biggest-maximal-clique-undirected
