@@ -48,14 +48,14 @@ closeness-after-births
   O> crt 2
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [0.67 1 0.67]
 
 closeness-after-deaths
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [0.67 1 0.67]
   O> ask turtle 1 [ die ]
   O> ask turtle 0 [ create-link-with turtle 2 ]
   [ nw:closeness-centrality ] of turtles => [1 1]
@@ -182,10 +182,10 @@ closeness-after-births-non-breed
   O> create-frogs 1
   O> create-mice 2 [ create-undirected-edge-with frog 0 ]
   O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [1 0.67 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [1 0.67 0.67]
   O> crt 1
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => ERROR Extension exception: turtle 3 is not a member of the current graph context.
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles with [ who < 3 ] => [1 0.67 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => ERROR Extension exception: turtle 3 is not a member of the current graph context.
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles with [ who < 3 ] => [1 0.67 0.67]
 
 closeness-after-deaths-non-breed
   extensions [ nw ]
@@ -195,7 +195,7 @@ closeness-after-deaths-non-breed
   O> create-frogs 1
   O> create-mice 2 [ create-undirected-edge-with frog 0 ]
   O> nw:set-context (turtle-set mice frogs) (link-set undirected-edges)
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [1 0.67 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [1 0.67 0.67]
   O> ask frogs [ die ]
   # create new link that should not be part of context:
   O> ask mouse 1 [ create-link-with mouse 2 ]
@@ -424,7 +424,7 @@ path-to-a-b-c-directed
 path-to-fully-connected
   extensions [ nw ]
   O> crt 6 [ create-links-with other turtles ]
-  (word sort map [(word ?)] [ nw:path-to turtle 0 ] of turtles) => "[[(link 0 1)] [(link 0 2)] [(link 0 3)] [(link 0 4)] [(link 0 5)] []]"
+  (word sort map [ [p] -> (word p)] [ nw:path-to turtle 0 ] of turtles) => "[[(link 0 1)] [(link 0 2)] [(link 0 3)] [(link 0 4)] [(link 0 5)] []]"
 
 path-to-on-a-circle
   extensions [ nw ]
@@ -466,7 +466,7 @@ path-to-mixed-directed-undirected
 turtles-on-path-to-self
   extensions [ nw ]
   O> crt 1
-  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 0 => [0]
+  map [ [t] -> [who] of t ] [ nw:turtles-on-path-to turtle 0 ] of turtle 0 => [0]
 
 turtles-on-path-to-no-path
   extensions [ nw ]
@@ -477,14 +477,14 @@ turtles-on-path-to-no-path
 turtles-on-path-to-undirected-pair
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
-  map [[who] of ?] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => [1 0]
+  map [[t] -> [who] of t] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
+  map [[t] -> [who] of t] [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => [1 0]
 
 turtles-on-path-to-directed-pair
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  map [[who] of ?] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
+  map [ [t] -> [who] of t ] [ nw:turtles-on-path-to turtle 1 ] of turtle 0 => [0 1]
   [ nw:turtles-on-path-to turtle 0 ] of turtle 1 => false
 
 turtles-on-path-to-fully-connected
@@ -587,7 +587,7 @@ closeness-centrality-directed-pair
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-link-to turtle 1 ]
-  map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [1 0]
+  map [ [t] -> [ precision nw:closeness-centrality 3 ] of t ] sort turtles => [1 0]
 
 closeness-centrality-simple-mixed
   extensions [ nw ]
@@ -596,14 +596,14 @@ closeness-centrality-simple-mixed
   O> crt 3
   O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
   O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
-  map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [0.667 1 0]
+  map [ [t] -> [ precision nw:closeness-centrality 3 ] of t ] sort turtles => [0.667 1 0]
 
 closeness-centrality-simple-undirected
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [0.67 1 0.67]
 
 closeness-centrality-simple-directed
   extensions [ nw ]
@@ -614,7 +614,7 @@ closeness-centrality-simple-directed
   O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
   O> ask turtle 2 [ create-directed-edge-to turtle 1 ]
   O> nw:set-context turtles directed-edges
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [0.67 1 0.67]
 
 closeness-centrality-bigger-directed
   extensions [ nw ]
@@ -629,7 +629,7 @@ closeness-centrality-bigger-directed
   O> ask turtle 5 [ create-directed-edge-to turtle 0 ]
   O> ask turtle 5 [ create-directed-edge-to turtle 4 ]
   O> nw:set-context turtles directed-edges
-  map [ [ precision nw:closeness-centrality 3 ] of ? ] sort turtles => [0.4 0.5 0.625 0 1 0.667]
+  map [ [t] -> [ precision nw:closeness-centrality 3 ] of t ] sort turtles => [0.4 0.5 0.625 0 1 0.667]
 
 closeness-centrality-disconnected-pentagon-triangle
   extensions [ nw ]
@@ -638,20 +638,20 @@ closeness-centrality-disconnected-pentagon-triangle
   O> ask turtle 5 [ create-link-with turtle 6 ]
   O> ask turtle 6 [ create-link-with turtle 7 ]
   O> ask turtle 7 [ create-link-with turtle 5 ]
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 0.67 0.67 0.67 0.67 1 1 1]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [0.67 0.67 0.67 0.67 0.67 1 1 1]
 
 weighted-closeness-centrality-pair-undirected
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 2 ] ]
-  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.5 0.5]
+  map [ [t] -> [ precision nw:weighted-closeness-centrality thickness 2 ] of t ] sort turtles => [0.5 0.5]
 
 weighted-closeness-centrality-simple-undirected
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 2 ] ]
   O> ask turtle 1 [ create-link-with turtle 2 [ set thickness 1 ] ]
-  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.4 0.67 0.5]
+  map [ [t] -> [ precision nw:weighted-closeness-centrality thickness 2 ] of t ] sort turtles => [0.4 0.67 0.5]
 
 weighted-closeness-centrality-simple-directed
   extensions [ nw ]
@@ -662,16 +662,16 @@ weighted-closeness-centrality-simple-directed
   O> ask turtle 1 [ create-directed-edge-to turtle 2 [ set thickness 2 ] ]
   O> ask turtle 2 [ create-directed-edge-to turtle 1 [ set thickness 1 ] ]
   O> nw:set-context turtles directed-edges
-  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.5 0.5 0.5]
+  map [ [t] -> [ precision nw:weighted-closeness-centrality thickness 2 ] of t ] sort turtles => [0.5 0.5 0.5]
 
 weighted-closeness-centrality-changes
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 2 ] ]
   O> ask turtle 1 [ create-link-with turtle 2 [ set thickness 1 ] ]
-  map [ [ precision nw:weighted-closeness-centrality thickness 2 ] of ? ] sort turtles => [0.4 0.67 0.5]
+  map [ [t] -> [ precision nw:weighted-closeness-centrality thickness 2 ] of t ] sort turtles => [0.4 0.67 0.5]
   O> ask turtle 0 [ create-link-with turtle 1 [ set thickness 1 ] ]
-  map [ [ precision nw:closeness-centrality 2 ] of ? ] sort turtles => [0.67 1 0.67]
+  map [ [t] -> [ precision nw:closeness-centrality 2 ] of t ] sort turtles => [0.67 1 0.67]
 
 ### betweenness-centrality
 
@@ -689,22 +689,22 @@ betweenness-centrality-simple-undirected
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [0 1 0]
 
 betweenness-centrality-simple-undirected-changes
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-with turtle 1 ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [0 1 0]
   O> ask turtle 2 [ create-link-with turtle 0 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 0 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [0 0 0]
 
 betweenness-centrality-central-node-undirected
   extensions [ nw ]
   O> crt 11
   O> ask turtle 0 [ create-links-with other turtles ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [45 0 0 0 0 0 0 0 0 0 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [45 0 0 0 0 0 0 0 0 0 0]
 
 betweenness-centrality-disconnected-undirected
   extensions [ nw ]
@@ -713,25 +713,25 @@ betweenness-centrality-disconnected-undirected
   O> ask turtle 1 [ create-link-with turtle 2 ]
   O> ask turtle 3 [ create-link-with turtle 4 ]
   O> ask turtle 4 [ create-link-with turtle 5 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0 0 1 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [0 1 0 0 1 0]
 
 betweenness-centrality-directed-triangle
   extensions [ nw ]
   O> crt 3 [ create-link-to turtle ((who + 1) mod 3) ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [1 1 1]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [1 1 1]
 
 betweenness-centrality-disconnected-directed-triangles
   extensions [ nw ]
   O> crt 3 [ create-link-to turtle ((who + 1) mod 3) ]
   O> crt 3 [ create-link-to turtle (((who - 2) mod 3) + 3) ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [1 1 1 1 1 1]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [1 1 1 1 1 1]
 
 betweenness-centrality-connected-directed-triangles
   extensions [ nw ]
   O> crt 3 [ create-link-to turtle ((who + 1) mod 3) ]
   O> crt 3 [ create-link-to turtle (((who - 2) mod 3) + 3) ]
   O> ask turtle 0 [ create-link-to turtle 3 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [7 1 4 7 4 1]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [7 1 4 7 4 1]
 
 betweenness-centrality-bigger-connected-directed-graph
   extensions [ nw ]
@@ -744,7 +744,7 @@ betweenness-centrality-bigger-connected-directed-graph
   O> ask turtle 4 [ create-link-to turtle 3 ]
   O> ask turtle 4 [ create-link-to turtle 0 ]
   O> ask turtle 4 [ create-link-to turtle 5 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 0 0 0 7 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [0 0 0 0 7 0]
 
 betweennes-centrality-directed-line
   extensions [ nw ]
@@ -752,13 +752,13 @@ betweennes-centrality-directed-line
   O> crt 3
   O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
   O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [0 1 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [0 1 0]
 
 betweenness-centrality-center-node
   extensions [ nw ]
   O> crt 5
   O> ask turtle 0 [ create-links-with other turtles ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [6 0 0 0 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [6 0 0 0 0]
 
 betweenness-centrality-mixed
   extensions [ nw ]
@@ -769,7 +769,7 @@ betweenness-centrality-mixed
   O> ask turtle 0 [ create-directed-edge-to turtle 2 ]
   O> ask turtle 0 [ create-directed-edge-from turtle 3 ]
   O> ask turtle 0 [ create-directed-edge-from turtle 4 ]
-  map [ [ nw:betweenness-centrality ] of ? ] sort turtles => [5 0 0 0 0]
+  map [ [t] -> [ nw:betweenness-centrality ] of t ] sort turtles => [5 0 0 0 0]
 
 ### eigenvector-centrality
 
@@ -785,21 +785,21 @@ eigenvector-centrality-single-isolate
 eigenvector-centrality-disconnected
   extensions [ nw ]
   O> crt 4
-  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [1 1 1 1]
+  map [ [t] -> [ nw:eigenvector-centrality ] of t ] sort turtles => [1 1 1 1]
   O> ask turtle 0 [ create-link-with turtle 1 ]
-  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [1 1 1 1]
+  map [ [t] -> [ nw:eigenvector-centrality ] of t ] sort turtles => [1 1 1 1]
 
 
 eigenvector-centrality-pair
   extensions [ nw ]
   O> crt 2 [ create-links-with other turtles ]
-  map [ [ nw:eigenvector-centrality ] of ? ] sort turtles => [1 1]
+  map [ [t] -> [ nw:eigenvector-centrality ] of t ] sort turtles => [1 1]
 
 eigenvector-directed-centrality-pair
   extensions [ nw ]
   O> crt 2
   O> ask turtle 0 [ create-links-to other turtles ]
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0 1]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3 ] of t ] sort turtles => [0 1]
 
 # Power iteration fails in this case. Gephi computes it successfully, but I'm using the same technique...
 # Power iteration actually fails for any odd length line...
@@ -808,21 +808,21 @@ eigenvector-centrality-3-line
   O> crt 3
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
   O> nw:set-context turtles links
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.707 1 0.707]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3 ] of t ] sort turtles => [0.707 1 0.707]
 
 eigenvector-centrality-4-line
   extensions [ nw ]
   O> crt 4
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
   O> nw:set-context turtles links
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.618 1 1 0.618]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3 ] of t ] sort turtles => [0.618 1 1 0.618]
 
 eigenvector-centrality-6-line
   extensions [ nw ]
   O> crt 6
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
   O> nw:set-context turtles links
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.445 0.802 1 1 0.802 0.445]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3 ] of t ] sort turtles => [0.445 0.802 1 1 0.802 0.445]
   # matches gephi when you run gephi for 10000 iterations
 
 eigenvector-centrality-assymetric
@@ -830,17 +830,17 @@ eigenvector-centrality-assymetric
   O> crt 4
   O> ask turtle 0 [ create-links-with other turtles ]
   O> ask turtle 1 [ create-link-with turtle 2 ]
-  map [ [ precision nw:eigenvector-centrality 3] of ? ] sort turtles => [1 0.855 0.855 0.461]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3] of t ] sort turtles => [1 0.855 0.855 0.461]
 
 eigenvector-centrality-changes
   extensions [ nw ]
   O> crt 4
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
   O> nw:set-context turtles links
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.618 1 1 0.618]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3 ] of t ] sort turtles => [0.618 1 1 0.618]
   O> crt 2
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0.445 0.802 1 1 0.802 0.445]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3 ] of t ] sort turtles => [0.445 0.802 1 1 0.802 0.445]
 
 # This is the one test where we disagree with Gephi. Gephi refuses to compute centrality on mixed networks.
 eigenvector-centrality-mixed
@@ -850,26 +850,26 @@ eigenvector-centrality-mixed
   O> crt 3
   O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
   O> ask turtle 1 [ create-undirected-edge-with turtle 2 ]
-  map [ [ precision nw:eigenvector-centrality 3 ] of ? ] sort turtles => [0 1 1]
+  map [ [t] -> [ precision nw:eigenvector-centrality 3 ] of t ] sort turtles => [0 1 1]
 
 page-rank-3-line
   extensions [ nw ]
   O> crt 3
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
-  map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.257 0.486 0.257]
+  map [ [t] -> [ precision nw:page-rank 3 ] of t ] sort turtles => [0.257 0.486 0.257]
 
 page-rank-disconnected
   extensions [ nw ]
   O> crt 4
-  map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.25 0.25 0.25 0.25]
+  map [ [t] -> [ precision nw:page-rank 3 ] of t ] sort turtles => [0.25 0.25 0.25 0.25]
 
 page-rank-changes
   extensions [ nw ]
   O> crt 3
   O> ask turtles with [ who < count turtles - 1 ] [ create-link-with turtle (who + 1) ]
-  map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.257 0.486 0.257]
+  map [ [t] -> [ precision nw:page-rank 3 ] of t ] sort turtles => [0.257 0.486 0.257]
   O> ask turtle 2 [ die ]
-  map [ [ precision nw:page-rank 3 ] of ? ] sort turtles => [0.5 0.5]
+  map [ [t] -> [ precision nw:page-rank 3 ] of t ] sort turtles => [0.5 0.5]
 
 ### clustering coefficient
 
@@ -893,14 +893,14 @@ square-with-diag-clustering-coefficient
   O> crt 4
   O> ask turtles [ create-link-with turtle ((who + 1) mod count turtles) ]
   O> ask turtle 0 [ create-link-with turtle 2 ]
-  map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.667 1 0.667 1]
+  map [ [t] -> [ precision nw:clustering-coefficient 3 ] of t ] sort turtles => [0.667 1 0.667 1]
 
 directed-triangle-clustering-coefficient
   extensions [ nw ]
   O> crt 3
   O> ask turtle 0 [ create-link-to turtle 1 create-link-to turtle 2 ]
   O> ask turtle 1 [ create-link-to turtle 0 create-link-to turtle 2 ]
-  map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.5 0.5 0]
+  map [ [t] -> [ precision nw:clustering-coefficient 3 ] of t ] sort turtles => [0.5 0.5 0]
 
 mixed-triangle-clustering-coefficient
   extensions [ nw ]
@@ -909,7 +909,7 @@ mixed-triangle-clustering-coefficient
   O> crt 3
   O> ask turtle 0 [ create-undirected-edge-with turtle 1 create-directed-edge-to turtle 2 ]
   O> ask turtle 1 [ create-directed-edge-to turtle 2 ]
-  map [ [ precision nw:clustering-coefficient 3 ] of ? ] sort turtles => [0.5 0.5 0]
+  map [ [t] -> [ precision nw:clustering-coefficient 3 ] of t ] sort turtles => [0.5 0.5 0]
 
 ## Modularity
 
@@ -1178,12 +1178,12 @@ weak-components-empty-graph
 weak-components-single-isolate
   extensions [ nw ]
   O> crt 1
-  (word map [[who] of ?] nw:weak-component-clusters) => "[[0]]"
+  (word map [ [cluster] -> [who] of cluster ] nw:weak-component-clusters) => "[[0]]"
 
 weak-components-two-isolates
   extensions [ nw ]
   O> crt 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0] [1]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0] [1]]"
 
 weak-components-connected-undirected-pair-and-isolate
   extensions [ nw ]
@@ -1192,10 +1192,10 @@ weak-components-connected-undirected-pair-and-isolate
   O> ask turtle 0 [ create-undirected-edge-with turtle 1 ]
   O> nw:set-context turtles undirected-edges
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2]]"
   O> nw:set-context turtles (link-set undirected-edges)
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2]]"
 
 weak-components-connected-directed-pair-and-isolate
   extensions [ nw ]
@@ -1204,10 +1204,10 @@ weak-components-connected-directed-pair-and-isolate
   O> ask turtle 0 [ create-directed-edge-to turtle 1 ]
   O> nw:set-context turtles directed-edges
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2]]"
   O> nw:set-context turtles (link-set directed-edges)
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2]]"
 
 weak-components-two-connected-undirected-pairs
   extensions [ nw ]
@@ -1217,10 +1217,10 @@ weak-components-two-connected-undirected-pairs
   O> ask turtle 2 [ create-undirected-edge-with turtle 3 ]
   O> nw:set-context turtles undirected-edges
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
   O> nw:set-context turtles (link-set undirected-edges)
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
 
 weak-components-two-connected-directed-pairs
   extensions [ nw ]
@@ -1230,10 +1230,10 @@ weak-components-two-connected-directed-pairs
   O> ask turtle 2 [ create-directed-edge-to turtle 3 ]
   O> nw:set-context turtles directed-edges
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
   O> nw:set-context turtles (link-set directed-edges)
   length nw:weak-component-clusters => 2
-  (word sort (map [(word sort [who] of turtle-set ?)] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
+  (word sort (map [ [cluster] -> (word sort [who] of turtle-set cluster) ] nw:weak-component-clusters)) => "[[0 1] [2 3]]"
 
 weak-components-three-turtles-connected-by-two-link-breeds
   extensions [ nw ]

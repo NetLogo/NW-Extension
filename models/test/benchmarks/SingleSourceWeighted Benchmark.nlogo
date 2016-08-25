@@ -38,10 +38,10 @@ end
 GRAPHICS-WINDOW
 206
 10
-645
-470
-16
-16
+643
+448
+-1
+-1
 13.0
 1
 10
@@ -68,7 +68,7 @@ BUTTON
 115
 149
 single-source
-timeit n task [ ask one-of turtles [ let foo max-single-source-dist ] ]
+timeit n [ [] -> ask one-of turtles [ let foo max-single-source-dist ] ]
 NIL
 1
 T
@@ -88,7 +88,7 @@ n
 n
 0
 1000
-1
+1.0
 1
 1
 NIL
@@ -100,7 +100,7 @@ BUTTON
 108
 194
 single-dest
-timeit n task [ ask one-of turtles [ let foo max-single-dest-dist ] ]
+timeit n [ [] -> ask one-of turtles [ let foo max-single-dest-dist ] ]
 NIL
 1
 T
@@ -117,7 +117,7 @@ BUTTON
 100
 250
 all-pairs
-timeit n task [ ask turtles [ let foo max-single-dest-dist ] ]
+timeit n [ [] -> ask turtles [ let foo max-single-dest-dist ] ]
 NIL
 1
 T
@@ -469,9 +469,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 6.0
+NetLogo 6.0-RC1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -487,7 +486,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@

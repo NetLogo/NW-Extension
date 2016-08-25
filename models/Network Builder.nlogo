@@ -44,14 +44,14 @@ to add-node
 end
 
 to add-undirected-link
-  add-link task [
-    create-undirected-edge-with ?1 [ run ?2 ]
+  add-link [ [source target] ->
+    create-undirected-edge-with source [ run target ]
   ]
 end
 
 to add-directed-link
-  add-link task [
-    create-directed-edge-to ?1 [ run ?2 ]
+  add-link [ [source target] ->
+    create-directed-edge-to source [ run target ]
   ]
 end
 
@@ -65,7 +65,7 @@ to add-link [ create-link ]
     if is-link? new-link and target != ([[other-end] of new-link] of new-link-from) [ ask new-link [ die ] ]
     if not is-link? new-link and target != new-link-from [
       ask new-link-from [
-        (run create-link target task [
+        (run create-link target [ [] ->
           set new-link self
         ])
       ]
@@ -138,10 +138,10 @@ end
 GRAPHICS-WINDOW
 251
 10
-690
-470
-16
-16
+688
+448
+-1
+-1
 13.0
 1
 10
@@ -170,7 +170,7 @@ CHOOSER
 mode
 mode
 "add-node" "add-undirected-link" "add-directed-link" "remove-node" "remove-link"
-0
+2
 
 BUTTON
 40
@@ -625,9 +625,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 6.0-M6
+NetLogo 6.0-RC1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -654,7 +653,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@
