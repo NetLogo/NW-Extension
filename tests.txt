@@ -933,7 +933,7 @@ directed-separate-components
 louvain-communities
   extensions [ nw ]
   O> crt 9
-  O> foreach [[0 1] [1 2] [2 3] [3 0] [0 4] [4 5] [5 6] [6 7] [7 4] [1 7] [8 0] [8 1] [8 2] [8 3]] [ ask turtle first ? [ create-link-with turtle last ?] ]
+  O> foreach [[0 1] [1 2] [2 3] [3 0] [0 4] [4 5] [5 6] [6 7] [7 4] [1 7] [8 0] [8 1] [8 2] [8 3]] [ [ends] -> ask turtle first ends [ create-link-with turtle last ends ] ]
   sort map count nw:louvain-communities => [4 5]
 
 louvain-communities-mixed
@@ -945,7 +945,7 @@ louvain-communities-mixed
   map count nw:louvain-communities => [1 1 1 1 1 1]
   O> ask turtles [ create-undirected-edges-with other turtles ]
   sort map count nw:louvain-communities => [6]
-  O> foreach [[0 1] [1 2] [2 0] [3 4] [4 5] [5 3]] [ ask turtle first ? [ create-directed-edge-to turtle last ? ] ]
+  O> foreach [[0 1] [1 2] [2 0] [3 4] [4 5] [5 3]] [ [ends] -> ask turtle first ends [ create-directed-edge-to turtle last ends ] ]
   sort map count nw:louvain-communities => [3 3]
 
 # tests to make sure undirected edges are worth twice directed edges
