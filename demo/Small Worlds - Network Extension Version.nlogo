@@ -21,7 +21,7 @@ globals
   number-rewired                       ;; number of edges that have been rewired. used for plots.
   rewire-one?                          ;; these two variables record which button was last pushed
   rewire-all?
-  
+
   ;; Colors:
   default-node-color
   default-link-color
@@ -30,9 +30,9 @@ globals
   highlighted-link-color
   rewired-link-color
   between-neighbors-link-color
-  
-  currently-highlighted-node  
-  
+
+  currently-highlighted-node
+
 ]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -41,7 +41,7 @@ globals
 
 to setup
   clear-all
-  
+
   ;; Colors:
   set default-node-color gray
   set default-link-color gray - 1
@@ -50,12 +50,12 @@ to setup
   set highlighted-link-color blue - 1
   set rewired-link-color green - 2
   set between-neighbors-link-color yellow
-  
-  set currently-highlighted-node nobody  
-  
+
+  set currently-highlighted-node nobody
+
   set-default-shape turtles "circle"
   make-turtles
-  
+
   ;; set up a variable to determine if we still have a connected network
   ;; (in most cases we will since it starts out fully connected)
   let success? false
@@ -65,7 +65,7 @@ to setup
     ;;calculate average path length and clustering coefficient for the lattice
     set success? do-calculations
   ]
-  
+
   ;; setting the values for the initial lattice
   set clustering-coefficient-of-lattice clustering-coefficient
   set average-path-length-of-lattice average-path-length
@@ -83,14 +83,14 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 to rewire-one
-  
+
   ;; make sure num-turtles is setup correctly else run setup first
   if count turtles != num-nodes [ setup ]
-  
+
   ;; record which button was pushed
   set rewire-one? true
   set rewire-all? false
-  
+
   let potential-edges links with [ not rewired? ]
   ifelse any? potential-edges [
     ask one-of potential-edges [
@@ -101,11 +101,11 @@ to rewire-one
         ;; find a node distinct from node1 and not already a neighbor of node1
         let node2 one-of turtles with [ (self != node1) and (not link-neighbor? node1) ]
         ;; wire the new edge
-        ask node1 [ 
-          create-link-with node2 [ 
-            set color rewired-link-color  
-            set rewired? true 
-          ] 
+        ask node1 [
+          create-link-with node2 [
+            set color rewired-link-color
+            set rewired? true
+          ]
         ]
         set number-rewired number-rewired + 1  ;; counter for number of rewirings
         die                                    ;; remove the old edge
@@ -116,26 +116,26 @@ to rewire-one
     update-plots
     display
   ]
-  [ 
+  [
     user-message "All edges have already been rewired once."
     stop
   ]
 end
 
 to rewire-all
-  
+
   ;; make sure num-turtles is setup correctly; if not run setup first
   if count turtles != num-nodes [
     setup
   ]
-  
+
   ;; record which button was pushed
   set rewire-one? false
   set rewire-all? true
-  
+
   ;; set up a variable to see if the network is connected
   let success? false
-  
+
   ;; if we end up with a disconnected network, we keep trying, because the APL distance
   ;; isn't meaningful for a disconnected network.
   while [ not success? ] [
@@ -143,9 +143,9 @@ to rewire-all
     ask links [ die ]
     wire-them
     set number-rewired 0
-    
+
     ask links [
-      
+
       ;; whether to rewire it or not?
       if (random-float 1) < rewiring-probability
       [
@@ -157,25 +157,25 @@ to rewire-all
           ;; find a node distinct from node1 and not already a neighbor of node1
           let node2 one-of turtles with [ (self != node1) and (not link-neighbor? node1) ]
           ;; wire the new edge
-          ask node1 [ 
-            create-link-with node2 [ 
-              set color rewired-link-color  
-              set rewired? true 
+          ask node1 [
+            create-link-with node2 [
+              set color rewired-link-color
+              set rewired? true
             ]
           ]
-          
+
           set number-rewired number-rewired + 1  ;; counter for number of rewirings
           set rewired? true
         ]
       ]
       if (rewired?) [ die ] ;; remove the old edge
     ]
-    
+
     ;; check to see if the new network is connected and calculate path length and clustering
     ;; coefficient at the same time
     set success? do-calculations
   ]
-  
+
   ;; do the plotting
   update-plots
 end
@@ -192,7 +192,7 @@ end
 ;;   and reports false if the network is disconnected.
 ;; (In the disconnected case, the average path length does not make sense)
 to-report do-calculations
-  
+
   ;; find the path lengths in the network
   ask turtles [
     let distances remove false [ nw:distance-to myself ] of other turtles
@@ -212,12 +212,12 @@ to-report do-calculations
       set node-clustering-coefficient (2 * count links-in-hood) / (count hood * (count hood - 1))
     ]
   ]
-  
+
   set average-path-length nw:mean-path-length ;; will be false if the network is disconnected
 
   let coefficients remove "undefined" [ node-clustering-coefficient ] of turtles
   set clustering-coefficient sum coefficients / length coefficients
-  
+
   ;; report whether the network is connected or not
   report (average-path-length != false)
 end
@@ -245,10 +245,10 @@ end
 
 ;; connects the two turtles
 to make-edge [node1 node2]
-  ask node1 [ 
+  ask node1 [
     create-link-with node2  [
       set rewired? false
-    ] 
+    ]
   ]
 end
 
@@ -267,14 +267,14 @@ to do-highlight
   if node = nobody [ stop ]
   if node = currently-highlighted-node [ stop ]
   set currently-highlighted-node node
-  
+
   ;; remove previous highlights
   ask turtles [ set color default-node-color ]
-  ask links [ 
-    set color ifelse-value rewired? [ rewired-link-color ] [ default-link-color ] 
+  ask links [
+    set color ifelse-value rewired? [ rewired-link-color ] [ default-link-color ]
     set thickness 0
   ]
-  
+
   ;; highlight the chosen node
   ask node [ set color highlighted-node-color ]
 
@@ -289,9 +289,9 @@ to do-highlight
         set color highlighted-link-color
       ]
       [
-        if (member? end1 neighbor-nodes and member? end2 neighbor-nodes) [ 
+        if (member? end1 neighbor-nodes and member? end2 neighbor-nodes) [
           set thickness 0.2
-          set color between-neighbors-link-color 
+          set color between-neighbors-link-color
         ]
       ]
     ]
@@ -304,10 +304,10 @@ end
 GRAPHICS-WINDOW
 330
 10
-798
-499
-17
-17
+796
+477
+-1
+-1
 13.1
 1
 10
@@ -337,7 +337,7 @@ num-nodes
 num-nodes
 10
 125
-30
+30.0
 1
 1
 NIL
@@ -366,7 +366,7 @@ BUTTON
 10
 50
 156
-81
+83
 rewire one
 rewire-one
 NIL
@@ -473,7 +473,7 @@ BUTTON
 10
 10
 85
-41
+43
 NIL
 setup
 NIL
@@ -566,7 +566,7 @@ BUTTON
 169
 50
 320
-81
+83
 rewire one
 rewire-one
 T
@@ -969,9 +969,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 6.0
+NetLogo 6.0-RC1
 @#$#@#$#@
 setup
 repeat 5 [rewire-one]
@@ -991,15 +990,14 @@ repeat 5 [rewire-one]
 @#$#@#$#@
 default
 0.0
--0.2 0 1.0 0.0
+-0.2 0 0.0 1.0
 0.0 1 1.0 0.0
-0.2 0 1.0 0.0
+0.2 0 0.0 1.0
 link direction
 true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 1
 @#$#@#$#@

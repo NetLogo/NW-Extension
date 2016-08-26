@@ -47,17 +47,17 @@ end
 to-report measure
   ; returns a different reporter task that can be run by the turtles, depending on which
   ; preferential attachment mecanism is selected in the chooser.
-  if preferential-attachment = "degree" [ report task [ count my-links ] ]
-  if preferential-attachment = "betweenness centrality" [ report task [ nw:betweenness-centrality ] ]
-  if preferential-attachment = "closeness centrality" [ report task [ nw:closeness-centrality ] ]
-  report task [ 1 ] ; used for "none" - they all get equal values
+  if preferential-attachment = "degree" [ report [ [] -> count my-links ] ]
+  if preferential-attachment = "betweenness centrality" [ report [ [] -> nw:betweenness-centrality ] ]
+  if preferential-attachment = "closeness centrality" [ report [ [] -> nw:closeness-centrality ] ]
+  report [ [] -> 1 ] ; used for "none" - they all get equal values
 end
 
 to highlight-giant-component
   ; nw:weak-component-clusters gives you a list of all the components in the network,
   ; each component being represented as an agentset. The get the biggest component
   ; (this "giant" one), we sort them in reverse size order and take the first one.
-  let giant-component first sort-by [ count ?1 > count ?2 ] nw:weak-component-clusters
+  let giant-component first sort-by [ [cluster1 cluster2] -> count cluster1 > count cluster2 ] nw:weak-component-clusters
   if count giant-component > giant-component-size [
     set giant-component-size count giant-component
     ask turtles [ set color gray + 2 ]
@@ -96,17 +96,17 @@ to-report choose-node [ candidates ]
     ; having a total of zero means they're all equal weight anyway
     report one-of candidates
   ]
-  [ 
+  [
     let chosen-node nobody
     ask candidates [
       let result runresult measure
       ;; if there's no winner yet...
       if chosen-node = nobody [
-        ifelse result > total [ 
-          set chosen-node self 
+        ifelse result > total [
+          set chosen-node self
         ]
-        [ 
-          set total total - result 
+        [
+          set total total - result
         ]
       ]
     ]
@@ -134,8 +134,8 @@ end
 
 
 to adjust-sizes
-  ;; We want the size of the turtles to reflect their centrality, but different measures 
-  ;; give different ranges of size, so we normalize the sizes according to the formula 
+  ;; We want the size of the turtles to reflect their centrality, but different measures
+  ;; give different ranges of size, so we normalize the sizes according to the formula
   ;; below. We then use the normalized sizes to pick an appropriate color.
   if count turtles > 0 [
     let results sort [ runresult measure ] of turtles ;; results of the measure in increasing order
@@ -149,7 +149,7 @@ to adjust-sizes
       ; note that we call runresult measure a second time, but since the centrality results
       ; are stored behind the scene by the nw extension, the cost of doing that is acceptable
       ask turtles [ set size base-size + (((runresult measure - first results) / delta) * size-range) ]
-    ]    
+    ]
   ]
 end
 
@@ -160,10 +160,10 @@ end
 GRAPHICS-WINDOW
 385
 19
-858
-513
-45
-45
+856
+491
+-1
+-1
 5.09
 1
 10
@@ -227,7 +227,7 @@ num-nodes
 num-nodes
 2
 500
-40
+40.0
 1
 1
 NIL
@@ -694,9 +694,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 6.0
+NetLogo 6.0-RC1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -712,7 +711,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 1
 @#$#@#$#@
