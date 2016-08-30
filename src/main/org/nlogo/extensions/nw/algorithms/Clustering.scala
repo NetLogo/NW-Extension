@@ -161,6 +161,11 @@ object Louvain {
     }
     def communities: Seq[Set[V]] = graph.nodes.groupBy(comMap).valuesIterator.map(_.toSet).toList
 
+    // The modularity is actually a pretty good signifier of identity.
+    // Just as importantly, its much faster to calculate the hash code of a double
+    // then of the graph and the community assignments and so forth.
+    override val hashCode = modularity.hashCode
+
   }
 
   case class Com[V](members: Set[V]) {
@@ -183,7 +188,7 @@ object Louvain {
       }
     }
 
-    val inEdgeMap: Map[Com[V], Seq[(Com[V], Com[V])]] = nodes.map{ node =>
+    val inEdgeMap: Map[Com[V], Seq[(Com[V], Com[V])]] = nodes.map { node =>
       node -> node.members.flatMap(v => graph.inNeighbors(v).map(community)).map(_ -> node).toSeq
     }.toMap
     val outEdgeMap: Map[Com[V], Seq[(Com[V], Com[V])]] = nodes.map { node =>

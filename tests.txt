@@ -948,6 +948,21 @@ louvain-communities-mixed
   O> foreach [[0 1] [1 2] [2 0] [3 4] [4 5] [5 3]] [ [ends] -> ask turtle first ends [ create-directed-edge-to turtle last ends ] ]
   sort map count nw:louvain-communities => [3 3]
 
+louvain-communities-respect-random-seed
+  extensions [ nw ]
+  globals [ comms other-comms ]
+  O> crt 100 [ create-links-with n-of 2 other turtles ]
+  O> random-seed 0
+  O> set comms nw:louvain-communities
+  O> random-seed 0
+  comms = nw:louvain-communities => true
+  O> random-seed 0
+  comms = nw:louvain-communities => true
+  O> random-seed 0
+  comms = nw:louvain-communities => true
+  O> random-seed 0
+  comms = nw:louvain-communities => true
+
 # tests to make sure undirected edges are worth twice directed edges
 mixed-separate-components
   extensions [ nw ]
