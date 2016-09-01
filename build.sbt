@@ -3,6 +3,7 @@ import org.nlogo.build.NetLogoExtension
 scalaVersion := "2.11.7"
 
 enablePlugins(NetLogoExtension)
+enablePlugins(org.nlogo.build.ExtensionDocumentationPlugin)
 
 name := "nw"
 

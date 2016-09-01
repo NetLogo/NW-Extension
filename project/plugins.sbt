@@ -4,3 +4,4 @@ resolvers += Resolver.url(
     Resolver.ivyStylePatterns)
 
 addSbtPlugin("org.nlogo" % "netlogo-extension-plugin" % "3.0")
+addSbtPlugin("org.nlogo" % "netlogo-extension-documentation" % "0.6")
