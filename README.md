@@ -362,7 +362,7 @@ If you have NW extension code running in two forever buttons or `loop` blocks th
 ### `nw:turtles-in-radius`
 
 ```NetLogo
-nw:turtles-in-radius
+nw:turtles-in-radius radius
 ```
 
 
@@ -399,7 +399,7 @@ As you may have noticed, the result includes the calling turtle. This mimics the
 ### `nw:turtles-in-reverse-radius`
 
 ```NetLogo
-nw:turtles-in-reverse-radius
+nw:turtles-in-reverse-radius radius
 ```
 
 
@@ -515,7 +515,7 @@ nw:turtles-on-path-to target-turtle
 ```
 
 
-Like `[nw:path-to](#nwpath-to)`, but the turtles on the path are reported, instead of the links, including the source turtle and target turtle.
+Like [`nw:path-to`](#nwpath-to), but the turtles on the path are reported, instead of the links, including the source turtle and target turtle.
 
 Example:
 
@@ -547,7 +547,7 @@ nw:weighted-path-to target-turtle weight-variable
 ```
 
 
-Like `[nw:path-to](#nwpath-to)`, but takes link weight into account.
+Like [`nw:path-to`](#nwpath-to), but takes link weight into account.
 
 Example:
 
@@ -580,7 +580,7 @@ nw:turtles-on-weighted-path-to target-turtle weight-variable
 ```
 
 
-Like `[nw:turtles-on-path-to](#nwturtles-on-path-to)`, but takes link weight into account.
+Like [`nw:turtles-on-path-to`](#nwturtles-on-path-to), but takes link weight into account.
 
 Example:
 
@@ -648,7 +648,7 @@ nw:mean-weighted-path-length weight-variable
 ```
 
 
-Like `[nw:mean-path-length](#nwmean-path-length)`, but takes into account link weights.
+Like [`nw:mean-path-length`](#nwmean-path-length), but takes into account link weights.
 
 Example:
 
@@ -743,7 +743,7 @@ nw:weighted-closeness-centrality link-weight-variable
 ```
 
 
-This is identical to `[nw:closeness-centrality](#nwcloseness-centrality)`, except that weights provided by the given variable are treated as the distances of links.
+This is identical to [`nw:closeness-centrality`](#nwcloseness-centrality), except that weights provided by the given variable are treated as the distances of links.
 
 
 
