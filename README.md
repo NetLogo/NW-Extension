@@ -885,7 +885,7 @@ The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/
 ### `nw:generate-preferential-attachment`
 
 ```NetLogo
-nw:generate-preferential-attachment turtle-breed link-breed num-nodes optional command block
+nw:generate-preferential-attachment turtle-breed link-breed num-nodes optional-command-block
 ```
 
 
@@ -905,7 +905,7 @@ nw:generate-preferential-attachment turtles links 100 [ set color red ]
 ### `nw:generate-random`
 
 ```NetLogo
-nw:generate-random turtle-breed link-breed num-nodes connection-probability optional command block
+nw:generate-random turtle-breed link-breed num-nodes connection-probability optional-command-block
 ```
 
 
@@ -924,7 +924,7 @@ nw:generate-random turtles links 100 0.5 [ set color red ]
 ### `nw:generate-watts-strogatz`
 
 ```NetLogo
-nw:generate-watts-strogatz turtle-breed link-breed num-nodes neighborhood-size rewire-probability optional command block
+nw:generate-watts-strogatz turtle-breed link-breed num-nodes neighborhood-size rewire-probability optional-command-block
 ```
 
 
@@ -943,7 +943,7 @@ nw:generate-watts-strogatz turtles links 50 2 0.1 [ fd 10 ]
 ### `nw:generate-small-world`
 
 ```NetLogo
-nw:generate-small-world turtle-breed link-breed row-count column-count clustering-exponent is-toroidal optional command block
+nw:generate-small-world turtle-breed link-breed row-count column-count clustering-exponent is-toroidal optional-command-block
 ```
 
 
@@ -969,7 +969,7 @@ nw:generate-small-world turtles links world-width world-height 2.0 false
 ### `nw:generate-lattice-2d`
 
 ```NetLogo
-nw:generate-lattice-2d turtle-breed link-breed row-count column-count is-toroidal optional command block
+nw:generate-lattice-2d turtle-breed link-breed row-count column-count is-toroidal optional-command-block
 ```
 
 
@@ -993,7 +993,7 @@ nw:generate-lattice-2d turtles links world-width world-height false
 ### `nw:generate-ring`
 
 ```NetLogo
-nw:generate-ring turtle-breed link-breed num-nodes optional command block
+nw:generate-ring turtle-breed link-breed num-nodes optional-command-block
 ```
 
 
@@ -1012,7 +1012,7 @@ nw:generate-ring turtles links 100 [ set color red ]
 ### `nw:generate-star`
 
 ```NetLogo
-nw:generate-star turtle-breed link-breed num-nodes optional command block
+nw:generate-star turtle-breed link-breed num-nodes optional-command-block
 ```
 
 
@@ -1029,7 +1029,7 @@ nw:generate-star turtles links 100 [ set color red ]
 ### `nw:generate-wheel`
 
 ```NetLogo
-nw:generate-wheel turtle-breed link-breed num-nodes optional command block
+nw:generate-wheel turtle-breed link-breed num-nodes optional-command-block
 ```
 
 
@@ -1082,7 +1082,7 @@ At the moment, `nw:save-matrix` does not support link weights. Every link is rep
 ### `nw:load-matrix`
 
 ```NetLogo
-nw:load-matrix file-name optional command block
+nw:load-matrix file-name optional-command-block
 ```
 
 
@@ -1264,7 +1264,7 @@ A few things to notice:
 ### `nw:load-graphml`
 
 ```NetLogo
-nw:load-graphml file-name optional command block
+nw:load-graphml file-name optional-command-block
 ```
 
 
@@ -1313,7 +1313,7 @@ let node-set turtle-set node-list
 ### `nw:load`
 
 ```NetLogo
-nw:load file-name default-turtle-breed default-link-breed optional command block
+nw:load file-name default-turtle-breed default-link-breed optional-command-block
 ```
 
 
