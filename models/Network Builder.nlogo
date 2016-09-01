@@ -170,7 +170,7 @@ CHOOSER
 mode
 mode
 "add-node" "add-undirected-link" "add-directed-link" "remove-node" "remove-link"
-2
+0
 
 BUTTON
 40
