@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions.nw.prim
 
-import org.nlogo.agent.ArrayAgentSet
+import org.nlogo.agent.AgentSet
 import org.nlogo.{ api, agent }
 import org.nlogo.api.Argument
 import org.nlogo.api.Context
@@ -53,7 +53,7 @@ class WithContext(gcp: GraphContextProvider)
     val extContext = context.asInstanceOf[ExtensionContext]
     val nvmContext = extContext.nvmContext
     // Note that this can optimized by hanging onto the array and just mutating it. Shouldn't be necessary though.
-    val agentSet = new ArrayAgentSet(nvmContext.agent.kind, Array(nvmContext.agent))
+    val agentSet = AgentSet.fromAgent(nvmContext.agent)
     gcp.withTempGraphContext(gc) { () =>
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }

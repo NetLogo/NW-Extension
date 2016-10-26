@@ -49,8 +49,8 @@ object NetworkExtensionUtil {
     def isLinkBreed = (agentSet eq world.links) || world.isLinkBreed(agentSet)
     def isTurtleBreed = (agentSet eq world.turtles) || world.isBreed(agentSet)
 
-    def isLinkSet = classOf[api.Link].isAssignableFrom(agentSet.`type`)
-    def isTurtleSet = classOf[api.Turtle].isAssignableFrom(agentSet.`type`)
+    def isLinkSet = agentSet.kind == AgentKind.Link
+    def isTurtleSet = agentSet.kind == AgentKind.Turtle
     def requireTurtleSet =
       if (isTurtleSet) agentSet
       else throw new ExtensionException("Expected input to be a turtleset")
@@ -76,7 +76,7 @@ object NetworkExtensionUtil {
 
     private class AgentSetIterable[T <: Agent]
       extends Iterable[T] {
-      protected def newIt = agentSet.iterator()
+      protected def newIt = agentSet.iterator
       override def iterator: Iterator[T] = {
         val it = newIt
         new Iterator[T] {
@@ -108,7 +108,7 @@ object NetworkExtensionUtil {
       val extContext = context.asInstanceOf[nvm.ExtensionContext]
       val nvmContext = extContext.nvmContext
       agents.foreach(extContext.workspace.joinForeverButtons)
-      val agentSet = new agent.ArrayAgentSet(AgentKind.Turtle, agents)
+      val agentSet = agent.AgentSet.fromArray(AgentKind.Turtle, agents)
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }
     def assemble(a: nvm.AssemblerAssistant) {
