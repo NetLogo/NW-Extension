@@ -27,7 +27,7 @@ object GephiUtils {
     import org.gephi.data.attributes.model.IndexedAttributeModel
     import org.gephi.data.attributes.event.AttributeEventManager
     import org.gephi.data.attributes.AbstractAttributeModel
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
 
     val indexedAttributeModels = GephiUtils.withNWLoaderContext {
       Lookup.getDefault.lookup(new Template(classOf[IndexedAttributeModel])).allInstances
@@ -35,16 +35,16 @@ object GephiUtils {
 
     val eventManagerField = classOf[AttributeEventManager].getDeclaredField("eventQueue")
     eventManagerField.setAccessible(true)
-    indexedAttributeModels.map(eventManagerField.get(_).asInstanceOf[AttributeEventManager]).foreach(_.stop(true))
+    indexedAttributeModels.asScala.map(eventManagerField.get(_).asInstanceOf[AttributeEventManager]).foreach(_.stop(true))
 
     val allDhns = withNWLoaderContext {
       Lookup.getDefault.lookup(
-        new Template(classOf[Dhns])).allInstances
+        new Template(classOf[Dhns])).allInstances.asScala
     }
 
     allDhns.foreach(_.getEventManager.stop(true))
 
-    val threadSet = Thread.getAllStackTraces().keySet()
+    val threadSet = Thread.getAllStackTraces().keySet().asScala
 
     val destructorThread =
       withNWLoaderContext {

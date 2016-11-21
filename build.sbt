@@ -1,6 +1,6 @@
 import org.nlogo.build.NetLogoExtension
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.0"
 
 enablePlugins(NetLogoExtension)
 enablePlugins(org.nlogo.build.ExtensionDocumentationPlugin)
@@ -39,7 +39,7 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test",
   "org.picocontainer" % "picocontainer" % "2.13.6" % "test",
   "org.ow2.asm" % "asm-all" % "5.0.3" % "test")
 
@@ -70,4 +70,4 @@ test in Test := {
   IO.delete(nwDirectory.value)
 }
 
-netLogoVersion := "6.0.0-BETA1"
+netLogoVersion := "6.0.0-BETA2"
