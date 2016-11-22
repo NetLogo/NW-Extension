@@ -6,10 +6,10 @@ to setup
   ca
   let probs runresult connection-probs
   let pops runresult populations
-  (foreach pops n-values length pops [?] [
-    crt ?1 [
-      set group ?2
-      set color item (?2 + 1) base-colors
+  (foreach pops n-values length pops [[i] -> i] [ [amount index] ->
+    crt amount [
+      set group index
+      set color item (index + 1) base-colors
     ]
   ])
   ask turtles [
@@ -432,7 +432,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0-M9
+NetLogo 6.0-BETA2
 @#$#@#$#@
 need-to-manually-make-preview-for-this-model
 @#$#@#$#@
