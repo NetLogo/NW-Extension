@@ -933,6 +933,7 @@ directed-separate-components
 louvain-communities
   extensions [ nw ]
   O> crt 9
+  O> random-seed 0
   O> foreach [[0 1] [1 2] [2 3] [3 0] [0 4] [4 5] [5 6] [6 7] [7 4] [1 7] [8 0] [8 1] [8 2] [8 3]] [ [ends] -> ask turtle first ends [ create-link-with turtle last ends ] ]
   sort map count nw:louvain-communities => [4 5]
 
@@ -950,7 +951,7 @@ louvain-communities-mixed
 
 louvain-communities-respect-random-seed
   extensions [ nw ]
-  globals [ comms other-comms ]
+  globals [ comms ]
   O> crt 100 [ create-links-with n-of 2 other turtles ]
   O> random-seed 0
   O> set comms nw:louvain-communities
@@ -962,6 +963,22 @@ louvain-communities-respect-random-seed
   comms = nw:louvain-communities => true
   O> random-seed 0
   comms = nw:louvain-communities => true
+
+louvain-communities-more-seed-tests
+  extensions [ nw ]
+  globals [ comms other-comms ]
+  O> ct random-seed 0 nw:generate-watts-strogatz turtles links 100 4 0.1
+  O> set comms map [ [ts] -> sort [ who ] of ts ] nw:louvain-communities
+  O> ct random-seed 0 nw:generate-watts-strogatz turtles links 100 4 0.1
+  comms = map [ [ts] -> sort [ who ] of ts ] nw:louvain-communities => true
+  O> ct random-seed 0 nw:generate-watts-strogatz turtles links 100 4 0.1
+  comms = map [ [ts] -> sort [ who ] of ts ] nw:louvain-communities => true
+  O> ct random-seed 0 nw:generate-watts-strogatz turtles links 100 4 0.1
+  comms = map [ [ts] -> sort [ who ] of ts ] nw:louvain-communities => true
+  O> ct random-seed 0 nw:generate-watts-strogatz turtles links 100 4 0.1
+  comms = map [ [ts] -> sort [ who ] of ts ] nw:louvain-communities => true
+  O> ct random-seed 0 nw:generate-watts-strogatz turtles links 100 4 0.1
+  comms = map [ [ts] -> sort [ who ] of ts ] nw:louvain-communities => true
 
 # tests to make sure undirected edges are worth twice directed edges
 mixed-separate-components

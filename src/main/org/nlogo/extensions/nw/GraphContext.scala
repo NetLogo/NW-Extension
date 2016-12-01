@@ -3,41 +3,45 @@
 package org.nlogo.extensions.nw
 
 import org.nlogo.agent._
+import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.algorithms.{BreadthFirstSearch, PathFinder}
-import org.nlogo.api.MersenneTwisterFast
-import scala.collection.{GenIterable, mutable}
-import org.nlogo.api.ExtensionException
-import scala.Some
-import org.nlogo.extensions.nw.util.CacheManager
+
+import scala.collection.immutable.SortedSet
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.util.Random
 
 class GraphContext( val world: World, val turtleSet: AgentSet, val linkSet: AgentSet)
 extends Graph[Turtle, Link]
 with algorithms.CentralityMeasurer {
 
-  implicit val implicitWorld = world
+  implicit val implicitWorld: World = world
 
-  val turtleMonitor = turtleSet match {
+  val turtleMonitor: MonitoredAgentSet[Turtle] = turtleSet match {
     case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
   }
 
-  val linkMonitor = linkSet match {
+  val linkMonitor: MonitoredAgentSet[Link] = linkSet match {
     case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas)
   }
 
-  override val nodes: Set[Turtle] = turtleSet.asIterable[Turtle].toSet
+  // We need a guaranteed iteration order for Turtles, but also want fast
+  // contains checks, so we use a SortedSet. Note that if you want to shuffle
+  // the turtles, you *must* convert to Seq first. Shuffling a Set converts to
+  // a HashTrie which does *not* have a deterministic ordering over Turtles.
+  implicit object TurtleOrdering extends Ordering[Turtle]{
+    override def compare(x: Turtle, y: Turtle): Int = x.compareTo(y)
+  }
+  override val nodes: SortedSet[Turtle] = turtleSet.asIterable[Turtle].to[SortedSet]
   override val links: Iterable[Link] = linkSet.asIterable[Link]
-    .filter((l => nodes.contains(l.end1) && nodes.contains(l.end2)))
+    .filter(l => nodes.contains(l.end1) && nodes.contains(l.end2))
 
   val (undirLinks, inLinks, outLinks) = {
     val in = mutable.Map.empty[Turtle, ArrayBuffer[Link]]
     val out = mutable.Map.empty[Turtle, ArrayBuffer[Link]]
     val undir = mutable.Map.empty[Turtle, ArrayBuffer[Link]]
-    var arcs = 0
     links foreach { link =>
       if (link.isDirectedLink) {
         out.getOrElseUpdate(link.end1, ArrayBuffer.empty[Link]) += link
@@ -108,7 +112,7 @@ with algorithms.CentralityMeasurer {
   // linkSet.isDirected fails for empty and mixed directed networks. The only
   // reliable way is to actually see if there are any directed links.
   // -- BCH 5/13/2014
-  lazy val isDirected = !outLinks.isEmpty
+  val isDirected: Boolean = outLinks.nonEmpty
 
   lazy val turtleCount: Int = nodes.size
   lazy val linkCount: Int = links.size
@@ -124,9 +128,9 @@ with algorithms.CentralityMeasurer {
 
   override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
 
-  val pathFinder = new PathFinder[Turtle, Link](this, world, weightFunction _)
+  val pathFinder = new PathFinder[Turtle, Link](this, world, weightFunction)
 
-  lazy val components: Traversable[Set[Turtle]] = {
+  lazy val components: Traversable[SortedSet[Turtle]] = {
     val foundBy = mutable.Map[Turtle, Turtle]()
     nodes.groupBy { t =>
       foundBy.getOrElseUpdate(t, {

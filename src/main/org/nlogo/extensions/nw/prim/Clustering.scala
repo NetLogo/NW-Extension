@@ -3,11 +3,12 @@ package org.nlogo.extensions.nw.prim
 import org.nlogo.api
 import org.nlogo.api.{AgentSet, ExtensionException, ScalaConversions}
 import org.nlogo.core.Syntax._
-import org.nlogo.core.{AgentKind}
+import org.nlogo.core.{AgentKind, LogoList}
 import org.nlogo.agent
 import org.nlogo.agent.Turtle
 import org.nlogo.extensions.nw.{GraphContext, GraphContextProvider}
 import org.nlogo.extensions.nw.algorithms.{ClusteringMetrics, Louvain}
+
 import collection.JavaConverters._
 import org.nlogo.api.TypeNames
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
@@ -37,9 +38,9 @@ class Modularity(gcp: GraphContextProvider) extends api.Reporter {
 
 class LouvainCommunities(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = ListType)
-  override def report(args: Array[api.Argument], context: api.Context) = {
+  override def report(args: Array[api.Argument], context: api.Context): LogoList = {
     val graph = gcp.getGraphContext(context.getAgent.world)
-    ScalaConversions.toLogoList(Louvain.cluster(graph).map(toTurtleSet))
+    ScalaConversions.toLogoList(Louvain.cluster(graph, context.getRNG).map(toTurtleSet))
   }
 }
 

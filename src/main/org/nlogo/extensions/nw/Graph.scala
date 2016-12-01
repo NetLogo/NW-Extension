@@ -3,7 +3,7 @@ package org.nlogo.extensions.nw
 trait Graph[V, E] {
 
   def nodes: Iterable[V]
-  def links: Iterable[E] = nodes.flatMap(outEdges _).toSet
+  def links: Iterable[E] = nodes.flatMap(outEdges).toSet
 
   /**
    * Returns the number of directed arcs, where an undirected link count as
@@ -14,7 +14,7 @@ trait Graph[V, E] {
    * of the network.
    */
   lazy val arcCount: Int = nodes.view.map(outEdges(_).size).sum
-  lazy val totalArcWeight: Double = nodes.view.flatMap(outEdges _).map(weight _).sum
+  lazy val totalArcWeight: Double = nodes.view.flatMap(outEdges).map(weight).sum
 
   def otherEnd(node: V)(link: E): V = {
     val (end1, end2) = ends(link)
@@ -47,19 +47,9 @@ trait Graph[V, E] {
   def weight(link: E): Double = 1.0
 }
 
-case class DirectedMultiGraph[V](val adjMap: Map[V, Seq[V]]) extends Graph[V, (V,V)] {
-  lazy val invAdjMap = adjMap.toSeq.flatMap({(s: V, ts: Seq[V]) => ts.map(s -> _)}.tupled).groupBy(_._2)
-  override def outNeighbors(node: V) = adjMap.getOrElse(node, Seq.empty[V])
-  override val nodes = (adjMap.keys ++ adjMap.values.flatten).toSet
-  override val links = nodes.view.flatMap(outEdges _).toSeq
-  override def ends(link: (V, V)) = link
-  override def outEdges(node: V) = outNeighbors(node) map ( node -> _ )
-  override def inEdges(node: V) = invAdjMap.getOrElse(node, Seq.empty[(V, V)])
-}
-
 case class MixedMultiGraph[V](override val links: Seq[(V, V, Boolean)]) extends Graph[V, (V,V,Boolean)] {
 
-  override val nodes = (links.map(_._1) ++ links.map(_._2)).distinct
+  override val nodes: Seq[V] = (links.map(_._1) ++ links.map(_._2)).distinct
   val undirLinks: Map[V, Seq[(V,V,Boolean)]] = {
     val undirLinks = links.filterNot(_._3)
     val outUndirLinks = undirLinks.groupBy(_._1)

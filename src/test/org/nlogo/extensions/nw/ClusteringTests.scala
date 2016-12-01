@@ -31,7 +31,7 @@ class ClusteringTestSuite extends FunSuite {
       (7, 7, true)
     ))
 
-    val cs = Seq(Set(0,1), Set(2,3), Set(4,5), Set(6), Set(7)).map(Louvain.Com(_))
+    val cs = Seq(Seq(0,1), Seq(2,3), Seq(4,5), Seq(6), Seq(7)).map(Louvain.Com(_))
 
     val mGraph = Louvain.MergedGraph(graph, cs)
 
