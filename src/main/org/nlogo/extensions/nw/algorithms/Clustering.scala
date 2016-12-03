@@ -84,7 +84,7 @@ object Louvain {
   object CommunityStructure {
     type Community[V] = Int
 
-    def apply[V,E](graph: Graph[V,E]) = {
+    def apply[V,E](graph: Graph[V,E]): CommunityStructure[V,E] = {
       val comMap: Map[V, Community[V]] = graph.nodes.zipWithIndex.toMap
       val internal = Array.fill(graph.nodes.size)(0.0)
       val totalIn = Array.fill(graph.nodes.size)(0.0)
@@ -104,6 +104,13 @@ object Louvain {
       }.sum
       new CommunityStructure[V,E](graph, comMap, internal.toVector, totalIn.toVector, totalOut.toVector, mod)
     }
+
+    // Very slow; only used for testing. Could speed it up by calculating the initial values for each of the vectors
+    // but am too lazy for test code.
+    def apply[V,E](graph: Graph[V,E], groups: Seq[Seq[V]]): CommunityStructure[V,E] =
+      groups.zipWithIndex.flatMap { case (vs, i) => vs.map(_ -> i) }.foldLeft(CommunityStructure(graph)) {
+        (cs: CommunityStructure[V,E], pair: (V, Community[V])) => cs.move(pair._1, pair._2)
+      }
   }
 
   class CommunityStructure[V,E](graph: Graph[V,E],

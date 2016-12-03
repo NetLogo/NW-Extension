@@ -1,9 +1,10 @@
 package org.nlogo.extensions.nw
 
+import org.nlogo.extensions.nw.algorithms.Louvain.CommunityStructure.Community
+import org.nlogo.extensions.nw.algorithms.Louvain.{CommunityStructure, WeightedLink}
 import org.scalatest.FunSuite
 import org.scalatest.GivenWhenThen
-
-import org.nlogo.extensions.nw.algorithms.{Louvain, ClusteringMetrics}
+import org.nlogo.extensions.nw.algorithms.{ClusteringMetrics, Louvain}
 
 class ClusteringTestSuite extends FunSuite {
   test("merged graphs count weights correctly for mixed multi-graph with self-links") {
@@ -31,21 +32,31 @@ class ClusteringTestSuite extends FunSuite {
       (7, 7, true)
     ))
 
-    val cs = Seq(Seq(0,1), Seq(2,3), Seq(4,5), Seq(6), Seq(7)).map(Louvain.Com(_))
+    val cs = Seq(Seq(0,1), Seq(2,3), Seq(4,5), Seq(6), Seq(7))
+    val comStruct = CommunityStructure(graph, cs)
 
-    val mGraph = Louvain.MergedGraph(graph, cs)
+    val mGraph = Louvain.MergedGraph(graph, comStruct)
+
+
+    def weight(v1: Community[Int], v2: Community[Int]) = mGraph.links.filter {
+      l => l.end1 == v1 && l.end2 == v2
+    }.head.weight
+
+    assert(mGraph.links.size === 11)
 
     // self-links
-    assert(mGraph.weight((cs(0), cs(0))) === 2)
-    assert(mGraph.weight((cs(1), cs(1))) === 3)
-    assert(mGraph.weight((cs(2), cs(2))) === 4)
-    assert(mGraph.weight((cs(3), cs(3))) === 2)
-    assert(mGraph.weight((cs(4), cs(4))) === 1)
+    assert(weight(0, 0) === 2)
+    assert(weight(1, 1) === 3)
+    assert(weight(2, 2) === 4)
+    assert(weight(3, 3) === 2)
+    assert(weight(4, 4) === 1)
 
     // between-community links
-    assert(mGraph.weight((cs(0), cs(1))) === 1)
-    assert(mGraph.weight((cs(1), cs(2))) === 1)
-    assert(mGraph.weight((cs(2), cs(3))) === 2)
-    assert(mGraph.weight((cs(3), cs(4))) === 2)
+    assert(weight(0, 1) === 1)
+    assert(weight(1, 2) === 1)
+    assert(weight(2, 1) === 1)
+    assert(weight(2, 3) === 2)
+    assert(weight(3, 4) === 2)
+    assert(weight(4, 3) === 1)
   }
 }
