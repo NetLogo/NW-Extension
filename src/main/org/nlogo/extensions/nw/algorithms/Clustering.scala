@@ -1,8 +1,8 @@
 package org.nlogo.extensions.nw.algorithms
 
 import org.nlogo.extensions.nw.Graph
+import org.nlogo.extensions.nw.algorithms.Louvain.CommunityStructure.Community
 
-import scala.collection.mutable
 import scala.util.Random
 
 object ClusteringMetrics {
@@ -44,17 +44,17 @@ object ClusteringMetrics {
 object Louvain {
   def cluster[V,E](graph: Graph[V,E], rng: Random): Seq[Seq[V]] = {
     val initComms = clusterLocally(graph, rng)
-    if (initComms.size < graph.nodes.size) {
-      val mGraph = MergedGraph(graph, initComms.map(Com(_)))
-      val metaComms: Seq[Seq[Com[V]]] = cluster(mGraph, rng)
-      metaComms.map(_.flatMap(_.members))
+    if (initComms.communities.size < graph.nodes.size) {
+      val mGraph = MergedGraph(graph, initComms)
+      val metaComms: Seq[Seq[Community[V]]] = cluster(mGraph, rng)
+      metaComms.map(_.flatMap(initComms.members))
     } else {
-      initComms
+      initComms.communities.map(initComms.members)
     }
   }
 
 
-  def clusterLocally[V,E](graph: Graph[V,E], rng: Random): Seq[Seq[V]] = {
+  def clusterLocally[V,E](graph: Graph[V,E], rng: Random): CommunityStructure[V,E] = {
     var comStruct = CommunityStructure(graph)
 
     var switchOccurred = true
@@ -64,8 +64,8 @@ object Louvain {
       switchOccurred  = false
       rng.shuffle(nodesSeq).foreach { v =>
         // Note that the original community is almost certainly in the connected communities, so we remove it
-        val originalCommunity = comStruct.community(v)
-        val connectedCommunities: Seq[Int] = rng.shuffle(
+        val originalCommunity: Community[V] = comStruct.community(v)
+        val connectedCommunities: Seq[Community[V]] = rng.shuffle(
           graph.outNeighbors(v).map(comStruct.community _).filterNot(_ == originalCommunity).distinct
         )
         if (connectedCommunities.nonEmpty) {
@@ -78,12 +78,14 @@ object Louvain {
         }
       }
     }
-    comStruct.communities
+    comStruct
   }
 
   object CommunityStructure {
+    type Community[V] = Int
+
     def apply[V,E](graph: Graph[V,E]) = {
-      val comMap = graph.nodes.zipWithIndex.toMap
+      val comMap: Map[V, Community[V]] = graph.nodes.zipWithIndex.toMap
       val internal = Array.fill(graph.nodes.size)(0.0)
       val totalIn = Array.fill(graph.nodes.size)(0.0)
       val totalOut = Array.fill(graph.nodes.size)(0.0)
@@ -104,9 +106,16 @@ object Louvain {
     }
   }
 
-  class CommunityStructure[V,E](graph: Graph[V,E], comMap: Map[V, Int], internal: Vector[Double], totalIn: Vector[Double], totalOut: Vector[Double], val modularity: Double) {
-    def community(node: V): Int = comMap(node)
-    def move(node: V, newCommunity: Int): CommunityStructure[V,E] = {
+  class CommunityStructure[V,E](graph: Graph[V,E],
+                                comMap: Map[V, Community[V]],
+                                internal: Vector[Double],
+                                totalIn: Vector[Double],
+                                totalOut: Vector[Double],
+                                val modularity: Double) {
+
+    def community(node: V): Community[V] = comMap(node)
+
+    def move(node: V, newCommunity: Community[V]): CommunityStructure[V,E] = {
       val originalCommunity = community(node)
       val otherEnd = graph.otherEnd(node)_
       var inDegree = 0.0
@@ -160,48 +169,43 @@ object Louvain {
       val deltaNew =
         contrib(newCommunity, newInternal, newTotalIn, newTotalOut) -
         contrib(newCommunity, internal, totalIn, totalOut)
-      new CommunityStructure[V,E](graph, comMap.updated(node, newCommunity), newInternal, newTotalIn, newTotalOut, modularity + deltaOriginal + deltaNew)
+      new CommunityStructure[V,E](graph,
+        comMap.updated(node, newCommunity),
+        newInternal, newTotalIn, newTotalOut, modularity + deltaOriginal + deltaNew)
     }
-    def communities: Seq[Seq[V]] = graph.nodes.groupBy(comMap).valuesIterator.map(_.toSeq).toList
 
-    // The modularity is actually a pretty good signifier of identity.
-    // Just as importantly, its much faster to calculate the hash code of a double
-    // then of the graph and the community assignments and so forth.
-    override val hashCode: Int = modularity.hashCode
+    lazy val communities: Seq[Community[V]] = comMap.values.toSeq.distinct.sorted
+
+    private lazy val _members: Map[Community[V], Seq[V]] = graph.nodes.toSeq.groupBy(comMap)
+    def members(community: Community[V]): Seq[V] = _members(community)
 
   }
 
-  case class Com[V](members: Seq[V]) {
-    override val hashCode: Int = members.hashCode
-    override def equals(that: Any): Boolean = that.isInstanceOf[Com[V]] && (this eq that.asInstanceOf[Com[V]])
-  }
+  case class WeightedLink[V](end1:V, end2: V, weight: Double)
 
-  case class MergedGraph[V,E](graph: Graph[V, E], communities: Seq[Com[V]]) extends Graph[Com[V], (Com[V], Com[V])] {
-    val community: Map[V, Com[V]] = communities.flatMap(c => c.members.map(_ -> c))(collection.breakOut)
-    override val nodes: Seq[Com[V]] = communities
-    override def ends(link: (Com[V], Com[V])): (Com[V], Com[V]) = link
+  case class MergedGraph[V,E](graph: Graph[V, E], communityStructure: CommunityStructure[V,E])
+    extends Graph[Community[V], WeightedLink[Community[V]]] {
 
-    val weights: mutable.Map[(Com[V], Com[V]), Double] = mutable.Map.empty[(Com[V], Com[V]), Double]
-    graph.nodes.foreach { source =>
-      val sourceComm = community(source)
-      graph.outEdges(source).foreach { edge =>
-        val targetComm = community(graph.otherEnd(source)(edge))
-        val commEdge = (sourceComm, targetComm)
-        weights(commEdge) = weights.getOrElse(commEdge, 0.0) + graph.weight(edge)
+    override val nodes: Seq[Community[V]] = communityStructure.communities
+
+    val edges: Seq[WeightedLink[Community[V]]] = communityStructure.communities.flatMap { sourceCom: Community[V] =>
+      communityStructure.members(sourceCom).flatMap { source =>
+        graph.outEdges(source).map { e =>
+          communityStructure.community(graph.otherEnd(source)(e)) -> graph.weight(e)
+        }
+      }.groupBy(_._1).map { case (targetCom, ws) =>
+        WeightedLink(sourceCom, targetCom, ws.map(_._2).sum)
       }
     }
 
-    val inEdgeMap: Map[Com[V], Seq[(Com[V], Com[V])]] = nodes.map { node =>
-      node -> node.members.flatMap(v => graph.inNeighbors(v).map(community)).map(_ -> node).distinct
-    }.toMap
-    val outEdgeMap: Map[Com[V], Seq[(Com[V], Com[V])]] = nodes.map { node =>
-      node -> node.members.flatMap(v => graph.outNeighbors(v).map(community)).map(node -> _).distinct
-    }.toMap
+    val outEdgeMap: Map[Community[V], Seq[WeightedLink[Community[V]]]] = edges.groupBy(_.end1)
+    val inEdgeMap: Map[Community[V], Seq[WeightedLink[Community[V]]]] = edges.groupBy(_.end2)
 
+    override def inEdges(node: Community[V]): Seq[WeightedLink[Community[V]]] = inEdgeMap(node)
+    override def outEdges(node: Community[V]): Seq[WeightedLink[Community[V]]] = outEdgeMap(node)
+    override def weight(link: WeightedLink[Community[V]]): Double = link.weight
 
-    override def inEdges(node: Com[V]): Seq[(Com[V], Com[V])] = inEdgeMap(node)
-    override def outEdges(node: Com[V]): Seq[(Com[V], Com[V])] = outEdgeMap(node)
-    override def weight(link: (Com[V], Com[V])): Double = weights(link)
+    override def ends(link: WeightedLink[Community[V]]): (Community[V], Community[V]) = link.end1 -> link.end2
   }
 }
 

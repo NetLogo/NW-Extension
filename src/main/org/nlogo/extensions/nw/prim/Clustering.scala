@@ -1,17 +1,15 @@
 package org.nlogo.extensions.nw.prim
 
-import org.nlogo.api
-import org.nlogo.api.{AgentSet, ExtensionException, ScalaConversions}
+import org.nlogo.agent.Turtle
+import org.nlogo.{agent, api}
+import org.nlogo.api.{AgentSet, ExtensionException, ScalaConversions, TypeNames}
 import org.nlogo.core.Syntax._
 import org.nlogo.core.{AgentKind, LogoList}
-import org.nlogo.agent
-import org.nlogo.agent.Turtle
-import org.nlogo.extensions.nw.{GraphContext, GraphContextProvider}
+import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.algorithms.{ClusteringMetrics, Louvain}
-
-import collection.JavaConverters._
-import org.nlogo.api.TypeNames
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
+
+import scala.collection.JavaConverters._
 
 class ClusteringCoefficient(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")
