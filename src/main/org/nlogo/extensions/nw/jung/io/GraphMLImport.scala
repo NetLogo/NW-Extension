@@ -4,13 +4,11 @@ import java.io.BufferedReader
 import java.io.FileReader
 import java.io.File
 import java.util.Locale
+
 import scala.Option.option2Iterable
 import scala.collection.JavaConverters._
 import org.nlogo.app.App
-import org.nlogo.agent.Agent
-import org.nlogo.agent.AgentSet
-import org.nlogo.agent.Link
-import org.nlogo.agent.Turtle
+import org.nlogo.agent.{Agent, AgentSet, Directedness, Link, Turtle, World}
 import org.nlogo.api.AgentException
 import org.nlogo.api.ExtensionException
 import org.nlogo.api
@@ -20,6 +18,7 @@ import org.nlogo.extensions.nw.jung.sparseGraphFactory
 import org.nlogo.extensions.nw.jung.transformer
 import org.nlogo.api.MersenneTwisterFast
 import edu.uci.ics.jung
+import edu.uci.ics.jung.graph.util.EdgeType
 import edu.uci.ics.jung.io.graphml.AbstractMetadata
 import edu.uci.ics.jung.io.graphml.EdgeMetadata
 import edu.uci.ics.jung.io.graphml.GraphMLReader2
@@ -27,7 +26,6 @@ import edu.uci.ics.jung.io.graphml.GraphMetadata
 import edu.uci.ics.jung.io.graphml.Key
 import edu.uci.ics.jung.io.graphml.Metadata.MetadataType
 import edu.uci.ics.jung.io.graphml.NodeMetadata
-import org.nlogo.agent.World
 
 object GraphMLImport {
 
@@ -175,7 +173,8 @@ object GraphMLImport {
           }
 
         createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE), world.links, world.getLinkBreed) {
-          (e: Edge, breed) => createLink(turtles, graph.getEndpoints(e), breed, world)
+          (e: Edge, breed) =>
+            createLink(turtles, graph.getEndpoints(e), graph.getDefaultEdgeType == EdgeType.DIRECTED, breed, world)
         }
 
         turtles.valuesIterator

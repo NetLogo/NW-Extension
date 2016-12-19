@@ -1354,6 +1354,7 @@ graphml-export-import-turtles
   O> ca
   O> nw:load-graphml "extensions/nw/test/tmp/graphml-export-import-turtles.xml"
   count turtles => 2
+  count links => 1
   sort [ color ] of turtles => [5 15]
   sort [ tvar ] of turtles => ["a" "b"]
   [ thickness ] of link 0 1 => 0.5
