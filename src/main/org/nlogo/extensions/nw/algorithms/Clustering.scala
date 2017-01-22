@@ -205,8 +205,10 @@ object Louvain {
       }
     }
 
-    val outEdgeMap: Map[Community[V], Seq[WeightedLink[Community[V]]]] = edges.groupBy(_.end1)
-    val inEdgeMap: Map[Community[V], Seq[WeightedLink[Community[V]]]] = edges.groupBy(_.end2)
+    val outEdgeMap: Map[Community[V], Seq[WeightedLink[Community[V]]]] =
+      edges.groupBy(_.end1).withDefaultValue(Seq.empty[WeightedLink[Community[V]]])
+    val inEdgeMap: Map[Community[V], Seq[WeightedLink[Community[V]]]] =
+      edges.groupBy(_.end2).withDefaultValue(Seq.empty[WeightedLink[Community[V]]])
 
     override def inEdges(node: Community[V]): Seq[WeightedLink[Community[V]]] = inEdgeMap(node)
     override def outEdges(node: Community[V]): Seq[WeightedLink[Community[V]]] = outEdgeMap(node)

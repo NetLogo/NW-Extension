@@ -937,6 +937,14 @@ louvain-communities
   O> foreach [[0 1] [1 2] [2 3] [3 0] [0 4] [4 5] [5 6] [6 7] [7 4] [1 7] [8 0] [8 1] [8 2] [8 3]] [ [ends] -> ask turtle first ends [ create-link-with turtle last ends ] ]
   sort map count nw:louvain-communities => [4 5]
 
+louvain-communities-multi-components
+  extensions [ nw ]
+  O> crt 9
+  O> random-seed 1
+  O> foreach [[0 1] [1 2] [2 3] [3 0] [0 4] [4 5] [5 6] [6 7] [7 4] [1 7] [8 0] [8 1] [8 2] [8 3]] [ [ends] -> ask turtle first ends [ create-link-with turtle last ends ] ]
+  O> crt 1
+  sort map count nw:louvain-communities => [1 4 5]
+
 louvain-communities-mixed
   extensions [ nw ]
   undirected-link-breed [ undirected-edges undirected-edge ]
