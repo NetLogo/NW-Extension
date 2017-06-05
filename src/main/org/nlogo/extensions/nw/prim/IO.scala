@@ -287,8 +287,8 @@ object GephiImport{
     } else if (importer.isInstanceOf[ImporterGraphML]) {
       throw new ExtensionException("You must use nw:load-graphml to load graphml files.")
     }
-    val turtleBreeds = world.getBreeds.asScala
-    val linkBreeds = world.getLinkBreeds.asScala
+    val turtleBreeds = world.breeds.asScala
+    val linkBreeds = world.linkBreeds.asScala
 
     val container = try using(new FileReader(file))(r => importController.importFile(r, importer))
                     catch { case e: IOException => throw new ExtensionException(e) }

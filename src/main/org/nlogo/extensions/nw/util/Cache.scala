@@ -34,7 +34,7 @@ The reference to the caches must be weak since the watcher may outlive the graph
 this). - BCH 5/2/2014
  */
 private class CacheClearingWatcher(caches: WeakReference[mutable.Map[Option[String], _]]) extends VariableWatcher {
-  def update(agent: Agent, variableName: String, value: scala.Any) = {
+  def update(agent: Agent, variableName: String, value: AnyRef) = {
     caches.get.foreach { _.remove(Some(variableName)) }
     agent.world.deleteWatcher(variableName, this)
   }

@@ -21,7 +21,7 @@ trait Algorithms {
   val weightedGraphCaches: mutable.Map[String, jungalg.shortestpath.DijkstraShortestPath[Turtle, Link]] = new mutable.HashMap[String, jungalg.shortestpath.DijkstraShortestPath[Turtle, Link]]()
 
   val cacheInvalidator: World.VariableWatcher = new VariableWatcher {
-    def update(agent: Agent, variable: String, value: scala.Any) = agent match {
+    def update(agent: Agent, variable: String, value: AnyRef) = agent match {
       case link: Link => if (gc.outEdges(link.end1) contains link) {
         weightedGraphCaches.remove(variable)
         gc.world.deleteWatcher(variable, cacheInvalidator)
