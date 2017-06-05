@@ -53,21 +53,21 @@ object GraphMLImport {
     val name: String,
     val attributeType: String,
     val value: String) {
-    def valueObject: Any =
+    def valueObject: AnyRef =
       try {
         attributeType match {
-          case "BOOLEAN" => value.toBoolean
-          case "INT"     => value.toDouble
-          case "LONG"    => value.toDouble
-          case "FLOAT"   => value.toDouble
-          case "DOUBLE"  => value.toDouble
+          case "BOOLEAN" => Boolean.box(value.toBoolean)
+          case "INT"     => Double.box(value.toDouble)
+          case "LONG"    => Double.box(value.toDouble)
+          case "FLOAT"   => Double.box(value.toDouble)
+          case "DOUBLE"  => Double.box(value.toDouble)
           case "STRING"  => value
           case _ =>
             // trial and errors for unknown types
-            try value.toDouble
+            try Double.box(value.toDouble)
             catch {
               case _: Exception =>
-                try value.toBoolean
+                try Boolean.box(value.toBoolean)
                 catch { case _: Exception => value } // string as a final resort
             }
         }

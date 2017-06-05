@@ -58,13 +58,13 @@ with algorithms.CentralityMeasurer {
 
   def verify(w: World): GraphContext = {
     if (w != world) {
-      new GraphContext(w, w.turtles(), w.links())
+      new GraphContext(w, w.turtles, w.links)
     } else if (turtleMonitor.hasChanged || linkMonitor.hasChanged) {
       // When a resize occurs, breed sets are all set to new objects, so we
       // need to make sure we're working with the latest object.
       new GraphContext(w,
-        if (turtleSet.isInstanceOf[TreeAgentSet]) Option(w.getBreed(turtleSet.printName)).getOrElse(w.turtles()) else turtleSet,
-        if (linkSet.isInstanceOf[TreeAgentSet]) Option(w.getLinkBreed(linkSet.printName)).getOrElse(w.links()) else linkSet)
+        if (turtleSet.isInstanceOf[TreeAgentSet]) Option(w.getBreed(turtleSet.printName)).getOrElse(w.turtles) else turtleSet,
+        if (linkSet.isInstanceOf[TreeAgentSet]) Option(w.getLinkBreed(linkSet.printName)).getOrElse(w.links) else linkSet)
     } else {
       this
     }
