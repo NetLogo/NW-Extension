@@ -21,7 +21,7 @@ Now we might want to consider this whole thing as one big network. If that is th
 
 We could also, however, be only interested in a subset of the network. Maybe we want to consider only friendship relations. Furthermore, maybe we want to consider only the friendships _between bankers_. After all, having a very high centrality in a network of banker friendships is very different from having a high centrality in a network of client friendships.
 
-To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The way to tell the extension about this is with the [`nw:set-context`](#set-context) primitive, which you must call _prior_ to doing any operations on a network.
+To specify such networks, we need to tell the extension _both_ which turtles _and_ which links we are interested in. All the turtles from the specified set of turtles will be included in the network, and only the links from the specified set of links that are between turtles of the specified set will be included. For example, if you ask for `bankers` and `friendships`, even the lonely bankers with no friends will be included, but friendship links between bankers and clients will **not** be included. The way to tell the extension about this is with the [`nw:set-context`](#nwset-context) primitive, which you must call _prior_ to doing any operations on a network.
 
 Some examples:
 
@@ -37,14 +37,14 @@ It must be noted that NetLogo has two types of agentsets that behave slightly di
 
 The "special" agentsets in NetLogo are `turtles`, `links` and the different "breed" agentsets. What is special about them is that they can grow: if you create a new turtle, it will be added to the `turtles` agentset. If you have a `bankers` breed and you create a new banker, it will be added to the `bankers` agentset and to the `turtles` agentset. Same goes for links. Other agentsets, such as those created with the `with` primitive (e.g., `turtles with [ color = red ]`) or the `turtle-set` and `link-set` primitives) are never added to. The content of normal agentsets will only change if the agents that they contain die.
 
-To show how different types of agentsets interact with [`nw:set-context`](#set-context), let's create a very simple network:
+To show how different types of agentsets interact with [`nw:set-context`](#nwset-context), let's create a very simple network:
 
 ```NetLogo
 clear-all
 create-turtles 3 [ create-links-with other turtles ]
 ```
 
-Let's set the context to `turtles` and `links` (which is the default anyway) and use [`nw:get-context`](#get-context) to see what we have:
+Let's set the context to `turtles` and `links` (which is the default anyway) and use [`nw:get-context`](#nwget-context) to see what we have:
 
 ```NetLogo
 nw:set-context turtles links
@@ -392,7 +392,7 @@ Will output:
 (turtle 0): [(turtle 0) (turtle 1) (turtle 2)]
 ```
 
-As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](#in-radius) primitive.
+As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](ccl.northwestern.edu/netlogo/docs/dictionary.html#in-radius) primitive.
 
 
 
@@ -837,8 +837,8 @@ turtles-own [ community ]
 
 ...
 
-foreach ls:louvain-communities [
-  ask ? [ set community ? ]
+foreach ls:louvain-communities [ [comm] ->
+  ask comm [ set community comm ]
 ]
 ```
 
@@ -947,7 +947,7 @@ nw:generate-small-world turtle-breed link-breed row-count column-count clusterin
 ```
 
 
-Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). Note that [`nw:generate-watts-strogatz`](#generate-watts-strogatz) generates a more traditional small-world network.
+Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). Note that [`nw:generate-watts-strogatz`](#nwgenerate-watts-strogatz) generates a more traditional small-world network.
 
 The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is-toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering-exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
@@ -961,7 +961,7 @@ The turtles are generated in the order that they appear in the lattice. So, for 
 
 ```NetLogo
 nw:generate-small-world turtles links world-width world-height 2.0 false
-(forach (sort turtles) (sort patches) [ ask ?1 [ move-to ?2 ] ])
+(foreach (sort turtles) (sort patches) [ [t p] -> ask t [ move-to p ] ])
 ```
 
 
@@ -985,7 +985,7 @@ The turtles are generated in the order that they appear in the lattice. So, for 
 
 ```NetLogo
 nw:generate-lattice-2d turtles links world-width world-height false
-(foreach (sort turtles) (sort patches) [ ask ?1 [ move-to ?2 ] ])
+(foreach (sort turtles) (sort patches) [ [t p] -> ask t [ move-to p ] ])
 ```
 
 
