@@ -828,7 +828,7 @@ nw:louvain-communities
 ```
 
 
-Detects community structure present in the network. It does this by maximizing [modularity](#modularity) using the [Louvain method](https://en.wikipedia.org/wiki/Louvain_Modularity). The communities are reported as a list of turtle-sets.
+Detects community structure present in the network. It does this by maximizing [modularity](#nwmodularity) using the [Louvain method](https://en.wikipedia.org/wiki/Louvain_Modularity). The communities are reported as a list of turtle-sets.
 
 Often you'll want to tell turtles about the community that they are in. You can do this like so:
 
