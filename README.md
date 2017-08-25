@@ -147,7 +147,7 @@ Nope:
 
 ## A note regarding floating point calculations
 
-Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge.net/), the two network libraries that we use internally, use [`strictfp` floating point calculations](http://en.wikipedia.org/wiki/Strictfp). This does mean that exact reproducibility of results involving floating point calculations _between different hardware architectures_ is not fully guaranteed. (NetLogo itself [always uses strict math](http://ccl.northwestern.edu/netlogo/docs/faq.html#reproduce) so this only applies to some primitives of the NW extension.)
+Neither [JGraphT](https://github.com/jgrapht) nor [Jung](http://jung.sourceforge.net/), the two network libraries that we use internally, use [`strictfp` floating point calculations](https://en.wikipedia.org/wiki/Strictfp). This does mean that exact reproducibility of results involving floating point calculations _between different hardware architectures_ is not fully guaranteed. (NetLogo itself [always uses strict math](http://ccl.northwestern.edu/netlogo/docs/faq.html#are-netlogo-models-runs-scientifically-reproducible) so this only applies to some primitives of the NW extension.)
 
 ## Performance
 
@@ -392,7 +392,7 @@ Will output:
 (turtle 0): [(turtle 0) (turtle 1) (turtle 2)]
 ```
 
-As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](ccl.northwestern.edu/netlogo/docs/dictionary.html#in-radius) primitive.
+As you may have noticed, the result includes the calling turtle. This mimics the behavior of the regular NetLogo [`in-radius`](http://ccl.northwestern.edu/netlogo/docs/dictionary.html#in-radius) primitive.
 
 
 
@@ -683,7 +683,7 @@ nw:betweenness-centrality
 ```
 
 
-To calculate the [betweenness centrality](http://en.wikipedia.org/wiki/Betweenness_centrality) of a turtle, you take every other possible pairs of turtles and, for each pair, you calculate the proportion of shortest paths between members of the pair that passes through the current turtle. The betweenness centrality of a turtle is the sum of these.
+To calculate the [betweenness centrality](https://en.wikipedia.org/wiki/Betweenness_centrality) of a turtle, you take every other possible pairs of turtles and, for each pair, you calculate the proportion of shortest paths between members of the pair that passes through the current turtle. The betweenness centrality of a turtle is the sum of these.
 
 As of now, link weights are not taken into account.
 
@@ -696,7 +696,7 @@ nw:eigenvector-centrality
 ```
 
 
-The [Eigenvector centrality](http://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality) of a node can be thought of as the amount of influence a node has on a network. In practice, turtles that are connected to a lot of other turtles that are themselves well-connected (and so on) get a higher Eigenvector centrality score.
+The [Eigenvector centrality](https://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality) of a node can be thought of as the amount of influence a node has on a network. In practice, turtles that are connected to a lot of other turtles that are themselves well-connected (and so on) get a higher Eigenvector centrality score.
 
 In this implementation, the eigenvector centrality is normalized such that the highest eigenvector centrality a node can have is 1. This implementation is designed to agree with Gephi's implementation out to at least 3 decimal places. If you discover that it disagrees with Gephi on a particular network, please [report it](https://github.com/NetLogo/NW-Extension/issues/new).
 
@@ -730,9 +730,9 @@ nw:closeness-centrality
 ```
 
 
-The [closeness centrality](http://en.wikipedia.org/wiki/Centrality#Closeness_centrality) of a turtle is defined as the inverse of the average of it's distances to all other turtles. (Some people use the sum of distances instead of the average, but the extension uses the average.)
+The [closeness centrality](https://en.wikipedia.org/wiki/Centrality#Closeness_centrality) of a turtle is defined as the inverse of the average of it's distances to all other turtles. (Some people use the sum of distances instead of the average, but the extension uses the average.)
 
-Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
+Note that this primitive reports the _intra-component_ closeness of a turtle, that is, it takes into account only the distances to the turtles that are part of the same [component](https://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) as the current turtle, since distance to turtles in other components is undefined. The closeness centrality of an isolated turtle is defined to be zero.
 
 
 
@@ -754,11 +754,11 @@ nw:clustering-coefficient
 ```
 
 
-Reports the [local clustering coefficient](http://en.wikipedia.org/wiki/Clustering_coefficient#Local_clustering_coefficient) of the turtle. The clustering coefficient of a node measures how connected its neighbors are. It is defined as the number of links between the node's neighbors divided by the total number of possible links between its neighbors.
+Reports the [local clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient#Local_clustering_coefficient) of the turtle. The clustering coefficient of a node measures how connected its neighbors are. It is defined as the number of links between the node's neighbors divided by the total number of possible links between its neighbors.
 
 `nw:clustering-coefficient` takes the directedness of links into account. A directed link counts as a single link whereas an undirected link counts as two links (one going one-way, one going the other).
 
-The [global clustering coefficient](http://en.wikipedia.org/wiki/Clustering_coefficient#Global_clustering_coefficient) measures how much nodes tend to cluster together in the network in general. It is defined based on the types of triplets in the network. A triplet consists of a central node and two of its neighbors. If its neighbors are also connected, it's a closed triplet. If its neighbors are not connected, it's an open triplet. The global clustering coefficient is simply the number of closed triplets in a network divided by the total number of triplets. It can be calculated from the local clustering coefficient quite easily with the following code
+The [global clustering coefficient](https://en.wikipedia.org/wiki/Clustering_coefficient#Global_clustering_coefficient) measures how much nodes tend to cluster together in the network in general. It is defined based on the types of triplets in the network. A triplet consists of a central node and two of its neighbors. If its neighbors are also connected, it's a closed triplet. If its neighbors are not connected, it's an open triplet. The global clustering coefficient is simply the number of closed triplets in a network divided by the total number of triplets. It can be calculated from the local clustering coefficient quite easily with the following code
 
 ```NetLogo
 to-report global-clustering-coefficient
@@ -804,7 +804,7 @@ nw:bicomponent-clusters
 ```
 
 
-Reports the list of [bicomponent clusters](http://en.wikipedia.org/wiki/Biconnected_component) in the current network context. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one bicomponent at once.
+Reports the list of [bicomponent clusters](https://en.wikipedia.org/wiki/Biconnected_component) in the current network context. A bicomponent (also known as a maximal biconnected subgraph) is a part of a network that cannot be disconnected by removing only one node (i.e. you need to remove at least two to disconnect it). The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one bicomponent at once.
 
 
 
@@ -815,7 +815,7 @@ nw:weak-component-clusters
 ```
 
 
-Reports the list of "weakly" [connected components](http://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network context. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
+Reports the list of "weakly" [connected components](https://en.wikipedia.org/wiki/Connected_component_%28graph_theory%29) in the current network context. A weakly connected component is simply a group of nodes where there is a path from each node to every other node. A "strongly" connected component would be one where there is a _directed_ path from each node to every other. The extension does not support the identification of strongly connected components at the moment.
 
 The result is reported as a list of agentsets, in random order. Note that one turtle _cannot_ be a member of more than one weakly connected component at once.
 
@@ -861,11 +861,11 @@ nw:maximal-cliques
 ```
 
 
-A [clique](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
+A [clique](https://en.wikipedia.org/wiki/Clique_%28graph_theory%29) is a subset of a network in which every node has a direct link to every other node. A maximal clique is a clique that is not, itself, contained in a bigger clique.
 
 The result is reported as a list of agentsets, in random order. Note that one turtle can be a member of more than one maximal clique at once.
 
-The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
+The primitive uses the [Bron–Kerbosch algorithm](https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
 
 
@@ -876,9 +876,9 @@ nw:biggest-maximal-cliques
 ```
 
 
-The biggest maximal cliques are, as the name implies, the biggest [cliques](http://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current context. Often, more than one clique are tied for the title of biggest clique, so the result is reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
+The biggest maximal cliques are, as the name implies, the biggest [cliques](https://en.wikipedia.org/wiki/Clique_%28graph_theory%29) in the current context. Often, more than one clique are tied for the title of biggest clique, so the result is reported as a list of agentsets, in random order. If you want only one clique, use `one-of nw:biggest-maximal-cliques`.
 
-The primitive uses the [Bron–Kerbosch algorithm](http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
+The primitive uses the [Bron–Kerbosch algorithm](https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) and only works with undirected links.
 
 
 
@@ -889,7 +889,7 @@ nw:generate-preferential-attachment turtle-breed link-breed num-nodes optional-c
 ```
 
 
-Generates a new network using the [Barabási–Albert](http://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
+Generates a new network using the [Barabási–Albert](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model) algorithm. This network will have the property of being "scale free": the distribution of degrees (i.e. the number of links for each turtle) should follow a power law.
 
 In this version of the primitive, turtles are added, one by one, each forming one link to a previously added turtle, until `num-nodes` is reached. The more links a turtle already has, the greater the probability that new turtles form links with it when they are added. Future versions of the primitive might provide more flexibility in the way the network is generated.
 
@@ -909,7 +909,7 @@ nw:generate-random turtle-breed link-breed num-nodes connection-probability opti
 ```
 
 
-Generates a new random network of _num-nodes_ turtles in which each one has a  _connection-probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G(n, p)_ variant of the [Erdős–Rényi model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+Generates a new random network of _num-nodes_ turtles in which each one has a  _connection-probability_ (between 0 and 1) of being connected to each other turtles. The algorithm uses the _G(n, p)_ variant of the [Erdős–Rényi model](https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
 
 The algorithm is O(n²) for directed networks and O(n²/2) for undirected networks, so generating more than a couple thousand nodes will likely take a very long time.
 
@@ -947,7 +947,7 @@ nw:generate-small-world turtle-breed link-breed row-count column-count clusterin
 ```
 
 
-Generates a new [small-world network](http://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](http://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). Note that [`nw:generate-watts-strogatz`](#nwgenerate-watts-strogatz) generates a more traditional small-world network.
+Generates a new [small-world network](https://en.wikipedia.org/wiki/Small-world_network) using the [Kleinberg Model](https://en.wikipedia.org/wiki/Small_world_routing#The_Kleinberg_Model). Note that [`nw:generate-watts-strogatz`](#nwgenerate-watts-strogatz) generates a more traditional small-world network.
 
 The algorithm proceeds by generating a lattice of the given number of rows and columns (the lattice will wrap around itself if _is-toroidal_ is `true`). The "small world effect" is created by adding additional links between the nodes in the lattice. The higher the _clustering-exponent_, the more the algorithm will favor already close-by nodes when adding new links. A clustering exponent of `2.0` is typically used.
 
@@ -973,7 +973,7 @@ nw:generate-lattice-2d turtle-breed link-breed row-count column-count is-toroida
 ```
 
 
-Generates a new 2D [lattice network](http://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column-count_ columns. The grid will wrap around itself if _is-toroidal_ is `true`.
+Generates a new 2D [lattice network](https://en.wikipedia.org/wiki/Lattice_graph) (basically, a grid) of _row-count_ rows and _column-count_ columns. The grid will wrap around itself if _is-toroidal_ is `true`.
 
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
@@ -997,7 +997,7 @@ nw:generate-ring turtle-breed link-breed num-nodes optional-command-block
 ```
 
 
-Generates a [ring network](http://en.wikipedia.org/wiki/Ring_network) of _num-nodes_ turtles, in which each turtle is connected to exactly two other turtles.
+Generates a [ring network](https://en.wikipedia.org/wiki/Ring_network) of _num-nodes_ turtles, in which each turtle is connected to exactly two other turtles.
 
 The number of nodes must be at least three.
 
@@ -1016,7 +1016,7 @@ nw:generate-star turtle-breed link-breed num-nodes optional-command-block
 ```
 
 
-Generates a [star network](http://en.wikipedia.org/wiki/Star_graph) in which there is one central turtle and every other turtle is connected only to this central node. The number of turtles can be as low as one, but it won't look much like a star.
+Generates a [star network](https://en.wikipedia.org/wiki/Star_graph) in which there is one central turtle and every other turtle is connected only to this central node. The number of turtles can be as low as one, but it won't look much like a star.
 
 If you specify an _optional-command-block_, it is executed for each turtle in the newly created network. For example:
 
@@ -1038,7 +1038,7 @@ Variants:
 - `nw:generate-wheel-inward`
 - `nw:generate-wheel-outward`
 
-Generates a [wheel network](http://en.wikipedia.org/wiki/Wheel_graph), which is basically a [ring network](http://en.wikipedia.org/wiki/Ring_network) with an additional "central" turtle that is connected to every other turtle.
+Generates a [wheel network](https://en.wikipedia.org/wiki/Wheel_graph), which is basically a [ring network](https://en.wikipedia.org/wiki/Ring_network) with an additional "central" turtle that is connected to every other turtle.
 
 The number of nodes must be at least four.
 
