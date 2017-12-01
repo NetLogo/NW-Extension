@@ -89,7 +89,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("maximal-cliques", new prim.jgrapht.MaximalCliques(this))
     add("biggest-maximal-cliques", new prim.jgrapht.BiggestMaximalCliques(this))
 
-    add("generate-preferential-attachment", new prim.jung.BarabasiAlbertGenerator)
+    add("generate-preferential-attachment", new prim.BarabasiAlbertGenerator)
     add("generate-random", new prim.ErdosRenyiGenerator)
     add("generate-small-world", new prim.jung.KleinbergSmallWorldGenerator)
     add("generate-watts-strogatz", new prim.WattsStrogatzGenerator)

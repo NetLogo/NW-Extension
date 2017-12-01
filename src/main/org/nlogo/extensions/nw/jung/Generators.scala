@@ -29,21 +29,6 @@ class Generator(
     DummyGraph.importToNetLogo(generator, world, turtleBreed, linkBreed, rng, sorted = true)
   }
 
-  def barabasiAlbert(nbVertices: Int, rng: MersenneTwisterFast) = {
-    val gen = new BarabasiAlbertGenerator(
-      graphFactory, vertexFactory, edgeFactory,
-      1, 1, new java.util.HashSet[V])
-
-    // use reflection to set our own rng
-    val mRandomField = gen.getClass.getDeclaredField("mRandom")
-    mRandomField.setAccessible(true)
-    mRandomField.set(gen, rng)
-
-    while (gen.create.getVertexCount < nbVertices)
-      gen.evolveGraph(1)
-    DummyGraph.importToNetLogo(gen.create, world, turtleBreed, linkBreed, rng, sorted = true)
-  }
-
   def kleinbergSmallWorld(rowCount: Int, colCount: Int,
     clusteringExponent: Double, isToroidal: Boolean, rng: MersenneTwisterFast) = {
     val gen = new KleinbergSmallWorldGenerator(

@@ -1209,6 +1209,30 @@ generate-watts-strogatz
   O> nw:generate-watts-strogatz turtles links 11 5 1
   count links => 55
 
+generate-preferential-attachment
+  extensions [ nw ]
+  O> nw:generate-preferential-attachment turtles links 2 1
+  count links => 1
+  count turtles => 2
+  O> ca
+  O> nw:generate-preferential-attachment turtles links 3 1
+  count links => 2
+  count turtles => 3
+  O> ca
+  O> nw:generate-preferential-attachment turtles links 3 2
+  count links => 3
+  count turtles => 3
+  O> ca
+  O> nw:generate-preferential-attachment turtles links 100 1
+  count links => 99
+  count turtles => 100
+  min [ count my-links ] of turtles => 1
+  O> ca
+  O> nw:generate-preferential-attachment turtles links 100 3
+  count links => 294
+  min [ count my-links ] of turtles => 3
+  O> nw:generate-preferential-attachment turtles links -1 1 => ERROR Extension exception: The number of nodes in the generated network must be at least 1.
+
 ## weak-component-clusterer
 
 weak-components-empty-graph

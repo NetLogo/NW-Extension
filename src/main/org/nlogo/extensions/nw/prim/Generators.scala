@@ -3,18 +3,19 @@
 package org.nlogo.extensions.nw.prim
 
 import org.nlogo.api
-import org.nlogo.api.ExtensionException
-import org.nlogo.agent.World
+import org.nlogo.api.{Argument, Context, ExtensionException}
+import org.nlogo.agent.{Turtle, World}
+import org.nlogo.core.Syntax
 import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.NetworkExtensionUtil.TurtleCreatingCommand
 import org.nlogo.extensions.nw.algorithms
 
 class ErdosRenyiGenerator extends TurtleCreatingCommand {
-  override def getSyntax = commandSyntax(
+  override def getSyntax: Syntax = commandSyntax(
     List(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
-  def createTurtles(args: Array[api.Argument], context: api.Context) = {
-    implicit val world = context.world.asInstanceOf[World]
+  def createTurtles(args: Array[api.Argument], context: api.Context): Seq[Turtle] = {
+    implicit val world: World = context.world.asInstanceOf[World]
     val turtleBreed = args(0).getAgentSet.requireTurtleBreed
     val linkBreed = args(1).getAgentSet.requireLinkBreed
     val nbTurtles = getIntValueWithMinimum(args(2), 1)
@@ -26,10 +27,10 @@ class ErdosRenyiGenerator extends TurtleCreatingCommand {
 }
 
 class WattsStrogatzGenerator extends TurtleCreatingCommand {
-  override def getSyntax = commandSyntax(
+  override def getSyntax: Syntax = commandSyntax(
     List(TurtlesetType, LinksetType, NumberType, NumberType, NumberType, CommandBlockType | OptionalType), blockAgentClassString = Some("-T--"))
-  def createTurtles(args: Array[api.Argument], context: api.Context) = {
-    implicit val world = context.world.asInstanceOf[World]
+  def createTurtles(args: Array[api.Argument], context: api.Context): Seq[Turtle] = {
+    implicit val world: World = context.world.asInstanceOf[World]
     val turtleBreed = args(0).getAgentSet.requireTurtleBreed
     val linkBreed = args(1).getAgentSet.requireLinkBreed
     val nbTurtles = getIntValueWithMinimum(args(2), 1)
@@ -40,5 +41,20 @@ class WattsStrogatzGenerator extends TurtleCreatingCommand {
     if (!(rewireProbability >= 0 && rewireProbability <= 1.0))
       throw new ExtensionException("The rewire probability must be between 0 and 1.")
     algorithms.WattsStrogatzGenerator.generate(world, turtleBreed, linkBreed, nbTurtles, neighborhoodSize, rewireProbability, context.getRNG)
+  }
+}
+
+class BarabasiAlbertGenerator extends TurtleCreatingCommand {
+  override def getSyntax: Syntax = commandSyntax(
+    List(TurtlesetType, LinksetType, NumberType, NumberType, CommandBlockType | OptionalType),
+    blockAgentClassString = Some("-T--")
+  )
+  override def createTurtles(args: Array[Argument], context: Context): Seq[Turtle] = {
+    implicit val world: World = context.world.asInstanceOf[World]
+    val turtleBreed = args(0).getAgentSet.requireTurtleBreed
+    val linkBreed = args(1).getAgentSet.requireLinkBreed
+    val numTurtles = getIntValueWithMinimum(args(2), 1)
+    val minDegree = getIntValueWithMinimum(args(3), 1)
+    algorithms.BarabasiAlbertGenerator.generate(world, turtleBreed, linkBreed, numTurtles, minDegree, context.getRNG)
   }
 }
