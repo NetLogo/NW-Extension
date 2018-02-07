@@ -57,7 +57,7 @@ moveToNwDir := {
   testTarget.create(NetLogoExtension.netLogoPackagedFiles.value)
   IO.createDirectory(nwDirectory.value / "test" / "tmp")
   val testResources =
-    (baseDirectory.value / "test" ***).filter { f =>
+    ((baseDirectory.value / "test").allPaths).filter { f =>
       f.getName.contains(".") && ! f.getName.endsWith(".scala")
     }
   for (file <- testResources.get)

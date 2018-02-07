@@ -39,3 +39,4 @@ classes/
 # os x
 
 .DS_Store
+.bundledFiles
