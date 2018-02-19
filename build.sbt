@@ -23,8 +23,6 @@ scalaSource in Test := baseDirectory.value / "src" / "test"
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature",
                       "-encoding", "us-ascii")
 
-resolvers += "Gephi Releases" at "http://nexus.gephi.org/nexus/content/repositories/releases/"
-
 libraryDependencies ++= Seq(
   "net.sf.jgrapht" % "jgrapht" % "0.8.3",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
