@@ -837,7 +837,7 @@ turtles-own [ community ]
 
 ...
 
-foreach ls:louvain-communities [ [comm] ->
+foreach nw:louvain-communities [ [comm] ->
   ask comm [ set community comm ]
 ]
 ```
@@ -845,7 +845,7 @@ foreach ls:louvain-communities [ [comm] ->
 You can give each community its own color with something like this:
 
 ```NetLogo
-let communities ls:louvain-communities
+let communities nw:louvain-communities
 let colors sublist 0 (length communities) base-colors
 (foreach communities colors [ [community col] ->
   ask community [ set color col ]
