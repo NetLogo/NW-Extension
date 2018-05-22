@@ -1232,6 +1232,8 @@ generate-preferential-attachment
   count links => 294
   min [ count my-links ] of turtles => 3
   O> nw:generate-preferential-attachment turtles links -1 1 => ERROR Extension exception: The number of nodes in the generated network must be at least 1.
+  O> ca nw:generate-preferential-attachment turtles links 100 1
+  length remove-duplicates [ count my-links ] of turtles > 3 => true
 
 ## weak-component-clusterer
 

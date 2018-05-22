@@ -29,6 +29,8 @@ object BarabasiAlbertGenerator {
         val t = if (rng.nextBoolean) l.end1 else l.end2
         ls += world.getOrCreateLink(s, t, linkBreed)
       }
+      links ++= ls
+      turtles += s
     }
 
     turtles
