@@ -1,31 +1,19 @@
 package org.nlogo.extensions.nw.jung.io
 
-import java.io.BufferedReader
-import java.io.FileReader
-import java.io.File
+import java.io.{BufferedReader, FileReader}
 import java.util.Locale
+
+import edu.uci.ics.jung
+import edu.uci.ics.jung.graph.util.EdgeType
+import edu.uci.ics.jung.io.graphml.Metadata.MetadataType
+import edu.uci.ics.jung.io.graphml.{AbstractMetadata, EdgeMetadata, GraphMLReader2, GraphMetadata, Key, NodeMetadata}
+import org.nlogo.agent.{Agent, AgentSet, Link, Turtle, World}
+import org.nlogo.api.{AgentException, ExtensionException, MersenneTwisterFast}
+import org.nlogo.extensions.nw.NetworkExtensionUtil.{createTurtle, using}
+import org.nlogo.extensions.nw.jung.{createLink, sparseGraphFactory, transformer}
 
 import scala.Option.option2Iterable
 import scala.collection.JavaConverters._
-import org.nlogo.app.App
-import org.nlogo.agent.{Agent, AgentSet, Directedness, Link, Turtle, World}
-import org.nlogo.api.AgentException
-import org.nlogo.api.ExtensionException
-import org.nlogo.api
-import org.nlogo.extensions.nw.NetworkExtensionUtil.{createTurtle, using}
-import org.nlogo.extensions.nw.jung.createLink
-import org.nlogo.extensions.nw.jung.sparseGraphFactory
-import org.nlogo.extensions.nw.jung.transformer
-import org.nlogo.api.MersenneTwisterFast
-import edu.uci.ics.jung
-import edu.uci.ics.jung.graph.util.EdgeType
-import edu.uci.ics.jung.io.graphml.AbstractMetadata
-import edu.uci.ics.jung.io.graphml.EdgeMetadata
-import edu.uci.ics.jung.io.graphml.GraphMLReader2
-import edu.uci.ics.jung.io.graphml.GraphMetadata
-import edu.uci.ics.jung.io.graphml.Key
-import edu.uci.ics.jung.io.graphml.Metadata.MetadataType
-import edu.uci.ics.jung.io.graphml.NodeMetadata
 
 object GraphMLImport {
 
@@ -167,8 +155,14 @@ object GraphMLImport {
             .getGraphMLDocument.getKeyMap.entrySet()
             .asScala.map(entry => entry.getKey -> entry.getValue.asScala).toMap
 
+        // The vertices have non-deterministic order, so we need to sort them by id
+        // so that the turtles are created in the same order every time. Otherwise
+        // we end up with an isomorphic, but non-identical network (up to turtle id)
+        // - BCH 8/7/2018
+        val vertices = graph.getVertices.asScala.toList.sortBy(_.id)
+
         val turtles: Map[Vertex, Turtle] =
-          createAgents(graph.getVertices.asScala, keyMap(MetadataType.NODE), world.turtles, world.getBreed) {
+          createAgents(vertices, keyMap(MetadataType.NODE), world.turtles, world.getBreed) {
             (_, breed) => createTurtle(world, breed, rng)
           }
 
@@ -177,7 +171,14 @@ object GraphMLImport {
             createLink(turtles, graph.getEndpoints(e), graph.getDefaultEdgeType == EdgeType.DIRECTED, breed, world)
         }
 
-        turtles.valuesIterator
+        // The `turtles` map also has non-deterministic order (likely since the keys
+        // are being hashed by reference address rather than a deterministic hash
+        // function). We need to return the turtles in a deterministic order, however,
+        // so initialization code always runs in the same order. We do this by mapping
+        // `vertices`, which is ordered, so that we don't have to do another sort. We
+        // do this lazily to avoid it completely if there is no initialization code.
+        // - BCH 8/7/2018
+        vertices.iterator.map(turtles)
       }
     } catch {
       case e: Exception => throw new ExtensionException(e)

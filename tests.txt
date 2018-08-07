@@ -1466,6 +1466,42 @@ export-import-graphml-multigraph
   count undirected-edges => 1
   count directed-edges => 1
 
+load-graphml-agent-order
+  extensions [ nw ]
+  globals [ attrs ]
+  O> random-seed 0
+  O> crt 10 [ create-link-with one-of other turtles ]
+  O> nw:save-graphml "extensions/nw/test/tmp/rng.graphml"
+  O> set attrs map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles
+  O> ct
+  O> random-seed 0
+  O> nw:load-graphml "extensions/nw/test/tmp/rng.graphml"
+  map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles = attrs => true
+  O> ct
+  O> random-seed 0
+  O> nw:load-graphml "extensions/nw/test/tmp/rng.graphml"
+  map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles = attrs => true
+  O> ct
+  O> random-seed 0
+  O> nw:load-graphml "extensions/nw/test/tmp/rng.graphml"
+  map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles = attrs => true
+  O> ct
+  O> random-seed 0
+  O> nw:load-graphml "extensions/nw/test/tmp/rng.graphml"
+  map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles = attrs => true
+  O> ct
+  O> random-seed 0
+  O> nw:load-graphml "extensions/nw/test/tmp/rng.graphml" [ set color one-of base-colors ]
+  O> set attrs map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles
+  O> ct
+  O> random-seed 0
+  O> nw:load-graphml "extensions/nw/test/tmp/rng.graphml" [ set color one-of base-colors ]
+  map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles = attrs => true
+  O> ct
+  O> random-seed 0
+  O> nw:load-graphml "extensions/nw/test/tmp/rng.graphml" [ set color one-of base-colors ]
+  map [ t -> [ (list color heading (map [ n -> [ who ] of n] sort link-neighbors)) ] of t ] sort turtles = attrs => true
+
 ## The new import/export implementations actually handle this, but I'm not comfortable switching graphml over yet. BCH 1/27/2015
 #load-graphml-preserves-undirectedness
 #  extensions [ nw ]
