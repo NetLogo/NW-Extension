@@ -1091,7 +1091,7 @@ Generates a new network according to the connection matrix saved in _file-name_,
 
 At the moment, `nw:load-matrix` does not support link weights.
 
-Please be aware that the breeds that use use to load the matrix may be different from those that you used when you saved it.
+Please be aware that the breeds used to load the matrix may be different from those that you used when you saved it.
 
 For example:
 
@@ -1255,7 +1255,7 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 
 A few things to notice:
 
-- The breed is stored as data field, both for nodes and edges.
+- The breed is stored as data field, both for nodes and edges.  Note that the breed is stored in its plural form.
 - The data includes both NetLogo's internal variables and the variables that were defined as either `breeds-own`, `turtles-own`, `linkbreeds-own` or `links-own`.
 - Each key gets an `attr.type` based on the actual types of the values contained in the agent variables. The three possible types are `"string"`, `"double"` and `"boolean"`. To determine the attribute type of a particular agent variable, the extension will look at the first agent in the graph. To see which agent is first, you can look at the result of `nw:get-context`. Note that variables containing other types of values, such as turtles, patches, lists, etc., will be stored as strings.
 - This example only has a directed link, and you will notice the `<graph edgedefault="directed">` element. If we had only undirected links, we would have `<graph edgedefault="undirected">`. What if we try to mix both kinds of link? At the moment, the extension will save such a "mixed" graph as if it were an undirected graph (see [this issue](https://github.com/NetLogo/NW-Extension/issues/58) for more details). The order of the `source` and `target` will be respected, however, so if you know which breeds represent directed links, you can figure it out _a posteriori_.
@@ -1271,7 +1271,7 @@ nw:load-graphml file-name optional-command-block
 
 Loading a GraphML file into NetLogo with the network extension should be as simple as calling `nw:load-graphml "example.graphml"`, but there is a bit of preparation involved.
 
-The key idea is that `nw:load-graphml` will try to assign the attribute values defined in the GraphML file to NetLogo agent variables of the same names (this is *not* case sensitive). The first one it tries to set is `breed` if it is there, so the turtle or link will get the right breed and, hence, the right breed variables.
+The key idea is that `nw:load-graphml` will try to assign the attribute values defined in the GraphML file to NetLogo agent variables of the same names (this is *not* case sensitive). The first one it tries to set is `breed` if it is there, so the turtle or link will get the right breed and, hence, the right breed variables.  The load expects the *plural form* of the breed for a turtle or link, it will not recognize the singular form.
 
 One special case is the `who` number, which is ignored by the importer if it is present as a GraphML attribute: NetLogo does not allow you to modify this number once a turtle is created and, besides, there could already be an existing turtle with that number.
 
