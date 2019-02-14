@@ -1,6 +1,6 @@
 import org.nlogo.build.NetLogoExtension
 
-scalaVersion := "2.12.0"
+scalaVersion := "2.12.8"
 
 enablePlugins(NetLogoExtension)
 enablePlugins(org.nlogo.build.ExtensionDocumentationPlugin)
