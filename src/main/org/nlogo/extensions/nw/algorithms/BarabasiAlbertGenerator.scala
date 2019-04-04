@@ -3,6 +3,8 @@ package org.nlogo.extensions.nw.algorithms
 import org.nlogo.agent.{AgentSet, Link, Turtle, World}
 import org.nlogo.api.MersenneTwisterFast
 import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
+
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 object BarabasiAlbertGenerator {
@@ -21,13 +23,13 @@ object BarabasiAlbertGenerator {
 
     for (_ <- turtles.size until numTurtles) {
       val s = createTurtle(world, turtleBreed, rng)
-      var ls = Set.empty[Link]
+      val ls = mutable.LinkedHashSet[Link]()
       while (ls.size < minDegree) {
         // Grabbing a random end of a random link is a very fast and simple way of sampling on degree. However, it is
         // not generalizable to different weighting schemes.
         val l = links(rng.nextInt(links.length))
         val t = if (rng.nextBoolean) l.end1 else l.end2
-        ls += world.getOrCreateLink(s, t, linkBreed)
+        ls.add(world.getOrCreateLink(s, t, linkBreed))
       }
       links ++= ls
       turtles += s
