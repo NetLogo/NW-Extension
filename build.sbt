@@ -7,7 +7,7 @@ enablePlugins(org.nlogo.build.ExtensionDocumentationPlugin)
 
 name := "nw"
 
-version := "3.7.6"
+version := "3.7.7"
 
 netLogoExtName      := "nw"
 
@@ -71,4 +71,4 @@ test in Test := {
   IO.delete(nwDirectory.value)
 }
 
-netLogoVersion := "6.0.4-9328ba6"
+netLogoVersion := "6.1.0-RC1"
