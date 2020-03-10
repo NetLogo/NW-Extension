@@ -122,5 +122,8 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("save-gexf", new SaveFileType(this, ".gexf"))
     add("save-gml", new SaveFileType(this, ".gml"))
     add("save-vna", new SaveFileType(this, ".vna"))
+
+    // Forces load of Gephi classes to prevent potential class not found during unload
+    classOf[org.gephi.graph.dhns.core.Dhns].getName
   }
 }
