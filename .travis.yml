@@ -1,3 +1,4 @@
+dist: trusty
 jdk: oraclejdk8
 language: scala
 scala: 2.12.11
