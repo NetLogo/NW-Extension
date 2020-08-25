@@ -31,7 +31,8 @@ object Matrix {
         for (i <- 0 until matrix.rows) {
           for (j <- 0 until matrix.columns) {
             val w = matrix.getQuick(i, j)
-            writer.write("%4.2f ".formatLocal(java.util.Locale.US, w))
+            writer.write("%4.2f".formatLocal(java.util.Locale.US, w))
+            if (j < matrix.columns - 1) writer.write(" ")
           }
           writer.write("\n")
         }
