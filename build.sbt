@@ -71,4 +71,4 @@ test in Test := {
   IO.delete(nwDirectory.value)
 }
 
-netLogoVersion := "6.1.0-RC1"
+netLogoVersion := "6.1.1"
