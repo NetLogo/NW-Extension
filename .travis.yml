@@ -1,7 +1,6 @@
-dist: trusty
-jdk: oraclejdk8
+jdk: openjdk8
 language: scala
-scala: 2.12.11
+scala: 2.12.12
 install:
   - sbt update
 script:
