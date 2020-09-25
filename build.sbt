@@ -1,6 +1,6 @@
 import org.nlogo.build.NetLogoExtension
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.12"
 
 enablePlugins(NetLogoExtension)
 enablePlugins(org.nlogo.build.ExtensionDocumentationPlugin)
@@ -71,4 +71,4 @@ test in Test := {
   IO.delete(nwDirectory.value)
 }
 
-netLogoVersion := "6.1.1"
+netLogoVersion := "6.1.1-c82c397"
