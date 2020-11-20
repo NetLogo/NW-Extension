@@ -7,7 +7,7 @@ enablePlugins(org.nlogo.build.ExtensionDocumentationPlugin)
 
 name := "nw"
 
-version := "3.7.7"
+version := "3.7.8"
 
 netLogoExtName      := "nw"
 
