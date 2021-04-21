@@ -71,4 +71,5 @@ test in Test := {
   IO.delete(nwDirectory.value)
 }
 
-netLogoVersion := "6.1.1-c82c397"
+resolvers      += "netlogo" at "https://dl.cloudsmith.io/public/netlogo/netlogo/maven/"
+netLogoVersion := "6.2.0-d27b502"
