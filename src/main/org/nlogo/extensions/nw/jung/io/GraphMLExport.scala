@@ -24,9 +24,6 @@ object GraphMLExport {
   def save(graphContext: GraphContext, filename: String) = {
     val world = graphContext.world
 
-    if (org.nlogo.workspace.AbstractWorkspace.isApplet)
-      throw new ExtensionException("Cannot save GraphML file when in applet mode.")
-
     val graphMLWriter = new GraphMLWriterWithAttribType[agent.Turtle, agent.Link]
 
     addImplicitVariables(api.AgentVariables.getImplicitTurtleVariables(false), graphMLWriter.addVertexData _)

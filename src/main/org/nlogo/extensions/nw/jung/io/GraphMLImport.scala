@@ -134,8 +134,6 @@ object GraphMLImport {
     }(scala.collection.breakOut)
 
   def load(fileName: String, world: World, rng: MersenneTwisterFast): Iterator[Turtle] = {
-    if (org.nlogo.workspace.AbstractWorkspace.isApplet)
-      throw new ExtensionException("Cannot load GraphML file when in applet mode.")
     try {
       val graphFactory = sparseGraphFactory[Vertex, Edge]
       val graphTransformer = transformer { _: GraphMetadata => graphFactory.create }
