@@ -1,7 +1,0 @@
-jdk: openjdk8
-language: scala
-scala: 2.12.12
-install:
-  - sbt update
-script:
-  - sbt test

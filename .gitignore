@@ -8,6 +8,7 @@
 /nw/
 /extensions/nw/
 classes/
+extensions/
 *.jar
 *.gz
 *.zip
