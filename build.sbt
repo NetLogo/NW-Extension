@@ -29,7 +29,5 @@ libraryDependencies ++= Seq(
   "net.sf.jung" % "jung-io" % "2.0.1",
   "org.gephi"   % "gephi-toolkit" % "0.8.2"
     from "https://s3.amazonaws.com/ccl-artifacts/gephi-toolkit-0.8.2-all.jar"
-    intransitive,
-  "com.typesafe" % "config" % "1.3.1" % Test,
-  "org.scalatest" %% "scalatest" % "3.0.0" % Test
+    intransitive
 )
