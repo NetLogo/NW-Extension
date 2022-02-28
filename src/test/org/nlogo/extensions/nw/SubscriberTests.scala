@@ -4,11 +4,11 @@ package org.nlogo.extensions.nw
 
 import org.nlogo.agent.{ AgentSet, TreeAgentSet }
 import org.nlogo.headless.HeadlessWorkspace
-import org.scalatest.FunSuite
-import org.scalatest.Matchers._
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers._
 import org.scalatest.GivenWhenThen
 
-class AgentSetChangeSubscribersTestSuite extends FunSuite with GivenWhenThen {
+class AgentSetChangeSubscribersTestSuite extends AnyFunSuite with GivenWhenThen {
 
   def getSubscribers(agentSet: AgentSet): collection.Set[AgentSetChangeSubscriber] = {
     val pub = agentSet.asInstanceOf[TreeAgentSet].simpleChangeEventPublisher

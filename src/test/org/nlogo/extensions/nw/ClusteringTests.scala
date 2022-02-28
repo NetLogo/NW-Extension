@@ -1,12 +1,12 @@
 package org.nlogo.extensions.nw
 
 import org.nlogo.extensions.nw.algorithms.Louvain.CommunityStructure.Community
-import org.nlogo.extensions.nw.algorithms.Louvain.{CommunityStructure, WeightedLink}
-import org.scalatest.FunSuite
+import org.nlogo.extensions.nw.algorithms.Louvain.{ CommunityStructure, WeightedLink }
+import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.GivenWhenThen
-import org.nlogo.extensions.nw.algorithms.{ClusteringMetrics, Louvain}
+import org.nlogo.extensions.nw.algorithms.{ ClusteringMetrics, Louvain }
 
-class ClusteringTestSuite extends FunSuite {
+class ClusteringTestSuite extends AnyFunSuite {
   test("merged graphs count weights correctly for mixed multi-graph with self-links") {
     val graph = MixedMultiGraph(Seq(
       (0, 1, false),

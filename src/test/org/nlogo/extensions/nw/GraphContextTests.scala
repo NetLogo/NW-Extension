@@ -3,10 +3,10 @@
 package org.nlogo.extensions.nw
 
 import org.nlogo.headless.HeadlessWorkspace
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.GivenWhenThen
 
-class SetContextTestSuite extends FunSuite with GivenWhenThen {
+class SetContextTestSuite extends AnyFunSuite with GivenWhenThen {
   test("avoid dangling links in context") {
     val ws: HeadlessWorkspace = HeadlessWorkspace.newInstance
     ws.setModelPath(new java.io.File("tests.txt").getPath)
