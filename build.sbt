@@ -20,14 +20,14 @@ scalaSource in Test    := baseDirectory.value / "src" / "test"
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature", "-encoding", "us-ascii")
 
 libraryDependencies ++= Seq(
-  "net.sf.jgrapht" % "jgrapht" % "0.8.3",
+  "net.sf.jgrapht"              % "jgrapht"             % "0.8.3",
   "net.sourceforge.collections" % "collections-generic" % "4.01",
-  "colt" % "colt" % "1.2.0",
-  "net.sf.jung" % "jung-algorithms" % "2.0.1",
-  "net.sf.jung" % "jung-api" % "2.0.1",
-  "net.sf.jung" % "jung-graph-impl" % "2.0.1",
-  "net.sf.jung" % "jung-io" % "2.0.1",
-  "org.gephi"   % "gephi-toolkit" % "0.8.2"
+  "colt"                        % "colt"                % "1.2.0",
+  "net.sf.jung"                 % "jung-algorithms"     % "2.0.1",
+  "net.sf.jung"                 % "jung-api"            % "2.0.1",
+  "net.sf.jung"                 % "jung-graph-impl"     % "2.0.1",
+  "net.sf.jung"                 % "jung-io"             % "2.0.1",
+  "org.gephi"                   % "gephi-toolkit"       % "0.8.2"
     from "https://s3.amazonaws.com/ccl-artifacts/gephi-toolkit-0.8.2-all.jar"
     intransitive
 )
