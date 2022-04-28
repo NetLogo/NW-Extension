@@ -1,17 +1,15 @@
+.bundledFiles
+target/
+extensions/
+/*.jar
+/*.zip
+
 *~
 *.orig
 /jung-src/
 /jgrapht-src/
-/project/target/
-/project/project/
-/target/
 /nw/
-/extensions/nw/
-classes/
-extensions/
-*.jar
 *.gz
-*.zip
 
 # eclipse files
 .project
@@ -38,6 +36,4 @@ extensions/
 \.\#*
 
 # os x
-
 .DS_Store
-.bundledFiles

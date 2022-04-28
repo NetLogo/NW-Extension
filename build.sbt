@@ -1,7 +1,6 @@
 import org.nlogo.build.{ ExtensionDocumentationPlugin, NetLogoExtension }
 
-enablePlugins(NetLogoExtension)
-enablePlugins(ExtensionDocumentationPlugin)
+enablePlugins(NetLogoExtension, ExtensionDocumentationPlugin)
 
 name       := "nw"
 version    := "3.7.9"
@@ -9,8 +8,6 @@ isSnapshot := true
 
 netLogoExtName      := "nw"
 netLogoClassManager := "org.nlogo.extensions.nw.NetworkExtension"
-netLogoTarget       := NetLogoExtension.directoryTarget(baseDirectory.value)
-netLogoZipSources   := false
 netLogoVersion      := "6.2.2"
 netLogoTestExtras   += baseDirectory.value / "test"
 
