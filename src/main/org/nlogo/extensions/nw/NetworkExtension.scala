@@ -22,19 +22,6 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     }
   }
 
-  override def additionalJars = Seq(
-    "collections-generic-4.01.jar",
-    "colt-1.2.0.jar",
-    "concurrent-1.3.4.jar",
-    "jgrapht-jdk1.6-0.8.3.jar",
-    "jung-algorithms-2.0.1.jar",
-    "jung-api-2.0.1.jar",
-    "jung-graph-impl-2.0.1.jar",
-    "jung-io-2.0.1.jar",
-    "stax-api-1.0.1.jar",
-    "wstx-asl-3.2.6.jar",
-    "gephi-toolkit-0.8.2-all.jar").asJava
-
   override def clearAll() { clearContext() }
   override def unload(em: api.ExtensionManager) {
     clearAll()
