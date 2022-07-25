@@ -2,7 +2,6 @@ package org.nlogo.extensions.nw.algorithms
 
 import org.nlogo.agent
 import org.nlogo.agent.{ AgentSet, World, Turtle }
-import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.api.MersenneTwisterFast
 import scala.collection.mutable
 

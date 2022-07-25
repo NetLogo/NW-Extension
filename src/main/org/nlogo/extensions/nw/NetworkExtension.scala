@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions.nw
 
-import org.nlogo.extensions.nw.prim.{SaveFileType, LoadFileType, LoadFileTypeDefaultBreeds}
+import org.nlogo.extensions.nw.prim.{SaveFileType, LoadFileType}
 import org.nlogo.extensions.nw.prim.jung.{SaveGraphML, LoadGraphML}
 
 import scala.collection.JavaConverters._

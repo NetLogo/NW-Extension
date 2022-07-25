@@ -78,17 +78,16 @@ object GraphMLImport {
     as.sortBy(_.name != "BREED") // BREED first
   }
 
-  private def setBreed(agent: Agent, breed: String) {
-    val program = agent.world.program
-    agent match {
-      case t: Turtle =>
-        for (breedAgentSet <- Option(agent.world.getBreed(breed)))
-          t.setTurtleOrLinkVariable("BREED", breedAgentSet)
-      case l: Link =>
-        for (breedAgentSet <- Option(agent.world.getLinkBreed(breed)))
-          l.setTurtleOrLinkVariable("BREED", breedAgentSet)
-    }
-  }
+  // private def setBreed(agent: Agent, breed: String) {
+  //   agent match {
+  //     case t: Turtle =>
+  //       for (breedAgentSet <- Option(agent.world.getBreed(breed)))
+  //         t.setTurtleOrLinkVariable("BREED", breedAgentSet)
+  //     case l: Link =>
+  //       for (breedAgentSet <- Option(agent.world.getLinkBreed(breed)))
+  //         l.setTurtleOrLinkVariable("BREED", breedAgentSet)
+  //   }
+  // }
 
   private def setAgentVariable(agent: Agent, attribute: Attribute) {
     if (attribute.name != "WHO") // don' try to set WHO

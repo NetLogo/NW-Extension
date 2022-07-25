@@ -6,18 +6,12 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
 
-import scala.collection.JavaConverters._
-import scala.util.control.Breaks.break
-import scala.util.control.Breaks.breakable
-
 import org.apache.commons.collections15.Transformer
 import org.nlogo.agent
 import org.nlogo.api
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.GraphContext
-import org.nlogo.extensions.nw.NetworkExtensionUtil.{
-  AgentSetToRichAgentSet, functionToTransformer, using
-}
+import org.nlogo.extensions.nw.NetworkExtensionUtil.{ functionToTransformer, using }
 
 object GraphMLExport {
 
@@ -104,7 +98,6 @@ object GraphMLExport {
     agents: Iterable[T],
     varChecker: (T) => Boolean,
     varGetter: (T) => Object) = {
-    def attrTypeForValue(x: Any) = x
     (for {
       agent <- agents.headOption
       if varChecker(agent)

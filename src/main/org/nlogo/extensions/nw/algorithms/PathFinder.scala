@@ -4,7 +4,6 @@ import org.nlogo.agent.World
 import scala.util.Random
 import collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.ref.WeakReference
 import org.nlogo.extensions.nw.util.{Cache, CacheManager}
 import org.nlogo.extensions.nw.Graph
 
@@ -44,7 +43,7 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
    * @param source
    * @param dest
    */
-  private def expandBestTraversal(variable: Option[String] = None, source: V, dest: V) {
+  private def expandBestTraversal(variable: Option[String], source: V, dest: V) {
     val sourceTraversal = singleSourceTraversalCaches(variable)(source)
     val destTraversal = singleDestTraversalCaches(variable)(dest)
     // If one doesn't have a next, the nodes are disconnected
@@ -98,7 +97,7 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
   def distance(source: V, dest: V, weightVariable: Option[String] = None): Option[Double] = {
     distanceCaches(weightVariable).get((source, dest)) orElse {
       expandBestTraversal(weightVariable, source, dest)
-      distanceCaches(weightVariable).get(source, dest)
+      distanceCaches(weightVariable).get((source, dest))
     }
   }
 
@@ -140,7 +139,7 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
           layer = neighbor :: layer
         }
         if (dists((start, neighbor)) == distance + 1) {
-          predecessorCache(neighbor, start).append(node)
+          predecessorCache((neighbor, start)).append(node)
         }
       }
       layer
@@ -176,7 +175,7 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
               }
             }
           }
-          if (turtle != predecessor) predecessorCache(turtle, start).append(predecessor)
+          if (turtle != predecessor) predecessorCache((turtle, start)).append(predecessor)
 
         }
       }
@@ -184,4 +183,3 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
     }.takeWhile(x => heap.nonEmpty).flatten
   }
 }
-

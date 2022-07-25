@@ -34,7 +34,6 @@ class GetContext(gcp: GraphContextProvider)
   override def getSyntax = reporterSyntax(ret = ListType)
   override def report(args: Array[api.Argument], context: api.Context): AnyRef = {
     val gc = gcp.getGraphContext(context.world.asInstanceOf[org.nlogo.agent.World])
-    val workspace = context.asInstanceOf[ExtensionContext].workspace
     LogoList(gc.turtleSet, gc.linkSet)
   }
 }

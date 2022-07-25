@@ -26,7 +26,6 @@ object GephiUtils {
     import org.gephi.graph.dhns.core.Dhns
     import org.gephi.data.attributes.model.IndexedAttributeModel
     import org.gephi.data.attributes.event.AttributeEventManager
-    import org.gephi.data.attributes.AbstractAttributeModel
     import scala.collection.JavaConverters._
 
     val indexedAttributeModels = GephiUtils.withNWLoaderContext {

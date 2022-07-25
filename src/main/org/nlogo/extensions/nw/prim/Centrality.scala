@@ -3,7 +3,7 @@ package org.nlogo.extensions.nw.prim
 import org.nlogo.api
 import org.nlogo.agent
 import org.nlogo.core.Syntax._
-import org.nlogo.extensions.nw.{GraphContext, GraphContextProvider}
+import org.nlogo.extensions.nw.GraphContextProvider
 
 class EigenvectorCentrality(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")

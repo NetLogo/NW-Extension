@@ -7,9 +7,7 @@ import org.nlogo.api
 import org.nlogo.core.LogoList
 import org.nlogo.api.ScalaConversions.toLogoObject
 import org.nlogo.core.Syntax._
-import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.NetworkExtensionUtil.{AgentToRichAgent, canonocilizeVar}
-import java.util.Locale
 import org.nlogo.extensions.nw.GraphContextProvider
 
 class DistanceTo(gcp: GraphContextProvider)

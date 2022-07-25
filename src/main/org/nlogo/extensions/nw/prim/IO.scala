@@ -15,7 +15,7 @@ import org.gephi.io.importer.plugin.file.{ImporterCSV, ImporterGraphML}
 import org.gephi.io.importer.spi.FileImporter
 import org.gephi.project.api.ProjectController
 import org.gephi.utils.longtask.spi.LongTask
-import org.gephi.utils.progress.{ProgressTicket, ProgressTicketProvider}
+import org.gephi.utils.progress.ProgressTicket
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
@@ -23,9 +23,7 @@ import org.nlogo.agent.Turtle
 import org.nlogo.agent.World
 import org.nlogo.api
 import org.nlogo.api._
-import org.nlogo.api.Command
 import org.nlogo.core.Breed
-import org.nlogo.core.Syntax
 import org.nlogo.core.LogoList
 import org.nlogo.core.Syntax._
 import org.nlogo.extensions.nw.{GraphContext, GraphContextProvider}
@@ -80,7 +78,7 @@ class Save(gcp: GraphContextProvider) extends api.Command {
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val world = context.getAgent.world.asInstanceOf[World]
     val workspace = context.asInstanceOf[ExtensionContext].workspace
-    val fm = context.asInstanceOf[ExtensionContext].workspace.fileManager
+    val fm = workspace.fileManager
     val file = new File(fm.attachPrefix(args(0).getString))
     GephiExport.save(gcp.getGraphContext(world), world, file)
   }
@@ -91,7 +89,7 @@ class SaveFileType(gcp: GraphContextProvider, extension: String) extends api.Com
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     val world = context.getAgent.world.asInstanceOf[World]
     val workspace = context.asInstanceOf[ExtensionContext].workspace
-    val fm = context.asInstanceOf[ExtensionContext].workspace.fileManager
+    val fm = workspace.fileManager
     val file = new File(fm.attachPrefix(args(0).getString))
     GephiExport.save(gcp.getGraphContext(world), world, file, extension)
   }
@@ -294,7 +292,7 @@ object GephiImport{
                     catch { case e: IOException => throw new ExtensionException(e) }
     val unloader = container.getUnloader
     val defaultDirected = unloader.getEdgeDefault == EdgeDefault.DIRECTED
-    val defaultUndirected = unloader.getEdgeDefault == EdgeDefault.UNDIRECTED
+    //val defaultUndirected = unloader.getEdgeDefault == EdgeDefault.UNDIRECTED
     val nodes: Iterable[NodeDraftGetter] = unloader.getNodes.asScala
     val edges: Iterable[EdgeDraftGetter] = unloader.getEdges.asScala
 
@@ -430,4 +428,3 @@ object GephiImport{
     if (i != -1) try { agent.setVariable(i, value) } catch { case e: AgentException => /*Invalid variable or value, so skip*/}
   }
 }
-

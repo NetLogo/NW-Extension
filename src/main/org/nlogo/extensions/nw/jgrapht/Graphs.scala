@@ -2,8 +2,6 @@
 
 package org.nlogo.extensions.nw.jgrapht
 
-import java.lang.IllegalArgumentException
-
 import scala.collection.JavaConverters._
 
 import org.nlogo.agent.Link

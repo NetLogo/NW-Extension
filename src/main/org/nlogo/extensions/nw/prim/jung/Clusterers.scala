@@ -5,7 +5,6 @@ package org.nlogo.extensions.nw.prim.jung
 import org.nlogo.api
 import org.nlogo.api.ScalaConversions.toLogoList
 import org.nlogo.core.Syntax._
-import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
 

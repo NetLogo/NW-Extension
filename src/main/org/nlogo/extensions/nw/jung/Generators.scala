@@ -6,7 +6,6 @@ import org.nlogo.agent.{ AgentSet, World }
 import org.nlogo.api.MersenneTwisterFast
 
 import edu.uci.ics.jung.algorithms.generators.Lattice2DGenerator
-import edu.uci.ics.jung.algorithms.generators.random.BarabasiAlbertGenerator
 import edu.uci.ics.jung.algorithms.generators.random.KleinbergSmallWorldGenerator
 
 class Generator(
@@ -38,4 +37,3 @@ class Generator(
     DummyGraph.importToNetLogo(gen.create, world, turtleBreed, linkBreed, rng, sorted = true)
   }
 }
-

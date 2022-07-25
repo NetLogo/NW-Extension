@@ -4,7 +4,6 @@ package org.nlogo.extensions.nw.prim.jung
 
 import org.nlogo.api
 import org.nlogo.core.Syntax._
-import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.agent
 import org.nlogo.agent.Agent
 import org.nlogo.extensions.nw.GraphContextProvider

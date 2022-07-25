@@ -2,7 +2,6 @@ package org.nlogo.extensions.nw.prim
 
 import org.nlogo.api
 import org.nlogo.core.Syntax._
-import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.algorithms.MeanPathLength._
 import org.nlogo.agent.Turtle
 import org.nlogo.extensions.nw.GraphContextProvider

@@ -2,8 +2,6 @@
 
 package org.nlogo.extensions.nw
 
-import scala.collection.immutable.HashSet
-
 import org.nlogo.agent.Agent
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.ArrayAgentSet
@@ -13,7 +11,6 @@ import org.nlogo.agent.Turtle
 import org.nlogo.agent.World
 import org.nlogo.api.SimpleChangeEvent
 import org.nlogo.api.SimpleChangeEventPublisher
-import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 
 class AgentSetChangeSubscriber(agentSet: TreeAgentSet, onNotify: () => Unit)
   extends SimpleChangeEventPublisher#Sub {
