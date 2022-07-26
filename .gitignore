@@ -1,6 +1,6 @@
 .bundledFiles
 target/
-extensions/
+/extensions/
 /*.jar
 /*.zip
 
