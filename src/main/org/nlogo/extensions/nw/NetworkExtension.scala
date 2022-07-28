@@ -5,8 +5,6 @@ package org.nlogo.extensions.nw
 import org.nlogo.extensions.nw.prim.{SaveFileType, LoadFileType}
 import org.nlogo.extensions.nw.prim.jung.{SaveGraphML, LoadGraphML}
 
-import scala.collection.JavaConverters._
-
 import org.nlogo.api
 
 class NetworkExtension extends api.DefaultClassManager with GraphContextManager {
