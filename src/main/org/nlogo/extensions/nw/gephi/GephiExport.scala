@@ -7,8 +7,7 @@ import org.nlogo.api
 import org.nlogo.api._
 import org.nlogo.core.Breed
 
-import org.gephi.data.attributes.api.{ AttributeColumn, AttributeType, AttributeController }
-import org.gephi.graph.api.GraphController
+import org.gephi.graph.api.{ Column, GraphController }
 import org.gephi.io.exporter.api.ExportController
 import org.gephi.io.exporter.plugin.{ ExporterCSV, ExporterGraphML }
 import org.gephi.io.exporter.spi.Exporter
@@ -41,7 +40,6 @@ object GephiExport {
     } else if (exporter.isInstanceOf[ExporterGraphML]) {
       throw new ExtensionException("You must use nw:save-graphml to save graphml files.")
     }
-
 
     // Some exporters expect a progress ticker to be passed in :( BCH 5/8/2015
     exporter match {
@@ -76,23 +74,21 @@ object GephiExport {
     val projectController = Lookup.getDefault.lookup(classOf[ProjectController])
     projectController.newProject()
     val gephiWorkspace = projectController.getCurrentWorkspace
-    val graphModel = Lookup.getDefault.lookup(classOf[GraphController]).getModel
-    val attributeModel = Lookup.getDefault.lookup(classOf[AttributeController]).getModel
+    val graphModel = Lookup.getDefault.lookup(classOf[GraphController]).getGraphModel
     val graph = (context.links.exists(_.isDirectedLink), context.links.exists(!_.isDirectedLink)) match {
-      case (true, true) => graphModel.getMixedGraph
       case (true, false) => graphModel.getDirectedGraph
       case (false, true) => graphModel.getUndirectedGraph
-      case _ => graphModel.getGraph
+      case _             => graphModel.getGraph
     }
 
-    val nodeAttributes = attributeModel.getNodeTable
+    val nodeAttributes = graphModel.getNodeTable
 
-    val turtlesOwnAttributes: Map[String, AttributeColumn] = program.turtlesOwn.map { name =>
+    val turtlesOwnAttributes: Map[String, Column] = program.turtlesOwn.map { name =>
       val kind = getBestType(world.turtles.asIterable[Turtle].map(t => t.getTurtleOrLinkVariable(name)))
       name -> Option(nodeAttributes.getColumn(name)).getOrElse(nodeAttributes.addColumn(name, kind))
     }.toMap
 
-    val breedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.breeds.collect {
+    val breedsOwnAttributes: Map[AgentSet, Map[String, Column]] = program.breeds.collect {
       case (breedName, breed: Breed) =>
         world.getBreed(breedName) -> breed.owns.map { name =>
           val kind = getBestType(world.getBreed(breedName).asIterable[Turtle].map(t => t.getBreedVariable(name)))
@@ -103,27 +99,27 @@ object GephiExport {
     val nodes = context.nodes.map { turtle =>
       val node = graphModel.factory.newNode(turtle.toString.split(" ").mkString("-"))
       turtlesOwnAttributes.foreach { case (name, col) =>
-        node.getAttributes.setValue(col.getIndex, coerce(turtle.getTurtleOrLinkVariable(name), col.getType))
+        node.setAttribute(col, coerce(turtle.getTurtleOrLinkVariable(name), col.getTypeClass))
       }
       if (turtle.getBreed != world.turtles) {
         breedsOwnAttributes(turtle.getBreed).foreach { case (name, col) =>
-          node.getAttributes.setValue(col.getIndex, coerce(turtle.getBreedVariable(name), col.getType))
+          node.setAttribute(col, coerce(turtle.getBreedVariable(name), col.getTypeClass))
         }
       }
       val color = api.Color.getColor(turtle.color())
-      node.getNodeData.setColor(color.getRed / 255f, color.getGreen / 255f, color.getBlue / 255f)
-      node.getNodeData.setAlpha(color.getAlpha / 255f)
+      node.setColor(color)
+      node.setAlpha(color.getAlpha / 255f)
       graph.addNode(node)
       turtle -> node
     }.toMap
 
-    val edgeAttributes = attributeModel.getEdgeTable
-    val linksOwnAttributes: Map[String, AttributeColumn] = program.linksOwn.map { name =>
+    val edgeAttributes = graphModel.getEdgeTable
+    val linksOwnAttributes: Map[String, Column] = program.linksOwn.map { name =>
       val kind = getBestType(world.links.asIterable[Link].map(l => l.getTurtleOrLinkVariable(name)))
       name -> Option(edgeAttributes.getColumn(name)).getOrElse(edgeAttributes.addColumn(name, kind))
     }.toMap
 
-    val linkBreedsOwnAttributes: Map[AgentSet, Map[String, AttributeColumn]] = program.linkBreeds.collect {
+    val linkBreedsOwnAttributes: Map[AgentSet, Map[String, Column]] = program.linkBreeds.collect {
       case (breedName, breed: Breed) =>
         val breedSet = world.getLinkBreed(breedName.toUpperCase)
         breedSet -> breed.owns.map { name =>
@@ -135,45 +131,48 @@ object GephiExport {
     context.links.foreach { link =>
       val edge = graphModel.factory.newEdge(nodes(link.end1), nodes(link.end2), 1, link.isDirectedLink)
       linksOwnAttributes.foreach { case (name, col) =>
-        edge.getAttributes.setValue(col.getIndex, coerce(link.getTurtleOrLinkVariable(name), col.getType))
+        edge.setAttribute(col, coerce(link.getTurtleOrLinkVariable(name), col.getTypeClass))
       }
       if (link.getBreed != world.links) {
         linkBreedsOwnAttributes(link.getBreed).foreach { case (name, col) =>
-          edge.getAttributes.setValue(col.getIndex, coerce(link.getLinkBreedVariable(name), col.getType))
+          edge.setAttribute(col, coerce(link.getLinkBreedVariable(name), col.getTypeClass))
         }
       }
       val color = api.Color.getColor(link.color())
-      edge.getEdgeData.setColor(color.getRed / 255f, color.getGreen / 255f, color.getBlue / 255f)
-      edge.getEdgeData.setAlpha(color.getAlpha / 255f)
+      edge.setColor(color)
+      edge.setAlpha(color.getAlpha / 255f)
       graph.addEdge(edge)
     }
     gephiWorkspace.add(graphModel)
-    gephiWorkspace.add(attributeModel)
     exportController.exportFile(file, exporter)
   }
 
-  private type JDouble = java.lang.Double
-  private type JBoolean = java.lang.Boolean
+  private type JDouble     = java.lang.Double
+  private type JBoolean    = java.lang.Boolean
+  private val DoubleClass  = classOf[java.lang.Double]
+  private val FloatClass   = classOf[java.lang.Float]
+  private val BooleanClass = classOf[java.lang.Boolean]
+  private val StringClass  = classOf[java.lang.String]
 
-  private def getBestType(values: Iterable[AnyRef]): AttributeType = {
+  private def getBestType(values: Iterable[AnyRef]): Class[_] = {
     if (values.forall(_.isInstanceOf[Number])){
-      AttributeType.DOUBLE
+      DoubleClass
     } else if (values.forall(_.isInstanceOf[JBoolean])) {
-      AttributeType.BOOLEAN
+      BooleanClass
     } else {
-      AttributeType.STRING
+      StringClass
     }
   }
 
-  private def coerce(value: AnyRef, kind: AttributeType): AnyRef =
+  private def coerce(value: AnyRef, kind: Class[_]): AnyRef =
     (value, kind) match {
-      case (x: Number, AttributeType.DOUBLE)    => x.doubleValue: JDouble
-      case (x: Number, AttributeType.FLOAT)     => x.doubleValue: JDouble
-      case (b: JBoolean, AttributeType.BOOLEAN) => b
+      case (x: Number, DoubleClass)    => x.doubleValue: JDouble
+      case (x: Number, FloatClass)     => x.doubleValue: JDouble
+      case (b: JBoolean, BooleanClass) => b
       // For Strings, we want to keep the escaping but ditch the surrounding quotes. BCH 1/26/2015
-      case (s: String, AttributeType.STRING)    => Dump.logoObject(s, readable = true, exporting = false).drop(1).dropRight(1)
-      case (s: AnyRef, AttributeType.STRING)    => Dump.logoObject(s, readable = true, exporting = false)
-      case (o: AnyRef, attributeType)           =>
+      case (s: String, StringClass)    => Dump.logoObject(s, readable = true, exporting = false).drop(1).dropRight(1)
+      case (s: AnyRef, StringClass)    => Dump.logoObject(s, readable = true, exporting = false)
+      case (o: AnyRef, attributeType)  =>
         throw new ExtensionException(s"Could not coerce ${Dump.logoObject(o, readable = true, exporting = false)} to $attributeType")
     }
 
