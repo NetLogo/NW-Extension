@@ -28,5 +28,5 @@ libraryDependencies ++= Seq(
   "net.sf.jung"                 % "jung-api"            % "2.0.1",
   "net.sf.jung"                 % "jung-graph-impl"     % "2.0.1",
   "net.sf.jung"                 % "jung-io"             % "2.0.1",
-  "org.gephi"                   % "gephi-toolkit"       % "0.9.6" classifier "all"
+  "org.gephi"                   % "gephi-toolkit"       % "0.9.7" classifier "all"
 )

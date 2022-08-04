@@ -1707,13 +1707,10 @@ load-full-vna
   frogs-own [age spots]
   turtles-own [tvar]
   O> nw:load-vna "extensions/nw/test/vna/full.vna" turtles links
-  # Suspected bug in the gephi VNA importer when empty strings are encountered
-  # in the data.  These should be uncommented once that bug is resolved.
-  # -Jeremy B August 2022
-  #[(list tvar fur)] of one-of mice => ["true" "white"]
-  #[(list tvar spots)] of one-of frogs => ["false" "true"]
-  #[(list lvar)] of one-of directed-edges => ["5.0"]
-  #[(list weight)] of one-of undirected-edges => [10]
+  [(list tvar fur)] of one-of mice => ["true" "white"]
+  [(list tvar spots)] of one-of frogs => ["false" "true"]
+  [(list lvar)] of one-of directed-edges => ["5.0"]
+  [(list weight)] of one-of undirected-edges => [10]
 
 save-simple
   extensions [ nw ]
