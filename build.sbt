@@ -28,5 +28,17 @@ libraryDependencies ++= Seq(
   "net.sf.jung"                 % "jung-api"            % "2.0.1",
   "net.sf.jung"                 % "jung-graph-impl"     % "2.0.1",
   "net.sf.jung"                 % "jung-io"             % "2.0.1",
-  "org.gephi"                   % "gephi-toolkit"       % "0.9.7" classifier "all"
+  "org.gephi"                   % "gephi-toolkit"       % "0.9.7"
+    exclude("org.gephi", "db-drivers")
+    exclude("org.gephi", "algorithms-plugin")
+    exclude("org.gephi", "preview-plugin")
+    exclude("org.gephi", "mostrecentfiles-api")
+    exclude("org.gephi", "io-exporter-preview")
+    exclude("org.gephi", "appearance-plugin")
+    exclude("org.gephi", "visualization-api")
+    exclude("com.itextpdf", "itextpdf")
+    exclude("net.sf.trove4j", "trove4j")
+    exclude("org.apache.poi", "poi-ooxml")
+    exclude("org.jfree", "jfreechart")
+    exclude("org.netbeans.modules", "org-netbeans-core")
 )
