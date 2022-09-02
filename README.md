@@ -1083,7 +1083,7 @@ At the moment, `nw:save-matrix` does not support link weights. Every link is rep
 ### `nw:load-matrix`
 
 ```NetLogo
-nw:load-matrix file-name optional-command-block
+nw:load-matrix file-name turtle-breed link-breed optional-command-block
 ```
 
 
