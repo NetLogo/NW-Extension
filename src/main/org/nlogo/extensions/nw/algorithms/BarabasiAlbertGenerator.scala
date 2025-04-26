@@ -18,8 +18,8 @@ object BarabasiAlbertGenerator {
 
     val turtles = ArrayBuffer.fill(minDegree + 1)(createTurtle(world, turtleBreed, rng))
     val links = turtles.combinations(2).map {
-      case Seq(s: Turtle, t: Turtle) => world.getOrCreateLink(s, t, linkBreed)
-      case a => throw new IllegalStateException
+      case s +: t +: tail => world.getOrCreateLink(s, t, linkBreed)
+      case _ => throw new IllegalStateException
     }.to(ArrayBuffer)
 
     for (_ <- turtles.size until numTurtles) {
