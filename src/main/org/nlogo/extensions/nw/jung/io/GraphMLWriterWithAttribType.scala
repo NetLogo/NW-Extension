@@ -21,13 +21,13 @@ class GraphMLWriterWithAttribType[V, E] extends GraphMLWriter[V, E] {
   val attribTypes = collection.mutable.Map[String, String]()
 
   def addVertexData(id: String, description: String, default_value: String,
-    attrType: String, vertex_transformer: Transformer[V, String]) {
+    attrType: String, vertex_transformer: Transformer[V, String]): Unit = {
     super.addVertexData(id, description, default_value, vertex_transformer)
     attribTypes += ("node" + id) -> attrType
   }
 
   def addEdgeData(id: String, description: String, default_value: String,
-    attrType: String, edge_transformer: Transformer[E, String]) {
+    attrType: String, edge_transformer: Transformer[E, String]): Unit = {
     super.addEdgeData(id, description, default_value, edge_transformer)
     attribTypes += ("edge" + id) -> attrType
   }
@@ -39,7 +39,7 @@ class GraphMLWriterWithAttribType[V, E] extends GraphMLWriter[V, E] {
   @throws(classOf[IOException])
   override def writeKeySpecification(
     key: String, `type`: String,
-    ds: GraphMLMetadata[_], bw: BufferedWriter) {
+    ds: GraphMLMetadata[_], bw: BufferedWriter): Unit = {
 
     bw.write("<key id=\"" + key + "\" for=\"" + `type` + "\"")
 

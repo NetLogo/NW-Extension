@@ -57,7 +57,7 @@ case class MixedMultiGraph[V](override val links: Seq[(V, V, Boolean)]) extends 
     nodes.map { node => node ->
       (outUndirLinks.getOrElse(node, Seq.empty[(V,V,Boolean)])
         ++ inUndirLinks.getOrElse(node, Seq.empty[(V,V,Boolean)]))
-    }(collection.breakOut)
+    }.toMap
   }
   val outLinks: Map[V, Seq[(V,V,Boolean)]] =
     links.filter(_._3).groupBy(_._1) withDefaultValue Seq.empty[(V,V,Boolean)]

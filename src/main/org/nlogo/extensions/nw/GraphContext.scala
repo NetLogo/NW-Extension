@@ -20,11 +20,13 @@ with algorithms.CentralityMeasurer {
   val turtleMonitor: MonitoredAgentSet[Turtle] = turtleSet match {
     case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
+    case _ => throw new Exception(s"Unexpected set: $turtleSet")
   }
 
   val linkMonitor: MonitoredAgentSet[Link] = linkSet match {
     case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas)
+    case _ => throw new Exception(s"Unexpected set: $linkSet")
   }
 
   // We need a guaranteed iteration order for Turtles, but also want fast
@@ -34,7 +36,7 @@ with algorithms.CentralityMeasurer {
   implicit object TurtleOrdering extends Ordering[Turtle]{
     override def compare(x: Turtle, y: Turtle): Int = x.compareTo(y)
   }
-  override val nodes: SortedSet[Turtle] = turtleSet.asIterable[Turtle].to[SortedSet]
+  override val nodes: SortedSet[Turtle] = turtleSet.asIterable[Turtle].to(SortedSet)
   override val links: Iterable[Link] = linkSet.asIterable[Link]
     .filter(l => nodes.contains(l.end1) && nodes.contains(l.end2))
 
@@ -51,9 +53,9 @@ with algorithms.CentralityMeasurer {
         undir.getOrElseUpdate(link.end2, ArrayBuffer.empty[Link]) += link
       }
     }
-    (undir.toMap[Turtle, Seq[Link]] withDefaultValue Seq.empty[Link],
-     in.toMap[Turtle, Seq[Link]] withDefaultValue Seq.empty[Link],
-     out.toMap[Turtle, Seq[Link]] withDefaultValue Seq.empty[Link])
+    (undir.toMap[Turtle, mutable.Seq[Link]] withDefaultValue mutable.Seq.empty[Link],
+     in.toMap[Turtle, mutable.Seq[Link]] withDefaultValue mutable.Seq.empty[Link],
+     out.toMap[Turtle, mutable.Seq[Link]] withDefaultValue mutable.Seq.empty[Link])
   }
 
   def verify(w: World): GraphContext = {
@@ -120,17 +122,17 @@ with algorithms.CentralityMeasurer {
   override def ends(link: Link): (Turtle, Turtle) = (link.end1, link.end2)
   override def otherEnd(node: Turtle)(link: Link): Turtle = if (link.end1 == node) link.end2 else link.end1
 
-  override def inEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ++ undirLinks(turtle)
+  override def inEdges(turtle: Turtle): Seq[Link] = (inLinks(turtle) ++ undirLinks(turtle)).toSeq
 
-  override def outEdges(turtle: Turtle): Seq[Link] = outLinks(turtle) ++ undirLinks(turtle)
+  override def outEdges(turtle: Turtle): Seq[Link] = (outLinks(turtle) ++ undirLinks(turtle)).toSeq
 
-  override def allEdges(turtle: Turtle): Seq[Link] = inLinks(turtle) ++ outLinks(turtle) ++ undirLinks(turtle)
+  override def allEdges(turtle: Turtle): Seq[Link] = (inLinks(turtle) ++ outLinks(turtle) ++ undirLinks(turtle)).toSeq
 
-  override def toString = turtleSet.toLogoList + "\n" + linkSet.toLogoList
+  override def toString = turtleSet.toLogoList.toString + "\n" + linkSet.toLogoList
 
   val pathFinder = new PathFinder[Turtle, Link](this, world, weightFunction)
 
-  lazy val components: Traversable[SortedSet[Turtle]] = {
+  lazy val components: Iterable[SortedSet[Turtle]] = {
     val foundBy = mutable.Map[Turtle, Turtle]()
     nodes.groupBy { t =>
       foundBy.getOrElseUpdate(t, {

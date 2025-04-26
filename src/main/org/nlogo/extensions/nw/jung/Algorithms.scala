@@ -2,9 +2,6 @@
 
 package org.nlogo.extensions.nw.jung
 
-import scala.collection.JavaConverters._
-import scala.collection.mutable
-
 import org.nlogo.agent.{World, Agent, Link, Turtle}
 import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.LinkToRichLink
@@ -14,6 +11,9 @@ import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
 import edu.uci.ics.jung.{ algorithms => jungalg }
 import org.nlogo.agent.World.VariableWatcher
 import org.nlogo.extensions.nw.util.CacheManager
+
+import scala.collection.mutable
+import scala.jdk.CollectionConverters.SetHasAsScala
 
 trait Algorithms {
   self: Graph =>
@@ -26,6 +26,7 @@ trait Algorithms {
         weightedGraphCaches.remove(variable)
         gc.world.deleteWatcher(variable, cacheInvalidator)
       }
+      case _ =>
     }
   }
 
@@ -68,6 +69,7 @@ trait Algorithms {
     def get(agent: Agent) = agent match {
       case (t: Turtle) => getVertexScore(t)
       case (l: Link) => getEdgeScore(l)
+      case _ => throw new Exception(s"Unexpected agent: $agent")
     }
   }
 
@@ -75,7 +77,7 @@ trait Algorithms {
     evaluate()
     def getScore(turtle: Turtle) = {
       if (!graph.containsVertex(turtle))
-        throw new ExtensionException(turtle + " is not a member of the current graph context.")
+        throw new ExtensionException(s"$turtle is not a member of the current graph context.")
       getVertexScore(turtle)
     }
   }
@@ -99,7 +101,7 @@ trait Algorithms {
   trait ClosenessCentrality extends jungalg.scoring.ClosenessCentrality[Turtle, Link] {
     def getScore(turtle: Turtle) = {
       if (!self.containsVertex(turtle))
-        throw new ExtensionException(turtle + " is not a member of the current graph context.")
+        throw new ExtensionException(s"$turtle is not a member of the current graph context.")
       val res = getVertexScore(turtle)
       if (res.isNaN)
         Double.box(0.0) // for isolates

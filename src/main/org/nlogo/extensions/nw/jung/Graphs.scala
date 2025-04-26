@@ -3,7 +3,6 @@
 package org.nlogo.extensions.nw.jung
 
 import java.util.Collection
-import scala.collection.JavaConverters._
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api.ExtensionException
@@ -11,6 +10,8 @@ import org.nlogo.extensions.nw.GraphContext
 import edu.uci.ics
 import edu.uci.ics.jung.graph.util.EdgeType
 import edu.uci.ics.jung.graph.util.Pair
+
+import scala.jdk.CollectionConverters.IterableHasAsJava
 
 trait Graph
   extends ics.jung.graph.AbstractGraph[Turtle, Link]

@@ -7,7 +7,7 @@ import org.nlogo.api
 
 trait GraphContextProvider {
   def getGraphContext(world: api.World): GraphContext
-  def withTempGraphContext(gc: GraphContext)(f: () => Unit)
+  def withTempGraphContext(gc: GraphContext)(f: () => Unit): Unit
 }
 
 trait GraphContextManager extends GraphContextProvider {
@@ -28,12 +28,12 @@ trait GraphContextManager extends GraphContextProvider {
     _graphContext.get
   }
 
-  def setGraphContext(gc: GraphContext) {
+  def setGraphContext(gc: GraphContext): Unit = {
     _graphContext.foreach(_.unsubscribe())
     _graphContext = Some(gc)
   }
 
-  def withTempGraphContext(gc: GraphContext)(f: () => Unit) {
+  def withTempGraphContext(gc: GraphContext)(f: () => Unit): Unit = {
     val currentContext = _graphContext
     _graphContext = Some(gc)
     f()
@@ -41,7 +41,7 @@ trait GraphContextManager extends GraphContextProvider {
     _graphContext = currentContext
   }
 
-  def clearContext() {
+  def clearContext(): Unit = {
     _graphContext.foreach(_.unsubscribe())
     _graphContext = None
   }

@@ -9,7 +9,7 @@ import java.lang.{
 import java.util.Collection
 
 import scala.collection.Map
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters.{ CollectionHasAsScala, IterableHasAsScala, MapHasAsScala }
 import scala.language.postfixOps
 import scala.util.control.Exception.allCatch
 
@@ -33,20 +33,20 @@ object GephiImport {
 
   def load(file: File, world: World,
            defaultTurtleBreed: AgentSet, defaultLinkBreed: AgentSet,
-           initTurtles: TraversableOnce[Turtle] => Unit): Unit = GephiUtils.withNWLoaderContext {
+           initTurtles: IterableOnce[Turtle] => Unit): Unit = GephiUtils.withNWLoaderContext {
     load(file, world, defaultTurtleBreed, defaultLinkBreed, initTurtles, importController.getFileImporter(file))
   }
 
   def load(file: File, world: World,
            defaultTurtleBreed: AgentSet, defaultLinkBreed: AgentSet,
-           initTurtles: TraversableOnce[Turtle] => Unit,
+           initTurtles: IterableOnce[Turtle] => Unit,
            extension: String): Unit = GephiUtils.withNWLoaderContext {
     load(file, world, defaultTurtleBreed, defaultLinkBreed, initTurtles, importController.getFileImporter(extension))
   }
 
   def load(file: File, world: World,
            defaultTurtleBreed: AgentSet, defaultLinkBreed: AgentSet,
-           initTurtles: TraversableOnce[Turtle] => Unit,
+           initTurtles: IterableOnce[Turtle] => Unit,
            importer: FileImporter): Unit = GephiUtils.withNWLoaderContext {
     if (!file.exists) {
       throw new ExtensionException("The file " + file + " cannot be found.")
@@ -103,7 +103,7 @@ object GephiImport {
       }
     } toMap
 
-    val badEdges: TraversableOnce[EdgeDraft] = edges.map { edge =>
+    val badEdges: Iterable[EdgeDraft] = edges.map { edge =>
       val source = nodeToTurtle(edge.getSource)
       val target = nodeToTurtle(edge.getTarget)
       // There are three gephi edge types: directed, undirected, and mutual. Mutual is pretty much just indicating that
@@ -175,7 +175,7 @@ object GephiImport {
   private def pair(key: String, value: AnyRef): Option[(String, AnyRef)] =
     Option(value) map (v => key -> convertAttribute(key, v))
 
-  private def getAttributes(el: ElementDraft): Map[String, AnyRef] =
+  private def getAttributes(el: ElementDraft): scala.collection.immutable.Map[String, AnyRef] =
     el.getColumns.asScala.map { c =>
       val name     = c.getId.toUpperCase
       val rawValue = el.getValue(c.getId)

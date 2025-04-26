@@ -20,12 +20,12 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     }
   }
 
-  override def clearAll() { clearContext() }
-  override def unload(em: api.ExtensionManager) {
+  override def clearAll(): Unit = { clearContext() }
+  override def unload(em: api.ExtensionManager): Unit = {
     clearAll()
   }
 
-  override def load(primManager: api.PrimitiveManager) {
+  override def load(primManager: api.PrimitiveManager): Unit = {
 
     checkNetLogoVersion()
 

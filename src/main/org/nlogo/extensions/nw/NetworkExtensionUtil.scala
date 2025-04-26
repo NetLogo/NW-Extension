@@ -12,12 +12,12 @@ import java.util.Locale
 
 object NetworkExtensionUtil {
 
-  implicit def functionToTransformer[I, O](f: Function1[I, O]) =
+  implicit def functionToTransformer[I, O](f: Function1[I, O]): org.apache.commons.collections15.Transformer[I,O] =
     new org.apache.commons.collections15.Transformer[I, O] {
       override def transform(i: I) = f(i)
     }
 
-  implicit def AgentToRichAgent(agent: Agent) = new RichAgent(agent)
+  implicit def AgentToRichAgent(agent: Agent): org.nlogo.extensions.nw.NetworkExtensionUtil.RichAgent = new RichAgent(agent)
   class RichAgent(agent: Agent) {
     def requireAlive =
       if (agent.id != -1) // is alive
@@ -26,7 +26,7 @@ object NetworkExtensionUtil {
         I18N.errors.get("org.nlogo.$common.thatAgentIsDead"))
   }
 
-  implicit def LinkToRichLink(link: org.nlogo.agent.Link)(implicit world: agent.World) =
+  implicit def LinkToRichLink(link: org.nlogo.agent.Link)(implicit world: agent.World): org.nlogo.extensions.nw.NetworkExtensionUtil.RichLink =
     new RichLink(link, world)
 
   class RichLink(link: org.nlogo.agent.Link, world: agent.World) {
@@ -41,7 +41,7 @@ object NetworkExtensionUtil {
       }
   }
 
-  implicit def AgentSetToRichAgentSet(agentSet: api.AgentSet)(implicit world: org.nlogo.agent.World) =
+  implicit def AgentSetToRichAgentSet(agentSet: api.AgentSet)(implicit world: org.nlogo.agent.World): org.nlogo.extensions.nw.NetworkExtensionUtil.RichAgentSet =
     new RichAgentSet(agentSet.asInstanceOf[agent.AgentSet], world)
 
   class RichAgentSet(agentSet: agent.AgentSet, val world: org.nlogo.agent.World) {
@@ -103,15 +103,15 @@ object NetworkExtensionUtil {
     override def getSyntax =
       Syntax.commandSyntax(agentClassString = "OT--", blockAgentClassString = Some("-T--"))
 
-    def askTurtles(context: api.Context)(turtles: TraversableOnce[agent.Turtle]) = {
-      val agents = turtles.toArray[agent.Agent]
+    def askTurtles(context: api.Context)(turtles: IterableOnce[agent.Turtle]) = {
+      val agents = turtles.iterator.toArray
       val extContext = context.asInstanceOf[nvm.ExtensionContext]
       val nvmContext = extContext.nvmContext
       agents.foreach(extContext.workspace.joinForeverButtons)
       val agentSet = agent.AgentSet.fromArray(AgentKind.Turtle, agents)
       nvmContext.runExclusiveJob(agentSet, nvmContext.ip + 1)
     }
-    def assemble(a: nvm.AssemblerAssistant) {
+    def assemble(a: nvm.AssemblerAssistant): Unit = {
       a.block()
       a.done()
     }
@@ -119,7 +119,7 @@ object NetworkExtensionUtil {
   }
 
   trait TurtleCreatingCommand extends TurtleAskingCommand {
-    def createTurtles(args: Array[api.Argument], context: api.Context): TraversableOnce[agent.Turtle]
+    def createTurtles(args: Array[api.Argument], context: api.Context): IterableOnce[agent.Turtle]
     override def perform(args: Array[api.Argument], context: api.Context) =
       askTurtles(context)(createTurtles(args, context))
 
@@ -141,12 +141,12 @@ object NetworkExtensionUtil {
       rng.nextInt(14), // color
       rng.nextInt(360)) // heading
 
-  def using[A <: { def close() }, B](closeable: A)(body: A => B): B =
+  def using[A <: { def close(): Unit }, B](closeable: A)(body: A => B): B =
     try body(closeable) finally closeable.close()
 
   def canonocilizeVar(variable: AnyRef) = variable match {
     case s: String => s.toUpperCase(Locale.ENGLISH)
     case t: Token  => t.text.toString.toUpperCase(Locale.ENGLISH)
+    case _ => throw new Exception(s"Unexpected variable: $variable")
   }
 }
-

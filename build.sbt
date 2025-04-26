@@ -11,7 +11,7 @@ netLogoClassManager := "org.nlogo.extensions.nw.NetworkExtension"
 netLogoVersion      := "6.3.0"
 netLogoTestExtras   += baseDirectory.value / "test"
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.13.16"
 Compile / scalaSource := baseDirectory.value / "src" / "main"
 Test / scalaSource    := baseDirectory.value / "src" / "test"
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature", "-encoding", "us-ascii", "-Xlint", "-release", "11")

@@ -96,7 +96,7 @@ object GephiExport {
         }.toMap
     }.toMap
 
-    val nodes = context.nodes.map { turtle =>
+    val nodes = context.nodes.unsorted.map { turtle =>
       val node = graphModel.factory.newNode(turtle.toString.split(" ").mkString("-"))
       turtlesOwnAttributes.foreach { case (name, col) =>
         node.setAttribute(col, coerce(turtle.getTurtleOrLinkVariable(name), col.getTypeClass))

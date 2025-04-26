@@ -25,7 +25,7 @@ object GraphMLExport {
 
     def addImplicitVariables[T <: agent.Agent](
       vars: Iterable[String],
-      adder: (String, String, String, String, Transformer[T, String]) => Unit) {
+      adder: (String, String, String, String, Transformer[T, String]) => Unit): Unit = {
       for ((variableName, i) <- vars.zipWithIndex) {
         val transformer = (a: T) => api.Dump.logoObject(a.getVariable(i))
         adder(variableName, null, null, "string", transformer)
@@ -67,7 +67,7 @@ object GraphMLExport {
       vars: Iterable[String],
       varChecker: (T, String) => Boolean,
       varGetter: (T, String) => Object,
-      adder: (String, String, String, String, Transformer[T, String]) => Unit) {
+      adder: (String, String, String, String, Transformer[T, String]) => Unit): Unit = {
       for (variableName <- vars) {
         val attrType = findAttrType(agents,
           varChecker(_: T, variableName),

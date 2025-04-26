@@ -2,8 +2,6 @@
 
 package org.nlogo.extensions.nw.jgrapht
 
-import scala.collection.JavaConverters._
-
 import org.nlogo.agent.Link
 import org.nlogo.agent.Turtle
 import org.nlogo.api
@@ -12,6 +10,8 @@ import org.nlogo.extensions.nw.GraphContext
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSets
 
 import org.jgrapht
+
+import scala.jdk.CollectionConverters.{ SetHasAsJava, CollectionHasAsScala }
 
 trait Graph
   extends jgrapht.graph.AbstractGraph[Turtle, Link] {

@@ -1,17 +1,18 @@
 package org.nlogo.extensions.nw.util
 
-import scala.collection.JavaConverters._
+import java.lang.{ Iterable => JIterable }
 
+import org.nlogo.api
 import org.nlogo.agent.{ Agent, AgentSet, Turtle, World }
 import org.nlogo.core.AgentKind
-import org.nlogo.api
-import java.lang.{ Iterable => JIterable }
+
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 object TurtleSetsConverters {
 
-  def toTurtleSets(turtleIterables: Traversable[JIterable[Turtle]], rng: java.util.Random): Seq[api.AgentSet] = {
+  def toTurtleSets(turtleIterables: Iterable[JIterable[Turtle]], rng: java.util.Random): Seq[api.AgentSet] = {
     val turtleSets: Seq[api.AgentSet] =
-      turtleIterables.map(toTurtleSet)(collection.breakOut)
+      turtleIterables.map(toTurtleSet).toSeq
     new scala.util.Random(rng).shuffle(turtleSets)
   }
 

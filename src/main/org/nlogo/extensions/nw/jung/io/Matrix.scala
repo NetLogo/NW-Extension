@@ -19,7 +19,7 @@ import edu.uci.ics.jung.algorithms.matrix.GraphMatrixOperations
 
 object Matrix {
 
-  def save(graph: jung.graph.Graph[Turtle, Link], filename: String) {
+  def save(graph: jung.graph.Graph[Turtle, Link], filename: String): Unit = {
     /* This is almost a line for line copy of jung.io.MatrixFile.save, the major
      * difference being that it explicitly uses the US locale to make sure entries
      * use the dot decimal separator (see issue #69) */

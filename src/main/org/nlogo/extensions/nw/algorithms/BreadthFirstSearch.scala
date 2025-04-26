@@ -12,7 +12,7 @@ object BreadthFirstSearch {
    * the paths share storage, so total memory usage stays within O(n).
    * Adapted from the original network extension written by Seth Tisue
    */
-  def apply(gc: GraphContext, start: Turtle, followOut: Boolean, followIn: Boolean): Stream[List[Turtle]] = {
+  def apply(gc: GraphContext, start: Turtle, followOut: Boolean, followIn: Boolean): LazyList[List[Turtle]] = {
     def rawNeighbors(node: Turtle) =
       (if (followOut) gc.outNeighbors(node) else Seq.empty[Turtle]) ++
       (if (followIn) gc.inNeighbors(node) else Seq.empty[Turtle])
@@ -22,12 +22,12 @@ object BreadthFirstSearch {
       t => memory(t) || { memory += t; false }
     }
     def neighbors(turtle: Turtle): Iterable[Turtle] = rawNeighbors(turtle).filterNot(seen)
-    def nextLayer(layer: Stream[List[Turtle]]) =
+    def nextLayer(layer: LazyList[List[Turtle]]) =
       for {
         path <- layer
         neighbor <- neighbors(path.head)
       } yield neighbor :: path
-    Stream.iterate(Stream(List(start)))(nextLayer)
+    LazyList.iterate(LazyList(List(start)))(nextLayer)
       .takeWhile(_.nonEmpty)
       .flatten
   }

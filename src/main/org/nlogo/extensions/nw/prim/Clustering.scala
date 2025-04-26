@@ -9,7 +9,7 @@ import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.algorithms.{ClusteringMetrics, Louvain}
 import org.nlogo.extensions.nw.util.TurtleSetsConverters.toTurtleSet
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class ClusteringCoefficient(gcp: GraphContextProvider) extends api.Reporter {
   override def getSyntax = reporterSyntax(ret = NumberType, agentClassString = "-T--")

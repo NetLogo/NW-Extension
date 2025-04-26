@@ -20,7 +20,7 @@ class SetContext(gcm: GraphContextManager)
   extends api.Command {
   override def getSyntax = commandSyntax(
     right = List(AgentsetType, AgentsetType))
-  override def perform(args: Array[api.Argument], context: api.Context) {
+  override def perform(args: Array[api.Argument], context: api.Context): Unit = {
     implicit val world = context.world.asInstanceOf[agent.World]
     val turtleSet = args(0).getAgentSet.requireTurtleSet
     val linkSet = args(1).getAgentSet.requireLinkSet
@@ -44,7 +44,7 @@ class WithContext(gcp: GraphContextProvider)
   override def getSyntax = commandSyntax(
     right = List(AgentsetType, AgentsetType, CommandBlockType))
 
-  def perform(args: Array[Argument], context: Context) {
+  def perform(args: Array[Argument], context: Context): Unit = {
     implicit val world = context.world.asInstanceOf[agent.World]
     val turtleSet = args(0).getAgentSet.requireTurtleSet
     val linkSet = args(1).getAgentSet.requireLinkSet
@@ -58,7 +58,7 @@ class WithContext(gcp: GraphContextProvider)
     }
   }
 
-  def assemble(a: AssemblerAssistant) {
+  def assemble(a: AssemblerAssistant): Unit = {
     a.block()
     a.done()
   }

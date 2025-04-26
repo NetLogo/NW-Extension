@@ -22,7 +22,7 @@ object MeanPathLength {
       } {
         if (dist.isEmpty) {
           sum = Double.NaN
-          break
+          break()
         }
         n += 1
         sum += dist.get

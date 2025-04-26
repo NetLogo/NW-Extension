@@ -3,12 +3,12 @@ package org.nlogo.extensions.nw.algorithms
 import org.nlogo.agent.Turtle
 
 trait CentralityMeasurer {
-  def inNeighbors(turtle: Turtle): Traversable[Turtle]
-  def components: Traversable[Traversable[Turtle]]
+  def inNeighbors(turtle: Turtle): Iterable[Turtle]
+  def components: Iterable[Iterable[Turtle]]
 
   // Initializing with in-degree works well with directed graphs, knocking out obviously non-strongly reachable nodes
   // immediately. Initializing with all ones can make convergence take much longer. -- BCH 5/12/2014
-  private def inDegrees(turtles: Traversable[Turtle]) =
+  private def inDegrees(turtles: Iterable[Turtle]) =
     turtles.foldLeft(Map.empty[Turtle, Double]) {
       (m, t) => m + (t -> inNeighbors(t).size.toDouble)
     }

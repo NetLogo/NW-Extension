@@ -4,7 +4,6 @@ import java.io.File
 
 import org.nlogo.agent.World
 import org.nlogo.api
-import org.nlogo.api._
 import org.nlogo.core.Syntax._
 import org.nlogo.nvm.ExtensionContext
 

@@ -12,8 +12,7 @@ import org.nlogo.api.{AgentException, ExtensionException, MersenneTwisterFast}
 import org.nlogo.extensions.nw.NetworkExtensionUtil.{createTurtle, using}
 import org.nlogo.extensions.nw.jung.{createLink, sparseGraphFactory, transformer}
 
-import scala.Option.option2Iterable
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters.{ CollectionHasAsScala, ListHasAsScala, MapHasAsScala, SetHasAsScala }
 
 object GraphMLImport {
 
@@ -89,7 +88,7 @@ object GraphMLImport {
   //   }
   // }
 
-  private def setAgentVariable(agent: Agent, attribute: Attribute) {
+  private def setAgentVariable(agent: Agent, attribute: Attribute): Unit = {
     if (attribute.name != "WHO") // don' try to set WHO
       try {
         val program = agent.world.program
@@ -110,6 +109,8 @@ object GraphMLImport {
               case v =>
                 agent.setBreedVariable(v, attribute.valueObject)
             }
+          case _ =>
+            throw new Exception(s"Unexpected agent: $agent")
         }
       } catch {
         case e: AgentException => // Variable just does not exist - move on
@@ -130,7 +131,7 @@ object GraphMLImport {
       val agent = create(elem, breed)
       attrs.foreach { setAgentVariable(agent, _) }
       elem -> agent
-    }(scala.collection.breakOut)
+    }.toMap
 
   def load(fileName: String, world: World, rng: MersenneTwisterFast): Iterator[Turtle] = {
     try {
@@ -150,7 +151,7 @@ object GraphMLImport {
         val keyMap: Map[MetadataType, Seq[Key]] =
           graphReader
             .getGraphMLDocument.getKeyMap.entrySet()
-            .asScala.map(entry => entry.getKey -> entry.getValue.asScala).toMap
+            .asScala.map(entry => entry.getKey -> entry.getValue.asScala.toSeq).toMap
 
         // The vertices have non-deterministic order, so we need to sort them by id
         // so that the turtles are created in the same order every time. Otherwise

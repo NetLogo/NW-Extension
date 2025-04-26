@@ -99,7 +99,7 @@ object Louvain {
           totalIn(comMap(other)) += weight
         }
       }
-      val mod = (internal, totalIn, totalOut).zipped.toIterator.map { case (intern: Double, in: Double, out: Double) =>
+      val mod = internal.lazyZip(totalIn).lazyZip(totalOut).map { case (intern: Double, in: Double, out: Double) =>
         (intern - in * out / graph.totalArcWeight) / graph.totalArcWeight
       }.sum
       new CommunityStructure[V,E](graph, comMap, internal.toVector, totalIn.toVector, totalOut.toVector, mod)

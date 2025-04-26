@@ -2,21 +2,15 @@
 
 package org.nlogo.extensions.nw
 
-import org.nlogo.agent.Agent
-import org.nlogo.agent.AgentSet
-import org.nlogo.agent.ArrayAgentSet
-import org.nlogo.agent.Link
-import org.nlogo.agent.TreeAgentSet
-import org.nlogo.agent.Turtle
-import org.nlogo.agent.World
+import org.nlogo.agent.{ Agent, AgentSet, ArrayAgentSet, Link, TreeAgentSet, Turtle, World }
 import org.nlogo.api.SimpleChangeEvent
-import org.nlogo.api.SimpleChangeEventPublisher
+import org.nlogo.core.Listener
 
 class AgentSetChangeSubscriber(agentSet: TreeAgentSet, onNotify: () => Unit)
-  extends SimpleChangeEventPublisher#Sub {
+  extends Listener[SimpleChangeEvent.type] {
   agentSet.simpleChangeEventPublisher.subscribe(this)
-  def unsubscribe(): Unit = agentSet.simpleChangeEventPublisher.removeSubscription(this)
-  override def notify(pub: SimpleChangeEventPublisher#Pub, event: SimpleChangeEvent.type) {
+  def unsubscribe(): Unit = agentSet.simpleChangeEventPublisher.unsubscribe(this)
+  override def handle(e: SimpleChangeEvent.type): Unit = {
     onNotify.apply()
   }
 }

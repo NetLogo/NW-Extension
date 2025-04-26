@@ -24,6 +24,6 @@ class WeakComponentClusters(gcp: GraphContextProvider)
   override def getSyntax = reporterSyntax(ret = ListType)
   override def report(args: Array[api.Argument], context: api.Context) = {
     val comps = gcp.getGraphContext(context.getAgent.world).components
-    toLogoList(new scala.util.Random(context.getRNG).shuffle(comps.map(toTurtleSet)(collection.breakOut)))
+    toLogoList(new scala.util.Random(context.getRNG).shuffle(comps.map(toTurtleSet).toSeq))
   }
 }

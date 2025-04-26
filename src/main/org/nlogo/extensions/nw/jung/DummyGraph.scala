@@ -2,8 +2,6 @@
 
 package org.nlogo.extensions.nw.jung
 
-import scala.collection.JavaConverters._
-
 import org.apache.commons.collections15.Factory
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Turtle
@@ -12,6 +10,8 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.createTurtle
 import org.nlogo.api.MersenneTwisterFast
 
 import edu.uci.ics.jung
+
+import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 object DummyGraph {
   // TODO: the vertex id thing is a ugly hack to get around the fact that
@@ -44,7 +44,7 @@ object DummyGraph {
     val turtles: Map[Vertex, Turtle] =
       vertices.map { v =>
         v -> createTurtle(world, turtleBreed, rng)
-      }(collection.breakOut)
+      }.toMap
 
     graph.getEdges.asScala.foreach { e =>
       createLink(turtles, graph.getEndpoints(e), defaultDirected = false, linkBreed, world)

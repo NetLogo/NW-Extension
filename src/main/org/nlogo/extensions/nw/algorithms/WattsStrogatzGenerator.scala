@@ -24,9 +24,9 @@ object WattsStrogatzGenerator {
     val availBuffer = turtles.toArray
 
     val adjMap: Map[Turtle, mutable.Set[Turtle]] = turtles.zipWithIndex.map { case (t: Turtle, i: Int) =>
-      val targets: mutable.Set[Turtle] = (1 to neighborhoodSize).map(j => turtles((i + j) % nbTurtles))(collection.breakOut)
+      val targets: mutable.Set[Turtle] = (1 to neighborhoodSize).map(j => turtles((i + j) % nbTurtles)).to(mutable.Set)
         t -> targets
-    }(collection.breakOut)
+    }.toMap
 
     for {
       (source, i) <- turtles.zipWithIndex
@@ -44,7 +44,7 @@ object WattsStrogatzGenerator {
           t
         }.dropWhile {
           t => t == source || adjMap(source).contains(t) || adjMap(t).contains(source)
-        }.next
+        }.next()
 
         adjMap(source).add(newTarget)
         newTarget

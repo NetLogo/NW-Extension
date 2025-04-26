@@ -43,7 +43,7 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
    * @param source
    * @param dest
    */
-  private def expandBestTraversal(variable: Option[String], source: V, dest: V) {
+  private def expandBestTraversal(variable: Option[String], source: V, dest: V): Unit = {
     val sourceTraversal = singleSourceTraversalCaches(variable)(source)
     val destTraversal = singleDestTraversalCaches(variable)(dest)
     // If one doesn't have a next, the nodes are disconnected
@@ -69,7 +69,7 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
     lastDest = Some(dest)
   }
 
-  private def cachedPath(cache: ((V, V)) => Seq[V], source: V, dest: V, rng: Random): Option[List[V]]
+  private def cachedPath(cache: ((V, V)) => ArrayBuffer[V], source: V, dest: V, rng: Random): Option[List[V]]
     = {
     if (source == dest) {
       Some(List(dest))

@@ -18,8 +18,9 @@ object BarabasiAlbertGenerator {
 
     val turtles = ArrayBuffer.fill(minDegree + 1)(createTurtle(world, turtleBreed, rng))
     val links = turtles.combinations(2).map {
-      case Seq(s, t) => world.getOrCreateLink(s, t, linkBreed)
-    }.to[ArrayBuffer]
+      case Seq(s: Turtle, t: Turtle) => world.getOrCreateLink(s, t, linkBreed)
+      case a => throw new Exception(s"Unexpected sequence: $a")
+    }.to(ArrayBuffer)
 
     for (_ <- turtles.size until numTurtles) {
       val s = createTurtle(world, turtleBreed, rng)
@@ -35,6 +36,6 @@ object BarabasiAlbertGenerator {
       turtles += s
     }
 
-    turtles
+    turtles.toSeq
   }
 }
