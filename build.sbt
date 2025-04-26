@@ -8,7 +8,7 @@ isSnapshot := true
 
 netLogoExtName      := "nw"
 netLogoClassManager := "org.nlogo.extensions.nw.NetworkExtension"
-netLogoVersion      := "6.3.0"
+netLogoVersion      := "7.0.0-internal1"
 netLogoTestExtras   += baseDirectory.value / "test"
 
 scalaVersion := "2.13.16"
