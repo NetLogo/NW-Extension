@@ -20,13 +20,13 @@ with algorithms.CentralityMeasurer {
   val turtleMonitor: MonitoredAgentSet[Turtle] = turtleSet match {
     case tas: TreeAgentSet  => new MonitoredTurtleTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredTurtleArrayAgentSet(aas)
-    case _ => throw new Exception(s"Unexpected set: $turtleSet")
+    case _ => throw new IllegalStateException
   }
 
   val linkMonitor: MonitoredAgentSet[Link] = linkSet match {
     case tas: TreeAgentSet  => new MonitoredLinkTreeAgentSet(tas, world)
     case aas: ArrayAgentSet => new MonitoredLinkArrayAgentSet(aas)
-    case _ => throw new Exception(s"Unexpected set: $linkSet")
+    case _ => throw new IllegalStateException
   }
 
   // We need a guaranteed iteration order for Turtles, but also want fast

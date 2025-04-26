@@ -69,7 +69,7 @@ trait Algorithms {
     def get(agent: Agent) = agent match {
       case (t: Turtle) => getVertexScore(t)
       case (l: Link) => getEdgeScore(l)
-      case _ => throw new Exception(s"Unexpected agent: $agent")
+      case _ => throw new IllegalStateException
     }
   }
 

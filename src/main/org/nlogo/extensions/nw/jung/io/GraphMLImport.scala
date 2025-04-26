@@ -110,7 +110,7 @@ object GraphMLImport {
                 agent.setBreedVariable(v, attribute.valueObject)
             }
           case _ =>
-            throw new Exception(s"Unexpected agent: $agent")
+            throw new IllegalStateException
         }
       } catch {
         case e: AgentException => // Variable just does not exist - move on

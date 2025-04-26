@@ -147,6 +147,6 @@ object NetworkExtensionUtil {
   def canonocilizeVar(variable: AnyRef) = variable match {
     case s: String => s.toUpperCase(Locale.ENGLISH)
     case t: Token  => t.text.toString.toUpperCase(Locale.ENGLISH)
-    case _ => throw new Exception(s"Unexpected variable: $variable")
+    case _ => throw new IllegalStateException
   }
 }
