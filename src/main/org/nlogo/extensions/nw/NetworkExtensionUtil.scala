@@ -7,7 +7,8 @@ import org.nlogo.api.{Agent, ExtensionException}
 import org.nlogo.core.{ AgentKind, I18N, Syntax, Token }
 import org.nlogo.{agent, api, nvm}
 import org.nlogo.api.MersenneTwisterFast
-import scala.language.{ implicitConversions, reflectiveCalls }
+import scala.language.implicitConversions
+import scala.reflect.Selectable.reflectiveSelectable
 import java.util.Locale
 
 object NetworkExtensionUtil {

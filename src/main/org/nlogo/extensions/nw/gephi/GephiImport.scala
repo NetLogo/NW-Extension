@@ -2,10 +2,7 @@ package org.nlogo.extensions.nw.gephi
 
 import java.awt.Color
 import java.io.{ File, FileReader, IOException }
-import java.lang.{
-  Boolean => JBoolean
-, Double  => JDouble
-}
+import java.lang.{ Boolean => JBoolean, Double  => JDouble }
 import java.util.Collection
 
 import scala.collection.Map
@@ -98,7 +95,7 @@ object GephiImport {
 
         val breed = getBreed(attrs, turtleBreeds).getOrElse(defaultTurtleBreed)
         val turtle = createTurtle(world, breed, world.mainRNG)
-        (attrs - "BREED") foreach (setAttribute(world, turtle) _).tupled
+        (attrs - "BREED") foreach (setAttribute(world, turtle)).tupled
         turtle
       }
     } toMap
@@ -143,7 +140,7 @@ object GephiImport {
           None
       }
 
-      links foreach { l => (attrs - "BREED") foreach (setAttribute(world, l) _).tupled }
+      links foreach { l => (attrs - "BREED") foreach (setAttribute(world, l)).tupled }
 
       if (bad) {
         Some(edge)
@@ -209,7 +206,7 @@ object GephiImport {
     } else if (colorBuiltins.contains(name)) o match {
       case c: Color => convertColor(c)
       case x: Number => x.doubleValue: JDouble
-      case c: Collection[_] => LogoList.fromIterator(c.asScala.map(convertAttribute _).iterator)
+      case c: Collection[?] => LogoList.fromIterator(c.asScala.map(convertAttribute).iterator)
       case s: String  => allCatch.opt(s.toDouble: JDouble).getOrElse("")
       case _ => "" // purposely invalid so it won't set. Might want to throw error instead. BCH 1/25/2015
 
@@ -223,10 +220,10 @@ object GephiImport {
     case n: Number => n.doubleValue: JDouble
     case b: JBoolean => b
     case ll: LogoList => ll
-    case c: Collection[_] => LogoList.fromIterator(c.asScala.map(x => convertAttribute(x)).iterator)
+    case c: Collection[?] => LogoList.fromIterator(c.asScala.map(x => convertAttribute(x)).iterator)
     // There may be a better handling of dynamic values, but this seems good enough for now. BCH 1/21/2015
-    case d: TimeMap[_, _] => LogoList.fromIterator(d.toValuesArray.map(x => convertAttribute(x)).iterator)
-    case a: Array[_] => LogoList.fromIterator(a.map(convertAttribute _).iterator)
+    case d: TimeMap[?, ?] => LogoList.fromIterator(d.toValuesArray.map(x => convertAttribute(x)).iterator)
+    case a: Array[?] => LogoList.fromIterator(a.map(convertAttribute).iterator)
     // Gephi attributes are strongly typed. Many formats, however, are not, and neither is NetLogo. Thus, when we use
     // String as a kind of AnyRef. This is a bad solution, but better than alternatives. BCH 1/25/2015
     case null => ""

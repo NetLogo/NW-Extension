@@ -8,13 +8,13 @@ isSnapshot := true
 
 netLogoExtName      := "nw"
 netLogoClassManager := "org.nlogo.extensions.nw.NetworkExtension"
-netLogoVersion      := "7.0.0-internal1-df97144"
+netLogoVersion      := "7.0.0-beta1"
 netLogoTestExtras   += baseDirectory.value / "test"
 
-scalaVersion := "2.13.16"
+scalaVersion := "3.7.0"
 Compile / scalaSource := baseDirectory.value / "src" / "main"
 Test / scalaSource    := baseDirectory.value / "src" / "test"
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature", "-encoding", "us-ascii", "-Xlint", "-release", "11")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature", "-encoding", "us-ascii", "-release", "11")
 
 resolvers ++= Seq(
   "gephi-thirdparty" at "https://raw.github.com/gephi/gephi/mvn-thirdparty-repo/"

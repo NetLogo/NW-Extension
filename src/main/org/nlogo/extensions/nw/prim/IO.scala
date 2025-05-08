@@ -33,7 +33,7 @@ class LoadFileType(extension: String) extends TurtleAskingCommand {
     val turtleBreed = args(1).getAgentSet.requireTurtleBreed
     val linkBreed = args(2).getAgentSet.requireLinkBreed
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiImport.load(file, world, turtleBreed, linkBreed, askTurtles(context) _, extension)
+    GephiImport.load(file, world, turtleBreed, linkBreed, askTurtles(context), extension)
   }
 }
 
@@ -43,7 +43,7 @@ class LoadFileTypeDefaultBreeds(extension: String) extends TurtleAskingCommand {
     val world = context.world.asInstanceOf[World]
     val ws = context.asInstanceOf[ExtensionContext].workspace
     val file = new File(ws.fileManager.attachPrefix(args(0).getString))
-    GephiImport.load(file, world, world.turtles, world.links, askTurtles(context) _, extension)
+    GephiImport.load(file, world, world.turtles, world.links, askTurtles(context), extension)
   }
 }
 

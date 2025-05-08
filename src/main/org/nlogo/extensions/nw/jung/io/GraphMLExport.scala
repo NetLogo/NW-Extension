@@ -20,8 +20,8 @@ object GraphMLExport {
 
     val graphMLWriter = new GraphMLWriterWithAttribType[agent.Turtle, agent.Link]
 
-    addImplicitVariables(api.AgentVariables.getImplicitTurtleVariables(false), graphMLWriter.addVertexData _)
-    addImplicitVariables(api.AgentVariables.getImplicitLinkVariables, graphMLWriter.addEdgeData _)
+    addImplicitVariables(api.AgentVariables.getImplicitTurtleVariables(false), graphMLWriter.addVertexData)
+    addImplicitVariables(api.AgentVariables.getImplicitLinkVariables, graphMLWriter.addEdgeData)
 
     def addImplicitVariables[T <: agent.Agent](
       vars: Iterable[String],
@@ -44,23 +44,23 @@ object GraphMLExport {
       turtles, turtlesOwn,
       (t: agent.Turtle, v: String) => turtlesOwn.contains(v),
       (t: agent.Turtle, v: String) => t.getVariable(turtlesOwn.indexOf(v)),
-      graphMLWriter.addVertexData _)
+      graphMLWriter.addVertexData)
     addVariables(
       links, linksOwn,
       (t: agent.Link, v: String) => linksOwn.contains(v),
       (t: agent.Link, v: String) => t.getVariable(linksOwn.indexOf(v)),
-      graphMLWriter.addEdgeData _)
+      graphMLWriter.addEdgeData)
 
     addVariables(
       turtles, program.breeds.values.flatMap(_.owns),
       (t: agent.Turtle, v: String) => world.breedOwns(t.getBreed, v),
       (t: agent.Turtle, v: String) => t.getBreedVariable(v),
-      graphMLWriter.addVertexData _)
+      graphMLWriter.addVertexData)
     addVariables(
       links, program.linkBreeds.values.flatMap(_.owns),
       (l: agent.Link, v: String) => world.linkBreedOwns(l.getBreed, v),
       (l: agent.Link, v: String) => l.getLinkBreedVariable(v),
-      graphMLWriter.addEdgeData _)
+      graphMLWriter.addEdgeData)
 
     def addVariables[T <: agent.Agent](
       agents: Iterable[T],

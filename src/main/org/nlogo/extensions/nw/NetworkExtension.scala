@@ -29,7 +29,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
 
     checkNetLogoVersion()
 
-    val add = primManager.addPrimitive _
+    val add = primManager.addPrimitive
 
     add("set-context", new prim.SetContext(this))
     add("get-context", new prim.GetContext(this))

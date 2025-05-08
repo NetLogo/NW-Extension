@@ -39,7 +39,7 @@ class GraphMLWriterWithAttribType[V, E] extends GraphMLWriter[V, E] {
   @throws(classOf[IOException])
   override def writeKeySpecification(
     key: String, `type`: String,
-    ds: GraphMLMetadata[_], bw: BufferedWriter): Unit = {
+    ds: GraphMLMetadata[?], bw: BufferedWriter): Unit = {
 
     bw.write("<key id=\"" + key + "\" for=\"" + `type` + "\"")
 

@@ -13,10 +13,10 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
   private val successorCaches = CacheManager(world, (_: Option[String]) => (p: (V, V)) => ArrayBuffer.empty[V])
   private val singleSourceTraversalCaches = CacheManager[V, Iterator[V]](world, {
     case None => {
-      source: V => cachingBFS(source, reverse = false, predecessorCaches(None))
+      (source: V) => cachingBFS(source, reverse = false, predecessorCaches(None))
     }
     case Some(varName: String) => {
-      source: V =>
+      (source: V) =>
         cachingDijkstra(source, weightFunction(varName), reverse = false,
           predecessorCaches(Some(varName)), distanceCaches(Some(varName)))
     }
@@ -24,10 +24,10 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
 
   private val singleDestTraversalCaches = CacheManager[V, Iterator[V]](world, {
     case None => {
-      source: V => cachingBFS(source, reverse = true, successorCaches(None))
+      (source: V) => cachingBFS(source, reverse = true, successorCaches(None))
     }
     case Some(varName: String) => {
-      source: V =>
+      (source: V) =>
         cachingDijkstra(source, weightFunction(varName), reverse = true,
           successorCaches(Some(varName)), distanceCaches(Some(varName)))
     }
@@ -114,7 +114,7 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
   will thinks it's done computing paths for a certain pair when it has not.
    */
   private def cachingBFS(start: V, reverse: Boolean, predecessorCache: ((V, V)) => ArrayBuffer[V]): Iterator[V] = {
-    val neighbors = if (reverse) (graph.inNeighbors _) else (graph.outNeighbors _)
+    val neighbors = if (reverse) graph.inNeighbors else graph.outNeighbors
     val dists = mutable.Map[(V,V), Int]()
     dists((start, start)) = 0
 
@@ -147,9 +147,9 @@ class PathFinder[V,E](graph: Graph[V, E], world: World, weightFunction: (String)
   }
 
   private def cachingDijkstra(start: V, weight: E => Double, reverse: Boolean, predecessorCache: ((V, V)) => ArrayBuffer[V], distanceCache: Cache[(V, V), Double]): Iterator[V] = {
-    val edges = if (reverse) (graph.inEdges _) else (graph.outEdges _)
+    val edges = if (reverse) graph.inEdges else graph.outEdges
     val dists = mutable.Map[V, Double]()
-    val heap = mutable.PriorityQueue[(V, Double, V)]()(Ordering[Double].on(-_._2))
+    val heap = mutable.PriorityQueue[(V, Double, V)]()(using Ordering[Double].on(-_._2))
     distanceCache(start -> start) = 0
     Iterator.continually {
       val curDistance = heap.headOption map { _._2 } getOrElse 0.0

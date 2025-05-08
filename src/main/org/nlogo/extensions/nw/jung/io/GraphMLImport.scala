@@ -136,7 +136,7 @@ object GraphMLImport {
   def load(fileName: String, world: World, rng: MersenneTwisterFast): Iterator[Turtle] = {
     try {
       val graphFactory = sparseGraphFactory[Vertex, Edge]
-      val graphTransformer = transformer { _: GraphMetadata => graphFactory.create }
+      val graphTransformer = transformer { (_: GraphMetadata) => graphFactory.create }
 
       using {
         new GraphMLReader2[jung.graph.Graph[Vertex, Edge], Vertex, Edge](

@@ -13,7 +13,7 @@ object ClusteringMetrics {
       0
     } else {
       val neighborLinkCounts = neighbors map {
-        t: V => graph.outNeighbors(t).count(neighborSet.contains)
+        (t: V) => graph.outNeighbors(t).count(neighborSet.contains)
       }
 
       neighborLinkCounts.sum.toDouble / (neighbors.size * (neighbors.size - 1))
@@ -66,7 +66,7 @@ object Louvain {
         // Note that the original community is almost certainly in the connected communities, so we remove it
         val originalCommunity: Community[V] = comStruct.community(v)
         val connectedCommunities: Seq[Community[V]] = rng.shuffle(
-          graph.outNeighbors(v).map(comStruct.community _).filterNot(_ == originalCommunity).distinct
+          graph.outNeighbors(v).map(comStruct.community).filterNot(_ == originalCommunity).distinct
         )
         if (connectedCommunities.nonEmpty) {
           val newComStruct = connectedCommunities.map(comStruct.move(v, _)).maxBy(_.modularity)
@@ -124,7 +124,7 @@ object Louvain {
 
     def move(node: V, newCommunity: Community[V]): CommunityStructure[V,E] = {
       val originalCommunity = community(node)
-      val otherEnd = graph.otherEnd(node)_
+      val otherEnd = graph.otherEnd(node)
       var inDegree = 0.0
       var outDegree = 0.0
       var internalOriginal = 0.0
@@ -195,7 +195,7 @@ object Louvain {
 
     override val nodes: Seq[Community[V]] = communityStructure.communities
 
-    val edges: Seq[WeightedLink[Community[V]]] = communityStructure.communities.flatMap { sourceCom: Community[V] =>
+    val edges: Seq[WeightedLink[Community[V]]] = communityStructure.communities.flatMap { (sourceCom: Community[V]) =>
       communityStructure.members(sourceCom).flatMap { source =>
         graph.outEdges(source).map { e =>
           communityStructure.community(graph.otherEnd(source)(e)) -> graph.weight(e)

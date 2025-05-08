@@ -154,7 +154,7 @@ object GephiExport {
   private val BooleanClass = classOf[java.lang.Boolean]
   private val StringClass  = classOf[java.lang.String]
 
-  private def getBestType(values: Iterable[AnyRef]): Class[_] = {
+  private def getBestType(values: Iterable[AnyRef]): Class[?] = {
     if (values.forall(_.isInstanceOf[Number])){
       DoubleClass
     } else if (values.forall(_.isInstanceOf[JBoolean])) {
@@ -164,7 +164,7 @@ object GephiExport {
     }
   }
 
-  private def coerce(value: AnyRef, kind: Class[_]): AnyRef =
+  private def coerce(value: AnyRef, kind: Class[?]): AnyRef =
     (value, kind) match {
       case (x: Number, DoubleClass)    => x.doubleValue: JDouble
       case (x: Number, FloatClass)     => x.doubleValue: JDouble

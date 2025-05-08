@@ -46,9 +46,9 @@ trait Graph
     throw sys.error("not implemented")
   def addVertex(turtle: Turtle): Boolean =
     throw sys.error("not implemented")
-  override def addEdge(link: Link, turtles: Collection[_ <: Turtle]): Boolean =
+  override def addEdge(link: Link, turtles: Collection[? <: Turtle]): Boolean =
     throw sys.error("not implemented")
-  def addEdge(link: Link, turtles: Pair[_ <: Turtle], edgeType: EdgeType): Boolean =
+  def addEdge(link: Link, turtles: Pair[? <: Turtle], edgeType: EdgeType): Boolean =
     throw sys.error("not implemented")
 }
 
