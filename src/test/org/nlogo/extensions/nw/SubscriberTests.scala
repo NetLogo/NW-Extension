@@ -13,13 +13,12 @@ class AgentSetChangeSubscribersTestSuite extends AnyFunSuite with GivenWhenThen 
   def getSubscribers(agentSet: AgentSet): collection.Set[AgentSetChangeSubscriber] = {
     val pub = agentSet.asInstanceOf[TreeAgentSet].simpleChangeEventPublisher
     // get private `filters` field using reflection:
-    val field = pub.getClass.getDeclaredField("scala$collection$mutable$Publisher$$filters")
+    val field = pub.getClass.getDeclaredField("org$nlogo$core$Publisher$$listeners")
     field.setAccessible(true)
-    val filters = field.get(pub).asInstanceOf[collection.Map[AgentSetChangeSubscriber, _]]
-    filters.keySet // the keySet is mutated with the map, so we can monitor it for changes
+    field.get(pub).asInstanceOf[collection.Set[AgentSetChangeSubscriber]]
   }
 
-  def checkSizes(expectedSizes: (collection.GenTraversable[_], Int)*) =
+  def checkSizes(expectedSizes: (Iterable[?], Int)*) =
     for ((xs, n) <- expectedSizes) xs should have size n
 
   test("subscribers") {

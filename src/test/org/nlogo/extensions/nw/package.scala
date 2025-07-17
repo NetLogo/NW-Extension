@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 import org.nlogo.workspace.AbstractWorkspace
 
