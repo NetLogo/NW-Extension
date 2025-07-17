@@ -12,7 +12,7 @@ class AgentSetChangeSubscribersTestSuite extends AnyFunSuite with GivenWhenThen 
 
   def getSubscribers(agentSet: AgentSet): collection.Set[AgentSetChangeSubscriber] = {
     val pub = agentSet.asInstanceOf[TreeAgentSet].simpleChangeEventPublisher
-    // get private `filters` field using reflection:
+    // get private `listeners` field using reflection:
     val field = pub.getClass.getDeclaredField("org$nlogo$core$Publisher$$listeners")
     field.setAccessible(true)
     field.get(pub).asInstanceOf[collection.Set[AgentSetChangeSubscriber]]
