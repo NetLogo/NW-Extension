@@ -3,5 +3,5 @@ resolvers ++= Seq(
 , "netlogo-extension-documentation" at "https://dl.cloudsmith.io/public/netlogo/netlogo-extension-documentation/maven/"
 )
 
-addSbtPlugin("org.nlogo" % "netlogo-extension-plugin" % "7.0.0")
+addSbtPlugin("org.nlogo" % "netlogo-extension-plugin" % "7.0.1")
 addSbtPlugin("org.nlogo" % "netlogo-extension-documentation" % "0.8.3")
