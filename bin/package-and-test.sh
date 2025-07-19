@@ -1,4 +1,4 @@
-./sbt package
+sbt package
 cd ../..
-./sbt "te nw"
+sbt "te nw"
 cd -
