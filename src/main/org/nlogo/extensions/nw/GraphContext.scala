@@ -7,7 +7,7 @@ import org.nlogo.api.ExtensionException
 import org.nlogo.extensions.nw.NetworkExtensionUtil.AgentSetToRichAgentSet
 import org.nlogo.extensions.nw.algorithms.{BreadthFirstSearch, PathFinder}
 
-import scala.collection.immutable.SortedSet
+import scala.collection.immutable.{ SortedSet, SortedMap }
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -141,7 +141,7 @@ with algorithms.CentralityMeasurer {
           .foreach(found => foundBy(found) = t)
         t
       })
-    }.values
+    }.to(SortedMap).values
   }
 
   def monitoredTreeAgentSets =
