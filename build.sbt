@@ -3,7 +3,7 @@ import org.nlogo.build.{ ExtensionDocumentationPlugin, NetLogoExtension }
 enablePlugins(NetLogoExtension, ExtensionDocumentationPlugin)
 
 name       := "nw"
-version    := "4.1.0"
+version    := "4.1.1"
 isSnapshot := true
 
 netLogoExtName      := "nw"
