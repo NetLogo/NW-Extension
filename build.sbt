@@ -14,7 +14,7 @@ netLogoTestExtras   += baseDirectory.value / "test"
 scalaVersion := "3.7.0"
 Compile / scalaSource := baseDirectory.value / "src" / "main"
 Test / scalaSource    := baseDirectory.value / "src" / "test"
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature", "-encoding", "us-ascii", "-release", "11")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-feature", "-encoding", "us-ascii", "-release", "17")
 
 resolvers ++= Seq(
   "gephi-thirdparty" at "https://raw.github.com/gephi/gephi/mvn-thirdparty-repo/"
