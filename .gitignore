@@ -1,3 +1,5 @@
+.bsp/
+
 .bundledFiles
 target/
 /extensions/
