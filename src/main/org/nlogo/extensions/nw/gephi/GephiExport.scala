@@ -1,6 +1,6 @@
 package org.nlogo.extensions.nw.gephi
 
-import java.io.File
+import java.io.{ File, StringWriter }
 
 import org.nlogo.agent.{ AgentSet, Link, Turtle, World }
 import org.nlogo.api
@@ -10,7 +10,7 @@ import org.nlogo.core.Breed
 import org.gephi.graph.api.{ Column, GraphController }
 import org.gephi.io.exporter.api.ExportController
 import org.gephi.io.exporter.plugin.{ ExporterCSV, ExporterGraphML }
-import org.gephi.io.exporter.spi.Exporter
+import org.gephi.io.exporter.spi.{ CharacterExporter, Exporter }
 import org.gephi.project.api.ProjectController
 import org.gephi.utils.longtask.spi.LongTask
 import org.gephi.utils.progress.ProgressTicket
@@ -30,11 +30,29 @@ object GephiExport {
     save(context, world, file, exportController.getFileExporter(file))
   }
 
-  def save(context: GraphContext, world: World, file: File, exporter: Exporter) = GephiUtils.withNWLoaderContext {
-    implicit val implicitWorld = world;
+  def save(context: GraphContext, world: World, file: File, exporter: Exporter): Unit = GephiUtils.withNWLoaderContext {
+    prepareExport(exporter, file.toString)
+    buildWorkspace(context, world)
+    exportController.exportFile(file, exporter)
+  }
 
+  def saveToString(context: GraphContext, world: World, extension: String): String = GephiUtils.withNWLoaderContext {
+    val exporter = exportController.getExporter(extension)
+    prepareExport(exporter, s"the given $extension string")
+    buildWorkspace(context, world)
+    exporter match {
+      case ce: CharacterExporter =>
+        val writer = new StringWriter
+        exportController.exportWriter(writer, ce)
+        writer.toString
+      case _ =>
+        throw new ExtensionException(s"The $extension format cannot be exported to a string.")
+    }
+  }
+
+  private def prepareExport(exporter: Exporter, sourceName: String): Unit = {
     if (exporter == null) {
-      throw new ExtensionException("Unable to find exporter for " + file)
+      throw new ExtensionException("Unable to find exporter for " + sourceName)
     } else if (exporter.isInstanceOf[ExporterCSV]) {
       throw new ExtensionException("Exporting CSV files is not supported.")
     } else if (exporter.isInstanceOf[ExporterGraphML]) {
@@ -70,6 +88,11 @@ object GephiExport {
         } )
       case _ => // ignore
     }
+  }
+
+  private def buildWorkspace(context: GraphContext, world: World): Unit = {
+    implicit val implicitWorld = world;
+
     val program = world.program
     val projectController = Lookup.getDefault.lookup(classOf[ProjectController])
     projectController.newProject()
@@ -144,7 +167,6 @@ object GephiExport {
       graph.addEdge(edge)
     }
     gephiWorkspace.add(graphModel)
-    exportController.exportFile(file, exporter)
   }
 
   private type JDouble     = java.lang.Double

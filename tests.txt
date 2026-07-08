@@ -1909,3 +1909,91 @@ load-from-string-format-normalization
 load-from-string-unknown-format
   extensions [ nw ]
   O> nw:load-from-string "bogus" "data" turtles links => ERROR Extension exception: 'bogus' is not a supported network format. Valid formats are: dl, gdf, gexf, gml, graphml, matrix, and vna.
+
+# nw:save-to-string round-trips through nw:load-from-string, so no temp file is needed. We use a global to
+# carry the string across commands and clear-turtles (not clear-all) so the global survives.
+save-to-string-gml
+  extensions [ nw ]
+  globals [ g ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string "gml"
+  O> clear-turtles
+  O> nw:load-from-string "gml" g turtles links
+  count turtles => 2
+  [is-undirected-link? self] of link 0 1 => true
+
+save-to-string-vna
+  extensions [ nw ]
+  globals [ g ]
+  undirected-link-breed [undirected-edges undirected-edge]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string "vna"
+  O> clear-turtles
+  O> nw:load-from-string "vna" g turtles undirected-edges
+  count turtles => 2
+  [is-undirected-link? self] of undirected-edge 0 1 => true
+
+save-to-string-dl
+  extensions [ nw ]
+  globals [ g ]
+  undirected-link-breed [undirected-edges undirected-edge]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string "dl"
+  O> clear-turtles
+  O> nw:load-from-string "dl" g turtles undirected-edges
+  count turtles => 2
+  [is-undirected-link? self] of undirected-edge 0 1 => true
+
+save-to-string-gexf
+  extensions [ nw ]
+  globals [ g ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string "gexf"
+  O> clear-turtles
+  O> nw:load-from-string "gexf" g turtles links
+  count turtles => 2
+  [is-undirected-link? self] of link 0 1 => true
+
+save-to-string-graphml
+  extensions [ nw ]
+  globals [ g ]
+  turtles-own [tvar]
+  O> cro 2
+  O> ask turtle 0 [ set tvar "a" create-link-with turtle 1 ]
+  O> ask turtle 1 [ set tvar "b" ]
+  O> set g nw:save-to-string "graphml"
+  O> clear-turtles
+  O> nw:load-from-string "graphml" g turtles links
+  count turtles => 2
+  count links => 1
+  sort [tvar] of turtles => ["a" "b"]
+
+save-to-string-matrix
+  extensions [ nw ]
+  globals [ g ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string "matrix"
+  O> clear-turtles
+  O> nw:load-from-string "matrix" g turtles links
+  count turtles => 2
+  any? links => true
+
+save-to-string-returns-string
+  extensions [ nw ]
+  O> crt 2 [ create-links-with other turtles ]
+  is-string? nw:save-to-string "gml" => true
+  (length nw:save-to-string "gml" > 0) => true
+
+# format argument is case-insensitive and tolerates a leading dot
+save-to-string-format-normalization
+  extensions [ nw ]
+  globals [ g ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string ".GML"
+  O> clear-turtles
+  O> nw:load-from-string "gml" g turtles links
+  count turtles => 2
+
+save-to-string-unknown-format
+  extensions [ nw ]
+  O> print nw:save-to-string "bogus" => ERROR Extension exception: 'bogus' is not a supported network format. Valid formats are: dl, gdf, gexf, gml, graphml, matrix, and vna.

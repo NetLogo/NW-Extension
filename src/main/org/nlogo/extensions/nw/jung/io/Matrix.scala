@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions.nw.jung.io
 
-import java.io.{ BufferedReader, FileNotFoundException, Reader }
+import java.io.{ BufferedReader, FileNotFoundException, Reader, StringWriter, Writer }
 
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
@@ -19,24 +19,34 @@ import edu.uci.ics.jung.algorithms.matrix.GraphMatrixOperations
 
 object Matrix {
 
-  def save(graph: jung.graph.Graph[Turtle, Link], filename: String): Unit = {
+  def save(graph: jung.graph.Graph[Turtle, Link], filename: String): Unit =
+    try {
+      using(new java.io.FileWriter(filename)) { writeMatrix(graph, _) }
+    } catch {
+      case e: Exception => throw new ExtensionException(e)
+    }
+
+  def saveToString(graph: jung.graph.Graph[Turtle, Link]): String =
+    try {
+      val writer = new StringWriter
+      writeMatrix(graph, writer)
+      writer.toString
+    } catch {
+      case e: Exception => throw new ExtensionException(e)
+    }
+
+  private def writeMatrix(graph: jung.graph.Graph[Turtle, Link], writer: Writer): Unit = {
     /* This is almost a line for line copy of jung.io.MatrixFile.save, the major
      * difference being that it explicitly uses the US locale to make sure entries
      * use the dot decimal separator (see issue #69) */
-    try {
-      using(new java.io.FileWriter(filename)) { writer =>
-        val matrix = GraphMatrixOperations.graphToSparseMatrix(graph, null) // TODO: provide weights
-        for (i <- 0 until matrix.rows) {
-          for (j <- 0 until matrix.columns) {
-            val w = matrix.getQuick(i, j)
-            writer.write("%4.2f".formatLocal(java.util.Locale.US, w))
-            if (j < matrix.columns - 1) writer.write(" ")
-          }
-          writer.write("\n")
-        }
+    val matrix = GraphMatrixOperations.graphToSparseMatrix(graph, null) // TODO: provide weights
+    for (i <- 0 until matrix.rows) {
+      for (j <- 0 until matrix.columns) {
+        val w = matrix.getQuick(i, j)
+        writer.write("%4.2f".formatLocal(java.util.Locale.US, w))
+        if (j < matrix.columns - 1) writer.write(" ")
       }
-    } catch {
-      case e: Exception => throw new ExtensionException(e)
+      writer.write("\n")
     }
   }
 

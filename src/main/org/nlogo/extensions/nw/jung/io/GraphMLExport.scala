@@ -5,6 +5,8 @@ package org.nlogo.extensions.nw.jung.io
 import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
+import java.io.StringWriter
+import java.io.Writer
 
 import org.apache.commons.collections15.Transformer
 import org.nlogo.agent
@@ -15,7 +17,23 @@ import org.nlogo.extensions.nw.NetworkExtensionUtil.{ functionToTransformer, usi
 
 object GraphMLExport {
 
-  def save(graphContext: GraphContext, filename: String) = {
+  def save(graphContext: GraphContext, filename: String): Unit =
+    try {
+      using(new PrintWriter(new BufferedWriter(new FileWriter(filename)))) { writeGraphML(graphContext, _) }
+    } catch {
+      case e: Exception => throw new ExtensionException(e)
+    }
+
+  def saveToString(graphContext: GraphContext): String =
+    try {
+      val writer = new StringWriter
+      writeGraphML(graphContext, writer)
+      writer.toString
+    } catch {
+      case e: Exception => throw new ExtensionException(e)
+    }
+
+  private def writeGraphML(graphContext: GraphContext, writer: Writer): Unit = {
     val world = graphContext.world
 
     val graphMLWriter = new GraphMLWriterWithAttribType[agent.Turtle, agent.Link]
@@ -79,13 +97,7 @@ object GraphMLExport {
       }
     }
 
-    try {
-      using(new PrintWriter(new BufferedWriter(new FileWriter(filename)))) { printWriter =>
-        graphMLWriter.save(graphContext.asJungGraph, printWriter)
-      }
-    } catch {
-      case e: Exception => throw new ExtensionException(e)
-    }
+    graphMLWriter.save(graphContext.asJungGraph, writer)
 
   }
 

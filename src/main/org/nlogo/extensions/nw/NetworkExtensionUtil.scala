@@ -22,6 +22,14 @@ object NetworkExtensionUtil {
   def readerForString(data: String): Reader =
     new InputStreamReader(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8)
 
+  val supportedStringFormats = Seq("dl", "gdf", "gexf", "gml", "graphml", "matrix", "vna")
+
+  def normalizeNetworkFormat(rawFormat: String): String =
+    rawFormat.trim.toLowerCase(Locale.ENGLISH).stripPrefix(".")
+
+  def unsupportedFormatMessage(rawFormat: String): String =
+    s"'$rawFormat' is not a supported network format. Valid formats are: dl, gdf, gexf, gml, graphml, matrix, and vna."
+
   implicit def functionToTransformer[I, O](f: Function1[I, O]): org.apache.commons.collections15.Transformer[I,O] =
     new org.apache.commons.collections15.Transformer[I, O] {
       override def transform(i: I) = f(i)

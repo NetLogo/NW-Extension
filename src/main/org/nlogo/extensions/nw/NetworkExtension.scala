@@ -102,6 +102,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("load-vna", new LoadFileType(".vna"))
 
     add("save", new prim.Save(this))
+    add("save-to-string", new prim.SaveToString(this))
     add("save-dl", new SaveFileType(this, ".dl"))
     add("save-gdf", new SaveFileType(this, ".gdf"))
     add("save-gexf", new SaveFileType(this, ".gexf"))

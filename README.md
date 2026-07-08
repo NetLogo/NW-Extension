@@ -208,6 +208,7 @@ There may be rare occasions in which you don't want the NW extension to remember
 [`nw:load`](#nwload)
 [`nw:load-from-string`](#nwload-from-string)
 [`nw:save`](#nwsave)
+[`nw:save-to-string`](#nwsave-to-string)
 
 ### Centrality Measures
 
@@ -1395,6 +1396,35 @@ Limitations:
 - Multigraphs are not supported. Thus, two turtles can share at most one link. `nw:save-graphml` does support multigraphs, so use that if turtles can have more than one type of link connecting them.
 
 `nw:save` determines the file-type of the given file based on the extension and calls the corresponding `save-*` primitive on it. Note that GraphML must be exported with `nw:save-graphml`.
+
+
+
+### `nw:save-to-string`
+
+```NetLogo
+nw:save-to-string format
+```
+
+
+Serialize the current network context to a string in the given format and report it, rather than writing to a file. This is the counterpart to [`nw:load-from-string`](#nwload-from-string), and is useful in NetLogo Web and other contexts where the result needs to go somewhere other than the file system.
+
+The `format` argument names the format explicitly and takes the same values as `nw:load-from-string`. It is case-insensitive and an optional leading dot is ignored, so `"gml"`, `"GML"`, and `".gml"` are all equivalent. The supported formats are:
+
+- `dl`
+- `gdf`
+- `gexf`
+- `gml`
+- `graphml`
+- `matrix`
+- `vna`
+
+Aside from reporting a string instead of writing to a file, `nw:save-to-string` behaves exactly like the corresponding `nw:save-*` primitive, with the same limitations regarding attributes and multigraphs.
+
+For example, to save a network and hand it off to a browser download in NetLogo Web:
+
+```
+let gml nw:save-to-string "gml"
+```
 
 
 

@@ -1,7 +1,6 @@
 package org.nlogo.extensions.nw.prim
 
 import java.io.File
-import java.util.Locale
 
 import org.nlogo.agent.World
 import org.nlogo.api
@@ -11,7 +10,7 @@ import org.nlogo.nvm.ExtensionContext
 import org.nlogo.extensions.nw.GraphContextProvider
 import org.nlogo.extensions.nw.NetworkExtensionUtil._
 import org.nlogo.extensions.nw.gephi.{ GephiExport, GephiImport, GephiUtils }
-import org.nlogo.extensions.nw.jung.io.{ GraphMLImport, Matrix }
+import org.nlogo.extensions.nw.jung.io.{ GraphMLExport, GraphMLImport, Matrix }
 
 class Load extends TurtleAskingCommand {
   override def getSyntax = commandSyntax(
@@ -34,22 +33,19 @@ class LoadFromString extends TurtleAskingCommand {
   override def perform(args: Array[api.Argument], context: api.Context) = GephiUtils.withNWLoaderContext {
     implicit val world = context.world.asInstanceOf[World]
     val rawFormat   = args(0).getString
-    val format      = rawFormat.trim.toLowerCase(Locale.ENGLISH).stripPrefix(".")
     val data        = args(1).getString
     val turtleBreed = args(2).getAgentSet.requireTurtleBreed
     val linkBreed   = args(3).getAgentSet.requireLinkBreed
     val rng         = context.getRNG
-    format match {
+    normalizeNetworkFormat(rawFormat) match {
       case "graphml" =>
         askTurtles(context)(GraphMLImport.load(readerForString(data), world, rng, turtleBreed, linkBreed))
       case "matrix" =>
         askTurtles(context)(Matrix.load(readerForString(data), turtleBreed, linkBreed, world, rng))
-      case "dl" | "gdf" | "gexf" | "gml" | "vna" =>
+      case format @ ("dl" | "gdf" | "gexf" | "gml" | "vna") =>
         GephiImport.loadString(data, "." + format, world, turtleBreed, linkBreed, askTurtles(context))
       case _ =>
-        throw new api.ExtensionException(
-          s"'$rawFormat' is not a supported network format. Valid formats are: " +
-          "dl, gdf, gexf, gml, graphml, matrix, and vna.")
+        throw new api.ExtensionException(unsupportedFormatMessage(rawFormat))
     }
   }
 }
@@ -84,6 +80,25 @@ class Save(gcp: GraphContextProvider) extends api.Command {
     val fm = workspace.fileManager
     val file = new File(fm.attachPrefix(args(0).getString))
     GephiExport.save(gcp.getGraphContext(world), world, file)
+  }
+}
+
+class SaveToString(gcp: GraphContextProvider) extends api.Reporter {
+  override def getSyntax = reporterSyntax(right = List(StringType), ret = StringType)
+  override def report(args: Array[api.Argument], context: api.Context): AnyRef = GephiUtils.withNWLoaderContext {
+    val world        = context.getAgent.world.asInstanceOf[World]
+    val rawFormat    = args(0).getString
+    val graphContext = gcp.getGraphContext(world)
+    normalizeNetworkFormat(rawFormat) match {
+      case "graphml" =>
+        GraphMLExport.saveToString(graphContext)
+      case "matrix" =>
+        Matrix.saveToString(graphContext.asJungGraph)
+      case format @ ("dl" | "gdf" | "gexf" | "gml" | "vna") =>
+        GephiExport.saveToString(graphContext, world, "." + format)
+      case _ =>
+        throw new api.ExtensionException(unsupportedFormatMessage(rawFormat))
+    }
   }
 }
 
