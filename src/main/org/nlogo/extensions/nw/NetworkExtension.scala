@@ -94,6 +94,7 @@ class NetworkExtension extends api.DefaultClassManager with GraphContextManager 
     add("load-graphml", new LoadGraphML())
 
     add("load", new prim.Load())
+    add("load-from-string", new prim.LoadFromString())
     add("load-dl", new LoadFileType(".dl"))
     add("load-gdf", new LoadFileType(".gdf"))
     add("load-gexf", new LoadFileType(".gexf"))

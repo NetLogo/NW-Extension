@@ -1,7 +1,7 @@
 package org.nlogo.extensions.nw.gephi
 
 import java.awt.Color
-import java.io.{ File, FileReader, IOException }
+import java.io.{ File, FileReader, IOException, Reader }
 import java.lang.{ Boolean => JBoolean, Double  => JDouble }
 import java.util.Collection
 
@@ -48,10 +48,23 @@ object GephiImport {
     if (!file.exists) {
       throw new ExtensionException("The file " + file + " cannot be found.")
     }
+    load(new FileReader(file), file.toString, world, defaultTurtleBreed, defaultLinkBreed, initTurtles, importer)
+  }
 
+  def loadString(data: String, extension: String, world: World,
+                 defaultTurtleBreed: AgentSet, defaultLinkBreed: AgentSet,
+                 initTurtles: IterableOnce[Turtle] => Unit): Unit = GephiUtils.withNWLoaderContext {
+    load(readerForString(data), s"the given $extension string",
+      world, defaultTurtleBreed, defaultLinkBreed, initTurtles, importController.getFileImporter(extension))
+  }
+
+  def load(reader: => Reader, sourceName: String, world: World,
+           defaultTurtleBreed: AgentSet, defaultLinkBreed: AgentSet,
+           initTurtles: IterableOnce[Turtle] => Unit,
+           importer: FileImporter): Unit = GephiUtils.withNWLoaderContext {
     val isGdfImport = importer match {
       case null =>
-        throw new ExtensionException("Unable to find importer for " + file)
+        throw new ExtensionException("Unable to find importer for " + sourceName)
 
       case _: ImporterSpreadsheetCSV =>
         throw new ExtensionException("Importing CSV files is not supported.")
@@ -70,7 +83,7 @@ object GephiImport {
     val linkBreeds = world.linkBreeds.asScala
 
     val container = try {
-      using(new FileReader(file))(r => importController.importFile(r, importer))
+      using(reader)(r => importController.importFile(r, importer))
     } catch {
       case e: IOException =>
         throw new ExtensionException(e)

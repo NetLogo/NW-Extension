@@ -1,6 +1,6 @@
 package org.nlogo.extensions.nw.jung.io
 
-import java.io.{BufferedReader, FileReader}
+import java.io.{BufferedReader, FileReader, Reader}
 import java.util.Locale
 
 import edu.uci.ics.jung
@@ -133,14 +133,18 @@ object GraphMLImport {
       elem -> agent
     }.toMap
 
-  def load(fileName: String, world: World, rng: MersenneTwisterFast): Iterator[Turtle] = {
+  def load(fileName: String, world: World, rng: MersenneTwisterFast): Iterator[Turtle] =
+    load(new BufferedReader(new FileReader(fileName)), world, rng, world.turtles, world.links)
+
+  def load(reader: => Reader, world: World, rng: MersenneTwisterFast,
+           defaultTurtleBreed: AgentSet, defaultLinkBreed: AgentSet): Iterator[Turtle] = {
     try {
       val graphFactory = sparseGraphFactory[Vertex, Edge]
       val graphTransformer = transformer { (_: GraphMetadata) => graphFactory.create }
 
       using {
         new GraphMLReader2[jung.graph.Graph[Vertex, Edge], Vertex, Edge](
-          new BufferedReader(new FileReader(fileName)),
+          reader,
           graphTransformer,
           transformer(Vertex.apply),
           transformer(Edge.apply),
@@ -160,11 +164,11 @@ object GraphMLImport {
         val vertices = graph.getVertices.asScala.toList.sortBy(_.id)
 
         val turtles: Map[Vertex, Turtle] =
-          createAgents(vertices, keyMap(MetadataType.NODE), world.turtles, world.getBreed) {
+          createAgents(vertices, keyMap(MetadataType.NODE), defaultTurtleBreed, world.getBreed) {
             (_, breed) => createTurtle(world, breed, rng)
           }
 
-        createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE), world.links, world.getLinkBreed) {
+        createAgents(graph.getEdges.asScala, keyMap(MetadataType.EDGE), defaultLinkBreed, world.getLinkBreed) {
           (e: Edge, breed) =>
             createLink(turtles, graph.getEndpoints(e), graph.getDefaultEdgeType == EdgeType.DIRECTED, breed, world)
         }

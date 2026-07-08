@@ -2,7 +2,7 @@
 
 package org.nlogo.extensions.nw.jung.io
 
-import java.io.FileNotFoundException
+import java.io.{ BufferedReader, FileNotFoundException, Reader }
 
 import org.nlogo.agent.AgentSet
 import org.nlogo.agent.Link
@@ -40,12 +40,24 @@ object Matrix {
     }
   }
 
-  def load(filename: String, turtleBreed: AgentSet, linkBreed: AgentSet, world: World, rng: MersenneTwisterFast) = {
+  def load(filename: String, turtleBreed: AgentSet, linkBreed: AgentSet, world: World, rng: MersenneTwisterFast): Iterator[Turtle] =
+    load(matrixFile => matrixFile.load(filename), turtleBreed, linkBreed, world, rng)
+
+  def load(reader: Reader, turtleBreed: AgentSet, linkBreed: AgentSet, world: World, rng: MersenneTwisterFast): Iterator[Turtle] = {
+    val buffered = reader match {
+      case b: BufferedReader => b
+      case r                 => new BufferedReader(r)
+    }
+    load(matrixFile => matrixFile.load(buffered), turtleBreed, linkBreed, world, rng)
+  }
+
+  private def load(readGraph: jung.io.MatrixFile[DummyGraph.Vertex, DummyGraph.Edge] => jung.graph.Graph[DummyGraph.Vertex, DummyGraph.Edge],
+                   turtleBreed: AgentSet, linkBreed: AgentSet, world: World, rng: MersenneTwisterFast): Iterator[Turtle] = {
     val matrixFile = new jung.io.MatrixFile(
       null, // TODO: provide weight key (null means 1) (issue #19)
       factoryFor(linkBreed), DummyGraph.vertexFactory, DummyGraph.edgeFactory)
     val graph = try {
-      matrixFile.load(filename)
+      readGraph(matrixFile)
     } catch {
       case e: Exception => e.getCause match {
         case fileNotFound: FileNotFoundException =>

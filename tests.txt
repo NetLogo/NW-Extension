@@ -1829,3 +1829,83 @@ save-gexf
   count turtles => 2
   [is-undirected-link? self] of link 0 1 => true
   [is-directed-link? self] of link 0 1 => false
+
+load-from-string-gml
+  extensions [ nw ]
+  to-report slurp [f] file-close-all file-open f let s "" while [not file-at-end?] [ set s (word s file-read-line "\n") ] file-close report s end
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-gml "extensions/nw/test/tmp/lfs.gml"
+  O> ca
+  O> nw:load-from-string "gml" (slurp "extensions/nw/test/tmp/lfs.gml") turtles links
+  count turtles => 2
+  [is-undirected-link? self] of link 0 1 => true
+
+load-from-string-vna
+  extensions [ nw ]
+  undirected-link-breed [undirected-edges undirected-edge]
+  to-report slurp [f] file-close-all file-open f let s "" while [not file-at-end?] [ set s (word s file-read-line "\n") ] file-close report s end
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-vna "extensions/nw/test/tmp/lfs.vna"
+  O> ca
+  O> nw:load-from-string "vna" (slurp "extensions/nw/test/tmp/lfs.vna") turtles undirected-edges
+  count turtles => 2
+  [is-undirected-link? self] of undirected-edge 0 1 => true
+
+load-from-string-dl
+  extensions [ nw ]
+  undirected-link-breed [undirected-edges undirected-edge]
+  to-report slurp [f] file-close-all file-open f let s "" while [not file-at-end?] [ set s (word s file-read-line "\n") ] file-close report s end
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-dl "extensions/nw/test/tmp/lfs.dl"
+  O> ca
+  O> nw:load-from-string "dl" (slurp "extensions/nw/test/tmp/lfs.dl") turtles undirected-edges
+  count turtles => 2
+  [is-undirected-link? self] of undirected-edge 0 1 => true
+
+load-from-string-gexf
+  extensions [ nw ]
+  to-report slurp [f] file-close-all file-open f let s "" while [not file-at-end?] [ set s (word s file-read-line "\n") ] file-close report s end
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-gexf "extensions/nw/test/tmp/lfs.gexf"
+  O> ca
+  O> nw:load-from-string "gexf" (slurp "extensions/nw/test/tmp/lfs.gexf") turtles links
+  count turtles => 2
+  [is-undirected-link? self] of link 0 1 => true
+
+load-from-string-graphml
+  extensions [ nw ]
+  turtles-own [tvar]
+  to-report slurp [f] file-close-all file-open f let s "" while [not file-at-end?] [ set s (word s file-read-line "\n") ] file-close report s end
+  O> cro 2
+  O> ask turtle 0 [ set tvar "a" create-link-with turtle 1 ]
+  O> ask turtle 1 [ set tvar "b" ]
+  O> nw:save-graphml "extensions/nw/test/tmp/lfs.graphml"
+  O> ca
+  O> nw:load-from-string "graphml" (slurp "extensions/nw/test/tmp/lfs.graphml") turtles links
+  count turtles => 2
+  count links => 1
+  sort [tvar] of turtles => ["a" "b"]
+
+load-from-string-matrix
+  extensions [ nw ]
+  to-report slurp [f] file-close-all file-open f let s "" while [not file-at-end?] [ set s (word s file-read-line "\n") ] file-close report s end
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-matrix "extensions/nw/test/tmp/lfs.matrix"
+  O> ca
+  O> nw:load-from-string "matrix" (slurp "extensions/nw/test/tmp/lfs.matrix") turtles links
+  count turtles => 2
+  any? links => true
+
+# format argument is case-insensitive and tolerates a leading dot
+load-from-string-format-normalization
+  extensions [ nw ]
+  to-report slurp [f] file-close-all file-open f let s "" while [not file-at-end?] [ set s (word s file-read-line "\n") ] file-close report s end
+  O> crt 2 [ create-links-with other turtles ]
+  O> nw:save-gml "extensions/nw/test/tmp/lfs.gml"
+  O> ca
+  O> nw:load-from-string ".GML" (slurp "extensions/nw/test/tmp/lfs.gml") turtles links
+  count turtles => 2
+
+load-from-string-unknown-format
+  extensions [ nw ]
+  O> nw:load-from-string "bogus" "data" turtles links => ERROR Extension exception: 'bogus' is not a supported network format. Valid formats are: dl, gdf, gexf, gml, graphml, matrix, and vna.

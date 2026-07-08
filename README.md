@@ -206,6 +206,7 @@ There may be rare occasions in which you don't want the NW extension to remember
 [`nw:save-graphml`](#nwsave-graphml)
 [`nw:load-graphml`](#nwload-graphml)
 [`nw:load`](#nwload)
+[`nw:load-from-string`](#nwload-from-string)
 [`nw:save`](#nwsave)
 
 ### Centrality Measures
@@ -1334,6 +1335,37 @@ Limitations:
 - Multigraphs are not supported in importing. Even if the file format supports it (and many don't), only the first link will be used on import. This is due to a limitation in the parsing libraries NW uses. `nw:load-graphml` does support multigraphs with the normal NetLogo limitation that two turtles can share more than one link only if all the links are of different breeds.
 
 `nw:load` determines the file-type of given file based on the extension and calls the corresponding `load-*` primitive on it. Note that GraphML must be imported with `nw:load-graphml`.
+
+
+
+### `nw:load-from-string`
+
+```NetLogo
+nw:load-from-string format data default-turtle-breed default-link-breed optional-command-block
+```
+
+
+Load `data` from an in-memory string rather than from a file. This is useful in NetLogo Web and other contexts where the data comes from somewhere other than the file system, such as the `fetch` or `resource` extensions.
+
+Because there is no file name to infer the file-type from, the first argument, `format`, names the format explicitly. It is case-insensitive and an optional leading dot is ignored, so `"gml"`, `"GML"`, and `".gml"` are all equivalent. The supported formats are:
+
+- `dl`
+- `gdf`
+- `gexf`
+- `gml`
+- `graphml`
+- `matrix`
+- `vna`
+
+Aside from taking its data from a string and its format from the `format` argument, `nw:load-from-string` behaves exactly like the corresponding `nw:load-*` primitive, including matching node and edge attributes to turtle and link variables and honoring `breed`.
+
+For example, to load a GML network fetched from a URL:
+
+```
+fetch:url-async "https://example.com/network.gml" [ [gml] ->
+  nw:load-from-string "gml" gml turtles links
+] [ [err] -> print err ]
+```
 
 
 

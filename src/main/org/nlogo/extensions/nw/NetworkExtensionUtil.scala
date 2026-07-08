@@ -9,9 +9,18 @@ import org.nlogo.{agent, api, nvm}
 import org.nlogo.api.MersenneTwisterFast
 import scala.language.implicitConversions
 import scala.reflect.Selectable.reflectiveSelectable
+import java.io.{ ByteArrayInputStream, InputStreamReader, Reader }
+import java.nio.charset.StandardCharsets
 import java.util.Locale
 
 object NetworkExtensionUtil {
+
+  // Wraps an in-memory string in a Reader for feeding to the file importers. We deliberately do NOT use StringReader:
+  // its `ready()` always returns true, even at EOF, whereas the Gephi importers loop on `reader.ready()` and rely on it
+  // going false to stop. Backing the reader with a ByteArrayInputStream gives FileReader-like `ready()` semantics
+  // (false at EOF), so the importers terminate. -Jeremy B July 2026
+  def readerForString(data: String): Reader =
+    new InputStreamReader(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8)
 
   implicit def functionToTransformer[I, O](f: Function1[I, O]): org.apache.commons.collections15.Transformer[I,O] =
     new org.apache.commons.collections15.Transformer[I, O] {
