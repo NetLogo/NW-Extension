@@ -1310,6 +1310,7 @@ primitives:
 
     ```
     let gml nw:save-to-string "gml"
+    send-to:file "my-network.gml" gml
     ```
   name: save-to-string
   returns: string

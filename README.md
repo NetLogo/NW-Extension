@@ -1424,6 +1424,7 @@ For example, to save a network and hand it off to a browser download in NetLogo 
 
 ```
 let gml nw:save-to-string "gml"
+send-to:file "my-network.gml" gml
 ```
 
 
