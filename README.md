@@ -1431,7 +1431,7 @@ send-to:file "my-network.gml" gml
 
 ## Building
 
-The extension is written in Scala (version 2.9.2).
+The extension is written in Scala (version 3.7.0).
 
 Run `sbt package` to build the extension.
 
