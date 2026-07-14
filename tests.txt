@@ -1997,3 +1997,181 @@ save-to-string-format-normalization
 save-to-string-unknown-format
   extensions [ nw ]
   O> print nw:save-to-string "bogus" => ERROR Extension exception: 'bogus' is not a supported network format. Valid formats are: dl, gdf, gexf, gml, graphml, matrix, and vna.
+
+turtles-in-radius-directed
+  extensions [nw]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  sort [ who ] of [ nw:turtles-in-radius 1 ] of turtle 0 => [0 1]
+  sort [ who ] of [ nw:turtles-in-radius 1 ] of turtle 1 => [1]
+
+turtles-in-reverse-radius-directed
+  extensions [nw]
+  O> crt 2
+  O> ask turtle 0 [ create-link-to turtle 1 ]
+  sort [who] of [ nw:turtles-in-reverse-radius 1 ] of turtle 0 => [0]
+  sort [who] of [ nw:turtles-in-reverse-radius 1 ] of turtle 1 => [0 1]
+
+generate-ring
+  extensions [ nw ]
+  O> nw:generate-ring turtles links 5
+  count turtles => 5
+  count links => 5
+  sort remove-duplicates [ count my-links ] of turtles => [2]
+  O> ca
+  O> nw:generate-ring turtles links 3
+  count turtles => 3
+  count links => 3
+  O> nw:generate-ring turtles links 2 => ERROR Extension exception: The number of nodes in the generated network must be at least 3.
+
+generate-star
+  extensions [ nw ]
+  O> nw:generate-star turtles links 5
+  count turtles => 5
+  count links => 4
+  sort [ count my-links ] of turtles => [1 1 1 1 4]
+  O> ca
+  O> nw:generate-star turtles links 1
+  count turtles => 1
+  count links => 0
+  O> nw:generate-star turtles links 0 => ERROR Extension exception: The number of nodes in the generated network must be at least 1.
+
+generate-wheel
+  extensions [ nw ]
+  O> nw:generate-wheel turtles links 5
+  count turtles => 5
+  count links => 8
+  sort [ count my-links ] of turtles => [3 3 3 3 4]
+  O> nw:generate-wheel turtles links 3 => ERROR Extension exception: The number of nodes in the generated network must be at least 4.
+
+generate-wheel-inward
+  extensions [ nw ]
+  directed-link-breed [ dedges dedge ]
+  O> nw:generate-wheel-inward turtles dedges 5
+  count turtles => 5
+  count dedges => 8
+  sort [ count my-in-dedges ] of turtles => [1 1 1 1 4]
+  sort [ count my-out-dedges ] of turtles => [0 2 2 2 2]
+
+generate-wheel-outward
+  extensions [ nw ]
+  directed-link-breed [ dedges dedge ]
+  O> nw:generate-wheel-outward turtles dedges 5
+  count turtles => 5
+  count dedges => 8
+  sort [ count my-out-dedges ] of turtles => [1 1 1 1 4]
+  sort [ count my-in-dedges ] of turtles => [0 2 2 2 2]
+
+generate-lattice-2d
+  extensions [ nw ]
+  O> nw:generate-lattice-2d turtles links 3 4 false
+  count turtles => 12
+  all? turtles [ count my-links <= 4 ] => true
+  length nw:weak-component-clusters => 1
+  O> ca
+  O> nw:generate-lattice-2d turtles links 3 4 true
+  count turtles => 12
+  sort remove-duplicates [ count my-links ] of turtles => [4]
+  O> ca nw:generate-lattice-2d turtles links 1 4 false => ERROR Extension exception: The number of rows in the generated network must be at least 2.
+  O> ca nw:generate-lattice-2d turtles links 4 1 false => ERROR Extension exception: The number of columns in the generated network must be at least 2.
+
+generate-small-world
+  extensions [ nw ]
+  O> nw:generate-small-world turtles links 5 5 2 true
+  count turtles => 25
+  (count links >= 50) => true
+  O> ca nw:generate-small-world turtles links 1 5 2 true => ERROR Extension exception: The number of rows in the generated network must be at least 2.
+
+bicomponent-clusters-single-triangle
+  extensions [ nw ]
+  O> crt 3 [ create-links-with other turtles ]
+  length nw:bicomponent-clusters => 1
+  sort map [ [c] -> count c ] nw:bicomponent-clusters => [3]
+
+bicomponent-clusters-path-two-bridges
+  extensions [ nw ]
+  O> crt 3
+  O> ask turtle 0 [ create-link-with turtle 1 ]
+  O> ask turtle 1 [ create-link-with turtle 2 ]
+  length nw:bicomponent-clusters => 2
+  sort map [ [c] -> count c ] nw:bicomponent-clusters => [2 2]
+
+bicomponent-clusters-bowtie-shared-cut-vertex
+  extensions [ nw ]
+  O> crt 5
+  O> ask turtle 0 [ create-link-with turtle 1 create-link-with turtle 2 ]
+  O> ask turtle 1 [ create-link-with turtle 2 ]
+  O> ask turtle 2 [ create-link-with turtle 3 create-link-with turtle 4 ]
+  O> ask turtle 3 [ create-link-with turtle 4 ]
+  length nw:bicomponent-clusters => 2
+  sort map [ [c] -> count c ] nw:bicomponent-clusters => [3 3]
+  member? turtle 2 first nw:bicomponent-clusters => true
+
+generate-preferential-attachment-command-block
+  extensions [ nw ]
+  O> nw:generate-preferential-attachment turtles links 6 2 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-random-command-block
+  extensions [ nw ]
+  O> nw:generate-random turtles links 6 0.5 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-watts-strogatz-command-block
+  extensions [ nw ]
+  O> nw:generate-watts-strogatz turtles links 6 2 0.1 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-ring-command-block
+  extensions [ nw ]
+  O> nw:generate-ring turtles links 5 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-star-command-block
+  extensions [ nw ]
+  O> nw:generate-star turtles links 5 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-wheel-command-block
+  extensions [ nw ]
+  O> nw:generate-wheel turtles links 5 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-wheel-inward-command-block
+  extensions [ nw ]
+  directed-link-breed [ dedges dedge ]
+  O> nw:generate-wheel-inward turtles dedges 5 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-wheel-outward-command-block
+  extensions [ nw ]
+  directed-link-breed [ dedges dedge ]
+  O> nw:generate-wheel-outward turtles dedges 5 [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-lattice-2d-command-block
+  extensions [ nw ]
+  O> nw:generate-lattice-2d turtles links 3 4 false [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+generate-small-world-command-block
+  extensions [ nw ]
+  O> nw:generate-small-world turtles links 4 4 2 true [ set color red ]
+  sort remove-duplicates [ color ] of turtles => [15]
+
+load-from-string-runs-command-block
+  extensions [ nw ]
+  globals [ g ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string "gml"
+  O> clear-turtles
+  O> nw:load-from-string "gml" g turtles links [ set color red ]
+  sort [ color ] of turtles => [15 15]
+
+load-from-string-command-block-error-not-masked
+  extensions [ nw ]
+  globals [ g ]
+  O> crt 2 [ create-links-with other turtles ]
+  O> set g nw:save-to-string "gml"
+  O> clear-turtles
+  O> nw:load-from-string "gml" g turtles links [ error "boom" ] => ERROR boom
