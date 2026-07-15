@@ -24,6 +24,16 @@ object ClusteringMetrics {
     communities.map(c => communityModularity(graph, c)).sum
   }
 
+  /**
+   * A single community's contribution to modularity. A `totalArcWeight` of 0 leaves this undefined as
+   * 0/0, so it contributes 0 instead. That happens for a network with no links, but also for a weighted
+   * network whose link weights sum to 0, so the total is what we check rather than the link count.
+   */
+  private[algorithms] def modularityContribution(
+    internal: Double, totalIn: Double, totalOut: Double, totalArcWeight: Double): Double =
+    if (totalArcWeight == 0) 0
+    else (internal - totalIn * totalOut / totalArcWeight) / totalArcWeight
+
   def communityModularity[V,E](graph: Graph[V,E], community: Set[V]): Double = {
     var totalIn: Double = 0
     var totalOut: Double = 0
@@ -36,7 +46,7 @@ object ClusteringMetrics {
       }
       graph.inEdges(node).foreach { edge => totalIn += graph.weight(edge) }
     }
-    (internal - totalIn * totalOut / graph.totalArcWeight) / graph.totalArcWeight
+    modularityContribution(internal, totalIn, totalOut, graph.totalArcWeight)
   }
 
 }
@@ -100,7 +110,7 @@ object Louvain {
         }
       }
       val mod = internal.lazyZip(totalIn).lazyZip(totalOut).map { case (intern: Double, in: Double, out: Double) =>
-        (intern - in * out / graph.totalArcWeight) / graph.totalArcWeight
+        ClusteringMetrics.modularityContribution(intern, in, out, graph.totalArcWeight)
       }.sum
       new CommunityStructure[V,E](graph, comMap, internal.toVector, totalIn.toVector, totalOut.toVector, mod)
     }
@@ -168,7 +178,7 @@ object Louvain {
         .updated(originalCommunity, internal(originalCommunity) - internalOriginal)
         .updated(newCommunity, internal(newCommunity) + internalNew)
       val contrib = (com: Int, intern: Vector[Double], in: Vector[Double], out: Vector[Double]) =>
-        (intern(com) - in(com) * out(com) / graph.totalArcWeight) / graph.totalArcWeight
+        ClusteringMetrics.modularityContribution(intern(com), in(com), out(com), graph.totalArcWeight)
 
       val deltaOriginal =
         contrib(originalCommunity, newInternal, newTotalIn, newTotalOut) -

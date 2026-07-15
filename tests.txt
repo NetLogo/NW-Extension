@@ -999,6 +999,16 @@ mixed-separate-components
   O> ask turtles [ create-undirected-edges-with other turtles with [ color != [ color ] of myself ] ]
   nw:modularity nw:weak-component-clusters => 0
 
+# Modularity is undefined (0/0) on a graph with no links, since it divides through by the network's total
+# arc weight.  Rather than leak `NaN` out into a NetLogo value, it reports 0.
+# Filed from Tortoise NW parity fuzzing.  -Jeremy B July 2026
+modularity-no-links-reports-zero
+  extensions [ nw ]
+  O> crt 3
+  nw:modularity nw:weak-component-clusters => 0
+  O> crt 1
+  nw:modularity nw:weak-component-clusters => 0
+
 ## weighted primitives
 
 ### weighted-distance-to
