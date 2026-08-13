@@ -3,12 +3,12 @@ import org.nlogo.build.{ ExtensionDocumentationPlugin, NetLogoExtension }
 enablePlugins(NetLogoExtension, ExtensionDocumentationPlugin)
 
 name       := "nw"
-version    := "4.2.0"
+version    := "4.2.1"
 isSnapshot := true
 
 netLogoExtName      := "nw"
 netLogoClassManager := "org.nlogo.extensions.nw.NetworkExtension"
-netLogoVersion      := "7.1.0-beta1-3ad9618"
+netLogoVersion      := "7.1.0-internal1-0194cd8"
 netLogoTestExtras   += baseDirectory.value / "test"
 
 scalaVersion := "3.7.0"
